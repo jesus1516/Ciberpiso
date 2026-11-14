@@ -1,0 +1,88 @@
+producto_codigo,producto,producto_es,unidad,grupo
+01110000,Soft wheat,Trigo blando,100 kg,cereal_invierno
+01120000,Durum wheat,Trigo duro,100 kg,cereal_invierno
+01200000,Rye,Centeno,100 kg,cereal_invierno
+01300000,Barley,Cebada,100 kg,cereal_invierno
+01310000,Feed barley,Cebada pienso,100 kg,cereal_invierno
+01320000,Malting barley,Cebada maltera,100 kg,cereal_invierno
+01400000,Oats,Avena,100 kg,cereal_invierno
+01500000,Maize,Maíz,100 kg,cereal_verano
+01600000,Rice,Arroz,100 kg,cereal_verano
+01910000,Sorghum,Sorgo,100 kg,cereal_verano
+01920000,Triticale,Triticale,100 kg,cereal_invierno
+02110000,Rape,Colza,100 kg,oleaginosa_otra
+02120000,Sunflowers,Girasol,100 kg,girasol
+02130000,Soya,Soja,100 kg,oleaginosa_otra
+02210000,Dried peas,Guisante seco,100 kg,leguminosa_grano
+02220000,Dried beans,Judía seca,100 kg,leguminosa_grano
+02230000,Dried broad beans,Haba seca,100 kg,leguminosa_grano
+02300000,Raw tobacco: all varieties,,100 kg,otro
+02400000,Sugar beet: unit value,,1000 kg,otro
+02911000,Cotton (including seed),,100 kg,otro
+02920000,Hops: all varieties,,100 kg,otro
+02991000,Lentils,Lenteja,100 kg,leguminosa_grano
+02992000,Chick peas,Garbanzo,100 kg,leguminosa_grano
+04110000,Cauliflowers: all qualities,,100 kg,otro
+04121000,Tomatoes in the open: all qualities,,100 kg,otro
+04122000,Tomatoes under glass: all qualities,,100 kg,otro
+04191100,White cabbage: all qualities,,100 kg,otro
+04191200,Red cabbage: all qualities,,100 kg,otro
+04192100,Lettuce in the open: all qualities,,100 kg,otro
+04192200,Lettuce under glass: all qualities,,100 kg,otro
+04193000,Spinach,,100 kg,otro
+04194100,Cucumbers in the open: all qualities,,100 kg,otro
+04194200,Cucumbers under glass: all qualities,,100 kg,otro
+04195000,Carrots: all qualities,,100 kg,otro
+04196000,Onions: all qualities,,100 kg,otro
+04198100,Green beans: all qualities,,100 kg,otro
+04199000,Green peas: all qualities,,100 kg,otro
+04199901,Cultivated mushrooms: all qualities,,100 kg,otro
+04199902,Chicory in the open,,100 kg,otro
+04199903,Leeks in the open,,100 kg,otro
+04199904,Capsicum (under glass),,100 kg,otro
+04199905,Beetroot,,100 kg,otro
+04199906,Garlic,,100 kg,otro
+04199908,Radish,,100 kg,otro
+04199909,Brussels sprouts: all qualities,,100 kg,otro
+04199910,Asparagus: all qualities,,100 kg,otro
+04199911,Courgettes,,100 kg,otro
+04199912,Celeriac: all qualities,,100 kg,otro
+04199913,Melons,,100 kg,otro
+04199914,Water melons,,100 kg,otro
+04210000,Roses,,100 items,otro
+04220000,Carnations,,100 items,otro
+04230000,Chrysanthemums,,100 items,otro
+04240000,Gladioli,,100 items,otro
+04250000,Tulips,,100 items,otro
+04260000,Freesias,,100 items,otro
+05110000,Early potatoes,,100 kg,otro
+05120000,Main crop potatoes,,100 kg,otro
+06110000,Dessert apples: all varieties,,100 kg,otro
+06120000,Dessert pears: all varieties,,100 kg,otro
+06130000,Peaches: all varieties,,100 kg,otro
+06191100,Cherries: sweet cherries,,100 kg,otro
+06192000,Plums: all varieties,,100 kg,otro
+06193000,Strawberries: all types of production,,100 kg,otro
+06194110,Walnuts,,100 kg,otro
+06194120,Hazelnuts,,100 kg,otro
+06194130,Almonds,Almendra,100 kg,lenoso_otro
+06194140,Chestnuts,,100 kg,otro
+06199100,Apricots: all varieties,,100 kg,otro
+06199200,Raspberries,,100 kg,otro
+06199300,Blackcurrants,,100 kg,otro
+06210000,Oranges: all varieties,,100 kg,otro
+06220000,Mandarins: all varieties,,100 kg,otro
+06230000,Lemons: all varieties,,100 kg,otro
+06290000,Other citrus fruit,,100 kg,otro
+06310000,Fresh figs,,100 kg,otro
+06410000,Dessert grapes: all varieties,,100 kg,otro
+06490000,Grapes for wine production,,100 kg,otro
+06510000,Table olives,Aceituna de mesa,100 kg,olivar
+06590000,Other olives,Aceituna (otras),100 kg,olivar
+07190000,Other table wine,,100 litres,otro
+07200000,Quality wine,,100 litres,otro
+08100000,Extra virgin olive oil,Aceite de oliva virgen extra,100 litres,olivar
+08200000,Virgin olive oil - fine,,100 litres,otro
+08300000,Ordinary virgin olive oil - semi-fine/corrente,,100 litres,otro
+08400000,Lampante virgin olive oil,Aceite de oliva lampante,100 litres,olivar
+08500000,Virgin olive oil,Aceite de oliva virgen,100 litres,olivar

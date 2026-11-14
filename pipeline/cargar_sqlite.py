@@ -27,7 +27,7 @@ DB_PATH = DB_DIR / "ciberpiso.sqlite"
 SCHEMA = DB_DIR / "schema.sql"
 # Orden de carga: primero las tablas referenciadas
 ORDEN = ["dim_municipio", "dim_celda_power", "fincas", "recintos", "suelo_fincas", "fenologia_fincas",
-         "ndvi_fincas", "clima_anual", "suelo_humedad_anual"]
+         "ndvi_fincas", "clima_anual", "suelo_humedad_anual", "dim_producto_precio", "precios_anuales"]
 
 
 def secciones(sql: str) -> dict[str, str]:

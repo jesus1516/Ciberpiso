@@ -40,6 +40,8 @@ Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo
 | `ndvi_fincas` | finca y fecha | `finca_key, fecha` | MODIS NDVI |
 | `clima_anual` | celda y campaña | `celda_power, campana` | NASA POWER |
 | `suelo_humedad_anual` | celda y campaña | `celda_power, campana` | NASA POWER |
+| `dim_producto_precio` | producto agrario | `producto_codigo` | Eurostat |
+| `precios_anuales` | producto y año (2000–2024) | `producto_codigo, anio` | Eurostat |
 
 Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep-2024).
 
