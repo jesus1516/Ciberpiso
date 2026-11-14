@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "water_model": "deficit",
+  "water_reference_deficit_mm": 900.0,
+  "nota": "Déficit hídrico anual (lluvia - ET0) validado en docs/validacion.md; la referencia de 900 mm solo fija la escala, no se ajusta a la etiqueta",
+  "validacion": {
+    "auc_exito_estival_precip": 0.627,
+    "auc_exito_estival_deficit": 0.723,
+    "spearman_ndvi_jun_ago_precip": 0.256,
+    "spearman_ndvi_jun_ago_deficit": 0.494,
+    "lomo_auc_precip": 0.727,
+    "lomo_auc_deficit": 0.778
+  }
+}

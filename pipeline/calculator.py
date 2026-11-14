@@ -23,6 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CROPS_PATH = BASE_DIR / "data" / "crops.csv"
 SCENARIOS_PATH = BASE_DIR / "data" / "processed" / "scenarios.csv"
 OUT_PATH = BASE_DIR / "data" / "processed" / "indicators.json"
+CALIBRATION_PATH = BASE_DIR / "data" / "calibration.json"
+
+DEFAULT_CALIBRATION = {
+    "version": 1,
+    "water_model": "deficit",
+    "water_reference_deficit_mm": 900.0,
+    "nota": "Déficit hídrico anual (lluvia - ET0); calibrado en docs/validacion.md",
+}
 
 ROTATIONS = {
     "R0": {"name": "Trigo-Girasol (Actual)", "crops": ["trigo", "girasol"]},
@@ -77,6 +85,14 @@ def load_scenarios(path: Path = SCENARIOS_PATH) -> list[dict]:
     return leer_csv(path)
 
 
+def load_calibration(path: Path = CALIBRATION_PATH) -> dict:
+    """Carga los parámetros calibrados; si no existen, usa los valores por defecto."""
+    calibracion = dict(DEFAULT_CALIBRATION)
+    if path.exists():
+        calibracion.update(json.loads(path.read_text(encoding="utf-8")))
+    return calibracion
+
+
 def _num(value, default=None):
     if value is None or value == "":
         return default
@@ -115,6 +131,15 @@ def planning_scenario(rows: list[dict]) -> dict:
         "fuente": "Sin ingreso por definicion",
     }
 
+    precip = _num(first["clima_lluvia_media_mm"])
+    precip_p20 = _num(first["clima_lluvia_p20_mm"])
+    deficit = _num(first["clima_deficit_medio_mm"])
+    deficit_p20 = (
+        deficit + (precip - precip_p20)
+        if None not in (deficit, precip, precip_p20)
+        else None
+    )
+
     return {
         "finca_key": first["finca_key"],
         "parcela_id": first["parcela_id"],
@@ -123,8 +148,10 @@ def planning_scenario(rows: list[dict]) -> dict:
         "lat": _num(first["lat"]),
         "lon": _num(first["lon"]),
         "rotacion_estimada": first["rotacion_estimada"],
-        "precip_mm": _num(first["clima_lluvia_media_mm"]),
-        "p20_precip_mm": _num(first["clima_lluvia_p20_mm"]),
+        "precip_mm": precip,
+        "p20_precip_mm": precip_p20,
+        "deficit_mm": deficit,
+        "deficit_p20_mm": deficit_p20,
         "heat_days": int(round(_num(first["clima_dias_calor_may_jun_media"], 0))),
         "frost_days": int(round(statistics.median(frost))) if frost else 0,
         "soil": {
@@ -153,8 +180,19 @@ def planning_scenario(rows: list[dict]) -> dict:
     }
 
 
-def _water_score(weighted_water: float, precip_mm: float) -> float:
-    drought_factor = min(3.0, max(1.0, 450.0 / max(precip_mm, 1.0)))
+def _water_score(
+    weighted_water: float,
+    precip_mm: float,
+    deficit_mm: float | None = None,
+    reference_deficit_mm: float = 900.0,
+) -> float:
+    """Nota de agua. Con déficit usa P-ET0; sin él, conserva el modo lluvia antiguo."""
+    if deficit_mm is not None:
+        drought_factor = min(
+            3.0, max(0.25, deficit_mm / max(reference_deficit_mm, 1.0))
+        )
+    else:
+        drought_factor = min(3.0, max(1.0, 450.0 / max(precip_mm, 1.0)))
     return max(0.0, min(100.0, 100.0 - (weighted_water / 5.0) * 80.0 * drought_factor))
 
 
@@ -198,8 +236,14 @@ def calculate_scores(
     frost_days: int = 0,
     soil: dict | None = None,
     dry_precip_mm: float | None = None,
+    deficit_mm: float | None = None,
+    dry_deficit_mm: float | None = None,
+    calibration: dict | None = None,
 ) -> dict:
     """Motor de reglas puro. Devuelve las cuatro rotaciones con notas 0-100."""
+    calibracion = calibration or DEFAULT_CALIBRATION
+    reference_deficit = float(calibracion.get("water_reference_deficit_mm", 900.0))
+    use_deficit = calibracion.get("water_model", "deficit") == "deficit"
     heat_ratio = max(0.0, min(1.0, 1.0 - (heat_days / 40.0)))
     frost_ratio = max(0.0, min(1.0, 1.0 - (frost_days / 20.0)))
     results = {}
@@ -211,9 +255,22 @@ def calculate_scores(
             sum(crops[c]["water_demand"] * crops[c]["years_weight"] for c in crop_ids)
             / total_years
         )
-        water = _water_score(weighted_water, precip_mm)
+        water = _water_score(
+            weighted_water,
+            precip_mm,
+            deficit_mm if use_deficit else None,
+            reference_deficit,
+        )
+        dry_deficit = (
+            (dry_deficit_mm if dry_deficit_mm is not None else deficit_mm)
+            if use_deficit
+            else None
+        )
         water_p20 = _water_score(
-            weighted_water, dry_precip_mm if dry_precip_mm is not None else precip_mm
+            weighted_water,
+            dry_precip_mm if dry_precip_mm is not None else precip_mm,
+            dry_deficit,
+            reference_deficit,
         )
         soil_score, soil_detail = _soil_score(crops, crop_ids, soil)
 
@@ -334,7 +391,7 @@ def calculate_scores(
     return results
 
 
-def score_farm(scenario: dict, crops: dict) -> dict:
+def score_farm(scenario: dict, crops: dict, calibration: dict | None = None) -> dict:
     return calculate_scores(
         crops,
         scenario["precip_mm"],
@@ -343,13 +400,19 @@ def score_farm(scenario: dict, crops: dict) -> dict:
         scenario["frost_days"],
         soil=scenario["soil"],
         dry_precip_mm=scenario["p20_precip_mm"],
+        deficit_mm=scenario.get("deficit_mm"),
+        dry_deficit_mm=scenario.get("deficit_p20_mm"),
+        calibration=calibration,
     )
 
 
 def build_indicators(
-    scenarios_path: Path = SCENARIOS_PATH, crops_path: Path = CROPS_PATH
+    scenarios_path: Path = SCENARIOS_PATH,
+    crops_path: Path = CROPS_PATH,
+    calibration_path: Path = CALIBRATION_PATH,
 ) -> dict:
     crops = load_crops(crops_path)
+    calibration = load_calibration(calibration_path)
     rows = load_scenarios(scenarios_path)
     if not rows:
         raise ValueError(f"{scenarios_path} está vacío")
@@ -361,7 +424,7 @@ def build_indicators(
     candidates = []
     for finca_key, group in sorted(groups.items()):
         scenario = planning_scenario(group)
-        rotations = score_farm(scenario, crops)
+        rotations = score_farm(scenario, crops, calibration)
 
         for rid, data in rotations.items():
             gaps = list(data["data_gaps"])
@@ -382,6 +445,9 @@ def build_indicators(
                     "Campaña 2025 sin precio Eurostat; se usa 2024 como referencia"
                 )
             gaps.append(
+                "La nota de agua usa déficit hídrico (lluvia - ET0), no solo lluvia"
+            )
+            gaps.append(
                 "La rotación observada es una estimación NDVI, no cultivo declarado"
             )
             data["data_gaps"] = list(dict.fromkeys(gaps))
@@ -399,6 +465,8 @@ def build_indicators(
                 "climate_used": {
                     "lluvia_media_mm": scenario["precip_mm"],
                     "lluvia_p20_mm": scenario["p20_precip_mm"],
+                    "deficit_medio_mm": scenario["deficit_mm"],
+                    "deficit_p20_mm": scenario["deficit_p20_mm"],
                     "dias_calor_may_jun": scenario["heat_days"],
                     "dias_helada": scenario["frost_days"],
                 },
@@ -421,6 +489,7 @@ def build_indicators(
         "status": "real_data_provisional",
         "source": "NASA POWER + SoilGrids + MODIS + Eurostat",
         "method": "reglas_explicables_v2",
+        "calibration": calibration,
         "profiles": PROFILES,
         "summary": {
             "fincas": len(candidates),

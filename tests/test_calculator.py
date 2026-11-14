@@ -121,6 +121,30 @@ class TestRotationCalculator(unittest.TestCase):
             self.assertEqual(data["viability"]["status"], "not_viable")
             self.assertIsNone(data["rankings"]["water_first"]["rank"])
 
+    def test_water_model_switch(self):
+        from pipeline.calculator import DEFAULT_CALIBRATION
+
+        precip_cal = {"water_model": "precip", "water_reference_deficit_mm": 900}
+        base = calculate_scores(self.crops, 450.0, 15, self.prices)
+        ignored = calculate_scores(
+            self.crops,
+            450.0,
+            15,
+            self.prices,
+            deficit_mm=900.0,
+            calibration=precip_cal,
+        )
+        deficit = calculate_scores(
+            self.crops,
+            450.0,
+            15,
+            self.prices,
+            deficit_mm=1000.0,
+            calibration=DEFAULT_CALIBRATION,
+        )
+        self.assertEqual(base["R0"]["water"], ignored["R0"]["water"])
+        self.assertNotEqual(base["R0"]["water"], deficit["R0"]["water"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -16,6 +16,7 @@ class TestRealIndicators(unittest.TestCase):
             self.data["summary"]["campanas"], [2020, 2021, 2022, 2023, 2024, 2025]
         )
         self.assertEqual(len(self.data["candidates"]), 60)
+        self.assertEqual(self.data["calibration"]["water_model"], "deficit")
         for candidate in self.data["candidates"]:
             self.assertEqual(len(candidate["rotations"]), 4)
             self.assertEqual(len(candidate["campaigns"]), 6)

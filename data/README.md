@@ -57,6 +57,10 @@ Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep
 - `python3 pipeline/calculator.py`: puntúa las cuatro rotaciones por finca y genera
   `data/processed/indicators.json`, la fuente que consume la web. Ese JSON sí se
   versiona; el resto de `data/processed/` no.
+- `python3 pipeline/calibrate.py`: compara la nota de agua de lluvia con la de déficit
+  hídrico y valida por municipios. Escribe `data/calibration.json` (versionado) y
+  `data/processed/validation.json` (intermedio). El resultado está en
+  [`docs/validacion.md`](../docs/validacion.md).
 
 ## Crear la base en cualquier equipo
 
