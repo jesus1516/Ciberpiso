@@ -34,13 +34,19 @@ class TestRealIndicators(unittest.TestCase):
                     self.assertGreaterEqual(rotation["profit"], 0.0)
                     self.assertLessEqual(rotation["profit"], 100.0)
 
-    def test_missing_veza_price(self):
+    def test_veza_price_available(self):
         for candidate in self.data["candidates"]:
             r2 = candidate["rotations"]["R2"]
-            self.assertIsNone(r2["profit"])
-            self.assertIsNone(r2["rankings"]["profit_first"]["rank"])
+            self.assertIsNotNone(r2["profit"])
+            self.assertTrue(r2["comparable"])
+            self.assertIn("MAPA", r2["indicators"]["profit"]["source"])
             self.assertTrue(any("veza" in gap.lower() for gap in r2["data_gaps"]))
-            self.assertIsNone(candidate["price_reference"]["veza"]["eur_t"])
+            ref = candidate["price_reference"]["veza"]
+            self.assertEqual(ref["anio"], 2024)
+            self.assertAlmostEqual(ref["eur_t"], 487.9, places=1)
+            for ranking in r2["rankings"].values():
+                self.assertFalse(ranking["partial"])
+                self.assertIsNotNone(ranking["final_score"])
 
     def test_example_farm(self):
         farm = self.candidates["29:15:0:0:62:14"]
@@ -50,7 +56,7 @@ class TestRealIndicators(unittest.TestCase):
         self.assertGreater(r["R2"]["soil"], r["R0"]["soil"])
         self.assertGreater(r["R0"]["profit"], r["R1"]["profit"])
         self.assertEqual(r["R0"]["rankings"]["profit_first"]["rank"], 1)
-        self.assertEqual(r["R2"]["rankings"]["profit_first"]["rank"], None)
+        self.assertIsNotNone(r["R2"]["rankings"]["profit_first"]["rank"])
 
     def test_price_reference_2025(self):
         for candidate in self.data["candidates"]:
@@ -68,7 +74,7 @@ class TestRealIndicators(unittest.TestCase):
         for candidate in self.data["candidates"]:
             self.assertEqual(candidate["rotations"]["R0"]["confidence"], "medium")
             self.assertEqual(candidate["rotations"]["R1"]["confidence"], "medium")
-            self.assertEqual(candidate["rotations"]["R2"]["confidence"], "low")
+            self.assertEqual(candidate["rotations"]["R2"]["confidence"], "medium")
             self.assertEqual(candidate["rotations"]["R3"]["confidence"], "medium")
 
 

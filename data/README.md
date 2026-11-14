@@ -42,18 +42,22 @@ Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo
 | `suelo_humedad_anual` | celda y campaña | `celda_power, campana` | NASA POWER |
 | `dim_producto_precio` | producto agrario | `producto_codigo` | Eurostat |
 | `precios_anuales` | producto y año (2000–2024) | `producto_codigo, anio` | Eurostat |
+| `precios_veza` | año (2014–2024) | `anio` | MAPA, Anuario de Estadística |
 
 Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep-2024).
 
 ## Catálogo de cultivos y escenarios
 
 - `data/crops.csv`: parámetros iniciales de trigo, girasol, garbanzo, veza y barbecho,
-  con el código de producto Eurostat de cada uno. La veza no tiene serie de precio y
-  se declara como hueco, sin imputar.
+  con el código de producto Eurostat cuando existe. La veza usa la serie nacional del
+  MAPA (`data/csv/precios_veza.csv`), no Eurostat.
 - `python3 pipeline/prepare_inputs.py`: cruza las 60 candidatas con su clima, suelo,
   fenología y precios de cada campaña (2020–2025). Genera
   `data/processed/scenarios.csv` y `data/processed/scenarios_qa.json`. Es un
   intermedio de trabajo y no se versiona.
+- `data/csv/precios_veza.csv`: serie nacional de veza grano del MAPA (2014–2024),
+  transcrita de la tabla 7.2.7.2. Cada fila lleva fuente y URL; no se descargó
+  automáticamente.
 - `data/rotation_content.json`: fichas explicativas de cada rotación (por qué,
   evidencia, beneficios, lagunas y riesgos de revisión local). Es contenido versionado.
 - `python3 pipeline/calculator.py`: puntúa las cuatro rotaciones por finca y genera

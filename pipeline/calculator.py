@@ -64,6 +64,11 @@ SOURCES = [
         "url": "https://ec.europa.eu/eurostat/databrowser/view/apri_ap_crpouta/default/table",
         "use": "Precio medio anual de venta en España.",
     },
+    {
+        "name": "MAPA Anuario de Estadística 2025, tabla 7.2.7.2",
+        "url": "https://www.mapa.gob.es/estadistica/pags/anuario/2025/FORMATO%20PDF/AE25-C07/7.2.7.2.pdf",
+        "use": "Precio medio anual de veza grano en España (2014-2024).",
+    },
 ]
 
 DEFAULT_CALIBRATION = {
@@ -439,6 +444,8 @@ def calculate_scores(
                 if price_component is not None
                 else None,
                 "is_profit": False,
+                "price_source": "Eurostat apri_ap_crpouta",
+                "price_year": 2024,
                 "gap": "Sin rendimiento ni costes: es un proxy de precio/mercado",
             },
             "comparable": profit is not None,
@@ -636,10 +643,15 @@ def _dynamic_evidence(
     elif rid == "R2":
         evidencia.append(
             {
-                "source": "Eurostat apri_ap_crpouta",
-                "url": "https://ec.europa.eu/eurostat/databrowser/view/apri_ap_crpouta/default/table",
-                "date": "2024",
-                "value": "Sin serie de precio de veza; hueco declarado",
+                "source": "MAPA Anuario de Estadística 2025, tabla 7.2.7.2",
+                "url": "https://www.mapa.gob.es/estadistica/pags/anuario/2025/FORMATO%20PDF/AE25-C07/7.2.7.2.pdf",
+                "date": str(ref["veza"]["anio"] or 2024),
+                "value": (
+                    f"Veza grano {ref['veza']['eur_t']:.0f} €/t; "
+                    "precio nacional percibido por el agricultor"
+                )
+                if ref["veza"]["eur_t"] is not None
+                else "Precio de veza no disponible",
             }
         )
     else:
@@ -682,8 +694,8 @@ def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
         "profit": {
             "value": data["profit"],
             "unit": "índice 0-100 (proxy precio/mercado)",
-            "source": "Eurostat apri_ap_crpouta",
-            "date": "2024",
+            "source": data["market"].get("price_source", "Eurostat apri_ap_crpouta"),
+            "date": str(data["market"].get("price_year") or 2024),
             "confidence": "low",
             "gap": data["market"]["gap"]
             if data["profit"] is not None
@@ -703,10 +715,13 @@ def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
 
 
 def _confidence_for(data: dict) -> tuple[str, float, dict]:
+    precio = 0.0
+    if data["profit"] is not None:
+        precio = 0.8 if "MAPA" in data["market"].get("price_source", "") else 1.0
     componentes = {
         "clima": 1.0,
         "suelo": 1.0,
-        "precio": 1.0 if data["profit"] is not None else 0.0,
+        "precio": precio,
         "validacion": 0.7,
     }
     cobertura = sum(componentes.values()) / len(componentes)
@@ -771,7 +786,7 @@ def build_indicators(
                 )
             if rid == "R2":
                 gaps.append(
-                    "Sin precio Eurostat de veza; la nota de precio no se calcula"
+                    "Precio de veza del MAPA (nacional y anual); no hay lonja local"
                 )
             if rid == "R3":
                 gaps.append(
@@ -787,6 +802,11 @@ def build_indicators(
             gaps.append(
                 "La rotación observada es una estimación NDVI, no cultivo declarado"
             )
+            data["market"]["price_year"] = scenario["price_reference"]["trigo"]["anio"]
+            if rid == "R2":
+                data["market"]["price_source"] = (
+                    "Eurostat (trigo/girasol) + MAPA (veza)"
+                )
             data["why"] = ficha.get("why", "")
             data["benefits"] = ficha.get("benefits", [])
             data["review_risks"] = ficha.get("review_risks", [])

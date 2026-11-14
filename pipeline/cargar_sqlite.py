@@ -26,8 +26,20 @@ DB_DIR = DATA / "database"
 DB_PATH = DB_DIR / "ciberpiso.sqlite"
 SCHEMA = DB_DIR / "schema.sql"
 # Orden de carga: primero las tablas referenciadas
-ORDEN = ["dim_municipio", "dim_celda_power", "fincas", "recintos", "suelo_fincas", "fenologia_fincas",
-         "ndvi_fincas", "clima_anual", "suelo_humedad_anual", "dim_producto_precio", "precios_anuales"]
+ORDEN = [
+    "dim_municipio",
+    "dim_celda_power",
+    "fincas",
+    "recintos",
+    "suelo_fincas",
+    "fenologia_fincas",
+    "ndvi_fincas",
+    "clima_anual",
+    "suelo_humedad_anual",
+    "dim_producto_precio",
+    "precios_anuales",
+    "precios_veza",
+]
 
 
 def secciones(sql: str) -> dict[str, str]:
@@ -45,7 +57,9 @@ def cargar(db: Path) -> None:
     db.unlink(missing_ok=True)
     sec = secciones(SCHEMA.read_text(encoding="utf-8"))
     con = sqlite3.connect(db)
-    con.executescript("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF; PRAGMA foreign_keys=OFF;")
+    con.executescript(
+        "PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF; PRAGMA foreign_keys=OFF;"
+    )
     con.executescript(sec["tablas"])
     for tabla in ORDEN:
         f = CSV_DIR / f"{tabla}.csv"
@@ -54,7 +68,9 @@ def cargar(db: Path) -> None:
             rd = csv.reader(fh)
             cab = next(rd)
             if sorted(cab) != sorted(cols_db):
-                raise ValueError(f"{tabla}: columnas CSV {set(cab) ^ set(cols_db)} no coinciden con el esquema")
+                raise ValueError(
+                    f"{tabla}: columnas CSV {set(cab) ^ set(cols_db)} no coinciden con el esquema"
+                )
             t0 = time.time()
             q = f"INSERT INTO {tabla} ({', '.join(cab)}) VALUES ({', '.join('?' * len(cab))})"
             con.executemany(q, ([v if v != "" else None for v in fila] for fila in rd))
@@ -64,7 +80,9 @@ def cargar(db: Path) -> None:
     con.executescript(sec["indices"] + sec["vistas"])
     malos = con.execute("PRAGMA foreign_key_check").fetchall()
     if malos:
-        raise ValueError(f"{len(malos)} filas violan claves foráneas, p. ej. {malos[:3]}")
+        raise ValueError(
+            f"{len(malos)} filas violan claves foráneas, p. ej. {malos[:3]}"
+        )
     con.execute("ANALYZE")
     con.commit()
     con.execute("VACUUM")
@@ -73,7 +91,9 @@ def cargar(db: Path) -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("--db", type=Path, default=DB_PATH)
     cargar(ap.parse_args().db)
 

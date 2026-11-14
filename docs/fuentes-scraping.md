@@ -182,8 +182,24 @@ necesario · ⛔ solo EE. UU. · ➖ no es un dataset.
   (`api.tech.ec.europa.eu/agrifood/api/cereal/prices`) devolvía error 500 el 14-11-2026,
   incluso con los ejemplos de su documentación. Si vuelve, daría precios semanales por
   lonja.
-- **Límites:** precio nacional y anual, no de la Campiña ni de la semana de venta. No
-  hay veza (rotación R2). No es una previsión.
+- **Límites:** precio nacional y anual, no de la Campiña ni de la semana de venta.
+  Eurostat no incluye veza; para eso está la serie del MAPA de 2.6. No es una previsión.
+
+### 2.6 Precio de veza, MAPA (excepción aprobada)
+
+- **Fuente:** MAPA, Anuario de Estadística 2025, tabla 7.2.7.2 "Veza. Serie histórica
+  de superficie, rendimiento, producción, precio y valor". Precio medio anual
+  percibido por el agricultor, nacional, en €/100 kg.
+- **URL:** `https://www.mapa.gob.es/estadistica/pags/anuario/2025/FORMATO%20PDF/AE25-C07/7.2.7.2.pdf`
+- **Contenido:** 2014–2024. 2024 = 48,79 €/100 kg = 487,9 €/t. Se guarda en
+  `data/csv/precios_veza.csv` y se cruza por campaña en `prepare_inputs.py`.
+- **Por qué no Eurostat:** la nomenclatura europea no incluye veza grano; sí incluye
+  guisante, haba, garbanzo y altramuces. No se usa un proxy.
+- **Límites:** precio nacional y anual, no de lonja; no hay precio provincial. La
+  campaña 2025 usa 2024 como referencia. Para veza forrajera en verde, el Anuario
+  publica otra tabla (7.6.3.5.1) que no es comparable con grano.
+- **Fuente complementaria:** lonjas andaluzas (Junta de Andalucía), veza grano en Jaén
+  (490 €/t en las semanas 37–38 de 2026), coherente con el orden de magnitud del MAPA.
 
 ## 3. Modelo de datos (CSV → SQLite)
 
@@ -204,6 +220,7 @@ ordenados por clave primaria. Claves enteras para JOIN rápidos; el código SIGP
 | `suelo_humedad_anual` | celda × campaña | `celda_power, campana` | NASA POWER |
 | `dim_producto_precio` | producto agrario | `producto_codigo` | Eurostat |
 | `precios_anuales` | producto × año | `producto_codigo, anio` | Eurostat |
+| `precios_veza` | año | `anio` | MAPA (veza grano) |
 
 - **Esquema** con claves foráneas, índices y vistas (`v_fincas`, `v_candidatas`,
   `v_clima_suelo_anual`): [`data/database/schema.sql`](../data/database/schema.sql); consultas de ejemplo en [`data/database/consultas.sql`](../data/database/consultas.sql).
@@ -252,7 +269,8 @@ caen en la tesela MODIS h17v05. NASA POWER necesitará unas 30–40 celdas.
 
 ## 6. Lagunas (por la regla "solo `resources.md`")
 
-- **Precios:** solo nacionales y anuales (Eurostat); sin precio local de lonja ni de veza.
+- **Precios:** nacionales y anuales (Eurostat para trigo, girasol y garbanzo; MAPA para
+  veza grano); sin precio local de lonja ni serie provincial de veza.
 - **Suelo:** la textura y la química vienen de SoilGrids (excepción aprobada, 250 m);
   la humedad, de POWER/MERRA-2 (~50 km). SMAP (9 km) necesitaría Earthdata Login.
 - **Cultivo real:** el cultivo es una **estimación por NDVI** a 250 m, no el cultivo

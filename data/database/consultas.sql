@@ -15,7 +15,8 @@ UNION ALL SELECT 'ndvi_fincas', COUNT(*) FROM ndvi_fincas
 UNION ALL SELECT 'clima_anual', COUNT(*) FROM clima_anual
 UNION ALL SELECT 'suelo_humedad_anual', COUNT(*) FROM suelo_humedad_anual
 UNION ALL SELECT 'dim_producto_precio', COUNT(*) FROM dim_producto_precio
-UNION ALL SELECT 'precios_anuales', COUNT(*) FROM precios_anuales;
+UNION ALL SELECT 'precios_anuales', COUNT(*) FROM precios_anuales
+UNION ALL SELECT 'precios_veza', COUNT(*) FROM precios_veza;
 
 -- 2. Municipios por superficie de cultivo (WorldCover) y candidatas
 SELECT m.nombre AS municipio,
@@ -125,3 +126,8 @@ FROM clima_anual c LEFT JOIN v_precios v ON v.anio = c.campana
 WHERE c.celda_power = 254281
 GROUP BY c.campana, c.lluvia_mm
 ORDER BY c.campana;
+
+-- 16. Precio nacional de veza grano (MAPA, 2014–2024)
+SELECT anio, precio_eur_100kg, precio_eur_t, fuente
+FROM v_precios_veza
+ORDER BY anio;

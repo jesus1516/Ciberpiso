@@ -83,7 +83,8 @@ SELECT
     pt.precio_eur_t  AS precio_trigo_eur_t,
     pg.precio_eur_t  AS precio_girasol_eur_t,
     pga.precio_eur_t AS precio_garbanzo_eur_t,
-    pgu.precio_eur_t AS precio_guisante_referencia_eur_t
+    pgu.precio_eur_t AS precio_guisante_referencia_eur_t,
+    pve.precio_eur_t AS precio_veza_eur_t
 FROM fenologia_fincas fen
 JOIN v_candidatas f ON f.finca_key = fen.finca_key
 LEFT JOIN clima_anual ca
@@ -98,6 +99,8 @@ LEFT JOIN precios_anuales pga
        ON pga.producto_codigo = '02992000' AND pga.anio = fen.campana
 LEFT JOIN precios_anuales pgu
        ON pgu.producto_codigo = '02210000' AND pgu.anio = fen.campana
+LEFT JOIN precios_veza pve
+       ON pve.anio = fen.campana
 WHERE fen.campana BETWEEN ? AND ?
 ORDER BY f.finca_key, fen.campana
 """
@@ -229,9 +232,9 @@ def build_scenarios(db: Path = DB_PATH) -> list[dict]:
         trigo = fila["precio_trigo_eur_t"]
         girasol = fila["precio_girasol_eur_t"]
         garbanzo = fila["precio_garbanzo_eur_t"]
+        veza = fila["precio_veza_eur_t"]
         ndvi_jun = fila["ndvi_jun_ago"]
 
-        fila["precio_veza_eur_t"] = None
         fila["precio_barbecho_eur_t"] = 0.0
         fila["precio_anio"] = fila["campana"] if trigo is not None else None
         fila["exito_estival"] = int(ndvi_jun >= 0.33) if ndvi_jun is not None else None
@@ -242,7 +245,9 @@ def build_scenarios(db: Path = DB_PATH) -> list[dict]:
         fila["precio_completo_r1"] = int(
             trigo is not None and girasol is not None and garbanzo is not None
         )
-        fila["precio_completo_r2"] = 0  # no hay serie Eurostat de veza
+        fila["precio_completo_r2"] = int(
+            trigo is not None and girasol is not None and veza is not None
+        )
         fila["precio_completo_r3"] = 1  # el barbecho no necesita precio
     return [{k: fila.get(k) for k in CAMPOS} for fila in filas]
 
@@ -262,7 +267,7 @@ def resumen_calidad(filas: list[dict]) -> dict:
             "trigo": sum(1 for f in filas if f["precio_trigo_eur_t"] is not None),
             "girasol": sum(1 for f in filas if f["precio_girasol_eur_t"] is not None),
             "garbanzo": sum(1 for f in filas if f["precio_garbanzo_eur_t"] is not None),
-            "veza": 0,
+            "veza": sum(1 for f in filas if f["precio_veza_eur_t"] is not None),
             "guisante_referencia": sum(
                 1 for f in filas if f["precio_guisante_referencia_eur_t"] is not None
             ),
@@ -279,7 +284,7 @@ def resumen_calidad(filas: list[dict]) -> dict:
             "exito_estival = 1 si ndvi_jun_ago >= 0,33 (regla de cultivo herbaceo).",
             "clase_arable = 1 si clase_estimada es herbaceo_invierno o herbaceo_verano.",
             "precio_anio = campana; 2025 no tiene precio Eurostat (serie hasta 2024).",
-            "Veza sin serie Eurostat: se deja NULL y no se imputa.",
+            "Veza usa la serie nacional del MAPA (2014-2024); no hay precio de lonja local.",
             "El barbecho no genera ingreso: precio 0 por definicion.",
             "La rotacion observada es una estimacion NDVI, no cultivo declarado.",
         ],

@@ -50,16 +50,17 @@ class TestCompliance(unittest.TestCase):
             r2 = candidate["rotations"]["R2"]
             self.assertNotEqual(r1["soil"], r2["soil"])
 
-    def test_r2_is_partial_not_ranked(self):
+    def test_r2_is_comparable(self):
         for candidate in self.data["candidates"]:
             r2 = candidate["rotations"]["R2"]
-            self.assertFalse(r2["comparable"])
-            self.assertIsNone(r2["profit"])
+            self.assertTrue(r2["comparable"])
+            self.assertIsNotNone(r2["profit"])
+            self.assertIn("MAPA", r2["indicators"]["profit"]["source"])
             for profile, ranking in r2["rankings"].items():
-                self.assertTrue(ranking["partial"])
-                self.assertIsNone(ranking["rank"])
-                self.assertIsNone(ranking["final_score"])
-                self.assertIsNotNone(ranking["partial_score"])
+                self.assertFalse(ranking["partial"])
+                self.assertIsNotNone(ranking["final_score"])
+                self.assertIsNotNone(ranking["rank"])
+                self.assertIsNone(ranking["partial_score"])
 
     def test_custom_weights_and_constraints(self):
         data = build_indicators(

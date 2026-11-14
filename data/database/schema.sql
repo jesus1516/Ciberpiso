@@ -173,6 +173,16 @@ CREATE TABLE precios_anuales (
   PRIMARY KEY (producto_codigo, anio)
 ) WITHOUT ROWID;
 
+-- Veza grano: serie nacional del MAPA (no existe en Eurostat)
+CREATE TABLE precios_veza (
+  anio              INTEGER PRIMARY KEY,
+  precio_eur_100kg  REAL NOT NULL,
+  precio_eur_t      REAL NOT NULL,
+  fuente            TEXT NOT NULL,
+  url               TEXT NOT NULL,
+  nota              TEXT
+);
+
 -- @indices ---------------------------------------------------------------------------
 CREATE INDEX ix_fincas_municipio  ON fincas(municipio_key);
 CREATE INDEX ix_fincas_celda      ON fincas(celda_power);
@@ -199,6 +209,9 @@ CREATE VIEW v_precios AS
 SELECT p.anio, d.producto_codigo, COALESCE(d.producto_es, d.producto) AS producto, d.grupo, d.unidad,
        p.precio_eur, p.precio_eur_t, p.estado
 FROM precios_anuales p JOIN dim_producto_precio d USING (producto_codigo);
+
+CREATE VIEW v_precios_veza AS
+SELECT anio, precio_eur_100kg, precio_eur_t, fuente, url, nota FROM precios_veza;
 
 CREATE VIEW v_clima_suelo_anual AS
 SELECT a.*, s.gwettop_media, s.gwetroot_media, s.gwetprof_media, s.gwetroot_mar_may,

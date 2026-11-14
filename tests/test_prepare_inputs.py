@@ -89,16 +89,19 @@ class TestScenarios(unittest.TestCase):
         self.assertEqual(p["trigo"], 300)
         self.assertEqual(p["girasol"], 300)
         self.assertEqual(p["garbanzo"], 300)
-        self.assertEqual(p["veza"], 0)
+        self.assertEqual(p["veza"], 300)
         self.assertEqual(p["barbecho"], 360)
         self.assertEqual(p["r0_completo"], 300)
         self.assertEqual(p["r1_completo"], 300)
-        self.assertEqual(p["r2_completo"], 0)
+        self.assertEqual(p["r2_completo"], 300)
         self.assertEqual(p["r3_completo"], 360)
         self.assertEqual(p["anios_con_precio"], [2020, 2021, 2022, 2023, 2024])
         for row in self.rows:
-            if row["campana"] == 2025:
+            if row["campana"] == "2024":
+                self.assertAlmostEqual(float(row["precio_veza_eur_t"]), 487.9, places=1)
+            if row["campana"] == "2025":
                 self.assertIsNone(row["precio_trigo_eur_t"])
+                self.assertIsNone(row["precio_veza_eur_t"])
                 self.assertIsNone(row["precio_anio"])
 
 

@@ -49,6 +49,7 @@ fincas.
 `python3 pipeline/audit.py` comprueba la salida completa:
 
 - 60 fincas, 240 rotaciones y 960 indicadores.
+- 4/4 rotaciones rankeadas en los 3 perfiles de las 60 fincas, sin puestos vacíos.
 - Los cinco campos obligatorios por rotación: por qué, evidencia, beneficios, lagunas
   y riesgos de revisión local.
 - Fuente, fecha, unidad, confianza y laguna en cada indicador.
@@ -57,8 +58,9 @@ fincas.
 - Aviso de herramienta de apoyo, glosario y fuentes en el JSON.
 
 Resultado actual: **0 fallos**. R1 y R2 ya no son clones: la veza tiene más protección
-de erosión y materia orgánica que el garbanzo. R2 sigue sin nota de precio y se muestra
-como “no comparable” hasta que exista una serie fiable de veza.
+de erosión y materia orgánica que el garbanzo. R2 usa el precio nacional de veza grano
+del MAPA (48,79 €/100 kg en 2024) y queda comparable; la limitación es que no hay lonja
+local ni serie Eurostat.
 
 ## Decisión sobre los umbrales
 
@@ -72,11 +74,13 @@ no se usa como corte.
 - **Suelo:** no hay una etiqueta independiente de calidad del suelo. La fórmula usa
   arcilla, pH y agua disponible, pero no se contrasta con rendimiento.
 - **Riesgo:** depende de calor, helada y sequía; no hay serie de daños observados.
-- **Precio:** Eurostat da precio nacional anual, no lonja local. Sin rendimientos ni
-  costes no se puede validar un margen; la nota se llama “precio/mercado”, no
-  rentabilidad.
+- **Precio:** Eurostat da precio nacional anual para trigo, girasol y garbanzo; el
+  MAPA da veza grano nacional y anual (2014–2024). No hay lonja local ni precio
+  provincial. Sin rendimientos ni costes no se puede validar un margen; la nota se
+  llama “precio/mercado”, no rentabilidad.
 - **Rotación observada:** `rotacion_estimada` es una estimación NDVI a 250 m, no cultivo
-  declarado. No distingue trigo de girasol ni separa R1 de R2.
+  declarado. No distingue trigo de girasol ni la veza del garbanzo; la separación R1/R2
+  sale de los parámetros de cultivo, no del satélite.
 - **Muestra:** 60 fincas y 44 éxitos estivales. Los intervalos de confianza son anchos;
   los resultados son una señal, no una prueba definitiva.
 
