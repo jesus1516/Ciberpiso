@@ -13,7 +13,9 @@ UNION ALL SELECT 'suelo_fincas', COUNT(*) FROM suelo_fincas
 UNION ALL SELECT 'fenologia_fincas', COUNT(*) FROM fenologia_fincas
 UNION ALL SELECT 'ndvi_fincas', COUNT(*) FROM ndvi_fincas
 UNION ALL SELECT 'clima_anual', COUNT(*) FROM clima_anual
-UNION ALL SELECT 'suelo_humedad_anual', COUNT(*) FROM suelo_humedad_anual;
+UNION ALL SELECT 'suelo_humedad_anual', COUNT(*) FROM suelo_humedad_anual
+UNION ALL SELECT 'dim_producto_precio', COUNT(*) FROM dim_producto_precio
+UNION ALL SELECT 'precios_anuales', COUNT(*) FROM precios_anuales;
 
 -- 2. Municipios por superficie de cultivo (WorldCover) y candidatas
 SELECT m.nombre AS municipio,
@@ -98,3 +100,28 @@ FROM v_fincas
 WHERE superficie_ha >= 30 AND wc_cultivo_pct >= 70 AND pendiente_pct <= 8 AND cad_0_100_mm >= 125
 ORDER BY cad_0_100_mm DESC
 LIMIT 20;
+
+-- 13. Precios de los cultivos de las rotaciones del caso (€/t), desde 2015
+SELECT anio, producto, precio_eur_t, estado
+FROM v_precios
+WHERE producto IN ('Trigo duro', 'Trigo blando', 'Cebada', 'Girasol', 'Garbanzo', 'Guisante seco')
+  AND anio >= 2015
+ORDER BY producto, anio;
+
+-- 14. Precio medio, mínimo y máximo 2015–2024 de cada cultivo herbáceo (€/t)
+SELECT producto, grupo, COUNT(*) AS anios,
+       ROUND(AVG(precio_eur_t)) AS media_eur_t, MIN(precio_eur_t) AS min_eur_t, MAX(precio_eur_t) AS max_eur_t
+FROM v_precios
+WHERE grupo IN ('cereal_invierno', 'girasol', 'leguminosa_grano', 'oleaginosa_otra') AND anio BETWEEN 2015 AND 2024
+GROUP BY producto, grupo
+ORDER BY grupo, media_eur_t DESC;
+
+-- 15. Precio de cada cultivo frente a la lluvia de la campaña en Antequera (año seco = precio alto?)
+SELECT c.campana, c.lluvia_mm,
+       MAX(CASE WHEN v.producto = 'Trigo duro' THEN v.precio_eur_t END) AS trigo_duro_eur_t,
+       MAX(CASE WHEN v.producto = 'Girasol' THEN v.precio_eur_t END) AS girasol_eur_t,
+       MAX(CASE WHEN v.producto = 'Garbanzo' THEN v.precio_eur_t END) AS garbanzo_eur_t
+FROM clima_anual c LEFT JOIN v_precios v ON v.anio = c.campana
+WHERE c.celda_power = 254281
+GROUP BY c.campana, c.lluvia_mm
+ORDER BY c.campana;

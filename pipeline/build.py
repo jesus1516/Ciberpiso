@@ -151,6 +151,14 @@ def construir(provs: list[int]) -> None:
     else:
         print("  (sin suelo SoilGrids: ejecuta python -m pipeline.soilgrids)")
 
+    # ---- Precios Eurostat (excepción pedida por el equipo) --------------------------------
+    pp = PROCESSED / "precios"
+    if (pp / "precios_anuales.parquet").exists():
+        _guardar(pd.read_parquet(pp / "dim_producto_precio.parquet"), "dim_producto_precio", ["producto_codigo"])
+        _guardar(pd.read_parquet(pp / "precios_anuales.parquet"), "precios_anuales", ["producto_codigo", "anio"])
+    else:
+        print("  (sin precios: ejecuta python -m pipeline.precios)")
+
     # ---- NASA POWER: clima y humedad del suelo -------------------------------------------
     anual = pd.read_parquet(POWER / "clima_anual.parquet")
     _guardar(anual.drop(columns=SUELO_COLS), "clima_anual", ["celda_power", "campana"])

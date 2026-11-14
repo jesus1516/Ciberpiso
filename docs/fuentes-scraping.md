@@ -14,6 +14,7 @@
 | Humedad del suelo (superficial, radicular, perfil) | **NASA POWER** (MERRA-2) | ✅ #6–7 | `suelo_humedad_anual` |
 | Altitud y pendiente | **SRTM** (versión NASA NASADEM) vía Planetary Computer | ✅ #28 (y SRTM, #3–4) | `fincas` |
 | Textura, carbono, pH y agua disponible del suelo | **ISRIC SoilGrids 2.0** | ⚠️ excepción aprobada | `suelo_fincas` |
+| Precios agrarios de venta en España, anuales 2000–2024 | **Eurostat** `apri_ap_crpouta` | ⚠️ excepción aprobada | `precios_anuales`, `dim_producto_precio` |
 | Cobertura del suelo (% cultivo, arbolado, pasto…) | **ESA WorldCover 2021** vía Planetary Computer | ✅ #28 | `fincas` |
 | Vegetación y cultivo estimado por campaña | **NASA MODIS MOD13Q1** (LP DAAC) vía Planetary Computer | ✅ #4, #28 | `fenologia_fincas`, `ndvi_fincas`, `fincas` |
 | Dónde está cada finca (identificador y polígono) | SIGPAC recintos 2026 (FEGA) | ❌ (ver nota) | `fincas`, `recintos`, `dim_municipio` |
@@ -49,7 +50,7 @@ radar de 2000, huecos rellenados y mejor calibración.
 | 16–17 | earthdata.nasa.gov | Portal Earthdata | — | Login y catálogo | ➖ |
 | 18 | cocorahs.org | CoCoRaHS | No | — | ⛔ |
 | 19 | waterdata.usgs.gov | NWIS | No | — | ⛔ |
-| 20 | ams.usda.gov/market-news | AMS Market News | No (EE. UU.) | **Sin precios para España** | ⛔ |
+| 20 | ams.usda.gov/market-news | AMS Market News | No (EE. UU.) | Sustituto: **Eurostat** (excepción aprobada) | ⛔ |
 | 21 | quickstats.nass.usda.gov | NASS QuickStats | No (EE. UU.) | Sin rendimientos para España | ⛔ |
 | 22 | etdata.org | OpenET | No | ET0 calculada con POWER | ⛔ |
 | 23 | landfire.gov | LANDFIRE | No | — | ⛔ |
@@ -165,6 +166,25 @@ necesario · ⛔ solo EE. UU. · ➖ no es un dataset.
   el carbono (~22 g/kg) parece alto para suelos agrícolas andaluces: úsalo para
   comparar fincas, no como análisis de laboratorio.
 
+### 2.5 Precios, Eurostat (`pipeline/precios.py`, excepción aprobada)
+
+- **Endpoint:** `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/apri_ap_crpouta?geo=ES&currency=EUR`
+  (JSON-stat, sin clave). "Selling prices of crop products": precio medio anual de
+  venta en España que el Ministerio de Agricultura comunica a Eurostat.
+- **Contenido:** 87 productos y 1.901 precios de 2000 a 2024 (8 provisionales, marca
+  `p`). Para el caso: trigo blando y duro, cebada, avena, triticale, girasol, guisante,
+  haba, lenteja, garbanzo, aceituna y aceite. `precio_eur` va en la unidad de Eurostat
+  (casi siempre 100 kg) y `precio_eur_t` en €/t.
+- **Medias 2015–2024 (€/t):** garbanzo 756, girasol 401, trigo duro 288, guisante 250,
+  trigo blando 213, cebada 199. El pico de 2022 (trigo blando 342 €/t) refleja la guerra
+  de Ucrania.
+- **Primera opción descartada:** la API semanal por mercado de la Comisión Europea
+  (`api.tech.ec.europa.eu/agrifood/api/cereal/prices`) devolvía error 500 el 14-11-2026,
+  incluso con los ejemplos de su documentación. Si vuelve, daría precios semanales por
+  lonja.
+- **Límites:** precio nacional y anual, no de la Campiña ni de la semana de venta. No
+  hay veza (rotación R2). No es una previsión.
+
 ## 3. Modelo de datos (CSV → SQLite)
 
 Ficheros en `data/csv/`, UTF-8, coma, punto decimal, `NULL` = celda vacía,
@@ -182,6 +202,8 @@ ordenados por clave primaria. Claves enteras para JOIN rápidos; el código SIGP
 | `ndvi_fincas` | finca × compuesto de 16 días (fincas ≥ 10 ha con ≥ 50 % cultivo) | `finca_key, fecha` | MODIS |
 | `clima_anual` | celda × campaña | `celda_power, campana` | NASA POWER |
 | `suelo_humedad_anual` | celda × campaña | `celda_power, campana` | NASA POWER |
+| `dim_producto_precio` | producto agrario | `producto_codigo` | Eurostat |
+| `precios_anuales` | producto × año | `producto_codigo, anio` | Eurostat |
 
 - **Esquema** con claves foráneas, índices y vistas (`v_fincas`, `v_candidatas`,
   `v_clima_suelo_anual`): [`data/database/schema.sql`](../data/database/schema.sql); consultas de ejemplo en [`data/database/consultas.sql`](../data/database/consultas.sql).
@@ -214,6 +236,7 @@ uv pip install --python .venv/bin/python -r pipeline/requirements.txt
 .venv/bin/python -m pipeline.power  --provincias 29     # clima y humedad del suelo
 .venv/bin/python -m pipeline.pc     --provincias 29     # SRTM/NASADEM, WorldCover, MODIS
 .venv/bin/python -m pipeline.soilgrids --provincias 29  # suelo (SoilGrids)
+.venv/bin/python -m pipeline.precios                    # precios (Eurostat)
 .venv/bin/python -m pipeline.build  --provincias 29     # CSV
 .venv/bin/python -m pipeline.cargar_sqlite              # SQLite
 ```
@@ -229,8 +252,7 @@ caen en la tesela MODIS h17v05. NASA POWER necesitará unas 30–40 celdas.
 
 ## 6. Lagunas (por la regla "solo `resources.md`")
 
-- **Precios:** las únicas fuentes de la lista (AMS, QuickStats) son de EE. UU. y
-  requieren API key. No hay precios españoles.
+- **Precios:** solo nacionales y anuales (Eurostat); sin precio local de lonja ni de veza.
 - **Suelo:** la textura y la química vienen de SoilGrids (excepción aprobada, 250 m);
   la humedad, de POWER/MERRA-2 (~50 km). SMAP (9 km) necesitaría Earthdata Login.
 - **Cultivo real:** el cultivo es una **estimación por NDVI** a 250 m, no el cultivo

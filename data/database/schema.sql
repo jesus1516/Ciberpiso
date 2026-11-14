@@ -154,6 +154,25 @@ CREATE TABLE suelo_humedad_anual (
   PRIMARY KEY (celda_power, campana)
 ) WITHOUT ROWID;
 
+-- Productos con precio (Eurostat apri_ap_crpouta, España)
+CREATE TABLE dim_producto_precio (
+  producto_codigo TEXT PRIMARY KEY,         -- código Eurostat prod_veg (8 dígitos, con ceros)
+  producto        TEXT NOT NULL,            -- nombre en inglés (Eurostat)
+  producto_es     TEXT,                     -- nombre en español (productos del caso)
+  unidad          TEXT,                     -- unidad del precio: 100 kg, 1000 kg, 100 litres, 100 items
+  grupo           TEXT                      -- grupo de rotación (cereal_invierno, girasol…)
+);
+
+-- Precio medio anual de venta en España (lo que el Ministerio comunica a Eurostat)
+CREATE TABLE precios_anuales (
+  producto_codigo TEXT    NOT NULL REFERENCES dim_producto_precio(producto_codigo),
+  anio            INTEGER NOT NULL,
+  precio_eur      REAL    NOT NULL,         -- € por la unidad del producto
+  precio_eur_t    REAL,                     -- € por tonelada (solo productos por peso)
+  estado          TEXT,                     -- marca de Eurostat: p = provisional
+  PRIMARY KEY (producto_codigo, anio)
+) WITHOUT ROWID;
+
 -- @indices ---------------------------------------------------------------------------
 CREATE INDEX ix_fincas_municipio  ON fincas(municipio_key);
 CREATE INDEX ix_fincas_celda      ON fincas(celda_power);
@@ -175,6 +194,11 @@ LEFT JOIN suelo_fincas s USING (finca_key);
 
 CREATE VIEW v_candidatas AS
 SELECT * FROM v_fincas WHERE es_candidata = 1;
+
+CREATE VIEW v_precios AS
+SELECT p.anio, d.producto_codigo, COALESCE(d.producto_es, d.producto) AS producto, d.grupo, d.unidad,
+       p.precio_eur, p.precio_eur_t, p.estado
+FROM precios_anuales p JOIN dim_producto_precio d USING (producto_codigo);
 
 CREATE VIEW v_clima_suelo_anual AS
 SELECT a.*, s.gwettop_media, s.gwetroot_media, s.gwetprof_media, s.gwetroot_mar_may,
