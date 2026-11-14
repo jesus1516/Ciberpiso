@@ -69,6 +69,7 @@ export type Celda = {
     lluvia_cv: number
     campana_mas_seca: number
     deficit_medio_mm: number
+    dias_calor_may_jun_media: number
     dias_calor_jul_ago_media: number
     dias_helada_media: number
   }
