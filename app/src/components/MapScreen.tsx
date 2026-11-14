@@ -5,7 +5,7 @@ import { SearchBox } from './SearchBox'
 export function MapScreen() {
   return (
     <div className="absolute left-3 right-3 top-16 z-10 flex max-w-md flex-col gap-2 sm:left-4">
-      <p className="rounded-lg bg-black/60 px-3 py-2 text-sm text-white">{t.map.intro}</p>
+      <p className="rounded-xl bg-black/60 px-3 py-2 text-sm text-white shadow-lg ring-1 ring-white/15 backdrop-blur-md">{t.map.intro}</p>
       <SearchBox />
       <FincaPicker />
     </div>

@@ -15,20 +15,27 @@ export const en = {
   disclaimer: 'Decision-support only. Validate with local agronomists and extension services.',
 
   map: {
-    searchPlaceholder: 'Search a place…',
+    searchPlaceholder: 'Search a place in Málaga…',
     search: 'Search',
     searching: 'Searching…',
     noResults: 'No places found.',
     searchError: 'Search is unavailable right now.',
     area: (ha: number) => `${ha.toLocaleString('en', { maximumFractionDigits: ha < 10 ? 1 : 0 })} ha`,
-    intro: 'Select the farms that make up your holding in Antequera (Málaga) to explore rotation options with NASA Earth observations.',
+    intro: 'Choose a municipality in Málaga, then select the farms that make up your holding to explore rotation options with NASA Earth observations.',
     webglError: 'Your browser could not start the 3D map (WebGL). Try another browser or device.',
     flatFallback: '3D terrain could not load. Showing a flat map.',
   },
 
   fincas: {
-    loading: 'Loading the Antequera farm map…',
+    loading: 'Loading the map of Málaga…',
     error: 'Could not load the farm map. Reload the page to try again.',
+    breadcrumb: 'Map level',
+    provincia: 'Málaga',
+    hintProvincia: 'Click a municipality, search a place or zoom in to see its farms.',
+    loadingMunicipio: 'Loading farms…',
+    errorMunicipio: 'Could not load the farms of this municipality. Try again.',
+    municipioPopup: (m: { nombre: string; fincas: number; ha: number }) =>
+      `${m.nombre}\n${m.fincas.toLocaleString('en')} farms · ${m.ha.toLocaleString('en')} ha`,
     hint: 'Click the farms that make up your holding. Click again to remove one.',
     hintMore: 'Add more farms or analyse your selection.',
     candidateHint: 'Gold-outlined farms already have precomputed project results.',
@@ -40,12 +47,12 @@ export const en = {
     total: (n: number, ha: number) => `${n} ${n === 1 ? 'farm' : 'farms'} · ${ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha`,
     clear: 'Clear',
     confirm: 'Analyse my farms',
-    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null; cand: number }) =>
+    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null }, project = false) =>
       [
         `Polygon ${p.pol} · Parcel ${p.par}`,
         `${p.ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha${p.cover ? ` · ${covers[p.cover] ?? p.cover}` : ''}`,
         p.slope !== null ? `Slope ${p.slope.toFixed(1)} %` : '',
-        p.cand ? `★ ${'project data'}` : '',
+        project ? '★ project data' : '',
       ].filter(Boolean).join('\n'),
   },
 
@@ -319,7 +326,7 @@ export const en = {
     real: 'Real data',
     demo: 'Demo data (simulated)',
     realItems: [
-      'Farm boundaries of Antequera (Málaga): SIGPAC parcels (FEGA, CC BY 4.0), with slope and land cover from the project dataset (NASADEM, ESA WorldCover).',
+      'Farm boundaries of the province of Málaga: SIGPAC parcels (FEGA, CC BY 4.0), with slope and land cover from the project dataset (NASADEM, ESA WorldCover).',
       'NASA POWER daily point data (temperature, minimum temperature, precipitation, solar radiation, humidity), 2015 to yesterday.',
       'NASA GIBS imagery: MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture.',
       'Terrain: Mapzen Terrarium elevation tiles (AWS Open Data). Basemap: Esri World Imagery. Place search: OpenStreetMap Nominatim.',

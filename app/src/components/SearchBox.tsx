@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { t } from '../i18n'
+import { municipioAt, provinciaBbox } from '../lib/fincas'
 import { useStore } from '../store'
 
-type Place = { place_id: number; display_name: string; boundingbox: [string, string, string, string] }
+type Place = { place_id: number; display_name: string; lat: string; lon: string; boundingbox: [string, string, string, string] }
 
 export function SearchBox() {
   const map = useStore((s) => s.map)
+  const setMunicipio = useStore((s) => s.setMunicipio)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Place[]>([])
   const [status, setStatus] = useState<'idle' | 'loading' | 'empty' | 'error'>('idle')
@@ -15,7 +17,8 @@ export function SearchBox() {
     if (!query.trim()) return
     setStatus('loading')
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&accept-language=en&q=${encodeURIComponent(query)}`
+      const [w, s, e, n] = provinciaBbox()
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&accept-language=en&bounded=1&viewbox=${w},${n},${e},${s}&q=${encodeURIComponent(query)}`
       const res = await fetch(url)
       if (!res.ok) throw new Error(String(res.status))
       const places: Place[] = await res.json()
@@ -29,7 +32,9 @@ export function SearchBox() {
 
   function go(place: Place) {
     const [south, north, west, east] = place.boundingbox.map(Number)
-    map?.fitBounds([[west, south], [east, north]], { maxZoom: 15, duration: 2000 })
+    const m = municipioAt(Number(place.lon), Number(place.lat))
+    if (m) setMunicipio({ key: m.properties.mun, name: m.properties.nombre, bounds: [west, south, east, north] })
+    else map?.fitBounds([[west, south], [east, north]], { maxZoom: 15, duration: 2000 })
     setResults([])
     setQuery(place.display_name.split(',')[0])
   }

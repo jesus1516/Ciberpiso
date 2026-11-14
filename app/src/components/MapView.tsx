@@ -2,82 +2,29 @@ import * as maplibregl from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
+import { flyToMunicipio, flyToProvincia, maxBoundsFor } from '../lib/camera'
+import { getMunicipio, loadMunicipio, loadMunicipios, municipioBbox, provinciaBbox } from '../lib/fincas'
 import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
-import bbox from '@turf/bbox'
-import { loadFincas } from '../lib/fincas'
+import { BASE_LAYER, EMPTY, GOLD, municipioPaint, style } from '../lib/mapStyle'
 import { pulse } from '../lib/pulse'
 import { disable3D, enable3D, flyToField } from '../lib/terrain'
 import { useStore } from '../store'
 
 maplibregl.setWorkerUrl(workerUrl)
 
-const EMPTY = { type: 'FeatureCollection' as const, features: [] }
-
-const style: maplibregl.StyleSpecification = {
-  version: 8,
-  sources: {
-    esri: {
-      type: 'raster',
-      tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-      tileSize: 256,
-      maxzoom: 19,
-      attribution: 'Imagery © Esri, Maxar, Earthstar Geographics',
-    },
-    fincas: { type: 'geojson', data: EMPTY, promoteId: 'id', attribution: 'Fincas: SIGPAC (FEGA, CC BY 4.0)' },
-    field: { type: 'geojson', data: EMPTY },
-    pulse: { type: 'geojson', data: EMPTY },
-  },
-  layers: [
-    { id: 'esri', type: 'raster', source: 'esri' },
-    { id: 'fincas-fill', type: 'fill', source: 'fincas', paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.04, 'fill-opacity-transition': { duration: 700 } } },
-    {
-      id: 'fincas-line',
-      type: 'line',
-      source: 'fincas',
-      paint: {
-        'line-color': '#ffffff',
-        'line-opacity': 0.5,
-        'line-opacity-transition': { duration: 700 },
-        'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.3, 15, 1.2],
-      },
-    },
-    {
-      id: 'fincas-candidate-fill',
-      type: 'fill',
-      source: 'fincas',
-      filter: ['==', ['get', 'cand'], 1],
-      paint: { 'fill-color': '#facc15', 'fill-opacity': 0.08 },
-    },
-    {
-      id: 'fincas-candidate-line',
-      type: 'line',
-      source: 'fincas',
-      filter: ['==', ['get', 'cand'], 1],
-      paint: {
-        'line-color': '#facc15',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 15, 3],
-        'line-opacity': 0.9,
-      },
-    },
-    { id: 'fincas-hover-fill', type: 'fill', source: 'fincas', filter: ['==', ['get', 'id'], -1], paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.22 } },
-    { id: 'fincas-hover-line', type: 'line', source: 'fincas', filter: ['==', ['get', 'id'], -1], paint: { 'line-color': '#ffffff', 'line-width': 2.5 } },
-    { id: 'field-fill', type: 'fill', source: 'field', paint: { 'fill-color': '#facc15', 'fill-opacity': 0.22 } },
-    { id: 'field-glow', type: 'line', source: 'field', paint: { 'line-color': '#facc15', 'line-width': 10, 'line-opacity': 0.3, 'line-blur': 4 } },
-    { id: 'field-line', type: 'line', source: 'field', paint: { 'line-color': '#facc15', 'line-width': 3 } },
-    { id: 'pulse-fill', type: 'fill', source: 'pulse', paint: { 'fill-opacity': 0 } },
-    { id: 'pulse-line-1', type: 'line', source: 'pulse', paint: { 'line-opacity': 0 } },
-    { id: 'pulse-line-2', type: 'line', source: 'pulse', paint: { 'line-opacity': 0 } },
-  ],
-}
+const MAP_LAYERS = ['municipios-fill', 'municipios-line', 'municipios-focus', 'fincas-candidate-fill', 'fincas-candidate-line']
 
 export function MapView() {
   const container = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
   const map = useStore((s) => s.map)
+  const ready = useStore((s) => s.fincasStatus === 'ready')
   const field = useStore((s) => s.field)
   const step = useStore((s) => s.step)
   const layers = useStore((s) => s.layers)
   const gibsDate = useStore((s) => s.gibsDate)
+  const municipio = useStore((s) => s.municipio)
+  const indicators = useStore((s) => s.indicators)
 
   useEffect(() => {
     let instance: maplibregl.Map
@@ -85,8 +32,8 @@ export function MapView() {
       instance = new maplibregl.Map({
         container: container.current!,
         style,
-        center: [-4.56, 37.05],
-        zoom: 10,
+        center: [-4.6, 36.8],
+        zoom: 8,
         maxPitch: 85,
         attributionControl: { compact: true },
       })
@@ -97,10 +44,10 @@ export function MapView() {
     instance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
     instance.on('load', () => {
       useStore.getState().setMap(instance)
-      loadFincas()
+      loadMunicipios()
         .then((data) => {
-          instance.getSource<maplibregl.GeoJSONSource>('fincas')?.setData(data)
-          instance.fitBounds(bbox(data) as [number, number, number, number], { padding: 40, duration: 1500 })
+          instance.getSource<maplibregl.GeoJSONSource>('municipios')?.setData(data)
+          instance.setMaxBounds(maxBoundsFor(provinciaBbox()))
           useStore.getState().setFincasStatus('ready')
         })
         .catch(() => useStore.getState().setFincasStatus('error'))
@@ -119,6 +66,48 @@ export function MapView() {
   }, [])
 
   useEffect(() => {
+    if (!map || !ready) return
+    const level = municipio ? 'municipio' : 'provincia'
+    const paint = municipioPaint[level]
+    map.setPaintProperty('municipios-fill', 'fill-color', paint['fill-color'])
+    map.setPaintProperty('municipios-fill', 'fill-opacity', paint['fill-opacity'])
+    map.removeFeatureState({ source: 'municipios' })
+    const fincas = map.getSource<maplibregl.GeoJSONSource>('fincas')
+    if (!municipio) {
+      fincas?.setData(EMPTY)
+      if (useStore.getState().step === 'map') flyToProvincia(map, provinciaBbox(), 2200)
+      return
+    }
+    map.setFeatureState({ source: 'municipios', id: municipio.key }, { active: true })
+    const feature = getMunicipio(municipio.key)
+    if (feature && useStore.getState().step === 'map') {
+      flyToMunicipio(map, municipio.bounds ?? municipioBbox(feature))
+      pulse(map, feature, GOLD, 1200)
+    }
+    let current = true
+    const { setMunicipioStatus } = useStore.getState()
+    setMunicipioStatus('loading')
+    loadMunicipio(municipio.key)
+      .then((data) => {
+        if (!current) return
+        fincas?.setData(data)
+        setMunicipioStatus('ready')
+      })
+      .catch(() => current && setMunicipioStatus('error'))
+    return () => {
+      current = false
+    }
+  }, [map, ready, municipio])
+
+  useEffect(() => {
+    if (!map) return
+    const pids = Object.keys(indicators?.byPid ?? {})
+    const filter: maplibregl.FilterSpecification = ['in', ['get', 'pid'], ['literal', pids]]
+    map.setFilter('fincas-candidate-fill', filter)
+    map.setFilter('fincas-candidate-line', filter)
+  }, [map, indicators])
+
+  useEffect(() => {
     const source = map?.getSource<maplibregl.GeoJSONSource>('field')
     source?.setData(field ?? EMPTY)
   }, [map, field])
@@ -133,7 +122,7 @@ export function MapView() {
       if (!source) {
         if (!visible) continue
         map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'NASA GIBS / ESDIS' })
-        map.addLayer({ id, type: 'raster', source: id }, 'fincas-fill')
+        map.addLayer({ id, type: 'raster', source: id }, BASE_LAYER)
       } else if (source.tiles?.[0] !== tiles[0]) {
         source.setTiles(tiles)
       }
@@ -146,9 +135,10 @@ export function MapView() {
     if (!map || step !== 'dashboard') return
     const { field, setTerrain, setPanelOpen } = useStore.getState()
     if (!field) return
-    pulse(map, field, '#facc15', 1300)
+    pulse(map, field, GOLD, 1300)
     map.setPaintProperty('fincas-fill', 'fill-opacity', 0)
     map.setPaintProperty('fincas-line', 'line-opacity', 0)
+    MAP_LAYERS.forEach((id) => map.setLayoutProperty(id, 'visibility', 'none'))
     const openPanel = () => setPanelOpen(true)
     const timer = setTimeout(() => {
       const ok = enable3D(map, () => setTerrain('flat'))
@@ -161,6 +151,7 @@ export function MapView() {
       map.off('moveend', openPanel)
       map.setPaintProperty('fincas-fill', 'fill-opacity', 0.04)
       map.setPaintProperty('fincas-line', 'line-opacity', 0.5)
+      MAP_LAYERS.forEach((id) => map.setLayoutProperty(id, 'visibility', 'visible'))
       disable3D(map)
     }
   }, [map, step])

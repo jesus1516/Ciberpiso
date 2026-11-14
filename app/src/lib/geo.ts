@@ -5,6 +5,7 @@ import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson'
 export type FincaProps = {
   id: number
   pid: string
+  mun: number
   pol: number
   par: number
   ha: number

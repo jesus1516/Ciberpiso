@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@turf/bbox": "^7.4.0",
+    "@turf/boolean-point-in-polygon": "^7.4.0",
     "@turf/centroid": "^7.4.0",
     "maplibre-gl": "^6.18.0",
     "react": "^19.3.1",

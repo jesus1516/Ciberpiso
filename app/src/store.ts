@@ -2,7 +2,7 @@ import type { Map } from 'maplibre-gl'
 import { create } from 'zustand'
 import type { SoilType } from './data/mock/soil'
 import { computeClimate, type Climate } from './lib/climate'
-import { fieldCentroid, toField, weightedSlope, type Field, type Finca } from './lib/geo'
+import { fieldCentroid, toField, weightedSlope, type BBox, type Field, type Finca } from './lib/geo'
 import { daysAgo, type GibsId } from './lib/gibs'
 import { loadIndicators as fetchIndicators, type Indicators } from './lib/indicators'
 import { fetchPower, type PowerSource } from './lib/power'
@@ -12,6 +12,7 @@ export type Step = 'map' | 'dashboard'
 export type Terrain = 'off' | 'on' | 'flat'
 export type Tab = 'conditions' | 'layers' | 'priorities' | 'rotations'
 export type LoadStatus = 'loading' | 'ready' | 'error'
+export type MunicipioFocus = { key: number; name: string; bounds?: BBox }
 export type ClimateState = {
   status: 'idle' | 'loading' | 'ready'
   data: Climate | null
@@ -39,6 +40,8 @@ type State = {
   map: Map | null
   step: Step
   fincasStatus: LoadStatus
+  municipio: MunicipioFocus | null
+  municipioStatus: LoadStatus
   indicatorsStatus: LoadStatus
   indicators: Indicators | null
   selection: Finca[]
@@ -55,6 +58,8 @@ type State = {
   gibsDate: string
   setMap: (map: Map | null) => void
   setFincasStatus: (status: LoadStatus) => void
+  setMunicipio: (municipio: MunicipioFocus | null) => void
+  setMunicipioStatus: (status: LoadStatus) => void
   loadIndicators: () => Promise<void>
   openProjectFinca: (finca: Finca) => void
   toggleFinca: (finca: Finca) => void
@@ -76,6 +81,8 @@ export const useStore = create<State>((set, get) => ({
   map: null,
   step: 'map',
   fincasStatus: 'loading',
+  municipio: null,
+  municipioStatus: 'ready',
   indicatorsStatus: 'loading',
   indicators: null,
   selection: [],
@@ -96,6 +103,8 @@ export const useStore = create<State>((set, get) => ({
   gibsDate: daysAgo(7),
   setMap: (map) => set({ map }),
   setFincasStatus: (fincasStatus) => set({ fincasStatus }),
+  setMunicipio: (municipio) => set({ municipio }),
+  setMunicipioStatus: (municipioStatus) => set({ municipioStatus }),
   loadIndicators: async () => {
     set({ indicatorsStatus: 'loading' })
     try {

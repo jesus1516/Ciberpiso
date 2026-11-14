@@ -1,8 +1,20 @@
-import type { Map, PaddingOptions } from 'maplibre-gl'
+import type { Map, PaddingOptions, SkySpecification } from 'maplibre-gl'
 import { fieldBbox, fieldCentroid, type Field } from './geo'
+import { BASE_LAYER } from './mapStyle'
 
 const TERRARIUM = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
 export const EXAGGERATION = 1.5
+const FIELD_PITCH = 50
+
+const sky: SkySpecification = {
+  'sky-color': '#7fb2e5',
+  'horizon-color': '#f3e7cf',
+  'fog-color': '#e9dfcb',
+  'sky-horizon-blend': 0.6,
+  'horizon-fog-blend': 0.7,
+  'fog-ground-blend': 0.85,
+  'atmosphere-blend': 0.8,
+}
 
 const demSource = {
   type: 'raster-dem' as const,
@@ -30,10 +42,11 @@ export function enable3D(map: Map, onFail: () => void): boolean {
           source: 'hillshade-dem',
           paint: { 'hillshade-exaggeration': 0.3, 'hillshade-shadow-color': '#000000' },
         },
-        'fincas-fill',
+        BASE_LAYER,
       )
     }
     map.setTerrain({ source: 'dem', exaggeration: EXAGGERATION })
+    map.setSky(sky)
   } catch {
     onFail()
     return false
@@ -61,6 +74,7 @@ export function disable3D(map: Map) {
     /* terrain already off */
   }
   if (map.getLayer('hillshade')) map.removeLayer('hillshade')
+  map.setSky({ 'atmosphere-blend': 0 })
   map.easeTo({ pitch: 0, bearing: 0, padding: { top: 0, bottom: 0, left: 0, right: 0 }, duration: 800 })
 }
 
@@ -71,8 +85,8 @@ export function flyToField(map: Map, field: Field, pitched: boolean) {
   map.flyTo({
     center: fieldCentroid(field),
     zoom,
-    pitch: pitched ? 65 : 0,
-    bearing: pitched ? -35 : 0,
+    pitch: pitched ? FIELD_PITCH : 0,
+    bearing: pitched ? -25 : 0,
     padding,
     duration: 4200,
     curve: 1.5,
