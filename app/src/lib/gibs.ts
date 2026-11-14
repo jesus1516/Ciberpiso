@@ -20,4 +20,4 @@ export function daysAgo(n: number) {
   return d.toISOString().slice(0, 10)
 }
 
-export const GIBS_MIN_DATE = '2015-04-01'
+export const GIBS_MIN_DATE = '2025-02-12'

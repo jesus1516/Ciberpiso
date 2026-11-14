@@ -17,7 +17,10 @@ export function LayersTab() {
           value={gibsDate}
           min={GIBS_MIN_DATE}
           max={daysAgo(1)}
-          onChange={(e) => e.target.value && setGibsDate(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value
+            if (value && value >= GIBS_MIN_DATE && value <= daysAgo(1)) setGibsDate(value)
+          }}
           className="w-44 rounded-lg border border-line bg-white px-2 py-1.5"
         />
       </label>
