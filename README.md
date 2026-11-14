@@ -4,8 +4,8 @@ Herramienta de apoyo a la decisión para explorar **rotaciones de cultivo** con 
 de observación de la Tierra de NASA y contexto local. Proyecto para el **2026 NASA
 Space Apps Challenge**, reto [*Field Shift: Adapting Farms with NASA Data*](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/).
 
-> Estado: documentación de investigación y plan de implementación. La aplicación
-> todavía no está construida.
+> Estado: documentación de investigación y un MVP de frontend en [`app/`](app/README.md)
+> (mapa 3D, datos NASA POWER y GIBS, comparación de tres rotaciones).
 
 ## El reto
 
