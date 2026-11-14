@@ -59,8 +59,8 @@ function evidence(ctx: Context, a: Analysis) {
     variability: { source: power, text: e.variability(c.rainStd, c.rainCv), demo: !ctx.climateReal },
     frost: { source: power, text: e.frost(c.frostDaysYear, frostMonths), demo: !ctx.climateReal },
     bare: { source: power, text: e.bare(a.bareMonths, a.rainOnBare), demo: !ctx.climateReal },
-    heat: { source: 'ECOSTRESS', text: e.heat, demo: true },
-    soil: { source: 'SSURGO-like soil', text: e.soil(ctx.soil.organicMatterPct), demo: true },
+    heat: { source: power, text: e.heat, demo: !ctx.climateReal },
+    soil: { source: 'SoilGrids', text: e.soil(ctx.soil.organicMatterPct, ctx.soil.waterHoldingMm), demo: !ctx.soil.fromData },
   }
 }
 
@@ -84,7 +84,7 @@ function risks(id: StrategyId, years: string[][], a: Analysis, ctx: Context) {
 
 function gaps(id: StrategyId, years: string[][], ctx: Context) {
   const g = t.rotations.gap
-  const out = [ctx.climateReal ? g.grid : g.sample, g.soil, g.market, g.demoSensors]
+  const out = [ctx.climateReal ? g.grid : g.sample, ctx.soil.fromData ? g.soil : g.noSoil, g.market]
   if (ctx.constraints.slopePct === null) out.push(g.slope)
   if (id === 'A') out.push(g.yields)
   if (id === 'B') out.push(g.cover)

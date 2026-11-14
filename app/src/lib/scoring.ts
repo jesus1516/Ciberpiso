@@ -1,10 +1,8 @@
-import type { HeatPoint } from '../data/mock/ecostress'
-import { mockMarket } from '../data/mock/market'
-import type { SoilProperties } from '../data/mock/soil'
 import { t } from '../i18n'
 import type { Constraints, Priorities, PriorityKey } from '../store'
-import type { Climate } from './climate'
+import type { Climate, HeatPoint } from './climate'
 import { crop, cropMonths, type Crop } from './crops'
+import type { SoilProperties } from './soil'
 
 export type Level = 'low' | 'medium' | 'high'
 export type Context = {
@@ -13,6 +11,7 @@ export type Context = {
   constraints: Constraints
   soil: SoilProperties
   heat: HeatPoint[]
+  prices: Record<string, number | null>
   southern: boolean
 }
 export type CriterionScore = { score: number; reason: string; demoInputs: string[]; uncertainty: Level }
@@ -41,6 +40,12 @@ const LEVELS: Level[] = ['low', 'medium', 'high']
 const levelFor = (demoCount: number) => LEVELS[Math.min(demoCount, 2)]
 
 const groundCover = (c: Crop) => (c.perennial ? 0.4 : 1)
+
+// Same price/market proxy as pipeline/calculator.py: 70 % market ease (1-5) + 30 % price capped at 800 €/t.
+export function marketValue(c: Crop, price: number | null | undefined) {
+  const market = (c.marketEase / 5) * 100
+  return price == null ? market : 0.7 * market + 0.3 * (Math.min(price, 800) / 800) * 100
+}
 
 export function coverage(years: string[][], southern: boolean) {
   return Array.from({ length: 12 }, (_, m) =>
@@ -84,10 +89,12 @@ export function analyse(years: string[][], ctx: Context, priorities: Priorities)
   const sandyPenalty = soil.waterHoldingMm < 100 ? thirsty.length * 5 : 0
   const water = clamp(100 - (avg('waterUse') - 1) * 20 - waterPenalty - sandyPenalty + fallowShare * 10)
 
-  const value = (c: Crop) => mockMarket(c.id).score * (1 - 0.5 * Math.max(riskOf(c).drought, riskOf(c).frost))
+  const value = (c: Crop) => marketValue(c, ctx.prices[c.id]) * (1 - 0.5 * Math.max(riskOf(c).drought, riskOf(c).frost))
   const marketValues = years.map((ids) => Math.max(0, ...ids.map((id) => value(crop(id)))))
   const income = clamp(mean(marketValues))
   const riskyCrops = risks.filter((r) => Math.max(r.drought, r.frost) > 0.4).map((r) => r.crop)
+  const noPrice = unique.filter((c) => ctx.prices[c.id] == null)
+  const soilDemo = soil.fromData ? [] : [t.scoring.inputs.soil]
 
   const rainShareBare = climate.annualRain ? rainOnBare / climate.annualRain : 0
   const erosion = clamp(100 - bareMonths * 5 * slopeF - rainShareBare * 40 * slopeF + (avg('erosionProtection') - 3) * 6)
@@ -99,10 +106,10 @@ export function analyse(years: string[][], ctx: Context, priorities: Priorities)
 
   const make = (score: number, reason: string, demoInputs: string[]): CriterionScore => ({ score, reason, demoInputs, uncertainty: levelFor(demoInputs.length) })
   const scores: Record<PriorityKey, CriterionScore> = {
-    water: make(water, t.scoring.water(avg('waterUse'), balance, names(thirsty), constraints.irrigation), [t.scoring.inputs.soil, ...climateDemo]),
-    income: make(income, t.scoring.income(mean(crops.map((c) => mockMarket(c.id).score)), names(riskyCrops), fallowShare), [t.scoring.inputs.market, ...climateDemo]),
+    water: make(water, t.scoring.water(avg('waterUse'), balance, names(thirsty), constraints.irrigation), [...soilDemo, ...climateDemo]),
+    income: make(income, t.scoring.income(mean(crops.map((c) => marketValue(c, ctx.prices[c.id]))), names(riskyCrops), fallowShare, names(noPrice)), climateDemo),
     erosion: make(erosion, t.scoring.erosion(bareMonths, rainOnBare, t.priorities.slopes[constraints.slope]), [...(constraints.slopePct === null ? [t.scoring.inputs.slope] : []), ...climateDemo]),
-    organic: make(organic, t.scoring.organic(avg('organicMatter'), legumeShare, coverShare, fallowShare, soil.organicMatterPct), [t.scoring.inputs.soil]),
+    organic: make(organic, t.scoring.organic(avg('organicMatter'), legumeShare, coverShare, fallowShare, soil.organicMatterPct, soil.fromData), soilDemo),
     cost: make(cost, t.scoring.cost(avg('inputCost'), legumeShare, irrigatedThirsty), []),
   }
 

@@ -1,12 +1,9 @@
 import { Bar, BarChart, Cell, ComposedChart, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts'
-import { mockHeatStress } from '../data/mock/ecostress'
-import { mockSoilMoistureAnomaly } from '../data/mock/smap'
 import { t } from '../i18n'
-import { fieldCentroid } from '../lib/geo'
 import { useStore } from '../store'
 import { axis, colors, grid } from '../lib/chartStyle'
-import { ChartCard, StatTile } from './ChartCard'
-import { SoilCard } from './SoilCard'
+import { ChartCard } from './ChartCard'
+import { FarmData } from './FarmData'
 import { Term } from './Term'
 
 const H = 150
@@ -19,34 +16,29 @@ export function ConditionsTab() {
 
   if (climate.status !== 'ready' || !climate.data || !field) {
     return (
-      <div className="flex items-center gap-3 py-8 text-sm text-ink-2" role="status">
-        <span className="size-5 animate-spin rounded-full border-2 border-brand border-t-transparent" aria-hidden />
-        {t.conditions.loading}
+      <div className="flex flex-col gap-3">
+        <FarmData />
+        <div className="flex items-center gap-3 py-4 text-sm text-ink-2" role="status">
+          <span className="size-5 animate-spin rounded-full border-2 border-brand border-t-transparent" aria-hidden />
+          {t.conditions.loading}
+        </div>
       </div>
     )
   }
 
   const c = climate.data
-  const [lon, lat] = fieldCentroid(field)
   const months = c.monthly.map((m) => ({ ...m, name: t.months[m.month], rain: r1(m.rain), et0: r1(m.et0), balance: r1(m.balance), temp: r1(m.temp), tmin: r1(m.tmin), frostDays: r1(m.frostDays) }))
   const annual = c.annual.map((a) => ({ ...a, rain: Math.round(a.rain), rainTrend: Math.round(a.rainTrend), temp: r1(a.temp), tempTrend: r1(a.tempTrend) }))
-  const moisture = mockSoilMoistureAnomaly(lat, lon).map((p) => ({ ...p, name: t.months[p.month] }))
-  const heat = mockHeatStress(lat, lon, c.monthly).map((p) => ({ ...p, name: t.months[p.month] }))
 
   return (
     <div className="flex flex-col gap-3">
+      <FarmData />
+      <h3 className="mt-2 font-semibold">{t.conditions.liveTitle}</h3>
       {climate.source === 'sample' && (
         <p role="alert" className="rounded-lg border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">⚠ {t.conditions.sampleWarning(climate.place ?? '')}</p>
       )}
       {climate.source === 'cache' && <p className="text-xs text-muted">{t.conditions.fromCache}</p>}
       <p className="text-xs text-muted">{t.conditions.source(fmtDate(c.firstDate), fmtDate(c.lastDate))}</p>
-
-      <div className="grid grid-cols-2 gap-2">
-        <StatTile label={t.conditions.annualRain} value={`${Math.round(c.annualRain)} mm`} />
-        <StatTile label={t.conditions.meanTemp} value={`${c.meanTemp.toFixed(1)} °C`} />
-        <StatTile label={<Term id="frostRisk">{t.conditions.frostDays}</Term>} value={c.frostDaysYear.toFixed(1)} />
-        <StatTile label={t.conditions.rainVariability} value={`± ${Math.round(c.rainStd)} mm`} note={t.conditions.variabilityNote(c.rainCv)} />
-      </div>
 
       <ChartCard title={t.conditions.monthlyRain}>
         <ResponsiveContainer width="100%" height={H}>
@@ -143,34 +135,6 @@ export function ConditionsTab() {
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title={<Term id="soilMoistureAnomaly">{t.conditions.smapChart}</Term>} note={t.conditions.smapNote} demo>
-        <ResponsiveContainer width="100%" height={H - 20}>
-          <BarChart data={moisture} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
-            <CartesianGrid {...grid} />
-            <XAxis dataKey="name" {...axis} interval={0} />
-            <YAxis {...axis} />
-            <ReferenceLine y={0} stroke="#898781" />
-            <Tooltip formatter={(v) => [`${v} pp`, t.conditions.anomaly]} />
-            <Bar dataKey="anomaly" maxBarSize={18} radius={2}>
-              {moisture.map((m) => <Cell key={m.month} fill={m.anomaly >= 0 ? colors.rain : colors.deficit} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartCard>
-
-      <ChartCard title={t.conditions.heatChart} note={t.conditions.heatNote} demo>
-        <ResponsiveContainer width="100%" height={H - 20}>
-          <BarChart data={heat} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
-            <CartesianGrid {...grid} />
-            <XAxis dataKey="name" {...axis} interval={0} />
-            <YAxis {...axis} domain={[0, 1]} />
-            <Tooltip formatter={(v) => [v, t.conditions.stress]} />
-            <Bar dataKey="stress" fill={colors.temp} radius={[4, 4, 0, 0]} maxBarSize={18} />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartCard>
-
-      <SoilCard />
     </div>
   )
 }

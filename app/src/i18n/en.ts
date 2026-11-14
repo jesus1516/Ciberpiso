@@ -47,6 +47,7 @@ export const en = {
     total: (n: number, ha: number) => `${n} ${n === 1 ? 'farm' : 'farms'} · ${ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha`,
     clear: 'Clear',
     confirm: 'Analyse my farms',
+    covers,
     popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null }, project = false) =>
       [
         `Polygon ${p.pol} · Parcel ${p.par}`,
@@ -54,6 +55,68 @@ export const en = {
         p.slope !== null ? `Slope ${p.slope.toFixed(1)} %` : '',
         project ? '★ project data' : '',
       ].filter(Boolean).join('\n'),
+  },
+
+  farm: {
+    title: 'Your farm in the project data',
+    badge: 'real data',
+    loading: 'Loading the project data for your farms…',
+    error: 'Could not load the project data for these farms. Reload the page to try again.',
+    missing: 'This farm is not in the project dataset.',
+    chooseFarm: 'Farm',
+    recordTitle: 'Farm record',
+    recordNote: 'SIGPAC parcel (FEGA). Altitude and slope from NASADEM; land cover from ESA WorldCover (10 m).',
+    parcel: 'SIGPAC parcel',
+    municipality: 'Municipality',
+    area: 'Area',
+    plots: 'SIGPAC plots',
+    altitude: 'Altitude',
+    slope: 'Mean slope',
+    coverTitle: 'Land cover',
+    vegetationTitle: 'Vegetation by season (MODIS NDVI)',
+    vegetationNote: 'What the satellite saw each season (Oct–Sep), classified by the project pipeline. MODIS pixels are 250 m.',
+    observedRotation: 'Observed rotation',
+    ndviMax: 'Peak NDVI',
+    ndviMean: 'Mean NDVI',
+    noVegetation: (rot: string | null) =>
+      `This farm is too small for a reliable MODIS season profile.${rot ? ` Estimated pattern: ${rot} (I winter crop, V summer crop, B fallow or pasture, P permanent).` : ''}`,
+    classes: {
+      herbaceo_invierno: 'Winter crop',
+      herbaceo_verano: 'Summer crop',
+      barbecho_o_pastizal: 'Fallow or pasture',
+      permanente: 'Permanent crop or trees',
+      mixto: 'Mixed',
+      sin_vegetacion: 'No vegetation',
+      sin_datos: 'No data',
+    } as Record<string, string>,
+    soilTitle: 'Soil (SoilGrids)',
+    soilNote: 'ISRIC SoilGrids 2.0, 250 m grid, averaged over the farm. Confirm with a soil test.',
+    noSoil: 'No SoilGrids data for this farm.',
+    sand: 'Sand',
+    silt: 'Silt',
+    clay: 'Clay',
+    texture: 'Texture class',
+    organicCarbon: 'Organic carbon',
+    ph: 'pH (water)',
+    nitrogen: 'Nitrogen',
+    cec: 'Cation exchange',
+    water: 'Available water (0–100 cm)',
+    stones: 'Coarse fragments',
+    meanRain: 'Mean rain per season',
+    since: (year?: number) => (year ? `NASA POWER, seasons ${year}–2025` : 'NASA POWER'),
+    dryYear: 'Dry-year rain (P20)',
+    dryYearNote: (year: number) => `1 season in 5 is drier. Driest: ${year}.`,
+    deficit: 'Mean water deficit',
+    deficitNote: 'Reference ET minus rain, per season.',
+    heatDays: 'Hot days in Jul–Aug',
+    heatDaysNote: 'Mean per season.',
+    rainTitle: 'Rain and water deficit by season (mm)',
+    rainNote: (lat: number, lon: number) => `NASA POWER cell ${lat}°, ${lon}° (about 50 km). Dashed line: dry-year rain (P20).`,
+    rain: 'Rain',
+    deficitSeries: 'Water deficit',
+    moistureTitle: 'Spring root-zone soil moisture anomaly',
+    moistureNote: 'NASA POWER GWETROOT, March–May, compared with the average. Below zero = drier spring than usual.',
+    anomaly: 'Anomaly',
   },
 
   dashboard: {
@@ -84,6 +147,7 @@ export const en = {
 
   conditions: {
     loading: 'Loading NASA POWER daily climate data (2015 to yesterday)…',
+    liveTitle: 'Monthly climate (NASA POWER daily API, live)',
     fromCache: 'NASA POWER data loaded from this browser’s cache.',
     sampleWarning: (place: string) =>
       `NASA POWER is unavailable right now. Showing a bundled sample dataset for ${place}, not your field.`,
@@ -158,28 +222,30 @@ export const en = {
     slopes: { flat: 'Flat (< 2 %)', gentle: 'Gentle (2–8 %)', moderate: 'Moderate (8–15 %)', steep: 'Steep (> 15 %)' },
     slopeFromRepo: (pct: number) => `Average ${pct.toFixed(1)} % for your farms (NASADEM, project data). Change it if you know better.`,
     slopeManual: 'No slope data for these farms. Please choose one.',
+    cropFromData: (seen: string, season: number, crop: string) => `Satellite (MODIS) saw “${seen}” in season ${season}, so we suggest ${crop}. Change it if you know better.`,
+    soilFromData: (clay: number, sand: number, texture: string) => `SoilGrids: ${Math.round(clay)} % clay, ${Math.round(sand)} % sand → ${texture}. Change it if you know better.`,
   },
 
   scoring: {
     inputs: {
-      soil: 'soil properties (demo)',
-      market: 'market suitability (demo)',
+      soil: 'typical soil values (no SoilGrids data for these farms)',
       slope: 'slope (not measured)',
       climateSample: 'climate (bundled sample)',
     },
     water: (avgUse: number, balance: number, thirsty: string, irrigation: string) =>
       `Average crop water use ${avgUse.toFixed(1)}/5. Approximate water balance ${Math.round(balance)} mm/yr.` +
       (thirsty ? ` ${thirsty} need${thirsty.includes(',') ? '' : 's'} a lot of water${irrigation !== 'yes' ? ', which is risky without full irrigation' : ''}.` : ''),
-    income: (market: number, risky: string, fallowShare: number) =>
-      `Average market suitability ${Math.round(market)}/100 (demo data).` +
+    income: (market: number, risky: string, fallowShare: number, noPrice: string) =>
+      `Price/market proxy ${Math.round(market)}/100: 70 % how easy the crop is to sell, 30 % its latest national price (Eurostat, MAPA). No yields or costs, so this is not a margin.` +
+      (noPrice ? ` No price series for ${noPrice}.` : '') +
       (risky ? ` Reduced because ${risky} face${risky.includes(',') ? '' : 's'} high climate risk here.` : '') +
       (fallowShare ? ' Fallow years earn no income.' : ''),
     erosion: (bare: number, rain: number, slope: string) =>
       `Soil is bare about ${bare.toFixed(1)} months per year, receiving ~${Math.round(rain)} mm of rain while unprotected. Slope: ${slope.toLowerCase()}.`,
-    organic: (avgOm: number, legume: number, cover: number, fallow: number, soilOm: number) =>
+    organic: (avgOm: number, legume: number, cover: number, fallow: number, soilOm: number, fromData: boolean) =>
       `Crop residue contribution ${avgOm.toFixed(1)}/5; legume in ${Math.round(legume * 100)}% of years, cover crop in ${Math.round(cover * 100)}%` +
       (fallow ? `, fallow in ${Math.round(fallow * 100)}%` : '') +
-      `. Current soil organic matter ${soilOm} % (demo).`,
+      `. Current soil organic matter ${soilOm} % (${fromData ? 'SoilGrids, project data' : 'typical value, no soil data'}).`,
     cost: (avgCost: number, legume: number, irrigated: boolean) =>
       `Average input cost ${avgCost.toFixed(1)}/5.` +
       (legume ? ' Legumes reduce nitrogen fertiliser for the next crop.' : '') +
@@ -239,8 +305,8 @@ export const en = {
       frost: (days: number, months: string[]) =>
         `${days.toFixed(1)} frost days per year${months.length ? `, mostly in ${months.join(', ')}` : ''}: relevant for winter cover crops.`,
       bare: (bare: number, rain: number) => `With this rotation the soil is bare ${bare.toFixed(1)} months per year, while ~${Math.round(rain)} mm of rain falls.`,
-      heat: 'Summer heat and water stress pattern for the field.',
-      soil: (om: number) => `Soil organic matter around ${om} %.`,
+      heat: 'Monthly heat and water stress derived from temperature and the approximate water balance.',
+      soil: (om: number, water: number) => `Soil organic matter around ${om} % and ${water} mm of available water in the top metre (250 m grid).`,
     },
     benefit: {
       water: (s: number) => `Uses water carefully (water conservation ${s}/100).`,
@@ -265,9 +331,9 @@ export const en = {
     gap: {
       grid: 'Climate comes from a NASA POWER grid cell (~50 km), not your exact field.',
       sample: 'Climate is a bundled sample dataset, not your location.',
-      soil: 'Soil properties are demo data: confirm with a soil test.',
-      market: 'Market scores are demo data: check local prices and buyers.',
-      demoSensors: 'Soil moisture (SMAP) and heat stress (ECOSTRESS) are demo data in this prototype.',
+      soil: 'Soil comes from SoilGrids at 250 m, not a sample of your field: confirm with a soil test.',
+      noSoil: 'There is no SoilGrids data for these farms, so typical soil values are used: get a soil test.',
+      market: 'Income is a price/market proxy with national prices; local prices, yields and costs are not included.',
       slope: 'No slope data for these farms.',
       yields: 'Your own yield history is not included.',
       cover: 'The best cover-crop species and termination date need local trials.',
@@ -324,17 +390,20 @@ export const en = {
     close: 'Close',
     intro: 'Ciberpiso is a decision-support prototype built for the NASA Space Apps Challenge. It helps you explore crop-rotation options; it does not replace your judgment or local advice.',
     real: 'Real data',
-    demo: 'Demo data (simulated)',
+    demo: 'Estimates and fallbacks',
     realItems: [
-      'Farm boundaries of the province of Málaga: SIGPAC parcels (FEGA, CC BY 4.0), with slope and land cover from the project dataset (NASADEM, ESA WorldCover).',
+      'Farm boundaries of the province of Málaga: SIGPAC parcels (FEGA, CC BY 4.0).',
+      'Project dataset per farm (data/malaga/): altitude and slope (NASADEM), land cover (ESA WorldCover), soil (ISRIC SoilGrids 2.0), seasonal vegetation and observed rotation (MODIS NDVI).',
+      'Project climate per NASA POWER cell and season, 2002–2025: rain, reference ET, water deficit, hot and frost days, root-zone soil moisture (GWETROOT).',
+      'Crop prices: Eurostat apri_ap_crpouta and MAPA (vetch), national annual prices.',
       'NASA POWER daily point data (temperature, minimum temperature, precipitation, solar radiation, humidity), 2015 to yesterday.',
       'NASA GIBS imagery: MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture.',
       'Terrain: Mapzen Terrarium elevation tiles (AWS Open Data). Basemap: Esri World Imagery. Place search: OpenStreetMap Nominatim.',
     ],
     demoItems: [
-      'Soil properties (SSURGO-like texture, organic matter, drainage).',
-      'SMAP soil moisture anomaly series and ECOSTRESS heat stress.',
-      'Market suitability of crops.',
+      'Typical soil values, only for farms without SoilGrids data (marked in the scores).',
+      'Monthly heat stress index and the approximate water balance (Turc), derived from NASA POWER.',
+      'Income is a price/market proxy: there are no yields or costs in the data.',
     ],
     catalog: 'The crop catalog is a simplified, hand-made reference table.',
     ackTitle: 'Acknowledgements',

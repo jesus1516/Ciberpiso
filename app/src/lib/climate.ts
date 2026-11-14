@@ -114,3 +114,13 @@ export function computeClimate(d: Daily): Climate {
     lastDate: d.dates.findLast((_, i) => valid(d.t2m[i])) ?? d.dates[d.dates.length - 1],
   }
 }
+
+export type HeatPoint = { month: number; stress: number }
+
+// Heat/water stress index 0-1 per month, derived from NASA POWER temperature and the approximate water balance.
+export function heatStress(monthly: Monthly[]): HeatPoint[] {
+  return monthly.map((m) => {
+    const raw = (m.temp - 14) / 18 - m.balance / 450
+    return { month: m.month, stress: Math.round(Math.max(0, Math.min(1, raw)) * 100) / 100 }
+  })
+}

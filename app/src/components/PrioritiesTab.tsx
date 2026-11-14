@@ -1,14 +1,19 @@
 import { t } from '../i18n'
-import { CROPS } from '../lib/crops'
+import { CROPS, crop } from '../lib/crops'
 import { PRIORITY_KEYS } from '../lib/scoring'
 import { useStore, type Irrigation, type SlopeClass } from '../store'
-import type { SoilType } from '../data/mock/soil'
+import { observedCrop, soilTexture } from '../lib/detalle'
+import type { SoilType } from '../lib/soil'
 
 const select = 'w-full rounded-lg border border-line bg-white px-2 py-1.5 text-sm'
 const p = t.priorities
 
 export function PrioritiesTab() {
-  const { priorities, constraints, setPriority, setConstraints } = useStore()
+  const { priorities, constraints, setPriority, setConstraints, selection, farmData } = useStore()
+  const largest = [...selection].sort((a, b) => b.properties.ha - a.properties.ha)[0]
+  const detalle = largest ? farmData.byId[largest.properties.id] : undefined
+  const texture = soilTexture(detalle?.suelo ?? null)
+  const observed = observedCrop(detalle)
 
   return (
     <div className="flex flex-col gap-4">
@@ -51,12 +56,16 @@ export function PrioritiesTab() {
           <select value={constraints.currentCrop} onChange={(e) => setConstraints({ currentCrop: e.target.value })} className={select}>
             {CROPS.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
+          {observed && <span className="mt-1 block text-xs text-muted">{p.cropFromData(t.farm.classes[observed.clase], observed.campana, crop(observed.crop).name)}</span>}
         </label>
         <label className="text-sm">
           <span className="mb-1 block">{p.soil}</span>
           <select value={constraints.soil} onChange={(e) => setConstraints({ soil: e.target.value as SoilType })} className={select}>
             {(['sandy', 'loam', 'clay'] as SoilType[]).map((s) => <option key={s} value={s}>{p.soils[s]}</option>)}
           </select>
+          {texture && detalle?.suelo && (
+            <span className="mt-1 block text-xs text-muted">{p.soilFromData(detalle.suelo.arcilla_pct ?? 0, detalle.suelo.arena_pct ?? 0, p.soils[texture])}</span>
+          )}
         </label>
         <label className="text-sm sm:col-span-2">
           <span className="mb-1 block">{p.slope}</span>

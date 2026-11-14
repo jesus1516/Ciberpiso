@@ -1,30 +1,34 @@
 import { useMemo } from 'react'
-import { mockHeatStress } from '../data/mock/ecostress'
-import { mockSoil } from '../data/mock/soil'
 import { t } from '../i18n'
+import { heatStress } from '../lib/climate'
+import { CROPS } from '../lib/crops'
+import { latestPrice } from '../lib/detalle'
 import { fieldCentroid } from '../lib/geo'
 import { buildStrategies } from '../lib/rotations'
+import { soilFor } from '../lib/soil'
 import { useStore } from '../store'
 import { CoverLegend } from './CoverTimeline'
 import { RealRotations } from './RealRotations'
 import { RotationCard } from './RotationCard'
 
 export function RotationsTab() {
-  const { climate, field, constraints, priorities, selection, indicators } = useStore()
+  const { climate, field, constraints, priorities, selection, indicators, farmData } = useStore()
 
   const strategies = useMemo(() => {
-    if (!climate.data || !field) return null
-    const [lon, lat] = fieldCentroid(field)
+    if (!climate.data || !field || farmData.status === 'loading') return null
+    const [, lat] = fieldCentroid(field)
+    const fincas = selection.map((f) => ({ ha: f.properties.ha, detalle: farmData.byId[f.properties.id] }))
     const ctx = {
       climate: climate.data,
       climateReal: climate.source !== 'sample',
       constraints,
-      soil: mockSoil(lat, lon, constraints.soil),
-      heat: mockHeatStress(lat, lon, climate.data.monthly),
+      soil: soilFor(fincas, constraints.soil),
+      heat: heatStress(climate.data.monthly),
+      prices: Object.fromEntries(CROPS.map((c) => [c.id, latestPrice(farmData.comun?.precios[c.id])?.eurT ?? null])),
       southern: lat < 0,
     }
     return buildStrategies(ctx, priorities)
-  }, [climate, field, constraints, priorities])
+  }, [climate, field, constraints, priorities, selection, farmData])
 
   const candidate = selection.length === 1 ? indicators?.byPid[selection[0].properties.pid] : undefined
   if (candidate) return <RealRotations candidate={candidate} />

@@ -1,11 +1,12 @@
 import type { Map } from 'maplibre-gl'
 import { create } from 'zustand'
-import type { SoilType } from './data/mock/soil'
 import { computeClimate, type Climate } from './lib/climate'
+import { loadComun, loadDetalles, observedCrop, soilTexture, type Comun, type FincaDetalle } from './lib/detalle'
 import { fieldCentroid, toField, weightedSlope, type BBox, type Field, type Finca } from './lib/geo'
 import { daysAgo, type GibsId } from './lib/gibs'
 import { loadIndicators as fetchIndicators, type Indicators } from './lib/indicators'
 import { fetchPower, type PowerSource } from './lib/power'
+import type { SoilType } from './lib/soil'
 import { slopeClass } from './lib/terrain'
 
 export type Step = 'map' | 'dashboard'
@@ -34,7 +35,10 @@ export type Constraints = {
 
 export type LayerState = { visible: boolean; opacity: number; error: boolean }
 
+export type FarmData = { status: LoadStatus | 'idle'; byId: Record<number, FincaDetalle>; comun: Comun | null }
+
 let climateRequest = 0
+let farmRequest = 0
 
 type State = {
   map: Map | null
@@ -71,6 +75,8 @@ type State = {
   setTab: (tab: Tab) => void
   setAboutOpen: (open: boolean) => void
   loadClimate: (lat: number, lon: number) => Promise<void>
+  farmData: FarmData
+  loadFarmData: () => Promise<void>
   setPriority: (key: PriorityKey, value: number) => void
   setConstraints: (patch: Partial<Constraints>) => void
   setLayer: (id: GibsId, patch: Partial<LayerState>) => void
@@ -128,6 +134,7 @@ export const useStore = create<State>((set, get) => ({
       constraints: slopePct === null ? s.constraints : { ...s.constraints, slopePct, slope: slopeClass(slopePct) },
     }))
     get().loadClimate(lat, lon)
+    get().loadFarmData()
   },
   toggleFinca: (finca) =>
     set((s) => {
@@ -148,6 +155,29 @@ export const useStore = create<State>((set, get) => ({
       constraints: slopePct === null ? s.constraints : { ...s.constraints, slopePct, slope: slopeClass(slopePct) },
     }))
     get().loadClimate(lat, lon)
+    get().loadFarmData()
+  },
+  farmData: { status: 'idle', byId: {}, comun: null },
+  loadFarmData: async () => {
+    const selection = get().selection
+    const id = ++farmRequest
+    set({ farmData: { status: 'loading', byId: {}, comun: null } })
+    try {
+      const [byId, comun] = await Promise.all([
+        loadDetalles(selection.map((f) => ({ id: f.properties.id, mun: f.properties.mun }))),
+        loadComun(),
+      ])
+      if (id !== farmRequest) return
+      const largest = [...selection].sort((a, b) => b.properties.ha - a.properties.ha)[0]
+      const texture = soilTexture(byId[largest?.properties.id]?.suelo ?? null)
+      const observed = observedCrop(byId[largest?.properties.id])
+      set((s) => ({
+        farmData: { status: 'ready', byId, comun },
+        constraints: { ...s.constraints, ...(texture && { soil: texture }), ...(observed && { currentCrop: observed.crop }) },
+      }))
+    } catch {
+      if (id === farmRequest) set({ farmData: { status: 'error', byId: {}, comun: null } })
+    }
   },
   resetField: () =>
     set((s) => ({ step: 'map', panelOpen: false, terrain: 'off', constraints: { ...s.constraints, slopePct: null } })),
