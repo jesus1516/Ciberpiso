@@ -1,8 +1,8 @@
 {
   "challenge": {
-    "title": "Field Shift: Adapting Farms with NASA Data",
+    "title": "Field Shift: Adapting Farms with Space Data",
     "url": "https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/",
-    "event": "2026 NASA Space Apps Challenge",
+    "event": "2026 Space Apps Challenge",
     "difficulty": ["Advanced", "Intermediate"],
     "subjects": ["Arts & Multimedia", "Earth Science", "Software"],
     "video": "https://www.youtube.com/embed/cF0U2WXsM7o",
@@ -38,7 +38,7 @@
     {
       "id": "smap",
       "name": "SMAP",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "soil_moisture",
       "official": true,
       "priority": "P2",
@@ -53,7 +53,7 @@
     {
       "id": "gpm_imerg",
       "name": "GPM / IMERG",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "precipitation",
       "official": true,
       "priority": "P2",
@@ -68,7 +68,7 @@
     {
       "id": "landsat",
       "name": "Landsat",
-      "agency": "NASA/USGS",
+      "agency": "USGS",
       "category": "vegetation",
       "official": true,
       "priority": "P2",
@@ -83,7 +83,7 @@
     {
       "id": "modis",
       "name": "MODIS",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "vegetation",
       "official": true,
       "priority": "P2",
@@ -98,7 +98,7 @@
     {
       "id": "viirs",
       "name": "VIIRS",
-      "agency": "NASA/NOAA",
+      "agency": "NOAA",
       "category": "vegetation",
       "official": true,
       "priority": "P2",
@@ -112,8 +112,8 @@
     },
     {
       "id": "power",
-      "name": "NASA POWER",
-      "agency": "NASA",
+      "name": "POWER",
+      "agency": "Space agency",
       "category": "climate",
       "official": true,
       "priority": "P0",
@@ -129,7 +129,7 @@
     {
       "id": "srtm",
       "name": "SRTM",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "terrain",
       "official": true,
       "priority": "P1",
@@ -144,7 +144,7 @@
     {
       "id": "ecostress",
       "name": "ECOSTRESS",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "evapotranspiration",
       "official": true,
       "priority": "P2",
@@ -265,7 +265,7 @@
     {
       "id": "nldas_gldas",
       "name": "NLDAS / GLDAS",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "land_data_assimilation",
       "official": true,
       "priority": "P2",
@@ -387,7 +387,7 @@
     {
       "id": "gedi",
       "name": "GEDI",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "vegetation_structure",
       "official": true,
       "priority": "P3",
@@ -434,7 +434,7 @@
     {
       "id": "grace",
       "name": "GRACE / GRACE-FO",
-      "agency": "NASA",
+      "agency": "Space agency",
       "category": "water_storage",
       "official": false,
       "priority": "P3",
@@ -448,8 +448,8 @@
     },
     {
       "id": "gibs",
-      "name": "NASA GIBS",
-      "agency": "NASA",
+      "name": "GIBS",
+      "agency": "Space agency",
       "category": "visualization",
       "official": false,
       "priority": "P0",

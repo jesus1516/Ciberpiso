@@ -40,7 +40,6 @@ export function AboutModal() {
           <h3 className="font-semibold">{a.ackTitle}</h3>
           <p className="mt-1">{a.ackPower}</p>
           <p className="mt-1">{a.ackGibs}</p>
-          <p className="mt-1 text-ink-2">{a.endorsement}</p>
         </section>
         <p className="rounded-lg bg-amber-50 p-2 font-medium text-amber-900">⚠ {t.disclaimer}</p>
       </div>

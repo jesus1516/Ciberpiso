@@ -1,7 +1,7 @@
 """Per-farm data from Microsoft Planetary Computer (resources.md).
 
 Collections (STAC https://planetarycomputer.microsoft.com/api/stac/v1, anonymous access):
-    nasadem          NASADEM (reprocessed SRTM), 1": altitude and slope
+    nasadem          SRTM-derived DEM (reprocessed SRTM), 1": altitude and slope
     esa-worldcover   ESA WorldCover 2021 v200, 10 m: land cover
     modis-13Q1-061   MODIS Terra MOD13Q1 v6.1 (LP DAAC), 250 m / 16 days: NDVI
 
@@ -106,7 +106,7 @@ def _items(cat: Client, col: str, g: Rejilla, fecha: str | None = None):
     return list(cat.search(collections=[col], bbox=list(g.bounds), datetime=fecha).items())
 
 
-# ---------------------------------------------------------------------------------- NASADEM
+# ---------------------------------------------------------------------------------- SRTM-derived DEM
 def nasadem(cat: Client, prov: int, g: Rejilla) -> np.ndarray:
     f = RAW_PC / f"nasadem_{prov:02d}.tif"
     if not f.exists():
@@ -120,7 +120,7 @@ def nasadem(cat: Client, prov: int, g: Rejilla) -> np.ndarray:
                       resampling=Resampling.bilinear)
         with rasterio.open(f, "w", **g.perfil("float32", np.nan)) as out:
             out.write(dst, 1)
-        record("NASA NASADEM (Planetary Computer)", f"{STAC}/collections/nasadem", f,
+        record("SRTM-derived DEM (Planetary Computer)", f"{STAC}/collections/nasadem", f,
                items=[i.id for i in items])
     with rasterio.open(f) as r:
         return r.read(1)
@@ -191,7 +191,7 @@ def modis(cat: Client, prov: int, g: Rejilla) -> list[tuple[pd.Timestamp, Path]]
                       resampling=Resampling.nearest)
         with rasterio.open(f, "w", **g.perfil("float32", np.nan)) as out:
             out.write(dst, 1)
-        record("NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)", f"{STAC}/collections/modis-13Q1-061", f,
+        record("MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)", f"{STAC}/collections/modis-13Q1-061", f,
                item=item.id, fecha=str(fecha.date()))
         return fecha, f
 
@@ -267,7 +267,7 @@ def run(provincias: list[int]) -> None:
         dem = nasadem(cat, prov, g)
         out["altitud_m"], out["n_pixeles"] = zonal(lab, dem, n, centro)
         out["pendiente_pct"], _ = zonal(lab, pendiente(dem, g), n, centro)
-        print("  NASADEM ready", flush=True)
+        print("  SRTM-derived DEM ready", flush=True)
 
         wc = worldcover(cat, prov, g)
         H, W = g.height, g.width

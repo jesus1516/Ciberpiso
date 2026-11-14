@@ -71,7 +71,7 @@ Andalucía copy, filter with `WHERE provincia = 29` (it has an index).
 | --- | --- | --- | --- |
 | `dim_municipio` | municipality | `municipio_key` | SIGPAC (codes) |
 | `dim_celda_power` | climate cell | `celda_power` | POWER |
-| `fincas` | farm (SIGPAC plot) | `finca_key` | SIGPAC (geometry) + NASADEM + WorldCover + MODIS |
+| `fincas` | farm (SIGPAC plot) | `finca_key` | SIGPAC (geometry) + SRTM-derived DEM + WorldCover + MODIS |
 | `recintos` | SIGPAC enclosure | `recinto_key` | SIGPAC (geometry) |
 | `suelo_fincas` | farm with soil data | `finca_key` | SoilGrids |
 | `fenologia_fincas` | farm and season | `finca_key, campana` | MODIS NDVI |

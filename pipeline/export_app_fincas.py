@@ -57,7 +57,7 @@ PARCELA_DOMINIO_PUBLICO = 9000  # in the cadastre and SIGPAC, plots 9000+ are tr
 def aptitud(f: pd.Series) -> str | None:
     """Why a farm does not look like cropland (None = looks suitable).
 
-    Rules on ESA WorldCover cover (% of the farm), NASADEM slope and the plot
+    Rules on ESA WorldCover cover (% of the farm), SRTM-derived DEM slope and the plot
     number: built-up, water and public land (plots 9000+) are not agricultural; rock, mountain and
     steep slope are of limited use.
     Trees on gentle slopes are not marked: in Málaga they are usually olive or almond groves.

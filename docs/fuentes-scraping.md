@@ -12,7 +12,7 @@
 | --- | --- | --- | --- |
 | Daily climate 2001–2025 → indicators per season | **POWER** | ✅ #6–7 | `clima_anual`, `dim_celda_power` |
 | Soil moisture (surface, root zone, profile) | **POWER** (MERRA-2) | ✅ #6–7 | `suelo_humedad_anual` |
-| Altitude and slope | **SRTM** (NASADEM version) via Planetary Computer | ✅ #28 (and SRTM, #3–4) | `fincas` |
+| Altitude and slope | **SRTM** (SRTM-derived DEM version) via Planetary Computer | ✅ #28 (and SRTM, #3–4) | `fincas` |
 | Soil texture, carbon, pH and available water | **ISRIC SoilGrids 2.0** | ⚠️ approved exception | `suelo_fincas` |
 | Farm-gate agricultural prices in Spain, annual 2000–2024 | **Eurostat** `apri_ap_crpouta` | ⚠️ approved exception | `precios_anuales`, `dim_producto_precio` |
 | Land cover (% crop, trees, grass…) | **ESA WorldCover 2021** via Planetary Computer | ✅ #28 | `fincas` |
@@ -27,7 +27,7 @@ crop). Everything that describes the farm comes from the sources in the table ab
 **Note on SoilGrids.** The team works with **SoilGrids + SRTM**. SoilGrids is not in
 `resources.md`, but the action plan already fixed it as the substitute for SSURGO
 (which only covers the US), so it enters as the **single explicit exception**. SRTM is
-in the list; its reprocessed version (NASADEM) is used, with the same 2000 radar data,
+in the list; its reprocessed version (SRTM-derived DEM) is used, with the same 2000 radar data,
 filled voids and better calibration.
 
 ## 1. Review of `resources.md`, link by link
@@ -36,7 +36,7 @@ filled voids and better calibration.
 | --- | --- | --- | --- | --- | --- |
 | 1 | earthdata…/smap | SMAP | Yes (9 km) | Requires Earthdata Login; soil moisture comes from POWER | 🔑 |
 | 2 | gpm.nasa.gov/data | GPM / IMERG | Yes (0.1°) | Rain comes from POWER; IMERG is also in Planetary Computer (`gpm-imerg-hhr`) | ⏸️ |
-| 3 | earthexplorer.usgs.gov | Landsat / SRTM | Yes | Relief with NASADEM (reprocessed SRTM) via #28 | ✅ (via #28) |
+| 3 | earthexplorer.usgs.gov | Landsat / SRTM | Yes | Relief with SRTM-derived DEM (reprocessed SRTM) via #28 | ✅ (via #28) |
 | 4 | earthdata…/lp-daac | MODIS / VIIRS (LP DAAC) | Yes (250 m) | **MOD13Q1 NDVI** via Planetary Computer | ✅ |
 | 5 | search.earthdata…VIIRS | VIIRS | Yes | Not needed (MODIS covers the series) | ⏸️ |
 | 6–7 | power.larc.nasa.gov | **POWER** | Yes (0.5°×0.625°) | Climate and soil moisture per cell | ✅ |
@@ -57,7 +57,7 @@ filled voids and better calibration.
 | 25 | earthdata…/lp-daac | (repeat of #4) | — | — | — |
 | 26 | spaceapps.earth | Event website | — | — | ➖ |
 | 27 | meteomatics.com | Meteomatics | Yes | API with an account; not needed | ⏸️ |
-| 28 | planetarycomputer.microsoft.com | **Planetary Computer** | Yes | NASADEM, WorldCover, MODIS (anonymous STAC) | ✅ |
+| 28 | planetarycomputer.microsoft.com | **Planetary Computer** | Yes | SRTM-derived DEM, WorldCover, MODIS (anonymous STAC) | ✅ |
 
 Legend: ✅ used · 🔑 requires credentials we do not have · ⏸️ available, not needed ·
 ⛔ US only · ➖ not a dataset.
@@ -97,7 +97,7 @@ Legend: ✅ used · 🔑 requires credentials we do not have · ⏸️ available
 
 | Collection | Product | Use |
 | --- | --- | --- |
-| `nasadem` | NASADEM, 1" | `altitud_m` (mean) and `pendiente_pct` (gradient on the grid) |
+| `nasadem` | SRTM-derived DEM, 1" | `altitud_m` (mean) and `pendiente_pct` (gradient on the grid) |
 | `esa-worldcover` | WorldCover 2021 v200, 10 m | `wc_*_pct`: exact fraction of 3×3 pixels per analysis cell |
 | `modis-13Q1-061` | MOD13Q1 v6.1 (Terra), 250 m, 16 days | NDVI 2019-10 → 2025-06 (130 composites, tile h17v05) |
 
@@ -213,7 +213,7 @@ SIGPAC code (`parcela_id`, `recinto_id`) is the stable identifier across version
 | --- | --- | --- | --- |
 | `dim_municipio` | municipality | `municipio_key` | Skeleton |
 | `dim_celda_power` | MERRA-2 cell | `celda_power` | POWER |
-| `fincas` | SIGPAC plot | `finca_key` | Skeleton + NASADEM + WorldCover + MODIS |
+| `fincas` | SIGPAC plot | `finca_key` | Skeleton + SRTM-derived DEM + WorldCover + MODIS |
 | `recintos` | SIGPAC enclosure | `recinto_key` | Skeleton |
 | `suelo_fincas` | farm with soil data | `finca_key` | SoilGrids |
 | `fenologia_fincas` | farm × season (farms ≥ 2 ha) | `finca_key, campana` | MODIS |

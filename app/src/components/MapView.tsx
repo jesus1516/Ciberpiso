@@ -122,7 +122,7 @@ export function MapView() {
       const source = map.getSource<maplibregl.RasterTileSource>(id)
       if (!source) {
         if (!visible) continue
-        map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'NASA GIBS / ESDIS' })
+        map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'GIBS / ESDIS' })
         map.addLayer({ id, type: 'raster', source: id }, BASE_LAYER)
       } else if (source.tiles?.[0] !== tiles[0]) {
         source.setTiles(tiles)

@@ -45,7 +45,7 @@ GLOSSARY = {
 
 SOURCES = [
     {
-        "name": "NASA POWER",
+        "name": "POWER",
         "url": "https://power.larc.nasa.gov/",
         "use": "Lluvia, temperatura, ET0 y déficit hídrico por celda.",
     },
@@ -461,7 +461,7 @@ def calculate_scores(
             "confidence": "low",
             "confidence_score": 0.4,
             "data_gaps": [
-                "Clima de celda NASA POWER (~50 km), no de la parcela",
+                "Clima de celda POWER (~50 km), no de la parcela",
                 "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
                 "Sin rendimientos ni costes: la nota de precio no es margen",
             ],
@@ -586,7 +586,7 @@ def _dynamic_evidence(
 
     evidencia = [
         {
-            "source": "NASA POWER",
+            "source": "POWER",
             "url": "https://power.larc.nasa.gov/",
             "date": "2002-2025",
             "value": (
@@ -692,7 +692,7 @@ def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
         "water": {
             "value": data["water"],
             "unit": "índice 0-100",
-            "source": "NASA POWER",
+            "source": "POWER",
             "date": "2002-2025",
             "confidence": "medium",
             "gap": f"Déficit medio {deficit:.0f} mm; celda de ~50 km"
@@ -723,7 +723,7 @@ def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
         "risk": {
             "value": data["risk"],
             "unit": "índice 0-100",
-            "source": "NASA POWER",
+            "source": "POWER",
             "date": "2002-2025",
             "confidence": "low",
             "gap": "Umbrales expertos; no validados con daños observados",
@@ -875,7 +875,7 @@ def build_indicators(
         "aoi": "antequera-malaga",
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "real_data_provisional",
-        "source": "NASA POWER + SoilGrids + MODIS + Eurostat",
+        "source": "POWER + SoilGrids + MODIS + Eurostat",
         "method": "reglas_explicables_v2",
         "disclaimer": DISCLAIMER,
         "glossary": GLOSSARY,
