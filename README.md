@@ -57,6 +57,8 @@ sustituir a un agrónomo.
 | Documento | Qué contiene |
 | --- | --- |
 | [Plan de acción](docs/plan-de-accion.md) | Rumbo actual: finca de Antequera, cuatro rotaciones y primer paso. |
+| [Fuentes scrapeadas](docs/fuentes-scraping.md) | Pipeline de datos de Málaga: fuentes de `resources.md`, CSV, SQLite y lagunas. |
+| [Datos](data/README.md) | `data/csv/` (tablas), `data/database/` (SQLite, esquema y consultas) y cómo abrirlos. |
 | [Guía paso a paso](docs/guia-paso-a-paso.md) | Plan de 48 h, fases, entregables y criterios de "hecho". |
 | [Alcance](docs/alcance.md) | Ficha para fijar AOI, perfil, decisión y rotaciones. |
 | [Rotaciones de ejemplo](docs/rotaciones.md) | Cuatro estrategias con evidencia, beneficios, lagunas y riesgos. |
