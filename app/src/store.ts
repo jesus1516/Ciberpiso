@@ -2,14 +2,15 @@ import type { Map } from 'maplibre-gl'
 import { create } from 'zustand'
 import type { SoilType } from './data/mock/soil'
 import { computeClimate, type Climate } from './lib/climate'
-import { fieldCentroid, type Field } from './lib/geo'
+import { fieldCentroid, toField, weightedSlope, type Field, type Finca } from './lib/geo'
 import { daysAgo, type GibsId } from './lib/gibs'
 import { fetchPower, type PowerSource } from './lib/power'
+import { slopeClass } from './lib/terrain'
 
 export type Step = 'map' | 'dashboard'
-export type DrawMode = 'idle' | 'polygon' | 'point'
 export type Terrain = 'off' | 'on' | 'flat'
 export type Tab = 'conditions' | 'layers' | 'priorities' | 'rotations'
+export type LoadStatus = 'loading' | 'ready' | 'error'
 export type ClimateState = {
   status: 'idle' | 'loading' | 'ready'
   data: Climate | null
@@ -36,10 +37,12 @@ let climateRequest = 0
 type State = {
   map: Map | null
   step: Step
-  drawMode: DrawMode
+  fincasStatus: LoadStatus
+  selection: Finca[]
   field: Field | null
   terrain: Terrain
   panelOpen: boolean
+  panelSeen: boolean
   tab: Tab
   aboutOpen: boolean
   climate: ClimateState
@@ -48,8 +51,9 @@ type State = {
   layers: Record<GibsId, LayerState>
   gibsDate: string
   setMap: (map: Map | null) => void
-  setDrawMode: (mode: DrawMode) => void
-  setField: (field: Field | null) => void
+  setFincasStatus: (status: LoadStatus) => void
+  toggleFinca: (finca: Finca) => void
+  clearSelection: () => void
   confirmField: () => void
   resetField: () => void
   setTerrain: (terrain: Terrain) => void
@@ -66,10 +70,12 @@ type State = {
 export const useStore = create<State>((set, get) => ({
   map: null,
   step: 'map',
-  drawMode: 'idle',
+  fincasStatus: 'loading',
+  selection: [],
   field: null,
   terrain: 'off',
   panelOpen: false,
+  panelSeen: false,
   tab: 'conditions',
   aboutOpen: false,
   climate: { status: 'idle', data: null, source: null },
@@ -82,19 +88,31 @@ export const useStore = create<State>((set, get) => ({
   },
   gibsDate: daysAgo(7),
   setMap: (map) => set({ map }),
-  setDrawMode: (drawMode) => set({ drawMode }),
-  setField: (field) => set({ field, drawMode: 'idle' }),
+  setFincasStatus: (fincasStatus) => set({ fincasStatus }),
+  toggleFinca: (finca) =>
+    set((s) => {
+      const exists = s.selection.some((f) => f.properties.id === finca.properties.id)
+      const selection = exists ? s.selection.filter((f) => f.properties.id !== finca.properties.id) : [...s.selection, finca]
+      return { selection, field: selection.length ? toField(selection) : null }
+    }),
+  clearSelection: () => set({ selection: [], field: null }),
   confirmField: () => {
     const field = get().field
     if (!field) return
     const [lon, lat] = fieldCentroid(field)
-    set({ step: 'dashboard', panelOpen: false })
+    const slopePct = weightedSlope(field)
+    set((s) => ({
+      step: 'dashboard',
+      panelOpen: false,
+      panelSeen: false,
+      constraints: slopePct === null ? s.constraints : { ...s.constraints, slopePct, slope: slopeClass(slopePct) },
+    }))
     get().loadClimate(lat, lon)
   },
   resetField: () =>
-    set((s) => ({ step: 'map', field: null, panelOpen: false, terrain: 'off', drawMode: 'idle', constraints: { ...s.constraints, slopePct: null } })),
+    set((s) => ({ step: 'map', panelOpen: false, terrain: 'off', constraints: { ...s.constraints, slopePct: null } })),
   setTerrain: (terrain) => set({ terrain }),
-  setPanelOpen: (panelOpen) => set({ panelOpen }),
+  setPanelOpen: (panelOpen) => set((s) => ({ panelOpen, panelSeen: s.panelSeen || panelOpen })),
   setTab: (tab) => set({ tab }),
   setAboutOpen: (aboutOpen) => set({ aboutOpen }),
   loadClimate: async (lat, lon) => {

@@ -30,7 +30,7 @@ export function enable3D(map: Map, onFail: () => void): boolean {
           source: 'hillshade-dem',
           paint: { 'hillshade-exaggeration': 0.3, 'hillshade-shadow-color': '#000000' },
         },
-        'field-fill',
+        'fincas-fill',
       )
     }
     map.setTerrain({ source: 'dem', exaggeration: EXAGGERATION })
@@ -61,7 +61,7 @@ export function disable3D(map: Map) {
     /* terrain already off */
   }
   if (map.getLayer('hillshade')) map.removeLayer('hillshade')
-  map.easeTo({ pitch: 0, bearing: 0, duration: 800 })
+  map.easeTo({ pitch: 0, bearing: 0, padding: { top: 0, bottom: 0, left: 0, right: 0 }, duration: 800 })
 }
 
 export function flyToField(map: Map, field: Field, pitched: boolean) {
@@ -77,32 +77,6 @@ export function flyToField(map: Map, field: Field, pitched: boolean) {
     duration: 4200,
     curve: 1.5,
   })
-}
-
-export function estimateSlopePct(map: Map, field: Field): number | null {
-  const [west, south, east, north] = fieldBbox(field)
-  const n = 5
-  const lat = (south + north) / 2
-  const dx = ((east - west) / (n - 1)) * 111_320 * Math.cos((lat * Math.PI) / 180)
-  const dy = ((north - south) / (n - 1)) * 111_320
-  const grid: number[][] = []
-  for (let i = 0; i < n; i++) {
-    grid.push([])
-    for (let j = 0; j < n; j++) {
-      const z = map.queryTerrainElevation([west + ((east - west) * j) / (n - 1), south + ((north - south) * i) / (n - 1)])
-      if (z === null) return null
-      grid[i].push(z / EXAGGERATION)
-    }
-  }
-  const slopes: number[] = []
-  for (let i = 0; i < n - 1; i++) {
-    for (let j = 0; j < n - 1; j++) {
-      const gx = (grid[i][j + 1] - grid[i][j]) / dx
-      const gy = (grid[i + 1][j] - grid[i][j]) / dy
-      slopes.push(Math.hypot(gx, gy) * 100)
-    }
-  }
-  return slopes.reduce((a, b) => a + b, 0) / slopes.length
 }
 
 export function slopeClass(pct: number) {
