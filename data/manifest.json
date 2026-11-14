@@ -1,5 +1,13 @@
 [
   {
+    "source": "es-atlas 0.6.0 (IGN, CC BY 4.0)",
+    "url": "https://cdn.jsdelivr.net/npm/es-atlas@0.6.0/es/provinces.json",
+    "retrieved_at": "2026-11-14T18:11:33+00:00",
+    "file": "data/raw/es_atlas/provinces.json",
+    "bytes": 62735,
+    "sha256": "46006b08bc75c8c07caeadbd27cf2c7a526f77ec62966dca515498925db26e47"
+  },
+  {
     "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
     "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
     "retrieved_at": "2026-11-14T14:34:19+00:00",
