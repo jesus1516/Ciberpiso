@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-field: #facc15;
+  --color-ink: #0b0b0b;
+  --color-ink-2: #52514e;
+  --color-muted: #6b6a65;
+  --color-surface: #fcfcfb;
+  --color-line: #e1e0d9;
+  --color-brand: #1c5cab;
+  --color-good: #0ca30c;
+  --color-warning: #fab219;
+  --color-critical: #d03b3b;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #0d0d0d;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.maplibregl-ctrl-attrib {
+  font-size: 10px;
+}
