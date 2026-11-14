@@ -35,19 +35,34 @@ No backend and no API keys: every request goes straight from the browser to publ
 | Daily temperature, min temperature, rain, radiation, humidity (2015 → yesterday) | **Real** | NASA POWER daily point API (AG community) |
 | Climatology, frost days, rain variability, water balance, trends | **Real (derived)** | Computed in the browser from POWER; ET uses the Turc formula and is labelled approximate |
 | MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** | NASA GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
-| Farm boundaries (363,401 farms in the 103 municipalities of Málaga) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/csv/fincas.csv`; built with `pipeline/export_app_fincas.py` |
-| Farm slope, altitude, land cover | **Real** | Project dataset (`data/csv/fincas.csv`: NASADEM, ESA WorldCover) |
+| Farm boundaries (363,401 farms in the 103 municipalities of Málaga) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/malaga/csv/29_malaga/fincas.csv`; built with `pipeline/export_app_fincas.py` |
+| Farm slope, altitude, land cover | **Real** | Project dataset (`data/malaga/csv/29_malaga/fincas.csv`: NASADEM, ESA WorldCover) |
 | Precomputed rotation results for 26 Antequera candidates | **Real** | `data/processed/indicators.json`, filtered by `pipeline/export_app_indicators.py` into `public/data/indicators_antequera.json` |
 | 3D terrain | **Real** | Mapzen Terrarium tiles on AWS Open Data |
 | Basemap, place search | **Real** | Esri World Imagery, OpenStreetMap Nominatim |
-| Soil properties (texture, organic matter, drainage) | Demo | `src/data/mock/soil.ts` |
-| SMAP soil-moisture anomaly series, ECOSTRESS heat stress | Demo | `src/data/mock/smap.ts`, `src/data/mock/ecostress.ts` |
-| Market suitability | Demo | `src/data/mock/market.ts` |
+| Soil per farm (texture, organic carbon, pH, N, CEC, available water) | **Real** | ISRIC SoilGrids 2.0 in the project dataset → `public/data/detalle/` |
+| Seasonal vegetation, NDVI series and observed rotation per farm | **Real** | MODIS NDVI in the project dataset → `public/data/detalle/` |
+| Climate and root-zone soil moisture per season (2002–2025) | **Real** | NASA POWER cell summaries in the project dataset → `public/data/comun_29.json` |
+| Crop prices | **Real** | Eurostat apri_ap_crpouta and MAPA (vetch) → `public/data/comun_29.json` |
+| Heat stress index per month | Derived | From NASA POWER temperature and the approximate water balance |
+| Income score | Proxy | 70 % market ease (crop catalog) + 30 % latest national price, the same formula as `pipeline/calculator.py`; no yields or costs |
 | Crop catalog | Hand-made reference | `src/data/crops.json` |
 
-Demo data shows a dashed **demo data** badge wherever it appears, and it raises the uncertainty level of the scores
-that use it. If POWER is unreachable, the app uses `src/data/sample-power.json` (real POWER data for
+When a farm has no SoilGrids data, typical soil values are used; the score says so, shows a dashed badge and its
+uncertainty goes up. If POWER is unreachable, the app uses `src/data/sample-power.json` (real POWER data for
 Antequera, Spain) and shows a warning.
+
+## Farm data
+
+When you analyse one or more farms, the app downloads the project data of their municipality
+(`public/data/detalle/{municipio_key}.json.gz`, 20 MB in total) and the province file
+(`public/data/comun_29.json`, 113 kB). The Conditions tab shows it per farm, Priorities is prefilled with the
+SoilGrids texture and the crop the satellite saw last season, and the rotation scores use the real soil and
+prices. To rebuild the files from `data/malaga/csv/`:
+
+```bash
+python -m pipeline.export_app_detalle --provincia 29
+```
 
 ## Farm map
 
@@ -82,9 +97,8 @@ button does not appear.
 ## Next steps
 
 - SMAP L3/L4 soil moisture and ECOSTRESS ET/ESI time series via NASA Earthdata (needs Earthdata Login, so a small proxy).
-- SSURGO soil properties via the USDA Soil Data Access API (US); SoilGrids or national maps elsewhere.
-- USDA Cropland Data Layer (CDL) to detect the current crop and past rotations (US).
-- OpenET field-scale evapotranspiration (western US) to replace the approximate Turc estimate.
+- Yields and costs per crop, so the income score becomes a margin instead of a price proxy.
+- The declared crop from SIGPAC (cultivo_declarado) to check the crop estimated from NDVI.
 - English translation of the precomputed project narrative (the UI labels are already English; the calculator text is Spanish).
 - Spanish translation (`src/i18n/es.ts`) and validation of scoring rules with local agronomists.
 
