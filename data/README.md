@@ -43,15 +43,27 @@ Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo
 
 Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep-2024).
 
-## Regenerar
+## Crear la base en cualquier equipo
+
+Solo hace falta Python 3.8 o superior, sin instalar nada más. Desde la raíz del repo:
+
+```bash
+python3 pipeline/cargar_sqlite.py      # Linux y Mac
+py pipeline\cargar_sqlite.py           # Windows
+```
+
+Tarda unos 10 segundos y crea `data/database/ciberpiso.sqlite` a partir de `data/csv/`
+y `schema.sql`. Comprueba que cada CSV tiene las columnas de su tabla, convierte las
+celdas vacías en NULL y valida las claves foráneas.
+
+## Volver a descargar los datos desde las fuentes
+
+Solo si hay que actualizar los CSV. Necesita internet y el entorno del pipeline
+(`pipeline/requirements.txt`); los pasos están en `docs/fuentes-scraping.md`.
 
 ```bash
 .venv/bin/python -m pipeline.build --provincias 29   # escribe data/csv/
-.venv/bin/python -m pipeline.cargar_sqlite           # escribe data/database/ciberpiso.sqlite
 ```
-
-`cargar_sqlite` comprueba que cada CSV tiene las columnas de su tabla y que las claves
-foráneas cuadran. El pipeline completo está en `docs/fuentes-scraping.md`.
 
 ## Git
 

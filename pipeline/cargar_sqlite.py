@@ -1,10 +1,14 @@
 """Genera la base SQLite a partir de data/csv/ y de data/database/schema.sql.
 
 Comprueba que las columnas de cada CSV coinciden con las de su tabla, carga en
-bloque, crea índices y vistas al final, y valida las claves foráneas.
+bloque, convierte las celdas vacías en NULL, crea índices y vistas al final, y valida
+las claves foráneas.
 
-Uso:
-    python -m pipeline.cargar_sqlite            # -> data/database/ciberpiso.sqlite
+Solo usa la biblioteca estándar: funciona con cualquier Python 3.8+ sin instalar nada.
+
+Uso (desde la raíz del repo):
+    python pipeline/cargar_sqlite.py            # -> data/database/ciberpiso.sqlite
+    python -m pipeline.cargar_sqlite            # equivalente
 """
 
 from __future__ import annotations
@@ -15,8 +19,11 @@ import sqlite3
 import time
 from pathlib import Path
 
-from pipeline.common import CSV_DIR, DB_DIR, DB_PATH
-
+# Rutas propias (sin importar pipeline.common, que necesita librerías externas)
+DATA = Path(__file__).resolve().parent.parent / "data"
+CSV_DIR = DATA / "csv"
+DB_DIR = DATA / "database"
+DB_PATH = DB_DIR / "ciberpiso.sqlite"
 SCHEMA = DB_DIR / "schema.sql"
 # Orden de carga: primero las tablas referenciadas
 ORDEN = ["dim_municipio", "dim_celda_power", "fincas", "recintos", "suelo_fincas", "fenologia_fincas",
