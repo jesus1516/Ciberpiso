@@ -1,0 +1,21 @@
+{
+  "base": "main",
+  "integration": "night/integration",
+  "slots": 2,
+  "slotsDir": "../Ciberpiso-night",
+  "verifierModel": "sonnet",
+  "minFreeMB": 700,
+  "limitProbeMinutes": 30,
+  "limitMaxWaitHours": 7,
+  "ntfyTopic": "",
+  "checks": [
+    "cd app && npx tsc -b",
+    "cd app && npm run build",
+    "cd app && node scripts/check-calculator.ts"
+  ],
+  "softChecks": [
+    "cd app && npx oxlint src",
+    "cd app && npm run test --if-present",
+    "python3 -m pytest tests -q"
+  ]
+}
