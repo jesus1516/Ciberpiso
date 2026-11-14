@@ -9,12 +9,12 @@ import { RotationsTab } from './RotationsTab'
 const tabs: Tab[] = ['conditions', 'layers', 'priorities', 'rotations']
 
 export function Dashboard() {
-  const { field, panelOpen, tab, terrain, setTab, setPanelOpen, resetField } = useStore()
+  const { field, panelOpen, panelSeen, tab, terrain, setTab, setPanelOpen, resetField } = useStore()
   const wide = tab === 'rotations'
 
   return (
     <>
-      {!panelOpen && (
+      {!panelOpen && panelSeen && (
         <button
           onClick={() => setPanelOpen(true)}
           className="absolute bottom-10 right-3 z-30 rounded-lg bg-white px-4 py-2 text-sm font-semibold shadow-lg focus:outline-2 focus:outline-brand lg:bottom-auto lg:top-3"
@@ -34,7 +34,7 @@ export function Dashboard() {
         <div className="flex items-center gap-2 border-b border-line px-4 pb-2 pt-3">
           <div className="flex-1">
             <h2 className="font-semibold">{t.dashboard.title}</h2>
-            {field && <p className="text-xs text-muted">{t.map.area(areaHa(field))}</p>}
+            {field && <p className="text-xs text-muted">{t.dashboard.count(field.features.length)} · {t.map.area(areaHa(field))}</p>}
           </div>
           <button onClick={resetField} className="rounded-md px-2 py-1 text-sm text-brand hover:bg-neutral-100">{t.dashboard.newField}</button>
           <button onClick={() => setPanelOpen(false)} className="rounded-md px-2 py-1 text-sm text-ink-2 hover:bg-neutral-100" aria-label={t.dashboard.collapse}>

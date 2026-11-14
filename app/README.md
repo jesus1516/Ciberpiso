@@ -16,11 +16,11 @@ No backend and no API keys: every request goes straight from the browser to publ
 
 ## Architecture (10 lines)
 
-1. `src/App.tsx` stacks the full-screen map, the header, the map screen or dashboard, the disclaimer and the About modal.
-2. `src/store.ts` (Zustand) holds all state: field, step, terrain, climate, priorities, constraints, GIBS layers.
-3. `components/MapView.tsx` owns MapLibre: Esri basemap, field layers, GIBS overlays, 3D terrain and the fly-to.
-4. `components/DrawControls.tsx` uses Terra Draw for polygons; a single click makes a ~500 m square.
-5. `lib/terrain.ts` adds the Terrarium DEM + hillshade, falls back to a flat map on errors, and estimates slope.
+1. `src/App.tsx` stacks the full-screen map, the header, the farm picker or dashboard, the disclaimer and the About modal.
+2. `src/store.ts` (Zustand) holds all state: selected farms, step, terrain, climate, priorities, constraints, GIBS layers.
+3. `components/MapView.tsx` owns MapLibre: Esri basemap, farm and selection layers, GIBS overlays, 3D terrain and the fly-to.
+4. `components/FincaPicker.tsx` lets you click the Antequera farms (from `public/data/fincas_antequera.geojson`) to build your holding; `lib/pulse.ts` animates each selection.
+5. `lib/terrain.ts` adds the Terrarium DEM + hillshade and falls back to a flat map on errors; slope comes from the farms' project data.
 6. `lib/power.ts` fetches NASA POWER daily data, caches it in localStorage and falls back to a bundled sample.
 7. `lib/climate.ts` derives monthly climatology, frost days, rain variability, Turc water balance and trends.
 8. `lib/gibs.ts` lists the GIBS layers verified in GetCapabilities and builds the WMTS tile URLs.
@@ -34,7 +34,9 @@ No backend and no API keys: every request goes straight from the browser to publ
 | Daily temperature, min temperature, rain, radiation, humidity (2015 → yesterday) | **Real** | NASA POWER daily point API (AG community) |
 | Climatology, frost days, rain variability, water balance, trends | **Real (derived)** | Computed in the browser from POWER; ET uses the Turc formula and is labelled approximate |
 | MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** | NASA GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
-| Terrain, slope | **Real** | Mapzen Terrarium tiles on AWS Open Data |
+| Farm boundaries (14,529 farms in Antequera) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/csv/fincas.csv`; built with `pipeline/export_app_fincas.py` |
+| Farm slope, altitude, land cover | **Real** | Project dataset (`data/csv/fincas.csv`: NASADEM, ESA WorldCover) |
+| 3D terrain | **Real** | Mapzen Terrarium tiles on AWS Open Data |
 | Basemap, place search | **Real** | Esri World Imagery, OpenStreetMap Nominatim |
 | Soil properties (texture, organic matter, drainage) | Demo | `src/data/mock/soil.ts` |
 | SMAP soil-moisture anomaly series, ECOSTRESS heat stress | Demo | `src/data/mock/smap.ts`, `src/data/mock/ecostress.ts` |
@@ -44,6 +46,15 @@ No backend and no API keys: every request goes straight from the browser to publ
 Demo data shows a dashed **demo data** badge wherever it appears, and it raises the uncertainty level of the scores
 that use it. If POWER is unreachable, the app uses `src/data/sample-power.json` (real POWER data for
 Antequera, Spain) and shows a warning.
+
+## Farm map
+
+The app only offers the farms of Antequera for now. To rebuild the file, or to export another
+municipality, download the SIGPAC GeoPackage with `pipeline.sigpac` and run, from the repo root:
+
+```bash
+python -m pipeline.export_app_fincas --municipio 29015 --salida app/public/data/fincas_antequera.geojson
+```
 
 ## Next steps
 

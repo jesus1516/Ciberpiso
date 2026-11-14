@@ -64,7 +64,7 @@ export function PrioritiesTab() {
             {(['flat', 'gentle', 'moderate', 'steep'] as SlopeClass[]).map((s) => <option key={s} value={s}>{p.slopes[s]}</option>)}
           </select>
           <span className="mt-1 block text-xs text-muted">
-            {constraints.slopePct !== null ? p.slopeFromDem(constraints.slopePct) : p.slopeManual}
+            {constraints.slopePct !== null ? p.slopeFromRepo(constraints.slopePct) : p.slopeManual}
           </span>
         </label>
       </fieldset>

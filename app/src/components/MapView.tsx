@@ -3,7 +3,10 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
 import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
-import { disable3D, enable3D, estimateSlopePct, flyToField, slopeClass } from '../lib/terrain'
+import bbox from '@turf/bbox'
+import { loadFincas } from '../lib/fincas'
+import { pulse } from '../lib/pulse'
+import { disable3D, enable3D, flyToField } from '../lib/terrain'
 import { useStore } from '../store'
 
 maplibregl.setWorkerUrl(workerUrl)
@@ -20,13 +23,32 @@ const style: maplibregl.StyleSpecification = {
       maxzoom: 19,
       attribution: 'Imagery © Esri, Maxar, Earthstar Geographics',
     },
+    fincas: { type: 'geojson', data: EMPTY, promoteId: 'id', attribution: 'Fincas: SIGPAC (FEGA, CC BY 4.0)' },
     field: { type: 'geojson', data: EMPTY },
+    pulse: { type: 'geojson', data: EMPTY },
   },
   layers: [
     { id: 'esri', type: 'raster', source: 'esri' },
+    { id: 'fincas-fill', type: 'fill', source: 'fincas', paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.04, 'fill-opacity-transition': { duration: 700 } } },
+    {
+      id: 'fincas-line',
+      type: 'line',
+      source: 'fincas',
+      paint: {
+        'line-color': '#ffffff',
+        'line-opacity': 0.5,
+        'line-opacity-transition': { duration: 700 },
+        'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.3, 15, 1.2],
+      },
+    },
+    { id: 'fincas-hover-fill', type: 'fill', source: 'fincas', filter: ['==', ['get', 'id'], -1], paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.22 } },
+    { id: 'fincas-hover-line', type: 'line', source: 'fincas', filter: ['==', ['get', 'id'], -1], paint: { 'line-color': '#ffffff', 'line-width': 2.5 } },
     { id: 'field-fill', type: 'fill', source: 'field', paint: { 'fill-color': '#facc15', 'fill-opacity': 0.22 } },
     { id: 'field-glow', type: 'line', source: 'field', paint: { 'line-color': '#facc15', 'line-width': 10, 'line-opacity': 0.3, 'line-blur': 4 } },
     { id: 'field-line', type: 'line', source: 'field', paint: { 'line-color': '#facc15', 'line-width': 3 } },
+    { id: 'pulse-fill', type: 'fill', source: 'pulse', paint: { 'fill-opacity': 0 } },
+    { id: 'pulse-line-1', type: 'line', source: 'pulse', paint: { 'line-opacity': 0 } },
+    { id: 'pulse-line-2', type: 'line', source: 'pulse', paint: { 'line-opacity': 0 } },
   ],
 }
 
@@ -45,8 +67,8 @@ export function MapView() {
       instance = new maplibregl.Map({
         container: container.current!,
         style,
-        center: [-4.5, 37.5],
-        zoom: 2.2,
+        center: [-4.56, 37.05],
+        zoom: 10,
         maxPitch: 85,
         attributionControl: { compact: true },
       })
@@ -55,7 +77,16 @@ export function MapView() {
       return
     }
     instance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
-    instance.on('load', () => useStore.getState().setMap(instance))
+    instance.on('load', () => {
+      useStore.getState().setMap(instance)
+      loadFincas()
+        .then((data) => {
+          instance.getSource<maplibregl.GeoJSONSource>('fincas')?.setData(data)
+          instance.fitBounds(bbox(data) as [number, number, number, number], { padding: 40, duration: 1500 })
+          useStore.getState().setFincasStatus('ready')
+        })
+        .catch(() => useStore.getState().setFincasStatus('error'))
+    })
     instance.on('error', (e) => {
       const sourceId = 'sourceId' in e ? String(e.sourceId) : ''
       if (!sourceId.startsWith('gibs-')) return
@@ -84,7 +115,7 @@ export function MapView() {
       if (!source) {
         if (!visible) continue
         map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'NASA GIBS / ESDIS' })
-        map.addLayer({ id, type: 'raster', source: id }, 'field-fill')
+        map.addLayer({ id, type: 'raster', source: id }, 'fincas-fill')
       } else if (source.tiles?.[0] !== tiles[0]) {
         source.setTiles(tiles)
       }
@@ -95,23 +126,24 @@ export function MapView() {
 
   useEffect(() => {
     if (!map || step !== 'dashboard') return
-    const { field, setTerrain, setPanelOpen, setConstraints } = useStore.getState()
+    const { field, setTerrain, setPanelOpen } = useStore.getState()
     if (!field) return
-    const ok = enable3D(map, () => setTerrain('flat'))
-    setTerrain(ok ? 'on' : 'flat')
-    flyToField(map, field, ok)
-    const onIdle = () => {
-      const pct = useStore.getState().terrain === 'on' ? estimateSlopePct(map, field) : null
-      if (pct !== null) setConstraints({ slopePct: pct, slope: slopeClass(pct) })
-    }
-    map.once('moveend', () => {
-      setPanelOpen(true)
-      if (ok) map.once('idle', onIdle)
-    })
+    pulse(map, field, '#facc15', 1300)
+    map.setPaintProperty('fincas-fill', 'fill-opacity', 0)
+    map.setPaintProperty('fincas-line', 'line-opacity', 0)
+    const openPanel = () => setPanelOpen(true)
+    const timer = setTimeout(() => {
+      const ok = enable3D(map, () => setTerrain('flat'))
+      setTerrain(ok ? 'on' : 'flat')
+      flyToField(map, field, ok)
+      map.once('moveend', openPanel)
+    }, 650)
     return () => {
-      map.off('idle', onIdle)
+      clearTimeout(timer)
+      map.off('moveend', openPanel)
+      map.setPaintProperty('fincas-fill', 'fill-opacity', 0.04)
+      map.setPaintProperty('fincas-line', 'line-opacity', 0.5)
       disable3D(map)
-      map.easeTo({ padding: { top: 0, bottom: 0, left: 0, right: 0 }, duration: 0 })
     }
   }, [map, step])
 

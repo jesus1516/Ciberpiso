@@ -1,3 +1,13 @@
+const covers: Record<string, string> = {
+  arbolado: 'trees',
+  matorral: 'shrubland',
+  pasto: 'grassland',
+  cultivo: 'cropland',
+  urbano: 'built-up',
+  suelo_desnudo: 'bare soil',
+  agua: 'water',
+}
+
 export const en = {
   appName: 'Ciberpiso',
   appTagline: 'Crop rotation explorer',
@@ -10,22 +20,35 @@ export const en = {
     searching: 'Searching…',
     noResults: 'No places found.',
     searchError: 'Search is unavailable right now.',
-    drawField: 'Draw my field',
-    dropPoint: 'Click a point',
-    drawHint: 'Click to add corners. Click the first corner to close the field.',
-    pointHint: 'Click on the map: we will create a ~500 m square around that point.',
-    cancel: 'Cancel',
     area: (ha: number) => `${ha.toLocaleString('en', { maximumFractionDigits: ha < 10 ? 1 : 0 })} ha`,
-    confirm: 'Analyse this field',
-    redraw: 'Redraw',
-    intro: 'Find your farm, then draw your field to explore rotation options with NASA Earth observations.',
+    intro: 'Select the farms that make up your holding in Antequera (Málaga) to explore rotation options with NASA Earth observations.',
     webglError: 'Your browser could not start the 3D map (WebGL). Try another browser or device.',
     flatFallback: '3D terrain could not load. Showing a flat map.',
   },
 
+  fincas: {
+    loading: 'Loading the Antequera farm map…',
+    error: 'Could not load the farm map. Reload the page to try again.',
+    hint: 'Click the farms that make up your holding. Click again to remove one.',
+    hintMore: 'Add more farms or analyse your selection.',
+    selected: 'Selected farms',
+    name: (pol: number, par: number) => `Polygon ${pol} · Parcel ${par}`,
+    remove: (pol: number, par: number) => `Remove polygon ${pol}, parcel ${par}`,
+    total: (n: number, ha: number) => `${n} ${n === 1 ? 'farm' : 'farms'} · ${ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha`,
+    clear: 'Clear',
+    confirm: 'Analyse my farms',
+    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null }) =>
+      [
+        `Polygon ${p.pol} · Parcel ${p.par}`,
+        `${p.ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha${p.cover ? ` · ${covers[p.cover] ?? p.cover}` : ''}`,
+        p.slope !== null ? `Slope ${p.slope.toFixed(1)} %` : '',
+      ].filter(Boolean).join('\n'),
+  },
+
   dashboard: {
-    title: 'Your field',
-    newField: 'New field',
+    title: 'Your farms',
+    newField: 'Change farms',
+    count: (n: number) => `${n} ${n === 1 ? 'farm' : 'farms'}`,
     collapse: 'Hide panel',
     expand: 'Show panel',
     tabs: {
@@ -122,8 +145,8 @@ export const en = {
     drainage: { excessive: 'Excessive', good: 'Good', moderate: 'Moderate', poor: 'Poor' },
     slope: 'Slope',
     slopes: { flat: 'Flat (< 2 %)', gentle: 'Gentle (2–8 %)', moderate: 'Moderate (8–15 %)', steep: 'Steep (> 15 %)' },
-    slopeFromDem: (pct: number) => `Estimated ${pct.toFixed(1)} % from the terrain model. Change it if you know better.`,
-    slopeManual: 'Could not estimate slope from terrain. Please choose one.',
+    slopeFromRepo: (pct: number) => `Average ${pct.toFixed(1)} % for your farms (NASADEM, project data). Change it if you know better.`,
+    slopeManual: 'No slope data for these farms. Please choose one.',
   },
 
   scoring: {
@@ -234,7 +257,7 @@ export const en = {
       soil: 'Soil properties are demo data: confirm with a soil test.',
       market: 'Market scores are demo data: check local prices and buyers.',
       demoSensors: 'Soil moisture (SMAP) and heat stress (ECOSTRESS) are demo data in this prototype.',
-      slope: 'Slope was not measured from the terrain model.',
+      slope: 'No slope data for these farms.',
       yields: 'Your own yield history is not included.',
       cover: 'The best cover-crop species and termination date need local trials.',
       fallow: 'How much water a fallow stores depends on soil depth, which is not measured here.',
@@ -256,6 +279,7 @@ export const en = {
     real: 'Real data',
     demo: 'Demo data (simulated)',
     realItems: [
+      'Farm boundaries of Antequera (Málaga): SIGPAC parcels (FEGA, CC BY 4.0), with slope and land cover from the project dataset (NASADEM, ESA WorldCover).',
       'NASA POWER daily point data (temperature, minimum temperature, precipitation, solar radiation, humidity), 2015 to yesterday.',
       'NASA GIBS imagery: MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture.',
       'Terrain: Mapzen Terrarium elevation tiles (AWS Open Data). Basemap: Esri World Imagery. Place search: OpenStreetMap Nominatim.',

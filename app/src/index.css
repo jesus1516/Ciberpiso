@@ -25,6 +25,17 @@ body {
   font-family: var(--font-sans);
 }
 
+.finca-popup .maplibregl-popup-content {
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: pre-line;
+  pointer-events: none;
+}
+
+.finca-popup .maplibregl-popup-tip {
+  display: none;
+}
+
 .maplibregl-ctrl-attrib {
   font-size: 10px;
 }
