@@ -54,6 +54,9 @@ Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep
   fenología y precios de cada campaña (2020–2025). Genera
   `data/processed/scenarios.csv` y `data/processed/scenarios_qa.json`. Es un
   intermedio de trabajo y no se versiona.
+- `python3 pipeline/calculator.py`: puntúa las cuatro rotaciones por finca y genera
+  `data/processed/indicators.json`, la fuente que consume la web. Ese JSON sí se
+  versiona; el resto de `data/processed/` no.
 
 ## Crear la base en cualquier equipo
 
