@@ -1,9 +1,12 @@
 import * as maplibregl from 'maplibre-gl'
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
 import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
 import { disable3D, enable3D, estimateSlopePct, flyToField, slopeClass } from '../lib/terrain'
 import { useStore } from '../store'
+
+maplibregl.setWorkerUrl(workerUrl)
 
 const EMPTY = { type: 'FeatureCollection' as const, features: [] }
 
@@ -114,7 +117,9 @@ export function MapView() {
 
   return (
     <>
-      <div ref={container} className="absolute inset-0" aria-label="Map" role="region" />
+      <div className="absolute inset-0">
+        <div ref={container} className="h-full w-full" aria-label="Map" role="region" />
+      </div>
       {failed && (
         <div className="absolute inset-0 grid place-items-center bg-neutral-900 p-6 text-center text-white">
           <p className="max-w-sm">{t.map.webglError}</p>

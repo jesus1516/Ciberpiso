@@ -50,7 +50,7 @@ export function ConditionsTab() {
 
       <ChartCard title={t.conditions.monthlyRain}>
         <ResponsiveContainer width="100%" height={H}>
-          <BarChart data={months} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+          <BarChart data={months} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="name" {...axis} interval={0} />
             <YAxis {...axis} />
@@ -62,12 +62,12 @@ export function ConditionsTab() {
 
       <ChartCard title={t.conditions.monthlyTemp}>
         <ResponsiveContainer width="100%" height={H}>
-          <LineChart data={months} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+          <LineChart data={months} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="name" {...axis} interval={0} />
             <YAxis {...axis} />
             <Tooltip formatter={(v) => `${v} °C`} />
-            <Legend iconType="plainline" wrapperStyle={{ fontSize: 11 }} />
+            <Legend iconType="plainline" wrapperStyle={{ fontSize: 11 }} formatter={(v) => <span className="text-ink-2">{v}</span>} />
             <Line type="monotone" dataKey="temp" name={t.conditions.meanSeries} stroke={colors.temp} strokeWidth={2} dot={false} />
             <Line type="monotone" dataKey="tmin" name={t.conditions.minSeries} stroke={colors.tmin} strokeWidth={2} dot={false} />
           </LineChart>
@@ -76,7 +76,7 @@ export function ConditionsTab() {
 
       <ChartCard title={<Term id="frostRisk">{t.conditions.frostChart}</Term>} note={t.conditions.frostNote}>
         <ResponsiveContainer width="100%" height={H - 20}>
-          <BarChart data={months} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+          <BarChart data={months} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="name" {...axis} interval={0} />
             <YAxis {...axis} allowDecimals={false} />
@@ -91,7 +91,7 @@ export function ConditionsTab() {
         note={<>{t.conditions.balanceNote} <Term id="et">ET</Term></>}
       >
         <ResponsiveContainer width="100%" height={H}>
-          <BarChart data={months} margin={{ top: 8, right: 4, left: -14, bottom: 0 }}>
+          <BarChart data={months} margin={{ top: 8, right: 12, left: -14, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="name" {...axis} interval={0} />
             <YAxis {...axis} />
@@ -119,7 +119,7 @@ export function ConditionsTab() {
 
       <ChartCard title={t.conditions.trendRain} note={`${t.conditions.perDecade(c.rainTrendPerDecade, 'mm')}. ${t.conditions.trendCaution}`}>
         <ResponsiveContainer width="100%" height={H}>
-          <ComposedChart data={annual} margin={{ top: 8, right: 4, left: -14, bottom: 0 }}>
+          <ComposedChart data={annual} margin={{ top: 8, right: 12, left: -14, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="year" {...axis} />
             <YAxis {...axis} />
@@ -132,7 +132,7 @@ export function ConditionsTab() {
 
       <ChartCard title={t.conditions.trendTemp} note={t.conditions.perDecade(c.tempTrendPerDecade, '°C')}>
         <ResponsiveContainer width="100%" height={H}>
-          <LineChart data={annual} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+          <LineChart data={annual} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="year" {...axis} />
             <YAxis {...axis} domain={['dataMin - 0.5', 'dataMax + 0.5']} tickFormatter={(v: number) => v.toFixed(1)} />
@@ -145,7 +145,7 @@ export function ConditionsTab() {
 
       <ChartCard title={<Term id="soilMoistureAnomaly">{t.conditions.smapChart}</Term>} note={t.conditions.smapNote} demo>
         <ResponsiveContainer width="100%" height={H - 20}>
-          <BarChart data={moisture} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+          <BarChart data={moisture} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="name" {...axis} interval={0} />
             <YAxis {...axis} />
@@ -160,7 +160,7 @@ export function ConditionsTab() {
 
       <ChartCard title={t.conditions.heatChart} note={t.conditions.heatNote} demo>
         <ResponsiveContainer width="100%" height={H - 20}>
-          <BarChart data={heat} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+          <BarChart data={heat} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
             <CartesianGrid {...grid} />
             <XAxis dataKey="name" {...axis} interval={0} />
             <YAxis {...axis} domain={[0, 1]} />

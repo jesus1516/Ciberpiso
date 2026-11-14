@@ -27,7 +27,7 @@ export function Dashboard() {
         aria-hidden={!panelOpen}
         inert={!panelOpen}
         className={`absolute inset-x-0 bottom-7 z-30 flex h-[55dvh] flex-col rounded-t-2xl bg-surface shadow-2xl transition-[transform,width] duration-500 ease-out
-          lg:inset-x-auto lg:bottom-9 lg:right-3 lg:top-3 lg:h-auto lg:rounded-2xl
+          lg:inset-x-auto lg:bottom-9 lg:right-3 lg:top-16 lg:h-auto lg:rounded-2xl
           ${wide ? 'lg:w-[min(1180px,calc(100vw-1.5rem))]' : 'lg:w-[460px]'}
           ${panelOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-[110%] lg:translate-x-[110%] lg:translate-y-0'}`}
       >
@@ -57,7 +57,7 @@ export function Dashboard() {
             </button>
           ))}
         </div>
-        <div id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="flex-1 overflow-y-auto p-4">
+        <div id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="flex-1 overflow-y-auto p-4 pb-14 lg:pb-4">
           {tab === 'conditions' && <ConditionsTab />}
           {tab === 'layers' && <LayersTab />}
           {tab === 'priorities' && <PrioritiesTab />}

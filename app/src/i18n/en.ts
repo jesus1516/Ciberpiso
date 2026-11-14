@@ -153,7 +153,7 @@ export const en = {
     season: {
       erosion: (rain: number) => `Bare soil during ~${rain} mm of seasonal rain (erosion).`,
       frost: (crops: string, days: number) => `${crops} in the field with ~${days.toFixed(1)} frost days.`,
-      drought: (crops: string, balance: number) => `${crops} facing a ${balance} mm water deficit.`,
+      drought: (crops: string, balance: number) => `${crops} facing a ${Math.abs(balance)} mm water deficit.`,
       heat: 'High heat stress (demo ECOSTRESS).',
     },
   },
