@@ -1,17 +1,17 @@
-"""Datos reales de cada finca para la app (app/public/data/detalle/).
+"""Real data of each farm for the app (app/public/data/detalle/).
 
-La app pinta las fincas con pipeline.export_app_fincas; este script le da lo que se
-muestra al analizar una: relieve, cobertura (WorldCover), suelo (SoilGrids), fenología
-y serie NDVI (MODIS), y la rotación observada. Escribe un JSON comprimido por municipio
-(la app solo descarga el del municipio de la finca) y un JSON común de la provincia con
-el clima y la humedad del suelo de cada celda NASA POWER y los precios de los cultivos
-del catálogo de la app.
+The app draws the farms with pipeline.export_app_fincas; this script gives it what is
+shown when analysing one: relief, cover (WorldCover), soil (SoilGrids), phenology
+and NDVI series (MODIS), and the observed rotation. It writes one compressed JSON per
+municipality (the app only downloads that of the farm's municipality) and a common JSON
+of the province with the climate and soil moisture of each POWER cell and the prices of
+the crops in the app catalogue.
 
-Uso:
+Usage:
     python -m pipeline.export_app_detalle                # Málaga (29)
     python -m pipeline.export_app_detalle --provincia 29
 
-Salida:
+Output:
     app/public/data/detalle/{municipio_key}.json.gz
     app/public/data/comun_{provincia}.json
 """
@@ -33,7 +33,7 @@ SUELO = ["arcilla_pct", "arena_pct", "limo_pct", "cos_gkg", "ph_h2o", "densidad_
          "cic_cmolkg", "cad_0_100_mm", "gruesos_pct", "pct_superficie_con_dato"]
 FENOLOGIA = ["campana", "ndvi_media", "ndvi_max", "mes_ndvi_max", "ndvi_amplitud", "ndvi_ene_abr", "ndvi_jun_ago",
              "ndvi_oct_dic", "clase_estimada"]
-# Cultivo del catálogo de la app -> código de precio (Eurostat apri_ap_crpouta). La veza usa MAPA.
+# Crop of the app catalogue -> price code (Eurostat apri_ap_crpouta). Vetch uses MAPA.
 PRECIOS = {
     "wheat": "01110000", "barley": "01300000", "corn": "01500000", "sunflower": "02120000",
     "chickpea": "02992000", "faba": "02230000", "rye": "01200000", "canola": "02110000",
@@ -128,9 +128,9 @@ def exportar(prov: int) -> None:
     comun = SALIDA / f"comun_{prov:02d}.json"
     comun.write_text(json.dumps(_comun(csv, fincas["celda_power"].unique()), ensure_ascii=False, separators=(",", ":")),
                      encoding="utf-8")
-    print(f"{len(fincas):,} fincas en {fincas['municipio_key'].nunique()} municipios -> "
-          f"{carpeta.relative_to(ROOT)}/ ({total / 1e6:.1f} MB comprimido)")
-    print(f"Clima, humedad y precios -> {comun.relative_to(ROOT)} ({comun.stat().st_size / 1e3:.0f} kB)")
+    print(f"{len(fincas):,} farms in {fincas['municipio_key'].nunique()} municipalities -> "
+          f"{carpeta.relative_to(ROOT)}/ ({total / 1e6:.1f} MB compressed)")
+    print(f"Climate, moisture and prices -> {comun.relative_to(ROOT)} ({comun.stat().st_size / 1e3:.0f} kB)")
 
 
 def main() -> None:

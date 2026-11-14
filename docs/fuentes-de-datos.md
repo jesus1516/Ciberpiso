@@ -1,441 +1,445 @@
-# Fuentes de datos: qué ofrece cada una
+# Data sources: what each one offers
 
-Catálogo de las **26 fuentes oficiales** de la pestaña Resources del reto, más dos
-fuentes adicionales que aparecen en el enunciado o se deducen de él. Para cada una:
-qué aporta, cómo se usa en el reto, cómo se accede y qué límite tiene.
+Catalogue of the **26 official sources** in the Resources tab of the challenge, plus
+two additional sources that appear in the challenge text or can be deduced from it.
+For each one: what it provides, how it is used in the challenge, how to access it and
+what its limit is.
 
-> Verificación: 14 de noviembre de 2026. Los estados de acceso pueden cambiar.
-> No metas claves ni credenciales en el repositorio.
+> Verification: 14 November 2026. Access statuses may change.
+> Do not put keys or credentials in the repository.
 
-## Mapa rápido
+## Quick map
 
-| # | Fuente | Qué resuelve | Acceso |
+| # | Source | What it solves | Access |
 | --- | --- | --- | --- |
-| 1 | SMAP | Humedad del suelo y freeze/thaw | Earthdata |
-| 2 | GPM / IMERG | Lluvia global | Earthdata |
-| 3 | Landsat | Reflectancia y NDVI a 30 m | USGS/Earthdata |
-| 4 | MODIS | Índices de vegetación y LST diarios | Earthdata |
-| 5 | VIIRS | Vegetación, fuego y LST | Earthdata |
-| 6 | NASA POWER | Clima diario por punto | Abierto |
-| 7 | SRTM | Elevación y pendiente | Earthdata |
-| 8 | ECOSTRESS | LST y ET a ~70 m | Earthdata |
-| 9 | Ag Data Commons | Catálogo de datos agrícolas | Abierto |
-| 10 | Web Soil Survey | Suelos oficiales por AOI | Manual |
-| 11 | CDL / CropScape | Cultivo anual a 30 m | Web/bulk |
-| 12 | PRISM | Clima local de EE. UU. | Abierto |
-| 13 | SSURGO / STATSGO2 | Atributos de suelo | SDA abierto |
-| 14 | NAIP | Aérea 1 m | Abierto |
-| 15 | NLCD | Cobertura del suelo 30 m | Abierto |
-| 16 | NLDAS / GLDAS | Series continuas de tierra | Earthdata |
-| 17 | GAEZ | Idoneidad agroclimática global | Registro |
-| 18 | CoCoRaHS | Lluvia ciudadana | Abierto |
-| 19 | NWIS | Caudal y agua subterránea | Abierto |
-| 20 | AMS Market News | Precios y mercado | API key |
-| 21 | QuickStats | Rendimiento y superficie | API key |
-| 22 | OpenET | ET a escala de campo | API key |
-| 23 | LANDFIRE | Vegetación y combustible | Abierto |
-| 24 | GEDI | Altura de dosel y biomasa | Earthdata |
-| 25 | Sentinel-2 | Multiespectral 10–20 m | OAuth |
-| 26 | ERA5 | Reanálisis horario global | CDS key |
-| + | GRACE / GRACE-FO | Agua almacenada | Earthdata |
-| + | GIBS | Teselas de visualización | Abierto |
+| 1 | SMAP | Soil moisture and freeze/thaw | Earthdata |
+| 2 | GPM / IMERG | Global rainfall | Earthdata |
+| 3 | Landsat | Reflectance and NDVI at 30 m | USGS/Earthdata |
+| 4 | MODIS | Daily vegetation indices and LST | Earthdata |
+| 5 | VIIRS | Vegetation, fire and LST | Earthdata |
+| 6 | POWER | Daily climate per point | Open |
+| 7 | SRTM | Elevation and slope | Earthdata |
+| 8 | ECOSTRESS | LST and ET at ~70 m | Earthdata |
+| 9 | Ag Data Commons | Catalogue of agricultural data | Open |
+| 10 | Web Soil Survey | Official soils per AOI | Manual |
+| 11 | CDL / CropScape | Annual crop at 30 m | Web/bulk |
+| 12 | PRISM | Local US climate | Open |
+| 13 | SSURGO / STATSGO2 | Soil attributes | Open SDA |
+| 14 | NAIP | 1 m aerial imagery | Open |
+| 15 | NLCD | Land cover 30 m | Open |
+| 16 | NLDAS / GLDAS | Continuous land series | Earthdata |
+| 17 | GAEZ | Global agro-climatic suitability | Registration |
+| 18 | CoCoRaHS | Citizen rainfall | Open |
+| 19 | NWIS | Streamflow and groundwater | Open |
+| 20 | AMS Market News | Prices and market | API key |
+| 21 | QuickStats | Yield and area | API key |
+| 22 | OpenET | Field-scale ET | API key |
+| 23 | LANDFIRE | Vegetation and fuel | Open |
+| 24 | GEDI | Canopy height and biomass | Earthdata |
+| 25 | Sentinel-2 | Multispectral 10–20 m | OAuth |
+| 26 | ERA5 | Global hourly reanalysis | CDS key |
+| + | GRACE / GRACE-FO | Stored water | Earthdata |
+| + | GIBS | Visualisation tiles | Open |
 
 ---
 
-## Clima y atmósfera
+## Climate and atmosphere
 
-### 6. NASA POWER
+### 6. POWER
 
-**Qué ofrece:** agroclimatología diaria y mensual por punto: temperatura media,
-mínima y máxima, humedad relativa, precipitación corregida, radiación, viento y
-punto de rocío. Fuente MERRA-2 y modelos POWER, resolución 0,5° × 0,625°.
+**What it offers:** daily and monthly agroclimatology per point: mean, minimum and
+maximum temperature, relative humidity, corrected precipitation, radiation, wind and
+dew point. MERRA-2 source and POWER models, resolution 0.5° × 0.625°.
 
-**Uso en el reto:** lluvia de temporada, días de calor, heladas, grados-día,
-radiación y balance hídrico simplificado. Es la fuente más fácil para el MVP.
+**Use in the challenge:** season rainfall, heat days, frosts, degree-days, radiation
+and a simplified water balance. It is the easiest source for the MVP.
 
-**Acceso:** API REST abierta, sin clave. Devuelve JSON o CSV.
+**Access:** open REST API, no key. Returns JSON or CSV.
 
-**Límite:** es un producto modelado, no una estación local. No prometas precisión de
-parcela. Las fechas van en formato `AAAAMMDD`.
+**Limit:** it is a modelled product, not a local station. Do not promise plot
+precision. Dates use the `YYYYMMDD` format.
 
 ### 2. GPM / IMERG
 
-**Qué ofrece:** precipitación global a 0,1°, cada 30 minutos y acumulados diarios.
-Combina el GPM Core Observatory con una constelación de satélites.
+**What it offers:** global precipitation at 0.1°, every 30 minutes and daily totals.
+It combines the GPM Core Observatory with a constellation of satellites.
 
-**Uso en el reto:** intensidad de lluvia, torrencialidad, riesgo de erosión y
-comparación con POWER/PRISM.
+**Use in the challenge:** rainfall intensity, torrentiality, erosion risk and
+comparison with POWER/PRISM.
 
-**Acceso:** Earthdata Login (GES DISC). Las capas de visualización están en GIBS.
+**Access:** Earthdata Login (GES DISC). Visualisation layers are in GIBS.
 
-**Límite:** la lluvia satelital tiene incertidumbre y sesgo; valida con pluviómetros
-(CoCoRaHS) antes de afirmar extremos locales.
+**Limit:** satellite rainfall has uncertainty and bias; validate with rain gauges
+(CoCoRaHS) before claiming local extremes.
 
 ### 12. PRISM
 
-**Qué ofrece:** clima de EE. UU. con efecto topográfico: normales de 30 años a 800 m
-y series diarias/mensuales a 4 km. Precipitación, temperatura, heladas.
+**What it offers:** US climate with topographic effect: 30-year normals at 800 m and
+daily/monthly series at 4 km. Precipitation, temperature, frosts.
 
-**Uso en el reto:** contraste local con POWER y contexto climático del condado.
+**Use in the challenge:** local cross-check with POWER and climate context of the
+county.
 
-**Acceso:** descarga abierta; algunos productos piden registro.
+**Access:** open download; some products require registration.
 
-**Límite:** solo EE. UU.; la serie diaria es de 4 km, no de 800 m.
+**Limit:** US only; the daily series is 4 km, not 800 m.
 
 ### 26. ERA5 (ECMWF/Copernicus)
 
-**Qué ofrece:** reanálisis global horario desde 1940 a 0,25°: temperatura,
-precipitación, viento, humedad y radiación.
+**What it offers:** global hourly reanalysis since 1940 at 0.25°: temperature,
+precipitation, wind, humidity and radiation.
 
-**Uso en el reto:** rellenar huecos, construir escenarios históricos y comparar
-tendencias fuera de EE. UU.
+**Use in the challenge:** fill gaps, build historical scenarios and compare trends
+outside the US.
 
-**Acceso:** CDS API key (`~/.cdsapirc`).
+**Access:** CDS API key (`~/.cdsapirc`).
 
-**Límite:** modelado y de escala gruesa; no sustituye una estación.
+**Limit:** modelled and coarse-scale; it does not replace a station.
 
 ### 16. NLDAS / GLDAS
 
-**Qué ofrece:** asimilación de datos de tierra: humedad del suelo, ET,
-precipitación, radiación y temperatura. NLDAS cubre EE. UU. a 0,125° horario; GLDAS
-es global a 0,25°.
+**What it offers:** land data assimilation: soil moisture, ET, precipitation,
+radiation and temperature. NLDAS covers the US at 0.125° hourly; GLDAS is global at
+0.25°.
 
-**Uso en el reto:** series continuas para rellenar huecos y comparar balances.
+**Use in the challenge:** continuous series to fill gaps and compare balances.
 
-**Acceso:** Earthdata Login (GES DISC). Algunas variables mensuales están en GIBS.
+**Access:** Earthdata Login (GES DISC). Some monthly variables are in GIBS.
 
-**Límite:** es un modelo, no una observación directa.
+**Limit:** it is a model, not a direct observation.
 
 ---
 
-## Suelo, humedad y agua
+## Soil, moisture and water
 
 ### 1. SMAP
 
-**Qué ofrece:** humedad superficial del suelo, humedad de zona radicular (L4) y
-estado de congelación/descongelación. Resolución de 9 km en L4, revisita de 2–3 días.
+**What it offers:** surface soil moisture, root-zone moisture (L4) and
+freeze/thaw state. 9 km resolution in L4, 2–3 day revisit.
 
-**Uso en el reto:** sequía, infiltración y señal temprana de estrés hídrico.
+**Use in the challenge:** drought, infiltration and early signal of water stress.
 
-**Acceso:** Earthdata Login (NSIDC DAAC). GIBS tiene capas de visualización
+**Access:** Earthdata Login (NSIDC DAAC). GIBS has visualisation layers
 (`SMAP_L4_Analyzed_Surface_Soil_Moisture`, freeze/thaw).
 
-**Límite:** 9 km y huecos; no es resolución de parcela. No uses un PNG de GIBS como
-si fuera un valor de humedad.
+**Limit:** 9 km and gaps; it is not plot resolution. Do not use a GIBS PNG as if it
+were a moisture value.
 
 ### 13. SSURGO / STATSGO2
 
-**Qué ofrece:** atributos oficiales de suelo a escala de campo y regional: textura,
-materia orgánica, grupo hidrológico, drenaje, capacidad de retención de agua,
-erosión y idoneidad.
+**What it offers:** official soil attributes at field and regional scale: texture,
+organic matter, hydrologic group, drainage, water holding capacity, erosion and
+suitability.
 
-**Uso en el reto:** línea base de suelo, retención de agua y riesgo de escorrentía.
+**Use in the challenge:** soil baseline, water retention and runoff risk.
 
-**Acceso:** Soil Data Access (SDA), SQL vía POST, sin clave. Verificado.
+**Access:** Soil Data Access (SDA), SQL via POST, no key. Verified.
 
-**Límite:** solo EE. UU.; son polígonos de mapas de suelo, no muestras de campo.
-Comprueba las unidades de cada campo en el diccionario SSURGO.
+**Limit:** US only; they are soil-map polygons, not field samples. Check the units of
+each field in the SSURGO dictionary.
 
 ### 10. Web Soil Survey
 
-**Qué ofrece:** interfaz web oficial para delimitar un AOI y consultar mapas y
-propiedades de suelo, con informes descargables.
+**What it offers:** official web interface to delimit an AOI and query soil maps and
+properties, with downloadable reports.
 
-**Uso en el reto:** exploración manual y validación de SSURGO.
+**Use in the challenge:** manual exploration and SSURGO validation.
 
-**Acceso:** web, exportación manual.
+**Access:** web, manual export.
 
-**Límite:** no es una API; para automatizar usa SSURGO/SDA. Solo EE. UU.
+**Limit:** it is not an API; to automate use SSURGO/SDA. US only.
 
 ### 19. USGS NWIS
 
-**Qué ofrece:** caudal, nivel de agua subterránea, calidad de agua y datos diarios
-de estaciones de EE. UU.
+**What it offers:** streamflow, groundwater level, water quality and daily data from
+US stations.
 
-**Uso en el reto:** contexto de cuenca, disponibilidad de agua y estrés aguas abajo.
+**Use in the challenge:** basin context, water availability and downstream stress.
 
-**Acceso:** API REST JSON abierta. Verificado.
+**Access:** open JSON REST API. Verified.
 
-**Límite:** mide en la estación, no en la parcela; los datos provisionales pueden
-cambiar.
+**Limit:** it measures at the station, not at the plot; provisional data may change.
 
 ### 22. OpenET
 
-**Qué ofrece:** evapotranspiración a escala de campo (≈30 m) a partir de Landsat y
-Sentinel-2, con varios modelos.
+**What it offers:** field-scale evapotranspiration (≈30 m) from Landsat and
+Sentinel-2, with several models.
 
-**Uso en el reto:** demanda hídrica y eficiencia de riego.
+**Use in the challenge:** water demand and irrigation efficiency.
 
-**Acceso:** API key; también hay explorador web.
+**Access:** API key; there is also a web explorer.
 
-**Límite:** solo oeste de EE. UU.; es un conjunto de modelos, no una medición directa.
+**Limit:** western US only; it is an ensemble of models, not a direct measurement.
 
 ### 8. ECOSTRESS
 
-**Qué ofrece:** temperatura de superficie y evapotranspiración a ~70 m desde la ISS.
+**What it offers:** surface temperature and evapotranspiration at ~70 m from the ISS.
 
-**Uso en el reto:** hotspots de estrés térmico y demanda de agua a escala de campo.
+**Use in the challenge:** heat-stress hotspots and field-scale water demand.
 
-**Acceso:** Earthdata Login / AppEEARS.
+**Access:** Earthdata Login / AppEEARS.
 
-**Límite:** revisita irregular y cobertura limitada; no hay serie diaria completa.
+**Limit:** irregular revisit and limited coverage; there is no complete daily series.
 
 ### + GRACE / GRACE-FO
 
-**Qué ofrece:** anomalías de agua total almacenada (suelo, agua superficial,
-nieve y subterránea) en mascons de ~0,5°, mensuales.
+**What it offers:** total stored water anomalies (soil, surface water, snow and
+groundwater) in ~0.5° mascons, monthly.
 
-**Uso en el reto:** tendencias de agua almacenada a largo plazo y contexto regional.
+**Use in the challenge:** long-term stored water trends and regional context.
 
-**Acceso:** PO.DAAC / JPL, Earthdata Login. El enunciado lo cita sin enlace propio.
+**Access:** PO.DAAC / JPL, Earthdata Login. The challenge text cites it without its
+own link.
 
-**Límite:** resolución muy gruesa y mensual; no sirve para una parcela.
+**Limit:** very coarse and monthly resolution; it is not useful for a plot.
 
 ---
 
-## Vegetación, cultivo y cobertura
+## Vegetation, crop and cover
 
 ### 3. Landsat
 
-**Qué ofrece:** reflectancia multiespectral a 30 m, revisita de 16 días (Landsat 8/9),
-NDVI, índices de vegetación, temperatura y cambios de cobertura.
+**What it offers:** multispectral reflectance at 30 m, 16-day revisit (Landsat 8/9),
+NDVI, vegetation indices, temperature and land-cover change.
 
-**Uso en el reto:** condición de la vegetación, suelo desnudo, límites de parcela y
-series históricas.
+**Use in the challenge:** vegetation condition, bare soil, plot boundaries and
+historical series.
 
-**Acceso:** USGS EarthExplorer / Earthdata Login.
+**Access:** USGS EarthExplorer / Earthdata Login.
 
-**Límite:** nubosidad y revisita; un píxel de 30 m puede mezclar cultivo y camino.
+**Limit:** cloudiness and revisit; a 30 m pixel may mix crop and track.
 
 ### 4. MODIS
 
-**Qué ofrece:** índices de vegetación, LST y cobertura a 250–1000 m, diarios y
-compuestos de 8/16 días.
+**What it offers:** vegetation indices, LST and cover at 250–1000 m, daily and 8/16-day
+composites.
 
-**Uso en el reto:** fenología, sequía y estrés térmico a escala regional.
+**Use in the challenge:** phenology, drought and heat stress at regional scale.
 
-**Acceso:** LP DAAC / Earthdata Login. GIBS tiene capas diarias de LST.
+**Access:** LP DAAC / Earthdata Login. GIBS has daily LST layers.
 
-**Límite:** resolución gruesa; los compuestos pueden ocultar eventos cortos.
+**Limit:** coarse resolution; composites can hide short events.
 
 ### 5. VIIRS
 
-**Qué ofrece:** índices de vegetación, LST, fuego activo y luces nocturnas a 375–750 m.
+**What it offers:** vegetation indices, LST, active fire and night lights at 375–750 m.
 
-**Uso en el reto:** complemento de MODIS y contexto de incendios o sequía.
+**Use in the challenge:** complement to MODIS and fire or drought context.
 
-**Acceso:** LP DAAC / Earthdata Login.
+**Access:** LP DAAC / Earthdata Login.
 
-**Límite:** similar a MODIS; no es adecuado para decisiones de parcela.
+**Limit:** similar to MODIS; not suitable for plot decisions.
 
 ### 11. CDL / CropScape
 
-**Qué ofrece:** clasificación anual de cultivo a 30 m para EE. UU., desde 2008.
+**What it offers:** annual crop classification at 30 m for the US, since 2008.
 
-**Uso en el reto:** reconstruir la rotación actual, medir diversidad y detectar suelo
-desnudo.
+**Use in the challenge:** reconstruct the current rotation, measure diversity and
+detect bare soil.
 
-**Acceso:** web de CropScape y descarga masiva. El servicio SOAP está vivo pero es
-frágil; no lo pongas en la ruta crítica de la demo.
+**Access:** CropScape web and bulk download. The SOAP service is alive but fragile;
+do not put it on the critical path of the demo.
 
-**Límite:** solo EE. UU.; errores de clasificación y no dice manejo ni variedad.
+**Limit:** US only; classification errors, and it does not tell management or variety.
 
 ### 14. NAIP
 
-**Qué ofrece:** fotografía aérea de 1 m en época de cultivo, con ciclo de 2–3 años.
+**What it offers:** 1 m aerial photography in the growing season, on a 2–3 year cycle.
 
-**Uso en el reto:** límites de parcela, suelo desnudo, validación visual y contexto.
+**Use in the challenge:** plot boundaries, bare soil, visual validation and context.
 
-**Acceso:** USDA ArcGIS Hub, abierto.
+**Access:** USDA ArcGIS Hub, open.
 
-**Límite:** no es diaria ni multiespectral para análisis; es imagery.
+**Limit:** it is not daily or multispectral for analysis; it is imagery.
 
 ### 15. NLCD
 
-**Qué ofrece:** cobertura del suelo a 30 m, multidecadal, con impervious y dosel.
+**What it offers:** 30 m land cover, multi-decadal, with impervious surfaces and
+canopy.
 
-**Uso en el reto:** contexto de microclima, línea base y cambio de cobertura.
+**Use in the challenge:** microclimate context, baseline and cover change.
 
-**Acceso:** MRLC, descarga abierta.
+**Access:** MRLC, open download.
 
-**Límite:** solo EE. UU.; clases generales, no cultivo específico.
+**Limit:** US only; general classes, not specific crops.
 
 ### 24. GEDI
 
-**Qué ofrece:** lidar espacial para altura de dosel, LAI y biomasa (L4).
+**What it offers:** spaceborne lidar for canopy height, LAI and biomass (L4).
 
-**Uso en el reto:** cobertura leñosa, cortavientos y carbono; contexto, no cultivo.
+**Use in the challenge:** woody cover, windbreaks and carbon; context, not crops.
 
-**Acceso:** ORNL DAAC / Earthdata Login. Enlace en la pestaña Resources:
+**Access:** ORNL DAAC / Earthdata Login. Link in the Resources tab:
 <https://gedi.umd.edu/data>.
 
-**Límite:** muestreo por franjas, no pared a pared; no es para campos de cultivo.
+**Limit:** swath sampling, not wall-to-wall; it is not for cropland.
 
 ### 23. LANDFIRE
 
-**Qué ofrece:** tipo y condición de vegetación, combustible y perturbaciones a 30 m.
+**What it offers:** vegetation type and condition, fuel and disturbances at 30 m.
 
-**Uso en el reto:** cobertura perenne y contexto de fuego; útil en bordes y zonas no
-agrícolas.
+**Use in the challenge:** perennial cover and fire context; useful at edges and
+non-agricultural areas.
 
-**Acceso:** descarga abierta.
+**Access:** open download.
 
-**Límite:** solo EE. UU.; no describe manejo agrícola.
+**Limit:** US only; it does not describe agricultural management.
 
 ### 25. Sentinel-2 (ESA)
 
-**Qué ofrece:** multiespectral a 10–20 m, 5 días de revisita con dos satélites,
-bandas red-edge, NIR y SWIR; NDVI/EVI.
+**What it offers:** multispectral at 10–20 m, 5-day revisit with two satellites,
+red-edge, NIR and SWIR bands; NDVI/EVI.
 
-**Uso en el reto:** alternativa global a Landsat, mejor resolución y frecuencia.
+**Use in the challenge:** global alternative to Landsat, better resolution and
+frequency.
 
-**Acceso:** Copernicus Data Space, OAuth.
+**Access:** Copernicus Data Space, OAuth.
 
-**Límite:** nubosidad; no siempre hay producto listo para análisis.
+**Limit:** cloudiness; there is not always an analysis-ready product.
 
 ---
 
-## Contexto agrícola, validación y mercado
+## Agricultural context, validation and market
 
 ### 9. USDA Ag Data Commons
 
-**Qué ofrece:** catálogo y conjuntos de datos agrícolas: suelos, cultivos, manejo,
-fenología y calidad de agua.
+**What it offers:** catalogue and datasets on agriculture: soils, crops, management,
+phenology and water quality.
 
-**Uso en el reto:** contexto local, validación y datos de manejo que no están en el
-satélite.
+**Use in the challenge:** local context, validation and management data that are not
+in the satellite.
 
-**Acceso:** abierto; algunos conjuntos piden registro.
+**Access:** open; some datasets require registration.
 
-**Límite:** formatos y licencias heterogéneos; revisa cada dataset.
+**Limit:** heterogeneous formats and licences; review each dataset.
 
 ### 17. FAO GAEZ
 
-**Qué ofrece:** zonas agroecológicas globales, idoneidad de cultivos, restricciones
-de suelo/clima y potencial de rendimiento.
+**What it offers:** global agro-ecological zones, crop suitability, soil/climate
+constraints and yield potential.
 
-**Uso en el reto:** alternativa global cuando CDL/SSURGO no aplican.
+**Use in the challenge:** global alternative when CDL/SSURGO do not apply.
 
-**Acceso:** registro y descarga.
+**Access:** registration and download.
 
-**Límite:** estático y de escala gruesa; no es una recomendación de parcela.
+**Limit:** static and coarse-scale; it is not a plot recommendation.
 
 ### 18. CoCoRaHS
 
-**Qué ofrece:** precipitación diaria de observadores voluntarios, con mapas y series.
+**What it offers:** daily precipitation from volunteer observers, with maps and
+series.
 
-**Uso en el reto:** validar IMERG/POWER y detectar extremos locales.
+**Use in the challenge:** validate IMERG/POWER and detect local extremes.
 
-**Acceso:** web abierta.
+**Access:** open web.
 
-**Límite:** red voluntaria, cobertura irregular; calidad variable.
+**Limit:** volunteer network, irregular coverage; variable quality.
 
 ### 20. USDA AMS Market News
 
-**Qué ofrece:** precios, oferta y demanda de productos agrícolas y ganaderos.
+**What it offers:** prices, supply and demand of agricultural and livestock products.
 
-**Uso en el reto:** viabilidad de mercado de la rotación propuesta.
+**Use in the challenge:** market viability of the proposed rotation.
 
-**Acceso:** MARS API con key; informes web abiertos.
+**Access:** MARS API with key; open web reports.
 
-**Límite:** cobertura variable; no es una previsión de precios.
+**Limit:** variable coverage; it is not a price forecast.
 
 ### 21. USDA NASS QuickStats
 
-**Qué ofrece:** rendimiento, superficie plantada, producción y precios por condado y
-estado.
+**What it offers:** yield, planted area, production and prices by county and state.
 
-**Uso en el reto:** línea base de productividad y contexto de mercado.
+**Use in the challenge:** productivity baseline and market context.
 
-**Acceso:** API key; consulta web abierta.
+**Access:** API key; open web query.
 
-**Límite:** datos agregados; no hay parcela ni manejo.
+**Limit:** aggregated data; no plot or management.
 
 ---
 
-## Visualización
+## Visualisation
 
 ### + GIBS
 
-**Qué ofrece:** servicio WMTS con teselas de imagen de NASA: MODIS LST, IMERG,
-SMAP L4, GLDAS y muchas más.
+**What it offers:** WMTS service with image tiles from the space agency: MODIS LST,
+IMERG, SMAP L4, GLDAS and many more.
 
-**Uso en el reto:** mapa base, overlays y narración visual de la demo.
+**Use in the challenge:** base map, overlays and visual storytelling of the demo.
 
-**Acceso:** WMTS abierto, sin clave. Verificado.
+**Access:** open WMTS, no key. Verified.
 
-**Límite:** las teselas son PNG con una rampa de color; **no son datos
-cuantitativos**. Para calcular usa el producto del DAAC, no el PNG.
+**Limit:** the tiles are PNGs with a colour ramp; **they are not quantitative data**.
+To compute, use the DAAC product, not the PNG.
 
-> **Corrección verificada:** GIBS sí tiene capas de SMAP L4, IMERG y GLDAS, además de
-> MODIS LST. La investigación inicial decía que no había SMAP/IMERG; era incorrecto.
-> Lo que no cambia es que son imágenes para visualizar, no para extraer valores.
+> **Verified correction:** GIBS does have SMAP L4, IMERG and GLDAS layers, in addition
+> to MODIS LST. The initial research said there was no SMAP/IMERG; that was incorrect.
+> What does not change is that they are images for visualising, not for extracting
+> values.
 
 ---
 
-## Qué fuente usar para cada pregunta
+## Which source to use for each question
 
-| Pregunta | Fuente principal | Alternativa |
+| Question | Main source | Alternative |
 | --- | --- | --- |
-| ¿Cuánto llueve en la temporada? | POWER | PRISM, IMERG |
-| ¿Hay riesgo de helada? | POWER | PRISM |
-| ¿Cuánta agua puede retener el suelo? | SSURGO | WSS |
-| ¿Qué cultivo había antes? | CDL | NAIP |
-| ¿Hay estrés vegetal? | Landsat/MODIS NDVI | Sentinel-2 |
-| ¿Hace calor extremo? | POWER | MODIS LST, ECOSTRESS |
-| ¿Hay agua superficial? | NWIS | GRACE |
-| ¿Qué mercado tiene? | QuickStats/AMS | Input del agricultor |
-| ¿Dónde se ve en el mapa? | GIBS | NAIP |
+| How much does it rain in the season? | POWER | PRISM, IMERG |
+| Is there frost risk? | POWER | PRISM |
+| How much water can the soil hold? | SSURGO | WSS |
+| What crop was there before? | CDL | NAIP |
+| Is there plant stress? | Landsat/MODIS NDVI | Sentinel-2 |
+| Is there extreme heat? | POWER | MODIS LST, ECOSTRESS |
+| Is there surface water? | NWIS | GRACE |
+| What market does it have? | QuickStats/AMS | Farmer input |
+| Where does it show on the map? | GIBS | NAIP |
 
 ## Shortlists
 
-### Si solo hay 2 horas
+### If there are only 2 hours
 
-POWER + SSURGO (SDA) + NLCD + GIBS. Con eso puedes hacer un mapa, un perfil de suelo
-y una comparación climática básica.
+POWER + SSURGO (SDA) + NLCD + GIBS. With that you can make a map, a soil profile and
+a basic climate comparison.
 
-### Si hay un día
+### If there is a day
 
-Añade CDL, PRISM, NWIS y SRTM. Ya puedes reconstruir la rotación actual, contrastar
-clima y calcular pendiente.
+Add CDL, PRISM, NWIS and SRTM. You can now reconstruct the current rotation,
+cross-check climate and compute slope.
 
-### Si hay Earthdata Login
+### If there is an Earthdata Login
 
-Añade SMAP, IMERG y Landsat. Úsalos para humedad, lluvia intensa y NDVI. Cachea el
-AOI antes de la demo.
+Add SMAP, IMERG and Landsat. Use them for moisture, heavy rain and NDVI. Cache the
+AOI before the demo.
 
-### Si sobra tiempo
+### If there is time left
 
-ECOSTRESS, GEDI, GRACE, OpenET, QuickStats y AMS. Son valiosos, pero cada uno añade
-autenticación, latencia o incertidumbre.
+ECOSTRESS, GEDI, GRACE, OpenET, QuickStats and AMS. They are valuable, but each one
+adds authentication, latency or uncertainty.
 
-## Verificación de endpoints (2026-11-14)
+## Endpoint verification (2026-11-14)
 
-| Endpoint | Resultado |
+| Endpoint | Result |
 | --- | --- |
-| `power.larc.nasa.gov/api/temporal/daily/point` | 200 JSON, sin clave |
-| `cmr.earthdata.nasa.gov/search/collections.json` | 200, sin clave |
-| `gibs.earthdata.nasa.gov/.../WMTSCapabilities.xml` | 200, ~5,8 MB |
-| Tesela GIBS SMAP L4 | 200 PNG |
-| Tesela GIBS IMERG | 200 PNG |
-| Tesela GIBS MODIS LST | 200 PNG |
-| Tesela GIBS GLDAS | 200 PNG |
+| `power.larc.nasa.gov/api/temporal/daily/point` | 200 JSON, no key |
+| `cmr.earthdata.nasa.gov/search/collections.json` | 200, no key |
+| `gibs.earthdata.nasa.gov/.../WMTSCapabilities.xml` | 200, ~5.8 MB |
+| GIBS SMAP L4 tile | 200 PNG |
+| GIBS IMERG tile | 200 PNG |
+| GIBS MODIS LST tile | 200 PNG |
+| GIBS GLDAS tile | 200 PNG |
 | `waterservices.usgs.gov/nwis/dv/?format=json` | 200 JSON |
-| `sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest` | 200 JSON con consulta |
-| `appeears.earthdatacloud.nasa.gov/api/` | 200; login para tareas |
-| `nassgeodata.gmu.edu/axis2/services/CDLService` | Vivo; SOAP frágil |
-| `quickstats.nass.usda.gov/api/api_GET` | 401 sin key |
-| `marsapi.ams.usda.gov/services/v1.2/reports` | 403 sin key |
-| `openet-api.org` | 200 docs; key para datos |
+| `sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest` | 200 JSON with query |
+| `appeears.earthdatacloud.nasa.gov/api/` | 200; login for tasks |
+| `nassgeodata.gmu.edu/axis2/services/CDLService` | Alive; fragile SOAP |
+| `quickstats.nass.usda.gov/api/api_GET` | 401 without key |
+| `marsapi.ams.usda.gov/services/v1.2/reports` | 403 without key |
+| `openet-api.org` | 200 docs; key for data |
 
-## Errores comunes
+## Common mistakes
 
-- **Confundir resolución con precisión.** Un píxel de 30 m no garantiza 30 m de
-  exactitud.
-- **Usar GIBS como dato.** Es una imagen coloreada; no leas valores del PNG.
-- **Mezclar unidades.** mm/día con mm/mes, °C con K, fracción con porcentaje.
-- **Comparar ET modelada con una medición de campo** sin decirlo.
-- **Prometer escala de parcela con SMAP (9 km) o POWER (0,5°).**
-- **Ignorar nubosidad y huecos.** Una media sin cobertura puede mentir.
-- **Citar la fuente solo en el README.** Cada tarjeta de la app debe llevar fuente y
-  fecha.
+- **Confusing resolution with accuracy.** A 30 m pixel does not guarantee 30 m of
+  accuracy.
+- **Using GIBS as data.** It is a coloured image; do not read values from the PNG.
+- **Mixing units.** mm/day with mm/month, °C with K, fraction with percentage.
+- **Comparing modelled ET with a field measurement** without saying so.
+- **Promising plot scale with SMAP (9 km) or POWER (0.5°).**
+- **Ignoring cloudiness and gaps.** A mean without coverage can lie.
+- **Citing the source only in the README.** Each app card must carry a source and date.

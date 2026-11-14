@@ -1,1 +1,1 @@
-"""Pipeline de datos de Ciberpiso: SIGPAC + NASA POWER + SoilGrids para España."""
+"""Ciberpiso data pipeline: SIGPAC + POWER + SoilGrids for Spain."""

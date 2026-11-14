@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Audita la salida de la calculadora contra los requisitos del reto.
+"""Audit the calculator output against the challenge requirements.
 
-Comprueba que cada rotación tenga los cinco campos obligatorios, que cada
-indicador declare fuente/fecha/unidad/confianza/laguna, que los rankings sean
-coherentes y que no haya empates arbitrarios ni notas fuera de rango.
+Checks that each rotation has the five mandatory fields, that each
+indicator declares source/date/unit/confidence/gap, that the rankings are
+consistent and that there are no arbitrary ties or out-of-range scores.
 
-Uso:
+Usage:
     python3 pipeline/audit.py
 """
 
@@ -40,66 +40,66 @@ def auditar(data: dict) -> dict:
     indicadores = 0
 
     if len(candidatos) != 60:
-        fallos.append(f"Se esperaban 60 fincas, hay {len(candidatos)}")
+        fallos.append(f"60 farms expected, found {len(candidatos)}")
     for campo in ("disclaimer", "glossary", "sources"):
         if not data.get(campo):
-            fallos.append(f"Falta el campo global {campo}")
+            fallos.append(f"Missing global field {campo}")
 
     for candidato in candidatos:
         parcela = candidato.get("parcela_id", "?")
         if len(candidato.get("campaigns", [])) != 6:
-            fallos.append(f"{parcela}: no tiene 6 campañas")
+            fallos.append(f"{parcela}: does not have 6 seasons")
         if len(candidato.get("rotations", {})) != 4:
-            fallos.append(f"{parcela}: no tiene 4 rotaciones")
+            fallos.append(f"{parcela}: does not have 4 rotations")
         for rid, rot in candidato.get("rotations", {}).items():
             rotaciones += 1
             for campo in CAMPOS_OBLIGATORIOS:
                 valor = rot.get(campo)
                 if not valor:
-                    fallos.append(f"{parcela}/{rid}: falta {campo}")
+                    fallos.append(f"{parcela}/{rid}: missing {campo}")
                 elif isinstance(valor, list) and not any(str(x).strip() for x in valor):
-                    fallos.append(f"{parcela}/{rid}: {campo} vacío")
+                    fallos.append(f"{parcela}/{rid}: {campo} empty")
                 elif isinstance(valor, str) and not valor.strip():
-                    fallos.append(f"{parcela}/{rid}: {campo} vacío")
+                    fallos.append(f"{parcela}/{rid}: {campo} empty")
 
             for key in INDICADORES:
                 indicador = rot.get("indicators", {}).get(key)
                 if not indicador:
-                    fallos.append(f"{parcela}/{rid}: falta el indicador {key}")
+                    fallos.append(f"{parcela}/{rid}: missing indicator {key}")
                     continue
                 indicadores += 1
                 for campo in CAMPOS_INDICADOR:
                     if indicador.get(campo) in (None, ""):
-                        fallos.append(f"{parcela}/{rid}/{key}: falta {campo}")
+                        fallos.append(f"{parcela}/{rid}/{key}: missing {campo}")
                 if indicador.get("value") is None and not (
                     key == "profit" and rot.get("profit") is None
                 ):
-                    fallos.append(f"{parcela}/{rid}/{key}: valor nulo no justificado")
+                    fallos.append(f"{parcela}/{rid}/{key}: unjustified null value")
 
             for key in ("water", "water_p20", "soil", "risk"):
                 valor = rot.get(key)
                 if not isinstance(valor, (int, float)) or math.isnan(valor):
-                    fallos.append(f"{parcela}/{rid}: {key} no numérico")
+                    fallos.append(f"{parcela}/{rid}: {key} not numeric")
                 elif not 0.0 <= valor <= 100.0:
-                    fallos.append(f"{parcela}/{rid}: {key} fuera de 0-100")
+                    fallos.append(f"{parcela}/{rid}: {key} outside 0-100")
             profit = rot.get("profit")
             if profit is not None and not 0.0 <= profit <= 100.0:
-                fallos.append(f"{parcela}/{rid}: profit fuera de 0-100")
+                fallos.append(f"{parcela}/{rid}: profit outside 0-100")
             if rot.get("comparable") is not (profit is not None):
-                fallos.append(f"{parcela}/{rid}: comparable no coincide con profit")
+                fallos.append(f"{parcela}/{rid}: comparable does not match profit")
 
             for perfil, ranking in rot.get("rankings", {}).items():
                 if ranking.get("partial"):
                     if ranking.get("rank") is not None:
-                        fallos.append(f"{parcela}/{rid}/{perfil}: parcial con rank")
+                        fallos.append(f"{parcela}/{rid}/{perfil}: partial with rank")
                     if ranking.get("final_score") is not None:
                         fallos.append(
-                            f"{parcela}/{rid}/{perfil}: parcial con final_score"
+                            f"{parcela}/{rid}/{perfil}: partial with final_score"
                         )
                 elif ranking.get("final_score") is None:
-                    fallos.append(f"{parcela}/{rid}/{perfil}: completo sin final_score")
+                    fallos.append(f"{parcela}/{rid}/{perfil}: complete without final_score")
                 if ranking.get("rank") is not None and ranking["rank"] < 1:
-                    fallos.append(f"{parcela}/{rid}/{perfil}: rank inválido")
+                    fallos.append(f"{parcela}/{rid}/{perfil}: invalid rank")
 
         for perfil in data.get("profiles", {}):
             completos = [
@@ -114,7 +114,7 @@ def auditar(data: dict) -> dict:
                 notas = {r["rankings"][perfil]["final_score"] for r in grupo}
                 if len(notas) != 1:
                     fallos.append(
-                        f"{parcela}/{perfil}: puesto {puesto} con notas distintas"
+                        f"{parcela}/{perfil}: place {puesto} with different scores"
                     )
                 if len(grupo) > 1:
                     for rot in grupo:
@@ -122,21 +122,21 @@ def auditar(data: dict) -> dict:
                         if sorted(rot["rankings"][perfil]["tied_with"]) != sorted(
                             esperados
                         ):
-                            fallos.append(f"{parcela}/{perfil}: empate mal declarado")
+                            fallos.append(f"{parcela}/{perfil}: tie wrongly declared")
             notas = [r["rankings"][perfil]["final_score"] for r in completos]
             if len(notas) != len(set(notas)):
-                # los empates comparten nota; esto solo falla si hay notas repetidas
-                # con puestos distintos, ya cubierto arriba
+                # ties share a score; this only fails if there are repeated scores
+                # with different places, already covered above
                 pass
 
-    # R1 y R2 no pueden ser clones: deben diferir al menos en suelo.
+    # R1 and R2 cannot be clones: they must differ at least in soil.
     clones = sum(
         1
         for c in candidatos
         if c["rotations"]["R1"]["soil"] == c["rotations"]["R2"]["soil"]
     )
     if clones:
-        avisos.append(f"{clones} fincas tienen R1 y R2 con la misma nota de suelo")
+        avisos.append(f"{clones} farms have R1 and R2 with the same soil score")
 
     resumen = {
         "generado": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -172,14 +172,14 @@ def main() -> None:
     )
 
     print(
-        f"{resultado['fincas']} fincas, {resultado['rotaciones']} rotaciones, "
-        f"{resultado['indicadores']} indicadores"
+        f"{resultado['fincas']} farms, {resultado['rotaciones']} rotations, "
+        f"{resultado['indicadores']} indicators"
     )
-    print(f"Fallos: {len(resultado['fallos'])}; avisos: {len(resultado['avisos'])}")
+    print(f"Failures: {len(resultado['fallos'])}; warnings: {len(resultado['avisos'])}")
     for fallo in resultado["fallos"][:10]:
         print(f"  - {fallo}")
     for aviso in resultado["avisos"][:5]:
-        print(f"  aviso: {aviso}")
+        print(f"  warning: {aviso}")
     print(f"-> {args.out.relative_to(BASE_DIR)}")
     if not resultado["ok"]:
         raise SystemExit(1)

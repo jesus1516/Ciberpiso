@@ -1,4 +1,4 @@
-"""Rutas, cliente HTTP con reintentos, descargas reanudables y manifiesto."""
+"""Paths, HTTP client with retries, resumable downloads and manifest."""
 
 from __future__ import annotations
 
@@ -16,13 +16,13 @@ from urllib3.util.retry import Retry
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 RAW = DATA / "raw"
-PROCESSED = DATA / "processed"  # intermedios (parquet, rásteres de trabajo)
-SQL_DIR = ROOT / "pipeline" / "sql"  # schema.sql y consultas.sql (fuente única)
-# Cada ámbito es una copia completa: data/<ámbito>/csv/ y data/<ámbito>/database/
+PROCESSED = DATA / "processed"  # intermediates (parquet, working rasters)
+SQL_DIR = ROOT / "pipeline" / "sql"  # schema.sql and consultas.sql (single source)
+# Each scope is a complete copy: data/<scope>/csv/ and data/<scope>/database/
 AMBITOS = {"malaga": [29], "andalucia": [4, 11, 14, 18, 21, 23, 29, 41]}
 MANIFEST = DATA / "manifest.json"
 
-USER_AGENT = "ciberpiso-pipeline/0.1 (NASA Space Apps 2026)"
+USER_AGENT = "ciberpiso-pipeline/0.1 (Space Apps 2026)"
 
 
 def session() -> requests.Session:
@@ -58,7 +58,7 @@ _LOCK = threading.Lock()
 
 
 def record(source: str, url: str, file: Path, **extra) -> None:
-    """Añade o reemplaza la entrada del fichero en data/manifest.json (seguro entre hilos)."""
+    """Add or replace the file entry in data/manifest.json (thread-safe)."""
     with _LOCK:
         _record(source, url, file, **extra)
 
@@ -84,7 +84,7 @@ def _record(source: str, url: str, file: Path, **extra) -> None:
 
 
 def download(url: str, dest: Path, source: str, expected_size: int | None = None, **extra) -> Path:
-    """Descarga reanudable. Si el fichero ya está completo, no hace nada."""
+    """Resumable download. If the file is already complete, it does nothing."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists() and expected_size and dest.stat().st_size == expected_size:
         if not en_manifiesto(dest):
@@ -98,7 +98,7 @@ def download(url: str, dest: Path, source: str, expected_size: int | None = None
         headers = {"Range": f"bytes={offset}-"} if offset else {}
         try:
             with s.get(url, headers=headers, stream=True, timeout=(30, 120)) as r:
-                if r.status_code == 416:  # ya completo
+                if r.status_code == 416:  # already complete
                     break
                 r.raise_for_status()
                 mode = "ab" if r.status_code == 206 else "wb"
@@ -112,14 +112,14 @@ def download(url: str, dest: Path, source: str, expected_size: int | None = None
             if expected_size is None or part.stat().st_size >= expected_size:
                 break
         except requests.RequestException as exc:
-            print(f"  intento {attempt} fallido para {dest.name}: {exc}")
+            print(f"  attempt {attempt} failed for {dest.name}: {exc}")
             time.sleep(5 * attempt)
     else:
-        raise RuntimeError(f"No se pudo descargar {url}")
+        raise RuntimeError(f"Could not download {url}")
 
     if expected_size and part.stat().st_size != expected_size:
         raise RuntimeError(
-            f"{dest.name}: tamaño {part.stat().st_size} != esperado {expected_size}"
+            f"{dest.name}: size {part.stat().st_size} != expected {expected_size}"
         )
     part.replace(dest)
     record(source, url, dest, **extra)
