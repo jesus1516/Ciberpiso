@@ -1,56 +1,56 @@
-# Alcance del caso de uso
+# Use case scope
 
-> Rellena esta ficha antes de descargar datos. Una página como máximo. Si algo no
-> está claro, no empieces el pipeline.
+> Fill in this sheet before downloading data. One page at most. If anything is
+> unclear, do not start the pipeline.
 
 ## AOI
 
-- **Condado / región:** (ejemplo: Story County, Iowa)
-- **Bbox WGS84:** oeste, sur, este, norte
-- **Superficie:** ha
-- **Por qué este AOI:** datos disponibles, tipo de agricultura, señal satelital
+- **County / region:** (example: Story County, Iowa)
+- **WGS84 bbox:** west, south, east, north
+- **Area:** ha
+- **Why this AOI:** available data, type of farming, satellite signal
 
-## Perfil de finca
+## Farm profile
 
-- **Superficie:** ha
-- **Suelo:** textura, drenaje, AWC
-- **Clima:** precipitación anual, días libres de helada
-- **Riego:** sí / no
-- **Maquinaria:** ...
-- **Mercado:** ...
-- **Rotación actual:** ...
+- **Area:** ha
+- **Soil:** texture, drainage, AWC
+- **Climate:** annual precipitation, frost-free days
+- **Irrigation:** yes / no
+- **Machinery:** ...
+- **Market:** ...
+- **Current rotation:** ...
 
-## Decisión que apoya la herramienta
+## Decision the tool supports
 
-- **Pregunta:** "¿Qué rotación tiene sentido para los próximos 3–4 años si mi
-  prioridad es ...?"
-- **Usuario:** agricultor / asesor / cooperativa
-- **Momento de uso:** planificación de temporada
-- **Lo que NO decide:** precio, rendimiento exacto, prescripción de insumos
+- **Question:** "Which rotation makes sense for the next 3–4 years if my
+  priority is ...?"
+- **User:** farmer / adviser / cooperative
+- **Moment of use:** season planning
+- **What it does NOT decide:** price, exact yield, input prescription
 
-## Rotaciones a comparar
+## Rotations to compare
 
-| ID | Secuencia | Por qué |
+| ID | Sequence | Why |
 | --- | --- | --- |
-| R0 |  | Actual |
+| R0 |  | Current |
 | R1 |  |  |
 | R2 |  |  |
 | R3 |  |  |
 
-## Prioridades y restricciones
+## Priorities and constraints
 
-- **Prioridades:** agua / suelo / rentabilidad / riesgo
-- **Restricciones:** agua disponible, maquinaria, mercado, mano de obra
-- **Supuestos:** ...
+- **Priorities:** water / soil / profitability / risk
+- **Constraints:** available water, machinery, market, labour
+- **Assumptions:** ...
 
-## Fuera de alcance
-
-- ...
-
-## Criterio de éxito de la demo
+## Out of scope
 
 - ...
 
-## Riesgos conocidos
+## Demo success criterion
+
+- ...
+
+## Known risks
 
 - ...
