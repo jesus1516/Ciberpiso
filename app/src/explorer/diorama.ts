@@ -16,7 +16,7 @@ import { Line2 } from 'three/addons/lines/Line2.js'
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
-import { COVER_COLORS, CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type Escena, type Geometry, type Mode, type ViewState } from './escena'
+import { COVER_COLORS, CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type FarmScene, type Geometry, type Mode, type ViewState } from './scene'
 
 type Rect = { x: number; y: number; w: number; h: number }
 type View = { radius: number; polar: number; azimuth: number; ty: number; offset: { x: number; y: number } }
@@ -126,7 +126,7 @@ type Ortho = { synthetic: boolean; canvas: HTMLCanvasElement }
 
 async function loadDEM(frame: Frame): Promise<Dem> {
   const st = await stitch(frame, frame.S < 2600 ? 15 : 14, TERRARIUM, 0, true)
-  if (st.failed === st.total) throw new Error('DEM sin teselas')
+  if (st.failed === st.total) throw new Error('DEM has no tiles')
   const { width: W, height: H } = st.canvas
   const px = st.canvas.getContext('2d')!.getImageData(0, 0, W, H).data
   let h = new Float32Array(W * H)
@@ -158,7 +158,7 @@ async function loadOrtho(frame: Frame): Promise<Ortho> {
   const native = frame.S / (mPerPx / 2 ** z)
   const out = Math.min(2048, Math.max(1024, 2 ** Math.ceil(Math.log2(native))))
   const st = await stitch(frame, z, ESRI, out, false)
-  if (st.failed > st.total * 0.3) throw new Error('ortofoto incompleta')
+  if (st.failed > st.total * 0.3) throw new Error('incomplete orthophoto')
   return { canvas: st.canvas, synthetic: false }
 }
 function syntheticOrtho(seed: number): Ortho {
@@ -308,13 +308,13 @@ export type DioramaOptions = {
   onCardsIn?: (anchors: Anchors) => void
 }
 
-export class FincaDiorama {
+export class FarmDiorama {
   container: HTMLElement
   opts: DioramaOptions
   speed = 1
-  state: ViewState = { year: 2025, rotation: 'R1', profile: 'water_first', mode: 'satelite', exaggeration: 2 }
+  state: ViewState = { year: 2025, rotation: 'R1', profile: 'water_first', mode: 'satellite', exaggeration: 2 }
   private preferredExaggeration = 2
-  escena: Escena | null = null
+  farmScene: FarmScene | null = null
   synthetic = false
   leaders: SVGSVGElement
   pin: HTMLDivElement
@@ -418,11 +418,11 @@ export class FincaDiorama {
   }
 
   // -------------------------------------------------------- construction
-  async load(escena: Escena) {
-    if (this.escena?.key === escena.key && this.group) return
-    const src = await prefetch(escena.key, escena.tile)
+  async load(farmScene: FarmScene) {
+    if (this.farmScene?.key === farmScene.key && this.group) return
+    const src = await prefetch(farmScene.key, farmScene.tile)
     this.clear()
-    this.escena = escena
+    this.farmScene = farmScene
     this.frame = src.frame
     this.synthetic = src.dem.synthetic || src.ortho.synthetic
     const { frame } = this
@@ -449,7 +449,7 @@ export class FincaDiorama {
     this.uniforms.tCropA.value = this.cropTex[0]
     this.uniforms.tCropB.value = this.cropTex[1]
     this.front = 0
-    this.uniforms.uClay.value = clamp01(((escena.clay ?? 30) - 15) / 30)
+    this.uniforms.uClay.value = clamp01(((farmScene.clay ?? 30) - 15) / 30)
 
     this.group = new THREE.Group()
     this.scene.add(this.group)
@@ -544,7 +544,7 @@ export class FincaDiorama {
 
   /** RGBA mask: R farm, G glow of the boundary, B boundaries of the neighbouring farms. */
   private buildMask() {
-    const size = this.maskSize, { frame } = this, e = this.escena!
+    const size = this.maskSize, { frame } = this, e = this.farmScene!
     const layer = (draw: (ctx: CanvasRenderingContext2D) => void) => {
       const c = document.createElement('canvas')
       c.width = c.height = size
@@ -661,7 +661,7 @@ export class FincaDiorama {
     const { frame } = this
     this.boundary = []
     const step = frame.S / 450
-    for (const poly of rings(this.escena!.geometry)) {
+    for (const poly of rings(this.farmScene!.geometry)) {
       const ring = poly[0]
       const pts: [number, number][] = []
       for (let i = 0; i < ring.length - 1; i++) {
@@ -718,7 +718,7 @@ export class FincaDiorama {
 
   /** Trees: WorldCover says how many (neighbouring "tree cover" farms and the farm %); the orthophoto, where. */
   private buildTrees(lum: { size: number; lum: Float32Array } | null) {
-    const { frame } = this, S = frame.S, e = this.escena!
+    const { frame } = this, S = frame.S, e = this.farmScene!
     const mask = document.createElement('canvas')
     mask.width = mask.height = 512
     const mctx = mask.getContext('2d', { willReadFrequently: true })!
@@ -729,7 +729,7 @@ export class FincaDiorama {
       drawRings(mctx, frame, f.geometry, 512)
       mctx.fill('evenodd')
     }
-    const ownShare = clamp01(e.arbolado / 100)
+    const ownShare = clamp01(e.trees / 100)
     if (ownShare > 0) {
       mctx.fillStyle = `rgba(255,255,255,${ownShare})`
       mctx.beginPath()
@@ -839,7 +839,7 @@ export class FincaDiorama {
     // Next to the boundary, on the side facing the initial camera (south-west), inwards.
     const [cu, cv] = this.centerUV
     let best: [number, number] = [cu, cv], score = -Infinity
-    for (const [lon, lat] of rings(this.escena!.geometry)[0][0]) {
+    for (const [lon, lat] of rings(this.farmScene!.geometry)[0][0]) {
       const [u, v] = frame.uv(lon, lat)
       if (v - u * 0.6 > score) { score = v - u * 0.6; best = [u, v] }
     }
@@ -972,7 +972,7 @@ export class FincaDiorama {
 
   // -------------------------------------------------------- crops by year
   private drawCrops(canvas: HTMLCanvasElement, year: number) {
-    const ctx = canvas.getContext('2d')!, size = canvas.width, { frame } = this, e = this.escena!
+    const ctx = canvas.getContext('2d')!, size = canvas.width, { frame } = this, e = this.farmScene!
     ctx.clearRect(0, 0, size, size)
     const histIdx = Math.min(5, Math.max(0, year - 2020))
     for (const f of e.neighbors) {
@@ -1051,7 +1051,7 @@ export class FincaDiorama {
     this.emit()
   }
   setMode(mode: Mode) {
-    const target = mode === 'maqueta' ? 1 : 0
+    const target = mode === 'model' ? 1 : 0
     this.state.mode = mode
     this.emit()
     if (!this.terrain) {
@@ -1257,10 +1257,10 @@ export class FincaDiorama {
     this.uniforms.tSnap.value = this.snapTex ?? this.blank
     this.uniforms.uSnap.value = this.snapTex ? 1 : 0
     this.catcher.material.opacity = 0
-    const maqueta = this.state.mode === 'maqueta'
-    this.uniforms.uMode.value = maqueta ? 1 : 0
-    this.farm.group.visible = maqueta
-    this.farm.group.scale.setScalar(maqueta ? 1 : 0.001)
+    const isModel = this.state.mode === 'model'
+    this.uniforms.uMode.value = isModel ? 1 : 0
+    this.farm.group.visible = isModel
+    this.farm.group.scale.setScalar(isModel ? 1 : 0.001)
     this.setCamera(from)
     this.container.classList.remove('cards-in')
     this.bg.style.opacity = o.fromRect ? '0' : '1'

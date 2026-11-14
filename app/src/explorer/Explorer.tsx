@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { getFinca } from '../lib/fincas'
+import { getFarm } from '../lib/farms'
 import { useStore } from '../store'
 import { ExplorerController } from './controller'
-import { FincaView } from './FincaView'
+import { FarmView } from './FarmView'
 import { useExplorer, type Hover, type Level } from './state'
 import { APT, DISCLAIMER, COVER_NAME, fmt } from './texts'
 import './explorer.css'
@@ -20,7 +20,7 @@ function Metric({ value, label }: { value: string; label: string }) {
 
 function Tooltip({ hover }: { hover: Hover | null }) {
   let body = null
-  if (hover?.kind === 'provincia') {
+  if (hover?.kind === 'province') {
     const p = hover.p
     body = (
       <>
@@ -34,7 +34,7 @@ function Tooltip({ hover }: { hover: Hover | null }) {
         <div className="a">{p.id === '29' ? 'Click to enter Málaga →' : 'Tour not available yet'}</div>
       </>
     )
-  } else if (hover?.kind === 'municipio') {
+  } else if (hover?.kind === 'municipality') {
     const p = hover.p
     body = (
       <>
@@ -48,7 +48,7 @@ function Tooltip({ hover }: { hover: Hover | null }) {
         <div className="a">Rain {fmt(p.lluvia_mm)} mm · deficit {fmt(p.deficit_mm)} mm · click to see its farms →</div>
       </>
     )
-  } else if (hover?.kind === 'finca') {
+  } else if (hover?.kind === 'farm') {
     const p = hover.p
     const blocked = p.apt === 'urbano' || p.apt === 'agua' || p.apt === 'publico'
     body = (
@@ -76,8 +76,8 @@ function Tooltip({ hover }: { hover: Hover | null }) {
 function Narrative() {
   const level = useExplorer((s) => s.level)
   const totals = useExplorer((s) => s.totals)
-  const municipio = useExplorer((s) => s.municipio)
-  const fincas = useExplorer((s) => s.fincasCount)
+  const municipality = useExplorer((s) => s.municipality)
+  const farms = useExplorer((s) => s.farmsCount)
   if (level === 3) return null
   return (
     <section className="narrative" aria-live="polite">
@@ -96,21 +96,21 @@ function Narrative() {
           <h1>Choose the municipality</h1>
           <p>The colour shows what share of its farms is cropland according to the satellite (ESA WorldCover).</p>
           <div className="legend-scale"><div className="bar" /><div className="ticks"><span>0 %</span><span>cropland farms</span><span>{fmt(totals.maxCropland)} %</span></div></div>
-          <div className="fact"><strong>{fmt(totals.malaga)}</strong><span>farms in<br />{totals.municipios} municipalities</span></div>
+          <div className="fact"><strong>{fmt(totals.malaga)}</strong><span>farms in<br />{totals.municipalities} municipalities</span></div>
           <div className="hint">Click on a municipality</div>
         </div>
       )}
-      {level === 2 && municipio && (
-        <div className="scene" key={`l2-${municipio.mun}`}>
+      {level === 2 && municipality && (
+        <div className="scene" key={`l2-${municipality.mun}`}>
           <p className="eyebrow">Step 3 of 4 · Málaga</p>
-          <h1>{municipio.nombre}</h1>
+          <h1>{municipality.nombre}</h1>
           <p>
-            {fincas === null ? 'Loading its farms…' : `${fmt(fincas)} SIGPAC farms.`} Zoom in and pick one
-            {municipio.candidatas ? `; the ${municipio.candidatas} gold ones are project candidates` : ''}.
+            {farms === null ? 'Loading its farms…' : `${fmt(farms)} SIGPAC farms.`} Zoom in and pick one
+            {municipality.candidatas ? `; the ${municipality.candidatas} gold ones are project candidates` : ''}.
           </p>
           <ul className="chips">
             <li><i className="sw-ok" />Farmland</li>
-            {municipio.candidatas > 0 && <li><i className="sw-cand" />Candidate</li>}
+            {municipality.candidatas > 0 && <li><i className="sw-cand" />Candidate</li>}
             <li><i className="sw-lim" />Limited (with warning)</li>
             <li><i className="sw-no" />Not farmland</li>
           </ul>
@@ -126,9 +126,9 @@ const LEVEL_NAMES = ['Andalucía', 'Málaga', '', 'Farm']
 function Crumbs({ go }: { go: (l: Level) => void }) {
   const level = useExplorer((s) => s.level)
   const phase = useExplorer((s) => s.phase)
-  const municipio = useExplorer((s) => s.municipio)
+  const municipality = useExplorer((s) => s.municipality)
   const sel = useExplorer((s) => s.sel)
-  const names = [LEVEL_NAMES[0], LEVEL_NAMES[1], municipio?.nombre ?? '', sel ? `Farm ${sel.finca.properties.pol}-${sel.finca.properties.par}` : 'Farm']
+  const names = [LEVEL_NAMES[0], LEVEL_NAMES[1], municipality?.nombre ?? '', sel ? `Farm ${sel.farm.properties.pol}-${sel.farm.properties.par}` : 'Farm']
   return (
     <nav className="crumbs" aria-label="Breadcrumb">
       {names.slice(0, level + 1).map((name, l) => (
@@ -175,7 +175,7 @@ export function Explorer() {
   useEffect(() => {
     const c = new ExplorerController(app.current!, mapEl.current!, dioEl.current!)
     ctrl.current = c
-    if (DIRECTOR) Object.assign(window, { __xp: { ctrl: c, state: useExplorer, getFinca } })
+    if (DIRECTOR) Object.assign(window, { __xp: { ctrl: c, state: useExplorer, getFarm } })
     const onResize = () => c.resize()
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape' || (e.target as HTMLElement).closest('input, textarea, select')) return
@@ -205,7 +205,7 @@ export function Explorer() {
       </header>
       <Narrative />
       <div ref={dioEl} />
-      <FincaView ctrl={ctrl} />
+      <FarmView ctrl={ctrl} />
       <Crumbs go={go} />
       <button className="back" disabled={phase !== 'idle' || level === 0} onClick={() => go((level - 1) as Level)}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="m9 6-6 6 6 6M3 12h18" /></svg>

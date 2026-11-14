@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { t } from '../i18n'
 import { axis, colors, grid } from '../lib/chartStyle'
-import { soilTexture, type FincaDetalle } from '../lib/detalle'
-import { getMunicipio } from '../lib/fincas'
+import { soilTexture, type FarmDetail } from '../lib/detail'
+import { getMunicipality } from '../lib/farms'
 import { useStore } from '../store'
 import { ChartCard, StatTile } from './ChartCard'
 import { Term } from './Term'
@@ -41,7 +41,7 @@ function Rows({ rows }: { rows: [string, string][] }) {
   )
 }
 
-function Vegetation({ d }: { d: FincaDetalle }) {
+function Vegetation({ d }: { d: FarmDetail }) {
   const series = d.ndvi.filter(([, v]) => v !== null).map(([date, ndvi]) => ({ date, ndvi }))
   const feno = d.fenologia.map((f) => ({ ...f, name: String(f.campana) }))
   return (
@@ -101,13 +101,13 @@ export function FarmData() {
   }
   if (farmData.status === 'error') return <p role="alert" className="rounded-lg border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">⚠ {s.error}</p>
 
-  const finca = selection.find((f) => f.properties.id === chosen) ?? selection[0]
-  if (!finca) return null
-  const p = finca.properties
+  const farm = selection.find((f) => f.properties.id === chosen) ?? selection[0]
+  if (!farm) return null
+  const p = farm.properties
   const d = farmData.byId[p.id]
   if (!d) return <p className="text-sm text-ink-2">{s.missing}</p>
-  const celda = farmData.comun?.celdas[d.celda]
-  const campanas = celda?.campanas.map((c) => ({ ...c, name: String(c.campana) })) ?? []
+  const cell = farmData.common?.celdas[d.celda]
+  const campanas = cell?.campanas.map((c) => ({ ...c, name: String(c.campana) })) ?? []
   const suelo = d.suelo
   const texture = soilTexture(suelo)
 
@@ -123,7 +123,7 @@ export function FarmData() {
           <select value={p.id} onChange={(e) => setChosen(Number(e.target.value))} className="flex-1 rounded-lg border border-line bg-white px-2 py-1.5">
             {selection.map((f) => (
               <option key={f.properties.id} value={f.properties.id}>
-                {t.fincas.name(f.properties.pol, f.properties.par)} · {t.map.area(f.properties.ha)}
+                {t.farms.name(f.properties.pol, f.properties.par)} · {t.map.area(f.properties.ha)}
               </option>
             ))}
           </select>
@@ -132,7 +132,7 @@ export function FarmData() {
 
       {p.apt && (
         <p role="note" className="rounded-lg border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
-          ⚠ {s.aptWarning(t.fincas.apt[p.apt] ?? p.apt)}
+          ⚠ {s.aptWarning(t.farms.apt[p.apt] ?? p.apt)}
         </p>
       )}
 
@@ -140,7 +140,7 @@ export function FarmData() {
         <Rows
           rows={[
             [s.parcel, p.pid],
-            [s.municipality, getMunicipio(p.mun)?.properties.nombre ?? String(p.mun)],
+            [s.municipality, getMunicipality(p.mun)?.properties.nombre ?? String(p.mun)],
             [s.area, t.map.area(p.ha)],
             [s.plots, String(d.recintos)],
             [s.altitude, fmt(d.altitud_m, 0, ' m')],
@@ -148,7 +148,7 @@ export function FarmData() {
           ]}
         />
         <h4 className="mb-1 mt-3 text-xs font-semibold text-ink-2">{s.coverTitle}</h4>
-        <BarList rows={Object.entries(d.cobertura).filter(([, v]) => (v ?? 0) > 0).sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0)).map(([k, v]) => [t.fincas.covers[k] ?? k, v])} />
+        <BarList rows={Object.entries(d.cobertura).filter(([, v]) => (v ?? 0) > 0).sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0)).map(([k, v]) => [t.farms.covers[k] ?? k, v])} />
       </ChartCard>
 
       <Vegetation d={d} />
@@ -176,15 +176,15 @@ export function FarmData() {
         )}
       </ChartCard>
 
-      {celda && (
+      {cell && (
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label={s.meanRain} value={fmt(celda.resumen.lluvia_media_mm, 0, ' mm')} note={s.since(campanas[0]?.campana)} />
-            <StatTile label={s.dryYear} value={fmt(celda.resumen.lluvia_p20_mm, 0, ' mm')} note={s.dryYearNote(celda.resumen.campana_mas_seca)} />
-            <StatTile label={<Term id="waterBalance">{s.deficit}</Term>} value={fmt(celda.resumen.deficit_medio_mm, 0, ' mm')} note={s.deficitNote} />
-            <StatTile label={s.heatDays} value={fmt(celda.resumen.dias_calor_jul_ago_media, 1)} note={s.heatDaysNote} />
+            <StatTile label={s.meanRain} value={fmt(cell.resumen.lluvia_media_mm, 0, ' mm')} note={s.since(campanas[0]?.campana)} />
+            <StatTile label={s.dryYear} value={fmt(cell.resumen.lluvia_p20_mm, 0, ' mm')} note={s.dryYearNote(cell.resumen.campana_mas_seca)} />
+            <StatTile label={<Term id="waterBalance">{s.deficit}</Term>} value={fmt(cell.resumen.deficit_medio_mm, 0, ' mm')} note={s.deficitNote} />
+            <StatTile label={s.heatDays} value={fmt(cell.resumen.dias_calor_jul_ago_media, 1)} note={s.heatDaysNote} />
           </div>
-          <ChartCard title={s.rainTitle} note={s.rainNote(celda.resumen.lat, celda.resumen.lon)}>
+          <ChartCard title={s.rainTitle} note={s.rainNote(cell.resumen.lat, cell.resumen.lon)}>
             <ResponsiveContainer width="100%" height={H}>
               <BarChart data={campanas} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
                 <CartesianGrid {...grid} />
@@ -192,7 +192,7 @@ export function FarmData() {
                 <YAxis {...axis} />
                 <Tooltip />
                 <Legend wrapperStyle={{ fontSize: 11 }} formatter={(v) => <span className="text-ink-2">{v}</span>} />
-                <ReferenceLine y={celda.resumen.lluvia_p20_mm} stroke={colors.trend} strokeDasharray="5 4" />
+                <ReferenceLine y={cell.resumen.lluvia_p20_mm} stroke={colors.trend} strokeDasharray="5 4" />
                 <Bar dataKey="lluvia_mm" name={s.rain} fill={colors.rain} radius={[3, 3, 0, 0]} maxBarSize={12} />
                 <Bar dataKey="deficit_mm" name={s.deficitSeries} fill={colors.deficit} radius={[3, 3, 0, 0]} maxBarSize={12} />
               </BarChart>

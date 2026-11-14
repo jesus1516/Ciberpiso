@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl'
 
 export const EMPTY = { type: 'FeatureCollection' as const, features: [] }
-export const BASE_LAYER = 'municipios-fill'
+export const BASE_LAYER = 'municipalities-fill'
 export const GOLD = '#facc15'
 export const NOT_FARMLAND = ['urbano', 'agua', 'publico']
 export const LIMITED = ['monte', 'pendiente', 'roca']
@@ -24,12 +24,12 @@ export function hatchImage(size = 12) {
 
 const state = (key: string): ExpressionSpecification => ['boolean', ['feature-state', key], false]
 
-export const municipioPaint = {
-  provincia: {
+export const municipalityPaint = {
+  province: {
     'fill-color': ['case', state('hover'), GOLD, '#0b0b0b'] as ExpressionSpecification,
     'fill-opacity': ['case', state('hover'), 0.3, 0.12] as ExpressionSpecification,
   },
-  municipio: {
+  municipality: {
     'fill-color': '#0b0b0b',
     'fill-opacity': ['case', state('active'), 0, state('hover'), 0.3, 0.5] as ExpressionSpecification,
   },
@@ -45,35 +45,35 @@ export const style: StyleSpecification = {
       maxzoom: 19,
       attribution: 'Imagery © Esri, Maxar, Earthstar Geographics',
     },
-    municipios: { type: 'geojson', data: EMPTY, promoteId: 'mun' },
-    fincas: { type: 'geojson', data: EMPTY, promoteId: 'id', attribution: 'Fincas: SIGPAC (FEGA, CC BY 4.0)' },
+    municipalities: { type: 'geojson', data: EMPTY, promoteId: 'mun' },
+    farms: { type: 'geojson', data: EMPTY, promoteId: 'id', attribution: 'Farms: SIGPAC (FEGA, CC BY 4.0)' },
     field: { type: 'geojson', data: EMPTY },
     pulse: { type: 'geojson', data: EMPTY },
   },
   layers: [
     { id: 'esri', type: 'raster', source: 'esri' },
-    { id: 'municipios-fill', type: 'fill', source: 'municipios', paint: municipioPaint.provincia },
+    { id: 'municipalities-fill', type: 'fill', source: 'municipalities', paint: municipalityPaint.province },
     {
-      id: 'municipios-line',
+      id: 'municipalities-line',
       type: 'line',
-      source: 'municipios',
+      source: 'municipalities',
       paint: { 'line-color': '#ffffff', 'line-opacity': 0.7, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 1.5] },
     },
     {
-      id: 'municipios-focus',
+      id: 'municipalities-focus',
       type: 'line',
-      source: 'municipios',
+      source: 'municipalities',
       paint: {
         'line-color': GOLD,
         'line-width': ['case', state('active'), 3, state('hover'), 2.5, 0],
         'line-opacity': ['case', state('active'), 1, state('hover'), 0.9, 0],
       },
     },
-    { id: 'fincas-fill', type: 'fill', source: 'fincas', paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.04, 'fill-opacity-transition': { duration: 700 } } },
+    { id: 'farms-fill', type: 'fill', source: 'farms', paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.04, 'fill-opacity-transition': { duration: 700 } } },
     {
-      id: 'fincas-line',
+      id: 'farms-line',
       type: 'line',
-      source: 'fincas',
+      source: 'farms',
       paint: {
         'line-color': '#ffffff',
         'line-opacity': 0.5,
@@ -82,36 +82,36 @@ export const style: StyleSpecification = {
       },
     },
     {
-      id: 'fincas-limited',
+      id: 'farms-limited',
       type: 'fill',
-      source: 'fincas',
+      source: 'farms',
       filter: ['in', ['get', 'apt'], ['literal', LIMITED]],
       paint: { 'fill-color': '#0b0b0b', 'fill-opacity': 0.42 },
     },
     {
-      id: 'fincas-blocked-tint',
+      id: 'farms-blocked-tint',
       type: 'fill',
-      source: 'fincas',
+      source: 'farms',
       filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]],
       paint: { 'fill-color': '#3f3f46', 'fill-opacity': 0.6 },
     },
     {
-      id: 'fincas-blocked',
+      id: 'farms-blocked',
       type: 'fill',
-      source: 'fincas',
+      source: 'farms',
       filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]],
       paint: { 'fill-pattern': HATCH },
     },
-    { id: 'fincas-candidate-fill', type: 'fill', source: 'fincas', filter: ['==', ['get', 'id'], -1], paint: { 'fill-color': GOLD, 'fill-opacity': 0.08 } },
+    { id: 'farms-candidate-fill', type: 'fill', source: 'farms', filter: ['==', ['get', 'id'], -1], paint: { 'fill-color': GOLD, 'fill-opacity': 0.08 } },
     {
-      id: 'fincas-candidate-line',
+      id: 'farms-candidate-line',
       type: 'line',
-      source: 'fincas',
+      source: 'farms',
       filter: ['==', ['get', 'id'], -1],
       paint: { 'line-color': GOLD, 'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 15, 3], 'line-opacity': 0.9 },
     },
-    { id: 'fincas-hover-fill', type: 'fill', source: 'fincas', paint: { 'fill-color': '#ffffff', 'fill-opacity': ['case', state('hover'), 0.22, 0] } },
-    { id: 'fincas-hover-line', type: 'line', source: 'fincas', paint: { 'line-color': '#ffffff', 'line-width': 2.5, 'line-opacity': ['case', state('hover'), 1, 0] } },
+    { id: 'farms-hover-fill', type: 'fill', source: 'farms', paint: { 'fill-color': '#ffffff', 'fill-opacity': ['case', state('hover'), 0.22, 0] } },
+    { id: 'farms-hover-line', type: 'line', source: 'farms', paint: { 'line-color': '#ffffff', 'line-width': 2.5, 'line-opacity': ['case', state('hover'), 1, 0] } },
     { id: 'field-fill', type: 'fill', source: 'field', paint: { 'fill-color': GOLD, 'fill-opacity': 0.22 } },
     { id: 'field-glow', type: 'line', source: 'field', paint: { 'line-color': GOLD, 'line-width': 10, 'line-opacity': 0.3, 'line-blur': 4 } },
     { id: 'field-line', type: 'line', source: 'field', paint: { 'line-color': GOLD, 'line-width': 3 } },

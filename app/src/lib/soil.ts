@@ -1,4 +1,4 @@
-import type { FincaDetalle } from './detalle'
+import type { FarmDetail } from './detail'
 
 export type SoilType = 'sandy' | 'loam' | 'clay'
 
@@ -18,15 +18,15 @@ const DEFAULTS: Record<SoilType, { organicMatterPct: number; waterHoldingMm: num
 // SoilGrids gives soil organic carbon (g/kg); organic matter ≈ 1.724 × carbon (Van Bemmelen factor).
 const SOC_TO_SOM = 1.724
 
-export function soilFor(fincas: { ha: number; detalle?: FincaDetalle }[], texture: SoilType): SoilProperties {
-  const withSoil = fincas.filter((f) => f.detalle?.suelo?.cos_gkg != null && f.detalle?.suelo?.cad_0_100_mm != null)
+export function soilFor(farms: { ha: number; detail?: FarmDetail }[], texture: SoilType): SoilProperties {
+  const withSoil = farms.filter((f) => f.detail?.suelo?.cos_gkg != null && f.detail?.suelo?.cad_0_100_mm != null)
   const ha = withSoil.reduce((s, f) => s + f.ha, 0)
   if (!ha) return { texture, ...DEFAULTS[texture], fromData: false }
   const avg = (get: (f: (typeof withSoil)[number]) => number) => withSoil.reduce((s, f) => s + get(f) * f.ha, 0) / ha
   return {
     texture,
-    organicMatterPct: Math.round(avg((f) => f.detalle!.suelo!.cos_gkg! / 10) * SOC_TO_SOM * 10) / 10,
-    waterHoldingMm: Math.round(avg((f) => f.detalle!.suelo!.cad_0_100_mm!)),
+    organicMatterPct: Math.round(avg((f) => f.detail!.suelo!.cos_gkg! / 10) * SOC_TO_SOM * 10) / 10,
+    waterHoldingMm: Math.round(avg((f) => f.detail!.suelo!.cad_0_100_mm!)),
     fromData: true,
   }
 }

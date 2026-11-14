@@ -1,14 +1,14 @@
 // Interface over the 3D terrain: header, four cards anchored to the terrain with guide
 // lines, timeline (MODIS campaigns + scenario) and R0–R3 selector. "Full data"
-// opens the app's conditions tab (NASA POWER climate, soil and NDVI of the farm).
+// opens the app's conditions tab (POWER climate, soil and NDVI of the farm).
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { RotationScore } from '../lib/calculator'
 import { fieldCentroid, toField } from '../lib/geo'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
 import { useStore } from '../store'
 import type { ExplorerController } from './controller'
-import { CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, type Mode } from './escena'
-import { useExplorer, type Seleccion } from './state'
+import { CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, type Mode } from './scene'
+import { useExplorer, type Selection } from './state'
 import { APT, DISCLAIMER, PROFILES, SHORT_ROTATION, fmt } from './texts'
 
 // The conditions tab brings the charts (recharts): it is only downloaded when opened.
@@ -49,7 +49,7 @@ function Card({ k, slot, label, value, wordTxt, base, rotation, ev, extra }: {
   )
 }
 
-function Cards({ sel, rotation, slots }: { sel: Seleccion; rotation: RotationKey; slots: Record<CardKey, Slot> }) {
+function Cards({ sel, rotation, slots }: { sel: Selection; rotation: RotationKey; slots: Record<CardKey, Slot> }) {
   const r: RotationScore | undefined = sel.scores?.[rotation]
   const base = sel.scores?.R0
   if (!r || !base) {
@@ -62,14 +62,14 @@ function Cards({ sel, rotation, slots }: { sel: Seleccion; rotation: RotationKey
       </div>
     )
   }
-  const soil = sel.detalle?.suelo
+  const soil = sel.detail?.suelo
   const prices = r.crops.map((c) => (c === 'barbecho' ? 0 : sel.prices[c]?.eurT ?? null))
   const avgPrice = prices.every((p) => p !== null) ? (prices as number[]).reduce((a, b) => a + b, 0) / prices.length : null
   const priceYear = Math.max(...Object.values(sel.prices).map((p) => p?.year ?? 0))
   return (
     <div className="fx-cards">
       <Card k="water" slot={slots.water} label="Water" value={r.water} wordTxt={word(r.water)} base={base.water} rotation={rotation}
-        ev={sel.climate ? `Mean rainfall ${fmt(sel.climate.lluvia)} mm · deficit ${fmt(sel.climate.deficit)} mm/year` : 'No climate data for the cell'} />
+        ev={sel.climate ? `Mean rainfall ${fmt(sel.climate.rain)} mm · deficit ${fmt(sel.climate.deficit)} mm/year` : 'No climate data for the cell'} />
       <Card k="market" slot={slots.market} label="Market" value={r.profit} wordTxt={word(r.profit)} base={base.profit} rotation={rotation}
         ev={avgPrice !== null ? `≈ ${fmt(avgPrice)} €/t on average (${priceYear}) · price proxy, excluding costs` : 'No price for all the crops'} />
       <Card k="soil" slot={slots.soil} label="Soil" value={r.soil} wordTxt={word(r.soil)} base={base.soil} rotation={rotation}
@@ -81,17 +81,17 @@ function Cards({ sel, rotation, slots }: { sel: Seleccion; rotation: RotationKey
           </>
         )} />
       <Card k="risk" slot={slots.risk} label="Climate risk" value={r.risk} wordTxt={riskWord(r.risk)} base={base.risk} rotation={rotation}
-        ev={sel.climate ? `${fmt(sel.climate.calor)} hot days in May–Jun · ${fmt(sel.climate.heladas)} frost days` : 'No climate data for the cell'} />
+        ev={sel.climate ? `${fmt(sel.climate.hotDays)} hot days in May–Jun · ${fmt(sel.climate.frostDays)} frost days` : 'No climate data for the cell'} />
     </div>
   )
 }
 
 /** Side panel with the app's conditions tab (POWER climate, soil, NDVI). */
-function DatosCompletos({ sel, onClose }: { sel: Seleccion; onClose: () => void }) {
+function FullData({ sel, onClose }: { sel: Selection; onClose: () => void }) {
   useEffect(() => {
-    const field = toField([sel.finca])
+    const field = toField([sel.farm])
     const [lon, lat] = fieldCentroid(field)
-    useStore.setState({ selection: [sel.finca], field })
+    useStore.setState({ selection: [sel.farm], field })
     useStore.getState().loadFarmData()
     useStore.getState().loadClimate(lat, lon)
   }, [sel])
@@ -100,7 +100,7 @@ function DatosCompletos({ sel, onClose }: { sel: Seleccion; onClose: () => void 
       <header>
         <div>
           <h2>Full data</h2>
-          <p>Farm {sel.finca.properties.pol}-{sel.finca.properties.par} · {sel.municipio}</p>
+          <p>Farm {sel.farm.properties.pol}-{sel.farm.properties.par} · {sel.municipality}</p>
         </div>
         <button onClick={onClose} aria-label="Close full data">✕</button>
       </header>
@@ -111,19 +111,19 @@ function DatosCompletos({ sel, onClose }: { sel: Seleccion; onClose: () => void 
   )
 }
 
-export function FincaView({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> }) {
+export function FarmView({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> }) {
   const sel = useExplorer((s) => s.sel)
   // One instance per farm: when switching farm or leaving, its state (playback, panel,
   // card positions) starts from scratch.
-  return <div className="fx">{sel && <FincaPanel key={sel.finca.properties.id} sel={sel} ctrl={ctrl} />}</div>
+  return <div className="fx">{sel && <FarmPanel key={sel.farm.properties.id} sel={sel} ctrl={ctrl} />}</div>
 }
 
-function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<ExplorerController | null> }) {
+function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<ExplorerController | null> }) {
   const view = useExplorer((s) => s.view)
   const synthetic = useExplorer((s) => s.synthetic)
   const [slots, setSlots] = useState(DEFAULT_SLOTS)
   const [playing, setPlaying] = useState(false)
-  const [datos, setDatos] = useState(false)
+  const [showFullData, setShowFullData] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const dio = () => ctrl.current?.dio ?? null
 
@@ -138,7 +138,7 @@ function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<Explo
     let at = 0
     let last = ''
     return d.attachOverlay({
-      label: `${fmt(sel.finca.properties.ha, 1)} ha`,
+      label: `${fmt(sel.farm.properties.ha, 1)} ha`,
       // Each card goes to the side of the screen where its point falls: so the guides do not cross the block.
       onCardsIn: (a) => {
         if (window.innerWidth < 760) return
@@ -172,11 +172,11 @@ function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<Explo
     })
   }, [sel, ctrl])
 
-  const p = sel.finca.properties
-  const crop = cropForYear(sel.escena, view.year, view.rotation)
+  const p = sel.farm.properties
+  const crop = cropForYear(sel.farmScene, view.year, view.rotation)
   const best = sel.scores ? (Object.keys(sel.scores) as RotationKey[]).find((k) => sel.scores![k].rank[view.profile] === 1) : undefined
-  const legendKeys = [...new Set(YEARS.map((y) => cropForYear(sel.escena, y, view.rotation).key))]
-  const permanente = sel.escena.rot?.split('-').every((l) => l === 'P') || p.cover === 'arbolado'
+  const legendKeys = [...new Set(YEARS.map((y) => cropForYear(sel.farmScene, y, view.rotation).key))]
+  const isPermanent = sel.farmScene.rot?.split('-').every((l) => l === 'P') || p.cover === 'arbolado'
 
   const play = (from?: number) => {
     setPlaying(true)
@@ -190,16 +190,16 @@ function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<Explo
   return (
     <div className="fx-panel" ref={root}>
       <header className="fx-head">
-        <p className="eyebrow">{p.cand ? 'Project candidate' : 'Farm'} · {sel.municipio}</p>
+        <p className="eyebrow">{p.cand ? 'Project candidate' : 'Farm'} · {sel.municipality}</p>
         <h2>{fmt(p.ha, 1)}<small>ha</small></h2>
-        <p className="fx-meta">SIGPAC {p.pid} · {fmt(sel.detalle?.recintos)} enclosures · {fmt(p.alt)} m · slope {fmt(p.slope, 1)} %</p>
+        <p className="fx-meta">SIGPAC {p.pid} · {fmt(sel.detail?.recintos)} enclosures · {fmt(p.alt)} m · slope {fmt(p.slope, 1)} %</p>
         <div className="now">
           <i style={{ background: CROPS[crop.key]?.color ?? '#777' }} />
           <b>{CROPS[crop.key]?.label ?? crop.key}</b>
           <span>{crop.observed ? `campaign ${view.year} · MODIS` : `${view.year} · scenario ${view.rotation}`}</span>
         </div>
         {p.apt && <p className="warn">⚠ {APT[p.apt]}: herbaceous rotations fit less well here.</p>}
-        {!p.apt && permanente && <p className="warn">This looks like a permanent crop (tree cover); rotations are indicative.</p>}
+        {!p.apt && isPermanent && <p className="warn">This looks like a permanent crop (tree cover); rotations are indicative.</p>}
       </header>
 
       <div className="fx-tools">
@@ -216,7 +216,7 @@ function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<Explo
         <button className="icon-btn" aria-label="Re-centre view" onClick={() => dio()?.resetView()}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" /><path d="M4 4v4.5h4.5" /></svg>
         </button>
-        <button className="datos-btn" aria-pressed={datos} onClick={() => setDatos(!datos)}>Full data</button>
+        <button className="full-data-btn" aria-pressed={showFullData} onClick={() => setShowFullData(!showFullData)}>Full data</button>
       </div>
 
       <Cards sel={sel} rotation={view.rotation} slots={slots} />
@@ -228,7 +228,7 @@ function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<Explo
           </button>
           <div className="years" data-scn={`Scenario ${view.rotation}`}>
             {YEARS.map((y) => {
-              const c = cropForYear(sel.escena, y, view.rotation)
+              const c = cropForYear(sel.farmScene, y, view.rotation)
               return (
                 <button key={y} className={`year ${y >= FIRST_SCENARIO_YEAR ? 'future' : ''}`} aria-current={y === view.year} title={CROPS[c.key]?.label ?? c.key}
                   style={{ '--c': CROPS[c.key]?.color ?? '#666' } as React.CSSProperties}
@@ -271,7 +271,7 @@ function FincaPanel({ sel, ctrl }: { sel: Seleccion; ctrl: React.RefObject<Explo
         </div>
       </aside>
 
-      {datos && <DatosCompletos sel={sel} onClose={() => setDatos(false)} />}
+      {showFullData && <FullData sel={sel} onClose={() => setShowFullData(false)} />}
     </div>
   )
 }

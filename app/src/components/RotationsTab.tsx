@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { t } from '../i18n'
 import { heatStress } from '../lib/climate'
 import { CROPS } from '../lib/crops'
-import { latestPrice } from '../lib/detalle'
+import { latestPrice } from '../lib/detail'
 import { fieldCentroid } from '../lib/geo'
 import { buildStrategies } from '../lib/rotations'
 import { soilFor } from '../lib/soil'
@@ -17,14 +17,14 @@ export function RotationsTab() {
   const strategies = useMemo(() => {
     if (!climate.data || !field || farmData.status === 'loading') return null
     const [, lat] = fieldCentroid(field)
-    const fincas = selection.map((f) => ({ ha: f.properties.ha, detalle: farmData.byId[f.properties.id] }))
+    const farms = selection.map((f) => ({ ha: f.properties.ha, detail: farmData.byId[f.properties.id] }))
     const ctx = {
       climate: climate.data,
       climateReal: climate.source !== 'sample',
       constraints,
-      soil: soilFor(fincas, constraints.soil),
+      soil: soilFor(farms, constraints.soil),
       heat: heatStress(climate.data.monthly),
-      prices: Object.fromEntries(CROPS.map((c) => [c.id, latestPrice(farmData.comun?.precios[c.id])?.eurT ?? null])),
+      prices: Object.fromEntries(CROPS.map((c) => [c.id, latestPrice(farmData.common?.precios[c.id])?.eurT ?? null])),
       southern: lat < 0,
     }
     return buildStrategies(ctx, priorities)

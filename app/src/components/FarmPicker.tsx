@@ -1,29 +1,29 @@
 import * as maplibregl from 'maplibre-gl'
 import { useEffect, useState } from 'react'
 import { t } from '../i18n'
-import { fincaByPid, getFinca, getMunicipio, municipioAt, type MunicipioProps } from '../lib/fincas'
-import { areaHa, type Finca } from '../lib/geo'
+import { farmByPid, getFarm, getMunicipality, municipalityAt, type MunicipalityProps } from '../lib/farms'
+import { areaHa, type Farm } from '../lib/geo'
 import { GOLD, LIMITED, NOT_FARMLAND } from '../lib/mapStyle'
 import { pulse } from '../lib/pulse'
 import { useStore } from '../store'
 
-const f = t.fincas
+const f = t.farms
 const AUTO_ENTER_ZOOM = 12.5
 const button = 'rounded-lg px-3 py-2 text-sm font-medium shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-white disabled:opacity-50'
 const glass = 'rounded-xl bg-black/60 text-white shadow-lg ring-1 ring-white/15 backdrop-blur-md'
 
 type Notice = { kind: 'blocked' | 'warning'; text: string } | null
 
-function toggle(finca: Finca): Notice {
-  const { map, selection, toggleFinca } = useStore.getState()
-  const apt = finca.properties.apt
+function toggle(farm: Farm): Notice {
+  const { map, selection, toggleFarm } = useStore.getState()
+  const apt = farm.properties.apt
   if (apt && NOT_FARMLAND.includes(apt)) {
-    if (map) pulse(map, finca, '#ef4444', 700)
+    if (map) pulse(map, farm, '#ef4444', 700)
     return { kind: 'blocked', text: f.blocked(f.apt[apt]) }
   }
-  const selected = selection.some((s) => s.properties.id === finca.properties.id)
-  if (map) pulse(map, finca, selected ? '#ffffff' : GOLD, selected ? 600 : 1100)
-  toggleFinca(finca)
+  const selected = selection.some((s) => s.properties.id === farm.properties.id)
+  if (map) pulse(map, farm, selected ? '#ffffff' : GOLD, selected ? 600 : 1100)
+  toggleFarm(farm)
   return !selected && apt && LIMITED.includes(apt) ? { kind: 'warning', text: f.limitedWarning(f.apt[apt]) } : null
 }
 
@@ -45,27 +45,27 @@ function Legend() {
   )
 }
 
-function enter(m: MunicipioProps) {
-  useStore.getState().setMunicipio({ key: m.mun, name: m.nombre })
+function enter(m: MunicipalityProps) {
+  useStore.getState().setMunicipality({ key: m.mun, name: m.nombre })
 }
 
-const municipioName = (key: number) => getMunicipio(key)?.properties.nombre ?? ''
+const municipalityName = (key: number) => getMunicipality(key)?.properties.nombre ?? ''
 
-export function FincaPicker() {
+export function FarmPicker() {
   const map = useStore((s) => s.map)
-  const status = useStore((s) => s.fincasStatus)
-  const municipio = useStore((s) => s.municipio)
-  const municipioStatus = useStore((s) => s.municipioStatus)
+  const status = useStore((s) => s.farmsStatus)
+  const municipality = useStore((s) => s.municipality)
+  const municipalityStatus = useStore((s) => s.municipalityStatus)
   const selection = useStore((s) => s.selection)
   const field = useStore((s) => s.field)
   const indicators = useStore((s) => s.indicators)
-  const { clearSelection, confirmField, openProjectFinca, setMunicipio } = useStore.getState()
+  const { clearSelection, confirmField, openProjectFarm, setMunicipality } = useStore.getState()
   const [opening, setOpening] = useState(false)
   const [notice, setNotice] = useState<Notice>(null)
 
   useEffect(() => {
     if (!map || status !== 'ready') return
-    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 14, className: 'finca-popup' })
+    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 14, className: 'farm-popup' })
     let hovered: { source: string; id: number } | null = null
 
     const setHover = (next: { source: string; id: number } | null) => {
@@ -77,23 +77,23 @@ export function FincaPicker() {
     }
 
     const pick = (point: maplibregl.Point) => {
-      const active = useStore.getState().municipio?.key
-      const hits = map.queryRenderedFeatures(point, { layers: ['fincas-fill', 'municipios-fill'] })
-      const finca = hits.find((h) => h.layer.id === 'fincas-fill')
-      if (finca) return { finca: getFinca(Number(finca.id)) }
-      const muni = hits.find((h) => h.layer.id === 'municipios-fill' && Number(h.id) !== active)
-      return { municipio: muni ? getMunicipio(Number(muni.id))?.properties : undefined }
+      const active = useStore.getState().municipality?.key
+      const hits = map.queryRenderedFeatures(point, { layers: ['farms-fill', 'municipalities-fill'] })
+      const farm = hits.find((h) => h.layer.id === 'farms-fill')
+      if (farm) return { farm: getFarm(Number(farm.id)) }
+      const muni = hits.find((h) => h.layer.id === 'municipalities-fill' && Number(h.id) !== active)
+      return { municipality: muni ? getMunicipality(Number(muni.id))?.properties : undefined }
     }
 
     const onMove = (e: maplibregl.MapMouseEvent) => {
-      const { finca, municipio: m } = pick(e.point)
-      if (finca) {
-        setHover({ source: 'fincas', id: finca.properties.id })
-        const project = Boolean(useStore.getState().indicators?.byPid[finca.properties.pid])
-        popup.setLngLat(e.lngLat).setText(f.popup(finca.properties, project)).addTo(map)
+      const { farm, municipality: m } = pick(e.point)
+      if (farm) {
+        setHover({ source: 'farms', id: farm.properties.id })
+        const project = Boolean(useStore.getState().indicators?.byPid[farm.properties.pid])
+        popup.setLngLat(e.lngLat).setText(f.popup(farm.properties, project)).addTo(map)
       } else if (m) {
-        setHover({ source: 'municipios', id: m.mun })
-        popup.setLngLat(e.lngLat).setText(f.municipioPopup(m)).addTo(map)
+        setHover({ source: 'municipalities', id: m.mun })
+        popup.setLngLat(e.lngLat).setText(f.municipalityPopup(m)).addTo(map)
       } else {
         setHover(null)
         popup.remove()
@@ -104,18 +104,18 @@ export function FincaPicker() {
       popup.remove()
     }
     const onClick = (e: maplibregl.MapMouseEvent) => {
-      const { finca, municipio: m } = pick(e.point)
+      const { farm, municipality: m } = pick(e.point)
       popup.remove()
-      if (finca) setNotice(toggle(finca))
+      if (farm) setNotice(toggle(farm))
       else if (m) {
         setHover(null)
         enter(m)
       }
     }
     const onMoveEnd = () => {
-      if (useStore.getState().municipio || map.getZoom() < AUTO_ENTER_ZOOM) return
+      if (useStore.getState().municipality || map.getZoom() < AUTO_ENTER_ZOOM) return
       const { lng, lat } = map.getCenter()
-      const m = municipioAt(lng, lat)
+      const m = municipalityAt(lng, lat)
       if (m) enter(m.properties)
     }
 
@@ -136,12 +136,12 @@ export function FincaPicker() {
     const pid = Object.keys(indicators?.byPid ?? {})[0]
     if (!pid) return
     setOpening(true)
-    const finca = await fincaByPid(pid).catch(() => undefined)
+    const farm = await farmByPid(pid).catch(() => undefined)
     setOpening(false)
-    if (!finca) return
+    if (!farm) return
     setNotice(null)
-    setMunicipio({ key: finca.properties.mun, name: municipioName(finca.properties.mun) })
-    openProjectFinca(finca)
+    setMunicipality({ key: farm.properties.mun, name: municipalityName(farm.properties.mun) })
+    openProjectFarm(farm)
   }
 
   if (status !== 'ready') {
@@ -156,34 +156,34 @@ export function FincaPicker() {
   return (
     <div className={`${glass} flex flex-col gap-2 p-3`}>
       <nav aria-label={f.breadcrumb} className="flex flex-wrap items-center gap-1 text-sm">
-        {municipio ? (
-          <button onClick={() => setMunicipio(null)} className="rounded px-1 text-white/75 underline-offset-2 hover:text-white hover:underline">
-            {f.provincia}
+        {municipality ? (
+          <button onClick={() => setMunicipality(null)} className="rounded px-1 text-white/75 underline-offset-2 hover:text-white hover:underline">
+            {f.province}
           </button>
         ) : (
-          <span className="px-1 font-semibold">{f.provincia}</span>
+          <span className="px-1 font-semibold">{f.province}</span>
         )}
-        {municipio && (
+        {municipality && (
           <>
             <span className="text-white/50" aria-hidden>›</span>
-            <span className="px-1 font-semibold" aria-current="page">{municipio.name}</span>
-            {municipioStatus === 'loading' && (
-              <span className="ml-1 size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" role="status" aria-label={f.loadingMunicipio} />
+            <span className="px-1 font-semibold" aria-current="page">{municipality.name}</span>
+            {municipalityStatus === 'loading' && (
+              <span className="ml-1 size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" role="status" aria-label={f.loadingMunicipality} />
             )}
           </>
         )}
       </nav>
 
       <p className="text-sm">
-        {!municipio ? f.hintProvincia : municipioStatus === 'error' ? f.errorMunicipio : selection.length ? f.hintMore : f.hint}
+        {!municipality ? f.hintProvince : municipalityStatus === 'error' ? f.errorMunicipality : selection.length ? f.hintMore : f.hint}
       </p>
       {notice && (
         <p role="status" className={`rounded-lg px-2 py-1.5 text-xs ${notice.kind === 'blocked' ? 'bg-red-500/25 ring-1 ring-red-300/50' : 'bg-amber-400/20 ring-1 ring-amber-300/50'}`}>
           ⚠ {notice.text}
         </p>
       )}
-      {municipio && <Legend />}
-      {municipio && <p className="text-xs text-white/70">{f.candidateHint}</p>}
+      {municipality && <Legend />}
+      {municipality && <p className="text-xs text-white/70">{f.candidateHint}</p>}
       {indicators && (
         <button
           onClick={openDemo}
@@ -202,7 +202,7 @@ export function FincaPicker() {
                 <span className="size-2.5 shrink-0 rounded-full bg-field" aria-hidden />
                 <span className="flex-1 leading-tight">
                   {f.name(s.properties.pol, s.properties.par)}
-                  <span className="block text-[11px] text-white/60">{municipioName(s.properties.mun)}</span>
+                  <span className="block text-[11px] text-white/60">{municipalityName(s.properties.mun)}</span>
                 </span>
                 {s.properties.apt && (
                   <span className="rounded bg-amber-400/25 px-1.5 py-0.5 text-[10px] font-semibold text-amber-100" title={f.apt[s.properties.apt]}>

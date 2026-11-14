@@ -1,4 +1,4 @@
-/* Estilos del explorador (transiciones y terreno 3D). Acotados bajo .xp para no chocar con Tailwind. */
+/* Explorer styles (transitions and 3D terrain). Scoped under .xp so they do not clash with Tailwind. */
 .xp {--bg: #1E2A1A; --bg-deep: #141C11; --surface: #2E3B2A; --surface-2: #3A4A34;
   --cream: #F4E9D8; --cream-2: rgba(244, 233, 216, .62); --cream-3: rgba(244, 233, 216, .38);
   --line: rgba(244, 233, 216, .14);
@@ -239,7 +239,7 @@
 .xp[data-level="3"] .crumbs {display: none;}
 .xp[data-level="3"] .back {left: auto; right: 16px; top: 64px;}
 }
-/* ------------------------------------------------------------ app React */
+/* ------------------------------------------------------------ React app */
 .xp { position: absolute; inset: 0; overflow: hidden; isolation: isolate; background: var(--bg); color: var(--cream); -webkit-font-smoothing: antialiased; }
 .xp button { cursor: pointer; }
 .xp button:disabled { cursor: default; }
@@ -267,8 +267,8 @@
 .xp .toast.blocked strong { color: #E9A3A3; }
 .xp .fx-head .warn { margin-top: 10px; font-size: 11.5px; line-height: 1.45; color: #E8C27A; }
 .xp .fx-card.nodata { width: 260px; }
-.xp .datos-btn { border: 1px solid rgba(232,184,106,.5); background: rgba(232,184,106,.12); color: var(--amber); border-radius: 11px; padding: 0 12px; font-size: 12px; }
-.xp .datos-btn[aria-pressed="true"] { background: var(--amber); color: #1E2A1A; }
+.xp .full-data-btn { border: 1px solid rgba(232,184,106,.5); background: rgba(232,184,106,.12); color: var(--amber); border-radius: 11px; padding: 0 12px; font-size: 12px; }
+.xp .full-data-btn[aria-pressed="true"] { background: var(--amber); color: #1E2A1A; }
 .xp .rot:disabled { opacity: .45; }
 .xp .xp-sheet { position: absolute; z-index: 60; top: 14px; right: 14px; bottom: 14px; width: min(460px, calc(100% - 28px)); display: flex; flex-direction: column; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.45); overflow: hidden; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
 .xp .xp-sheet header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; border-bottom: 1px solid var(--color-line); }

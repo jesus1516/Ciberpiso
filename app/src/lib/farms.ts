@@ -1,26 +1,26 @@
 import bbox from '@turf/bbox'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson'
-import type { BBox, Finca, FincaProps } from './geo'
+import type { BBox, Farm, FarmProps } from './geo'
 
-export type MunicipioProps = { mun: number; nombre: string; fincas: number; ha: number; candidatas: number }
-export type Municipio = Feature<Polygon | MultiPolygon, MunicipioProps>
-type Fincas = FeatureCollection<Polygon | MultiPolygon, FincaProps>
+export type MunicipalityProps = { mun: number; nombre: string; fincas: number; ha: number; candidatas: number }
+export type Municipality = Feature<Polygon | MultiPolygon, MunicipalityProps>
+type Farms = FeatureCollection<Polygon | MultiPolygon, FarmProps>
 
 const DATA = `${import.meta.env.BASE_URL}data`
-export const PROVINCIA = 29
-export const DEMO_MUNICIPIO = 29015
+export const PROVINCE = 29
+export const DEMO_MUNICIPALITY = 29015
 
-let municipios: Municipio[] = []
-const loaded = new Map<number, Promise<Fincas>>()
-const byId = new Map<number, Finca>()
-const byPid = new Map<string, Finca>()
+let municipalities: Municipality[] = []
+const loaded = new Map<number, Promise<Farms>>()
+const byId = new Map<number, Farm>()
+const byPid = new Map<string, Farm>()
 
-export async function loadMunicipios(): Promise<FeatureCollection<Polygon | MultiPolygon, MunicipioProps>> {
-  const res = await fetch(`${DATA}/municipios_${PROVINCIA}.geojson`)
-  if (!res.ok) throw new Error(`municipios ${res.status}`)
+export async function loadMunicipalities(): Promise<FeatureCollection<Polygon | MultiPolygon, MunicipalityProps>> {
+  const res = await fetch(`${DATA}/municipios_${PROVINCE}.geojson`)
+  if (!res.ok) throw new Error(`municipalities ${res.status}`)
   const data = await res.json()
-  municipios = data.features
+  municipalities = data.features
   return data
 }
 
@@ -31,14 +31,14 @@ async function readGeojson(res: Response) {
   return JSON.parse(await new Response(body).text())
 }
 
-export function loadMunicipio(key: number): Promise<Fincas> {
+export function loadMunicipality(key: number): Promise<Farms> {
   if (!loaded.has(key)) {
     const request = fetch(`${DATA}/fincas/${key}.geojson.gz`)
       .then((res) => {
-        if (!res.ok) throw new Error(`fincas ${key} ${res.status}`)
+        if (!res.ok) throw new Error(`farms ${key} ${res.status}`)
         return readGeojson(res)
       })
-      .then((data: Fincas) => {
+      .then((data: Farms) => {
         data.features.forEach((f) => {
           byId.set(f.properties.id, f)
           byPid.set(f.properties.pid, f)
@@ -51,18 +51,18 @@ export function loadMunicipio(key: number): Promise<Fincas> {
   return loaded.get(key)!
 }
 
-export const getFinca = (id: number) => byId.get(id)
+export const getFarm = (id: number) => byId.get(id)
 
-export const getMunicipio = (key: number) => municipios.find((m) => m.properties.mun === key)
+export const getMunicipality = (key: number) => municipalities.find((m) => m.properties.mun === key)
 
-export const municipioBbox = (m: Municipio) => bbox(m) as BBox
+export const municipalityBbox = (m: Municipality) => bbox(m) as BBox
 
-export const provinciaBbox = () => bbox({ type: 'FeatureCollection', features: municipios }) as BBox
+export const provinceBbox = () => bbox({ type: 'FeatureCollection', features: municipalities }) as BBox
 
-export const municipioAt = (lng: number, lat: number) => municipios.find((m) => booleanPointInPolygon([lng, lat], m))
+export const municipalityAt = (lng: number, lat: number) => municipalities.find((m) => booleanPointInPolygon([lng, lat], m))
 
-export async function fincaByPid(pid: string) {
+export async function farmByPid(pid: string) {
   const [prov, mun] = pid.split(':').map(Number)
-  await loadMunicipio(prov * 1000 + mun)
+  await loadMunicipality(prov * 1000 + mun)
   return byPid.get(pid)
 }

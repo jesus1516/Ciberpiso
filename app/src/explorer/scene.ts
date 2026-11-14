@@ -7,7 +7,7 @@ export type BBox = [number, number, number, number]
 export type Geometry = Polygon | MultiPolygon
 
 /** Everything the 3D needs from a farm. */
-export type Scene = {
+export type FarmScene = {
   key: string
   geometry: Geometry
   tile: BBox
@@ -62,7 +62,7 @@ export function yearLetter(rot: string | null, idx: number) {
 }
 
 /** What is on the farm in a given year: observed campaign (≤2025) or rotation scenario. */
-export function cropForYear(e: Scene, year: number, rotation: RotationKey) {
+export function cropForYear(e: FarmScene, year: number, rotation: RotationKey) {
   if (year < FIRST_SCENARIO_YEAR) {
     const c = e.campaigns.find((x) => x.y === year)
     const letter = (c?.cls && CLASS_LETTER[c.cls]) || yearLetter(e.rot, year - 2020)
