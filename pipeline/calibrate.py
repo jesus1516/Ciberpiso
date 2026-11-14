@@ -141,7 +141,7 @@ def spearman(x: list[float], y: list[float]) -> float | None:
 
 
 def best_threshold(labels: list[int], scores: list[float]) -> dict:
-    """Umbral que maximiza balanced accuracy (Youden J)."""
+    """Threshold that maximises balanced accuracy (Youden J)."""
     mejor = None
     for threshold in sorted(set(scores)):
         tp = sum(1 for s, y in zip(scores, labels) if s >= threshold and y == 1)
