@@ -19,7 +19,7 @@ No backend and no API keys: every request goes straight from the browser to publ
 1. `src/App.tsx` stacks the full-screen map, the header, the farm picker or dashboard, the disclaimer and the About modal.
 2. `src/store.ts` (Zustand) holds all state: selected farms, step, terrain, climate, priorities, constraints, GIBS layers.
 3. `components/MapView.tsx` owns MapLibre: Esri basemap, farm and selection layers, GIBS overlays, 3D terrain and the fly-to.
-4. `components/FincaPicker.tsx` lets you click the Antequera farms (from `public/data/fincas_antequera.geojson`) to build your holding; `lib/pulse.ts` animates each selection.
+4. `components/FincaPicker.tsx` drives the map funnel (Málaga → municipality → farms) and the selection; `lib/fincas.ts` loads each municipality on demand; `lib/pulse.ts` animates selections.
 5. `lib/terrain.ts` adds the Terrarium DEM + hillshade and falls back to a flat map on errors; slope comes from the farms' project data.
 6. `lib/power.ts` fetches NASA POWER daily data, caches it in localStorage and falls back to a bundled sample.
 7. `lib/climate.ts` derives monthly climatology, frost days, rain variability, Turc water balance and trends.
@@ -35,7 +35,7 @@ No backend and no API keys: every request goes straight from the browser to publ
 | Daily temperature, min temperature, rain, radiation, humidity (2015 → yesterday) | **Real** | NASA POWER daily point API (AG community) |
 | Climatology, frost days, rain variability, water balance, trends | **Real (derived)** | Computed in the browser from POWER; ET uses the Turc formula and is labelled approximate |
 | MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** | NASA GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
-| Farm boundaries (14,529 farms in Antequera) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/csv/fincas.csv`; built with `pipeline/export_app_fincas.py` |
+| Farm boundaries (363,401 farms in the 103 municipalities of Málaga) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/csv/fincas.csv`; built with `pipeline/export_app_fincas.py` |
 | Farm slope, altitude, land cover | **Real** | Project dataset (`data/csv/fincas.csv`: NASADEM, ESA WorldCover) |
 | Precomputed rotation results for 26 Antequera candidates | **Real** | `data/processed/indicators.json`, filtered by `pipeline/export_app_indicators.py` into `public/data/indicators_antequera.json` |
 | 3D terrain | **Real** | Mapzen Terrarium tiles on AWS Open Data |
@@ -51,12 +51,19 @@ Antequera, Spain) and shows a warning.
 
 ## Farm map
 
-The app only offers the farms of Antequera for now. To rebuild the file, or to export another
-municipality, download the SIGPAC GeoPackage with `pipeline.sigpac` and run, from the repo root:
+The map covers the province of Málaga. It opens on the 103 municipalities
+(`public/data/municipios_29.geojson`, 0.4 MB); clicking one, searching a place or zooming in loads only
+that municipality's farms (`public/data/fincas/{municipio_key}.geojson.gz`, 35 MB in total, 2.1 MB at
+most). The browser decompresses the files itself, so any static host works.
+
+To rebuild them, download the SIGPAC GeoPackage with `pipeline.sigpac` and run, from the repo root:
 
 ```bash
-python -m pipeline.export_app_fincas --municipio 29015 --salida app/public/data/fincas_antequera.geojson
+python -m pipeline.export_app_fincas --provincia 29
 ```
+
+`public/data/fincas_antequera.geojson` is no longer loaded by the app; it is kept because
+`pipeline/export_app_indicators.py` and its test still read it.
 
 ## Precomputed project results
 
