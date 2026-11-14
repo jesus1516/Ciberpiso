@@ -1,13 +1,13 @@
 # Night shift summary
 
-Started 2026-11-14 23:48:05, updated 2026-11-15 00:18:18.
+Started 2026-11-14 23:48:05, updated 2026-11-15 00:20:50.
 
 | Ticket | Title | Model | Status | Attempts | Last verdict |
 |---|---|---|---|---|---|
 | T-00 | Smoke test - English page metadata | sonnet | done | 1 | The diff touches only app/index.html and the report. In index.html, lang is "en", the title is "Ciberpiso · From territory to farm", and the description is a fa |
 | T-01 | Translate the whole web app UI to English | sonnet | done | 1 | T-01 meets its contract. The orchestrator's tsc, build, calculator check (0 differences), oxlint and test checks all pass. The Python pytest failure is only a m |
 | T-02 | Translate documentation, pipeline and tests to English | sonnet | done | 2 | T-02 meets its contract. I swept README.md, docs/*.md, data/README.md, pipeline/*.py and tests/*.py for Spanish prose in comments, docstrings and messages. The  |
-| T-03 | Remove the word NASA from the repository and the web | sonnet | blocked | 2 | Not reviewed: mechanical checks failed. |
+| T-03 | Remove the word NASA from the repository and the web | sonnet | blocked | 2 | Verifier output was not readable. |
 | T-04 | Automated tests - unit, end to end and layout overlap checks | sonnet | done | 1 | T-04 meets its contract. I re-ran `npm run test` and all 50 Vitest tests passed. I did not re-run the Playwright suite. The T-04 commits add only test files, `v |
 | T-05 | Performance on slow computers | opus | pending | 0 |  |
 | T-06 | Farm view redesign - terrain on one side, all cards in a column | opus | pending | 0 |  |
