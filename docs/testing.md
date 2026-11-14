@@ -53,7 +53,7 @@ running on that port.
   role, text and existing class names.
 - To run one spec or test: `npx playwright test e2e/flows.spec.ts -g "urban"` (after a build).
   Use `npx playwright test --headed` to watch it. Failure traces and screenshots are written
-  to `app/node_modules/.cache/playwright/results`; `npx playwright show-trace <trace.zip>` opens one.
+  to `<tmpdir>/ciberpiso-e2e/results` (override with `E2E_OUTPUT_DIR`; kept outside `node_modules` so `npm ci` never trips on it); `npx playwright show-trace <trace.zip>` opens one.
 
 ### Specs
 
