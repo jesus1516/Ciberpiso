@@ -5,6 +5,7 @@ para que el navegador lo cargue rápido y le añade los atributos de
 data/<copia>/csv/<pp_provincia>/fincas.csv (las dos copias tienen las mismas filas).
 Escribe un GeoJSON comprimido por municipio (la app solo descarga el municipio que se
 abre) y un GeoJSON con el contorno de cada municipio para la vista de provincia.
+Cada finca lleva `apt`: por qué no parece campo de cultivo (ver aptitud()), o null.
 Necesita el GeoPackage de recintos extraído por pipeline.sigpac.
 
 Uso:
@@ -48,6 +49,37 @@ PROPS = {
     "rotacion_estimada": "rot",
     "es_candidata": "cand",
 }
+WC = ["wc_urbano_pct", "wc_agua_pct", "wc_suelo_desnudo_pct", "wc_matorral_pct", "wc_arbolado_pct"]
+PENDIENTE_FUERTE = 30  # % de pendiente: por encima, el laboreo y la maquinaria son muy difíciles
+PARCELA_DOMINIO_PUBLICO = 9000  # en catastro y SIGPAC, las parcelas 9000+ son caminos, carreteras y cauces
+
+
+def aptitud(f: pd.Series) -> str | None:
+    """Por qué una finca no parece campo de cultivo (None = parece apta).
+
+    Reglas sobre la cobertura ESA WorldCover (% de la finca), la pendiente NASADEM y el número de
+    parcela: urbano, agua y dominio público (parcelas 9000+) no son agrícolas; roca, monte y
+    pendiente fuerte son de uso limitado.
+    El arbolado en pendiente suave no se marca: en Málaga suele ser olivar o almendral.
+    """
+    if pd.isna(f["wc_urbano_pct"]):
+        return None
+    dominante = f["cobertura_dominante"]
+    if f["wc_urbano_pct"] >= 50 or (dominante == "urbano" and f["wc_urbano_pct"] >= 30):
+        return "urbano"
+    if f["wc_agua_pct"] >= 50 or dominante == "agua":
+        return "agua"
+    if f["parcela"] >= PARCELA_DOMINIO_PUBLICO:
+        return "publico"
+    if f["wc_suelo_desnudo_pct"] >= 50:
+        return "roca"
+    pendiente = 0 if pd.isna(f["pendiente_pct"]) else f["pendiente_pct"]
+    natural = f["wc_matorral_pct"] + f["wc_arbolado_pct"]
+    if f["wc_matorral_pct"] >= 50 or (natural >= 80 and pendiente >= PENDIENTE_FUERTE):
+        return "monte"
+    if pendiente >= PENDIENTE_FUERTE:
+        return "pendiente"
+    return None
 
 
 def _geojson(gdf: gpd.GeoDataFrame) -> bytes:
@@ -71,8 +103,10 @@ def _csv_provincia(prov: int) -> Path:
 
 def exportar(prov: int) -> None:
     csv = _csv_provincia(prov)
-    fincas = pd.read_csv(csv / "fincas.csv", usecols=list(PROPS))
+    fincas = pd.read_csv(csv / "fincas.csv", usecols=list(PROPS) + WC)
     fincas = fincas[fincas["municipio_key"] // 1000 == prov]
+    fincas["apt"] = fincas.apply(aptitud, axis=1)
+    fincas = fincas.drop(columns=WC)
     nombres = pd.read_csv(csv / "dim_municipio.csv").set_index("municipio_key")["nombre"]
 
     rec = pyogrio.read_dataframe(gpkg_de(prov), layer="recinto", columns=NAT, where=f"provincia = {prov}", use_arrow=True)
