@@ -1,16 +1,16 @@
-"""Precios agrarios de venta en España (Eurostat, serie anual desde 2000).
+"""Farm-gate agricultural prices in Spain (Eurostat, annual series since 2000).
 
-Fuente: Eurostat `apri_ap_crpouta`, "Selling prices of crop products (absolute prices)
-- annual price". API abierta, sin clave:
+Source: Eurostat `apri_ap_crpouta`, "Selling prices of crop products (absolute prices)
+- annual price". Open API, no key:
 https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/apri_ap_crpouta
-Son los precios medios nacionales que España (Ministerio de Agricultura) comunica a la
-Comisión Europea. Excepción a la regla "solo resources.md", aprobada por el equipo:
-la lista solo tiene precios de EE. UU. (AMS, QuickStats).
+These are the national average prices that Spain (Ministry of Agriculture) reports to the
+European Commission. Exception to the "only resources.md" rule, approved by the team:
+the list only has US prices (AMS, QuickStats).
 
-Nota: se intentó primero la API semanal de la Comisión (agridata, por mercado), pero
-el 14-11-2026 devolvía error 500 incluso con los ejemplos de su documentación.
+Note: the Commission's weekly API (agridata, per market) was tried first, but
+on 2026-11-14 it returned error 500 even with the examples from its documentation.
 
-Uso:
+Usage:
     python -m pipeline.precios
 """
 
@@ -28,7 +28,7 @@ PARAMS = {"geo": "ES", "currency": "EUR", "lang": "EN"}
 RAW_F = RAW / "precios" / "eurostat_apri_ap_crpouta_ES.json"
 OUT = PROCESSED / "precios"
 
-# Nombre en español y grupo de rotación de los productos que importan al caso
+# Spanish name and rotation group of the products that matter for the case
 PRODUCTOS = {
     "01110000": ("Trigo blando", "cereal_invierno"),
     "01120000": ("Trigo duro", "cereal_invierno"),
@@ -56,7 +56,7 @@ PRODUCTOS = {
     "08400000": ("Aceite de oliva lampante", "olivar"),
     "06194130": ("Almendra", "lenoso_otro"),
 }
-MASA_A_T = {"100 kg": 10, "1000 kg": 1}  # factor a €/t
+MASA_A_T = {"100 kg": 10, "1000 kg": 1}  # factor to €/t
 
 
 def descargar() -> dict:
@@ -70,7 +70,7 @@ def descargar() -> dict:
 
 
 def normalizar(js: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """JSON-stat → (dimensión de productos, precios en formato largo)."""
+    """JSON-stat → (products dimension, prices in long format)."""
     dims, size = js["id"], js["size"]
     cat = {k: js["dimension"][k]["category"] for k in dims}
     orden = {k: sorted(cat[k]["index"], key=cat[k]["index"].get) for k in dims}

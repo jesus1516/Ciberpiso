@@ -1,24 +1,24 @@
-"""Construye el modelo en estrella y exporta CSV listos para cargar en una base de datos.
+"""Build the star model and export CSVs ready to load into a database.
 
-Todo el contenido temático sale de fuentes de resources.md:
-    NASA POWER            clima y humedad del suelo (pipeline.power)
+All thematic content comes from sources in resources.md:
+    POWER                 climate and soil moisture (pipeline.power)
     Planetary Computer    NASADEM, ESA WorldCover, MODIS NDVI (pipeline.pc)
-SIGPAC solo aporta el esqueleto: identificador, municipio y geometría de cada finca.
+SIGPAC only provides the skeleton: identifier, municipality and geometry of each farm.
 
-Salida: data/<ámbito>/csv/comun/*.csv (tablas comunes) y data/<ámbito>/csv/<pp_provincia>/*.csv
-(una carpeta por provincia), UTF-8, coma, punto decimal, NULL = vacío, ordenados
-por clave primaria. Copia pipeline/sql/*.sql a data/<ámbito>/database/.
+Output: data/<scope>/csv/comun/*.csv (common tables) and data/<scope>/csv/<pp_provincia>/*.csv
+(one folder per province), UTF-8, comma, decimal point, NULL = empty, sorted
+by primary key. Copies pipeline/sql/*.sql to data/<scope>/database/.
 
-Claves:
-    finca_key     = provincia * 10^8 + orden por código SIGPAC (parcela)
-    recinto_key   = provincia * 10^8 + orden por código SIGPAC
-    municipio_key = provincia * 1000 + municipio
-    celda_power   = índice de la celda MERRA-2 (ver pipeline.power.celda)
-Las claves enteras sirven para JOIN rápidos dentro de una versión de los datos; el
-identificador estable entre versiones es el código SIGPAC (`parcela_id`, `recinto_id`).
+Keys:
+    finca_key     = province * 10^8 + order by SIGPAC code (plot)
+    recinto_key   = province * 10^8 + order by SIGPAC code
+    municipio_key = province * 1000 + municipality
+    celda_power   = index of the MERRA-2 cell (see pipeline.power.celda)
+The integer keys are for fast JOINs within one version of the data; the
+identifier that is stable across versions is the SIGPAC code (`parcela_id`, `recinto_id`).
 
-Uso:
-    python -m pipeline.build --ambito andalucia      # provincias de AMBITOS["andalucia"]
+Usage:
+    python -m pipeline.build --ambito andalucia      # provinces of AMBITOS["andalucia"]
     python -m pipeline.subconjunto --de andalucia --a malaga
 """
 
@@ -39,7 +39,7 @@ from pipeline.common import AMBITOS, DATA, PROCESSED, RAW, SQL_DIR
 from pipeline.power import celda
 from pipeline.sigpac import cargar_esqueleto, gpkg_de
 
-CSV = DATA / "andalucia" / "csv"  # se fija en construir() según el ámbito
+CSV = DATA / "andalucia" / "csv"  # set in construir() according to the scope
 GEO = PROCESSED / "geo"
 GEO_COLS = ["parcela_id", "municipio_key", "superficie_ha", "altitud_m", "pendiente_pct", "wc_cultivo_pct",
             "rotacion_estimada", "celda_power"]
@@ -51,18 +51,18 @@ LETRA = {"herbaceo_invierno": "I", "herbaceo_verano": "V", "barbecho_o_pastizal"
          "sin_vegetacion": "S", "mixto": "M", "sin_datos": "?"}
 SUELO_COLS = ["gwettop_media", "gwetroot_media", "gwetprof_media", "gwetroot_mar_may", "gwetroot_mar_may_anomalia",
               "gwettop_oct_nov", "gwetroot_min"]
-# Fincas con fenología (MODIS 250 m ≈ 6 ha: por debajo de 2 ha el píxel es casi todo vecino)
+# Farms with phenology (MODIS 250 m ≈ 6 ha: below 2 ha the pixel is almost all neighbour)
 FENO_MIN_HA = 2.0
-# Serie NDVI completa solo para fincas agrícolas grandes (para gráficas de la app)
+# Full NDVI series only for large agricultural farms (for the app charts)
 SERIE_MIN_HA, SERIE_MIN_CULTIVO = 10.0, 50.0
-# Candidata a "finca del caso" (secano de campiña). El plan habla de una explotación de
-# 150–250 ha en 5–20 parcelas, pero sin el cultivo declarado de SIGPAC (fuera de
-# resources.md) no se pueden agrupar parcelas en explotaciones: se buscan parcelas
-# arables grandes. Clases arables: I (invierno), V (verano), B (barbecho/cultivo débil).
+# Candidate for the "case farm" (rainfed farmland of the campiña). The plan talks about a holding of
+# 150–250 ha in 5–20 plots, but without the declared crop from SIGPAC (outside
+# resources.md) plots cannot be grouped into holdings: large arable plots are
+# searched for. Arable classes: I (winter), V (summer), B (fallow/weak crop).
 CANDIDATA = dict(sup_min=50, cultivo_min=60, pendiente_max=12, arables_min=5, ndvi_verano_max=0.55)
 
 
-NOMBRE_PROV: dict[int, str] = {}  # se rellena en construir() con los códigos SIGPAC
+NOMBRE_PROV: dict[int, str] = {}  # filled in construir() with the SIGPAC codes
 
 
 def carpeta_provincia(p: int) -> Path:
@@ -76,9 +76,9 @@ def por_finca(df: pd.DataFrame) -> pd.Series:
 
 
 def _guardar(df: pd.DataFrame, nombre: str, pk: list[str], provincia=None) -> None:
-    """Escribe la tabla en data/csv/comun/ o, con `provincia`, un CSV por provincia.
+    """Write the table to data/csv/comun/ or, with `provincia`, one CSV per province.
 
-    `provincia` es el nombre de una columna o una función que la calcula.
+    `provincia` is the name of a column or a function that computes it.
     """
     df = df.sort_values(pk).reset_index(drop=True)
     if df.duplicated(pk).any():
@@ -103,12 +103,12 @@ def construir(provs: list[int], ambito: str) -> None:
     CSV = DATA / ambito / "csv"
     CSV.mkdir(parents=True, exist_ok=True)
     for viejo in list(CSV.glob("*.csv")) + list(CSV.glob("*/*.csv")):
-        viejo.unlink()  # salida generada: se reescribe entera en cada build
+        viejo.unlink()  # generated output: rewritten entirely on each build
     NOMBRE_PROV.update({c["codigo"]: c["descripcion"]
                         for c in json.loads((COD / "provincia.json").read_text(encoding="utf-8"))["codigos"]})
     rec, fincas = cargar_esqueleto(provs)
 
-    # ---- claves ----------------------------------------------------------------------
+    # ---- keys ----------------------------------------------------------------------
     fincas["finca_key"] = fincas["provincia"].astype("int64") * 10**8 + fincas.groupby("provincia").cumcount() + 1
     rec["recinto_key"] = rec["provincia"].astype("int64") * 10**8 + rec.groupby("provincia").cumcount() + 1
     rec = rec.merge(fincas[["finca_idx", "finca_key"]], on="finca_idx")
@@ -126,16 +126,16 @@ def construir(provs: list[int], ambito: str) -> None:
     celdas = pd.read_parquet(POWER / "celdas.parquet")
     _guardar(celdas, "dim_celda_power", ["celda_power"])
 
-    # ---- Planetary Computer: relieve, cobertura y fenología ------------------------------
+    # ---- Planetary Computer: relief, cover and phenology ------------------------------
     pc = pd.read_parquet(PC / "fincas_pc.parquet")
     feno = pd.read_parquet(PC / "fenologia.parquet")
-    # Los intermedios usan finca_idx, que depende de la lista de provincias: si son de
-    # otra ejecución, los cruces saldrían mal sin avisar.
+    # The intermediates use finca_idx, which depends on the list of provinces: if they come from
+    # another run, the joins would go wrong without warning.
     if len(pc) != len(fincas) or not pc["finca_idx"].isin(fincas["finca_idx"]).all():
         raise RuntimeError(
-            f"Los intermedios de pipeline.pc son de otro conjunto de provincias ({len(pc):,} fincas, "
-            f"se esperaban {len(fincas):,}). Ejecuta pc y soilgrids con las mismas --provincias, "
-            "o usa pipeline.subconjunto para sacar una copia de otra ya construida.")
+            f"The pipeline.pc intermediates are from a different set of provinces ({len(pc):,} farms, "
+            f"{len(fincas):,} expected). Run pc and soilgrids with the same --provincias, "
+            "or use pipeline.subconjunto to extract a copy from one that is already built.")
     fincas = fincas.merge(pc, on="finca_idx", how="left")
     wc_cols = [f"wc_{c}_pct" for c in WC]
     fincas["cobertura_dominante"] = fincas[wc_cols].idxmax(axis=1).str.removeprefix("wc_").str.removesuffix("_pct")
@@ -158,7 +158,7 @@ def construir(provs: list[int], ambito: str) -> None:
         & (fincas["pendiente_pct"] <= k["pendiente_max"])
         & (fincas["n_campanas_arables"] >= k["arables_min"])
         & (fincas["n_campanas_invierno"] >= 1)
-        & (fincas["ndvi_jun_ago_max"] < k["ndvi_verano_max"])  # sin señal de regadío estival
+        & (fincas["ndvi_jun_ago_max"] < k["ndvi_verano_max"])  # no summer irrigation signal
     ).astype(int)
 
     print("Hechos")
@@ -189,35 +189,35 @@ def construir(provs: list[int], ambito: str) -> None:
     }).dropna(subset=["ndvi"])
     _guardar(serie, "ndvi_fincas", ["finca_key", "fecha"], provincia=por_finca)
 
-    # ---- Suelo SoilGrids (excepción pedida por el equipo) ---------------------------------
+    # ---- SoilGrids soil (exception requested by the team) ---------------------------------
     sg = PROCESSED / "soilgrids" / "suelo_fincas.parquet"
     if sg.exists():
         suelo = pd.read_parquet(sg).dropna(subset=["arcilla_pct"])
         suelo.insert(0, "finca_key", suelo.pop("finca_idx").map(idx2key))
         _guardar(suelo, "suelo_fincas", ["finca_key"], provincia=por_finca)
     else:
-        print("  (sin suelo SoilGrids: ejecuta python -m pipeline.soilgrids)")
+        print("  (no SoilGrids soil: run python -m pipeline.soilgrids)")
 
-    # ---- Precios Eurostat (excepción pedida por el equipo) --------------------------------
+    # ---- Eurostat prices (exception requested by the team) --------------------------------
     pp = PROCESSED / "precios"
     if (pp / "precios_anuales.parquet").exists():
         _guardar(pd.read_parquet(pp / "dim_producto_precio.parquet"), "dim_producto_precio", ["producto_codigo"])
         _guardar(pd.read_parquet(pp / "precios_anuales.parquet"), "precios_anuales", ["producto_codigo", "anio"])
     else:
-        print("  (sin precios: ejecuta python -m pipeline.precios)")
+        print("  (no prices: run python -m pipeline.precios)")
 
-    # ---- Series transcritas a mano (p. ej. veza del MAPA): data/manual/*.csv --------------
+    # ---- Hand-transcribed series (e.g. MAPA vetch): data/manual/*.csv --------------
     for f in sorted((DATA / "manual").glob("*.csv")):
         (CSV / "comun").mkdir(parents=True, exist_ok=True)
         shutil.copy2(f, CSV / "comun" / f.name)
-        print(f"  {f.name} (comun/): copiado de data/manual/")
+        print(f"  {f.name} (comun/): copied from data/manual/")
 
-    # ---- NASA POWER: clima y humedad del suelo -------------------------------------------
+    # ---- POWER: climate and soil moisture -------------------------------------------
     anual = pd.read_parquet(POWER / "clima_anual.parquet")
     _guardar(anual.drop(columns=SUELO_COLS), "clima_anual", ["celda_power", "campana"])
     _guardar(anual[["celda_power", "campana"] + SUELO_COLS], "suelo_humedad_anual", ["celda_power", "campana"])
 
-    # ---- Polígonos de las candidatas (esqueleto SIGPAC) para el mapa de la app ----------
+    # ---- Polygons of the candidates (SIGPAC skeleton) for the app map ----------
     GEO.mkdir(parents=True, exist_ok=True)
     cand = fincas[fincas["es_candidata"] == 1]
     partes = []
@@ -228,7 +228,7 @@ def construir(provs: list[int], ambito: str) -> None:
         try:
             gpkg = gpkg_de(p)
         except FileNotFoundError:
-            print(f"  (sin GeoPackage de la provincia {p}: sus candidatas no van al GeoJSON)")
+            print(f"  (no GeoPackage for province {p}: its candidates are left out of the GeoJSON)")
             continue
         g = pyogrio.read_dataframe(gpkg, layer="recinto", columns=[], use_arrow=True)
         g = g.iloc[r["fid"].to_numpy()].assign(finca_key=r["finca_key"].to_numpy())
@@ -242,13 +242,13 @@ def construir(provs: list[int], ambito: str) -> None:
 
     n = fincas["es_candidata"].sum()
     na = fincas.loc[fincas["municipio_key"] == 29015, "es_candidata"].sum() if 29 in provs else 0
-    print(f"Candidatas: {n} en total, {na} en Antequera. Campañas NDVI: {campanas}")
+    print(f"Candidatas: {n} in total, {na} in Antequera. NDVI seasons: {campanas}")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--ambito", default="andalucia", help=f"Copia a construir: {', '.join(AMBITOS)} u otro nombre")
-    ap.add_argument("--provincias", default=None, help="Códigos separados por comas (por defecto, los del ámbito)")
+    ap.add_argument("--ambito", default="andalucia", help=f"Copy to build: {', '.join(AMBITOS)} or another name")
+    ap.add_argument("--provincias", default=None, help="Comma-separated codes (by default, those of the scope)")
     a = ap.parse_args()
     provs = [int(p) for p in a.provincias.split(",")] if a.provincias else AMBITOS[a.ambito]
     construir(provs, a.ambito)

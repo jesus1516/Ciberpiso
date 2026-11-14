@@ -1,15 +1,15 @@
-"""Datos por finca desde Microsoft Planetary Computer (resources.md).
+"""Per-farm data from Microsoft Planetary Computer (resources.md).
 
-Colecciones (STAC https://planetarycomputer.microsoft.com/api/stac/v1, acceso anónimo):
-    nasadem          NASA NASADEM (SRTM reprocesado), 1": altitud y pendiente
-    esa-worldcover   ESA WorldCover 2021 v200, 10 m: cobertura del suelo
-    modis-13Q1-061   NASA MODIS Terra MOD13Q1 v6.1 (LP DAAC), 250 m / 16 días: NDVI
+Collections (STAC https://planetarycomputer.microsoft.com/api/stac/v1, anonymous access):
+    nasadem          NASADEM (reprocessed SRTM), 1": altitude and slope
+    esa-worldcover   ESA WorldCover 2021 v200, 10 m: land cover
+    modis-13Q1-061   MODIS Terra MOD13Q1 v6.1 (LP DAAC), 250 m / 16 days: NDVI
 
-Las fincas (esqueleto SIGPAC) se rasterizan en una rejilla común de 1/4000° (~25 m) y
-cada variable se promedia con todos los píxeles de la finca. Las fincas demasiado
-pequeñas para tener un píxel propio toman el valor del píxel de su centroide.
+The farms (SIGPAC skeleton) are rasterised onto a common 1/4000° grid (~25 m) and
+each variable is averaged over all the pixels of the farm. Farms too
+small to have a pixel of their own take the value of the pixel at their centroid.
 
-Uso:
+Usage:
     python -m pipeline.pc --provincias 29
 """
 
@@ -39,16 +39,16 @@ from pipeline.common import PROCESSED, RAW, record
 from pipeline.sigpac import cargar_esqueleto, gpkg_de
 
 STAC = "https://planetarycomputer.microsoft.com/api/stac/v1"
-RES = 1 / 4000  # grados; múltiplo exacto del píxel de WorldCover (1/12000°)
+RES = 1 / 4000  # degrees; exact multiple of the WorldCover pixel (1/12000°)
 WC_CLASES = {10: "arbolado", 20: "matorral", 30: "pasto", 40: "cultivo", 50: "urbano", 60: "suelo_desnudo", 80: "agua"}
-MODIS_INICIO, MODIS_FIN = "2019-10-01", "2025-09-30"  # campañas 2020–2025
+MODIS_INICIO, MODIS_FIN = "2019-10-01", "2025-09-30"  # seasons 2020–2025
 RAW_PC = RAW / "pc"
 OUT = PROCESSED / "pc"
 GDAL_ENV = dict(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY="5", GDAL_HTTP_RETRY_DELAY="3",
                 CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif,.TIF")
 
 
-# ---------------------------------------------------------------------------------- rejilla
+# ---------------------------------------------------------------------------------- grid
 class Rejilla:
     def __init__(self, lon: pd.Series, lat: pd.Series, margen: float = 0.01):
         self.w = np.floor((lon.min() - margen) / RES) * RES
@@ -70,10 +70,10 @@ class Rejilla:
 
 
 def etiquetas(prov: int, rec: pd.DataFrame, g: Rejilla, base: int) -> np.ndarray:
-    """Raster con el índice local de finca de cada píxel (finca_idx - base; 0 = sin finca).
+    """Raster with the local farm index of each pixel (finca_idx - base; 0 = no farm).
 
-    El índice es local a la provincia, así el ráster sigue valiendo aunque cambie la
-    lista de provincias procesadas.
+    The index is local to the province, so the raster remains valid even if the
+    list of processed provinces changes.
     """
     f = RAW_PC / f"fincas_local_{prov:02d}.tif"
     if f.exists():
@@ -89,7 +89,7 @@ def etiquetas(prov: int, rec: pd.DataFrame, g: Rejilla, base: int) -> np.ndarray
 
 
 def zonal(lab: np.ndarray, valores: np.ndarray, n: int, centro: tuple):
-    """Media por finca y nº de píxeles; las fincas sin píxeles usan el píxel del centroide."""
+    """Mean per farm and number of pixels; farms without pixels use the centroid pixel."""
     v = valores.ravel()
     idx = lab.ravel()
     ok = (idx > 0) & np.isfinite(v)
@@ -136,7 +136,7 @@ def pendiente(dem: np.ndarray, g: Rejilla) -> np.ndarray:
 
 # ---------------------------------------------------------------------------------- WorldCover
 def worldcover(cat: Client, prov: int, g: Rejilla) -> np.ndarray:
-    """Clases WorldCover 2021 a 10 m sobre la rejilla ×3 (alineada)."""
+    """WorldCover 2021 classes at 10 m on the ×3 grid (aligned)."""
     f = RAW_PC / f"worldcover2021_{prov:02d}.tif"
     if not f.exists():
         items = _items(cat, "esa-worldcover", g, "2021-01-01/2021-12-31")
@@ -158,11 +158,11 @@ def worldcover(cat: Client, prov: int, g: Rejilla) -> np.ndarray:
 
 # ---------------------------------------------------------------------------------- MODIS NDVI
 def modis(cat: Client, prov: int, g: Rejilla) -> list[tuple[pd.Timestamp, Path]]:
-    """Recorta NDVI (calidad buena o marginal) de cada compuesto MOD13Q1 a la rejilla."""
+    """Clip NDVI (good or marginal quality) of each MOD13Q1 composite to the grid."""
     d = RAW_PC / f"modis_{prov:02d}"
     d.mkdir(parents=True, exist_ok=True)
-    # El catálogo tiene a veces varias versiones (reprocesados) del mismo compuesto:
-    # nos quedamos con la de producción más reciente (último campo del id).
+    # The catalogue sometimes has several versions (reprocessed) of the same composite:
+    # we keep the most recent production (last field of the id).
     por_compuesto: dict[str, object] = {}
     for i in _items(cat, "modis-13Q1-061", g, f"{MODIS_INICIO}/{MODIS_FIN}"):
         clave = i.id.split(".")[1]  # AYYYYDDD
@@ -199,9 +199,9 @@ def modis(cat: Client, prov: int, g: Rejilla) -> list[tuple[pd.Timestamp, Path]]
         return list(ex.map(uno, items))
 
 
-# ---------------------------------------------------------------------------------- fenología
+# ---------------------------------------------------------------------------------- phenology
 def fenologia(ndvi: np.ndarray, fechas: pd.DatetimeIndex) -> pd.DataFrame:
-    """Métricas NDVI por finca y campaña (oct–sep) y clase de cultivo estimada (heurística)."""
+    """NDVI metrics per farm and season (Oct–Sep) and estimated crop class (heuristic)."""
     campana = fechas.year + (fechas.month >= 10)
     mes = fechas.month.to_numpy()
     filas = []
@@ -210,7 +210,7 @@ def fenologia(ndvi: np.ndarray, fechas: pd.DatetimeIndex) -> pd.DataFrame:
         v = ndvi[:, sel]
         validos = np.isfinite(v).sum(axis=1)
         with np.errstate(all="ignore"), warnings.catch_warnings():
-            warnings.simplefilter("ignore", RuntimeWarning)  # fincas sin datos en la campaña
+            warnings.simplefilter("ignore", RuntimeWarning)  # farms without data in the season
             vmax = np.nanmax(v, axis=1)
             imax = np.argmax(np.where(np.isfinite(v), v, -9), axis=1)
             p10, p90 = np.nanpercentile(v, [10, 90], axis=1)
@@ -220,10 +220,10 @@ def fenologia(ndvi: np.ndarray, fechas: pd.DatetimeIndex) -> pd.DataFrame:
             media = np.nanmean(v, axis=1)
         mes_max = mes[sel][imax]
         amp = p90 - p10
-        # Umbrales calibrados en Málaga con fincas ≥ 80 % de una clase WorldCover (mediana):
-        #   cultivo: verano 0,26, amplitud 0,33, otoño ~0,27 (siembra tardía)
-        #   pasto:   verano 0,31, amplitud 0,24, otoño ~0,40 (verdea con las primeras lluvias)
-        #   arbolado/matorral: verano ≥ 0,40, amplitud ≤ 0,17
+        # Thresholds calibrated in Málaga with farms ≥ 80% of one WorldCover class (median):
+        #   crop:    summer 0.26, amplitude 0.33, autumn ~0.27 (late sowing)
+        #   grass:   summer 0.31, amplitude 0.24, autumn ~0.40 (turns green with the first rains)
+        #   trees/scrub: summer ≥ 0.40, amplitude ≤ 0.17
         clase = np.select(
             [
                 validos < 12,
@@ -257,7 +257,7 @@ def run(provincias: list[int]) -> None:
     for prov in provincias:
         fp = fincas[fincas["provincia"] == prov]
         base, n = int(fp["finca_idx"].min()) - 1, len(fp)
-        assert fp["finca_idx"].max() - base == n, "finca_idx no contiguo en la provincia"
+        assert fp["finca_idx"].max() - base == n, "finca_idx not contiguous in the province"
         g = Rejilla(rec.loc[rec["_prov"] == prov, "lon"], rec.loc[rec["_prov"] == prov, "lat"])
         print(f"[{prov:02d}] rejilla {g.width}×{g.height}; {n:,} fincas", flush=True)
         lab = etiquetas(prov, rec, g, base)
@@ -282,7 +282,7 @@ def run(provincias: list[int]) -> None:
         if ndvi is None:
             fechas, ndvi = f_prov, np.full((total, len(serie)), np.nan, dtype="float32")
         if not f_prov.equals(fechas):
-            raise RuntimeError(f"Provincia {prov}: compuestos MODIS distintos de las demás")
+            raise RuntimeError(f"Province {prov}: MODIS composites differ from the others")
         filas = fp["finca_idx"].to_numpy() - 1
         for j, (_, f) in enumerate(serie):
             with rasterio.open(f) as r:
@@ -300,7 +300,7 @@ def run(provincias: list[int]) -> None:
 
 
 def solo_fenologia() -> None:
-    """Recalcula la fenología desde la matriz NDVI guardada (sin descargar nada)."""
+    """Recompute the phenology from the saved NDVI matrix (without downloading anything)."""
     ndvi = np.load(OUT / "ndvi_fincas.npy")
     fechas = pd.DatetimeIndex(pd.read_parquet(OUT / "ndvi_fechas.parquet")["fecha"])
     fenologia(ndvi, fechas).to_parquet(OUT / "fenologia.parquet", index=False)

@@ -1,11 +1,11 @@
-"""Crea una copia con un subconjunto de provincias a partir de otra ya construida.
+"""Create a copy with a subset of provinces from one that is already built.
 
-Las claves (finca_key, recinto_key, municipio_key) no dependen de qué otras provincias
-haya en la copia, así que basta con copiar las carpetas de las provincias y filtrar las
-tablas comunes. Las filas se copian tal cual, sin reformatear.
+The keys (finca_key, recinto_key, municipio_key) do not depend on which other provinces
+are in the copy, so it is enough to copy the province folders and filter the
+common tables. Rows are copied as they are, without reformatting.
 
-Uso:
-    python -m pipeline.subconjunto --de andalucia --a malaga          # provincias de AMBITOS["malaga"]
+Usage:
+    python -m pipeline.subconjunto --de andalucia --a malaga          # provinces of AMBITOS["malaga"]
     python -m pipeline.subconjunto --de andalucia --a sevilla --provincias 41
 """
 
@@ -17,7 +17,7 @@ import shutil
 
 from pipeline.common import AMBITOS, DATA, SQL_DIR
 
-# Tablas comunes que se filtran por las celdas de clima de las fincas copiadas
+# Common tables that are filtered by the climate cells of the copied farms
 POR_CELDA = ["dim_celda_power", "clima_anual", "suelo_humedad_anual"]
 
 
@@ -38,30 +38,30 @@ def filtrar(origen, destino, campo: str, valores: set[str]) -> int:
 def crear(de: str, a: str, provincias: list[int]) -> None:
     src, dst = DATA / de / "csv", DATA / a / "csv"
     if not src.is_dir():
-        raise SystemExit(f"No existe {src}: construye primero la copia '{de}' con pipeline.build")
+        raise SystemExit(f"{src} does not exist: first build the copy '{de}' with pipeline.build")
     if dst.exists():
-        shutil.rmtree(dst)  # salida generada: se rehace entera
+        shutil.rmtree(dst)  # generated output: rebuilt entirely
     (dst / "comun").mkdir(parents=True)
 
     celdas: set[str] = set()
     for p in provincias:
         carpeta = next(src.glob(f"{p:02d}_*"), None)
         if carpeta is None:
-            raise SystemExit(f"La copia '{de}' no tiene la provincia {p}")
+            raise SystemExit(f"Copy '{de}' does not have province {p}")
         shutil.copytree(carpeta, dst / carpeta.name)
         with (carpeta / "fincas.csv").open(encoding="utf-8", newline="") as fh:
             rd = csv.reader(fh)
             i = next(rd).index("celda_power")
             celdas.update(fila[i] for fila in rd)
-        print(f"  {carpeta.name}/ copiada")
+        print(f"  {carpeta.name}/ copied")
 
     for f in sorted((src / "comun").glob("*.csv")):
         if f.stem in POR_CELDA:
             n = filtrar(f, dst / "comun" / f.name, "celda_power", celdas)
-            print(f"  comun/{f.name}: {n:,} filas ({len(celdas)} celdas de clima)")
+            print(f"  comun/{f.name}: {n:,} rows ({len(celdas)} climate cells)")
         else:
             shutil.copy2(f, dst / "comun" / f.name)
-            print(f"  comun/{f.name}: copiado entero")
+            print(f"  comun/{f.name}: copied whole")
 
     db = DATA / a / "database"
     db.mkdir(parents=True, exist_ok=True)
@@ -72,16 +72,16 @@ def crear(de: str, a: str, provincias: list[int]) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--de", default="andalucia", help="Copia de origen ya construida")
-    ap.add_argument("--a", required=True, help="Nombre de la copia nueva (carpeta data/<nombre>/)")
-    ap.add_argument("--provincias", default=None, help="Códigos separados por comas (por defecto, los de AMBITOS)")
+    ap.add_argument("--de", default="andalucia", help="Source copy that is already built")
+    ap.add_argument("--a", required=True, help="Name of the new copy (folder data/<name>/)")
+    ap.add_argument("--provincias", default=None, help="Comma-separated codes (by default, those of AMBITOS)")
     args = ap.parse_args()
     if args.provincias:
         provs = [int(p) for p in args.provincias.split(",")]
     elif args.a in AMBITOS:
         provs = AMBITOS[args.a]
     else:
-        raise SystemExit(f"Indica --provincias para '{args.a}' (no está en AMBITOS)")
+        raise SystemExit(f"Give --provincias for '{args.a}' (it is not in AMBITOS)")
     crear(args.de, args.a, provs)
 
 

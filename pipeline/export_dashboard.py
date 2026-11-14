@@ -1,9 +1,9 @@
-"""Exporta resúmenes pequeños de la base para el panel visual (JSON {rows, meta}).
+"""Export small summaries of the database for the visual dashboard (JSON {rows, meta}).
 
-Lee data/malaga/database/ciberpiso_malaga.sqlite y escribe data/processed/dashboard/*.json. Cada
-fichero lleva en `meta` este código y su consulta, para que se pueda comprobar.
+Reads data/malaga/database/ciberpiso_malaga.sqlite and writes data/processed/dashboard/*.json. Each
+file carries this code and its query in `meta`, so that it can be checked.
 
-Uso:
+Usage:
     python -m pipeline.export_dashboard
 """
 
@@ -19,8 +19,8 @@ import pandas as pd
 DB = Path("data/malaga/database/ciberpiso_malaga.sqlite")
 OUT = Path("data/processed/dashboard")
 ANTEQUERA = 29015
-CELDA_ANTEQUERA = 254281  # celda POWER (37,0, −4,375) que cubre la Campiña de Antequera
-REJILLA = 0.025  # grados, para el mapa de densidad de cultivo
+CELDA_ANTEQUERA = 254281  # POWER cell (37.0, −4.375) that covers the Campiña de Antequera
+REJILLA = 0.025  # degrees, for the crop density map
 CODIGO = Path(__file__).read_text(encoding="utf-8")
 
 SQL = {

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Valida la nota de agua de la calculadora y decide si calibrarla.
+"""Validate the calculator's water score and decide whether to calibrate it.
 
-Compara el modelo antiguo (solo lluvia) con el modelo de déficit hídrico
-(lluvia - ET0) usando las 360 fincas-campaña. La etiqueta principal es
-`exito_estival` (NDVI jun-ago >= 0,33), la única con señal suficiente.
-`clase_arable` se reporta como control negativo: no distingue.
+Compares the old model (rain only) with the water deficit model
+(rain - ET0) using the 360 farm-seasons. The main label is
+`exito_estival` (Jun-Aug NDVI >= 0.33), the only one with enough signal.
+`clase_arable` is reported as a negative control: it does not discriminate.
 
-Escribe:
-    data/calibration.json             parametros adoptados (versionado)
-    data/processed/validation.json    metricas, folds y decision (intermedio)
+Writes:
+    data/calibration.json             adopted parameters (versioned)
+    data/processed/validation.json    metrics, folds and decision (intermediate)
 
-Uso:
+Usage:
     python3 pipeline/calibrate.py
 """
 
@@ -85,7 +85,7 @@ def _scenario(row: dict, crops: dict) -> dict:
 
 
 def water_score(row: dict, crops: dict, model: str) -> float:
-    """Nota de agua de la rotación actual (R0) con el modelo pedido."""
+    """Water score of the current rotation (R0) with the requested model."""
     scenario = _scenario(row, crops)
     deficit = scenario["deficit_mm"] if model == "deficit" else None
     deficit_p20 = scenario["deficit_p20_mm"] if model == "deficit" else None
@@ -202,7 +202,7 @@ def por_grupo(
 
 
 def lomo(rows: list[dict], crops: dict, model: str, label: str) -> dict:
-    """Deja un municipio fuera: umbral en train, balanced accuracy en test."""
+    """Leave one municipality out: threshold on train, balanced accuracy on test."""
     folds = []
     for municipio in sorted({r["municipio"] for r in rows}):
         train = [r for r in rows if r["municipio"] != municipio]
@@ -272,7 +272,7 @@ def construir_validacion(
     rows = load_scenarios(scenarios_path)
     crops = load_crops(crops_path)
     if not rows:
-        raise ValueError(f"{scenarios_path} está vacío")
+        raise ValueError(f"{scenarios_path} is empty")
 
     modelos = {}
     lomos = {}
@@ -288,7 +288,7 @@ def construir_validacion(
             for label in LABELS
         }
 
-    # Quitamos las notas individuales del JSON: solo interesan las metricas.
+    # Drop the individual scores from the JSON: only the metrics matter.
     for model in modelos:
         for label in LABELS:
             modelos[model][label].pop("scores", None)

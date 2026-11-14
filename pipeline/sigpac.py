@@ -1,19 +1,19 @@
-"""Esqueleto de fincas a partir de SIGPAC (FEGA): solo identificadores y geometría.
+"""Farm skeleton from SIGPAC (FEGA): identifiers and geometry only.
 
-Ninguna fuente de resources.md delimita las fincas en España, así que SIGPAC se usa
-**únicamente** para saber dónde está cada finca (parcela) y qué recintos la forman.
-No se usa ningún atributo temático de SIGPAC (uso, pendiente, altitud, regadío,
-cultivo declarado): esos datos salen de fuentes de resources.md (pipeline.pc,
+No source in resources.md delimits farms in Spain, so SIGPAC is used
+**only** to know where each farm (plot) is and which enclosures make it up.
+No thematic SIGPAC attribute is used (use, slope, altitude, irrigation,
+declared crop): that data comes from sources in resources.md (pipeline.pc,
 pipeline.power).
 
-Fuente: https://sigpac-hubcloud.es/geopackages/ (CC BY 4.0, autor: FEGA).
+Source: https://sigpac-hubcloud.es/geopackages/ (CC BY 4.0, author: FEGA).
 
-Uso:
+Usage:
     python -m pipeline.sigpac --provincias 29
-    python -m pipeline.sigpac --provincias all --borrar-bruto   # toda España
+    python -m pipeline.sigpac --provincias all --borrar-bruto   # all of Spain
 
-Genera data/processed/sigpac/esqueleto_{prov}.parquet (un registro por recinto) y deja
-el GeoPackage extraído en data/raw/sigpac/extract/ para rasterizar las fincas.
+Generates data/processed/sigpac/esqueleto_{prov}.parquet (one record per enclosure) and leaves
+the extracted GeoPackage in data/raw/sigpac/extract/ to rasterise the farms.
 """
 
 from __future__ import annotations
@@ -41,14 +41,14 @@ COLS = NAT + ["recinto", "dn_surface"]
 
 
 def listar() -> dict[int, tuple[str, int]]:
-    """Zip de recintos por provincia: {29: ('29_MALAGA_rec_2026_..zip', bytes)}."""
+    """Enclosure zip per province: {29: ('29_MALAGA_rec_2026_..zip', bytes)}."""
     html = session().get(f"{BASE}/geopackages/{YEAR}/recintos/", timeout=60).text
     out = {
         int(name[:2]): (name, int(size))
         for size, name in re.findall(r"(\d+) <A HREF=\"[^\"]+\">([^<]+\.zip)</A>", html, flags=re.I)
     }
     if not out:
-        raise RuntimeError(f"No hay ficheros en {YEAR}/recintos")
+        raise RuntimeError(f"No files in {YEAR}/recintos")
     return out
 
 
@@ -65,9 +65,9 @@ def municipios(prov: int) -> list[dict]:
 
 
 def cargar_esqueleto(provincias: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Recintos y fincas (parcelas) en orden canónico, con un índice de finca 1..N.
+    """Enclosures and farms (plots) in canonical order, with a farm index 1..N.
 
-    Todos los módulos usan este orden, así `finca_idx` coincide entre ellos.
+    All modules use this order, so `finca_idx` matches across them.
     """
     rec = pd.concat(
         pd.read_parquet(OUT / f"esqueleto_{p:02d}.parquet").assign(_prov=p) for p in provincias
@@ -75,7 +75,7 @@ def cargar_esqueleto(provincias: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]
     fincas = rec.drop_duplicates("parcela_id")[["parcela_id"] + NAT].reset_index(drop=True)
     fincas["finca_idx"] = np.arange(1, len(fincas) + 1, dtype="int32")
     rec = rec.merge(fincas[["parcela_id", "finca_idx"]], on="parcela_id", how="left")
-    # Centroide ponderado por superficie y superficie total por finca
+    # Area-weighted centroid and total area per farm
     w = rec["superficie_ha"].clip(lower=1e-6)
     agg = (
         rec.assign(_wlon=rec["lon"] * w, _wlat=rec["lat"] * w, _w=w)
@@ -93,7 +93,7 @@ def cargar_esqueleto(provincias: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]
 def gpkg_de(prov: int) -> Path:
     gpkgs = list((RAW_SIGPAC / "extract" / f"{prov:02d}_recintos").glob("*.gpkg"))
     if not gpkgs:
-        raise FileNotFoundError(f"Falta el GeoPackage de la provincia {prov}: ejecuta pipeline.sigpac")
+        raise FileNotFoundError(f"GeoPackage of province {prov} is missing: run pipeline.sigpac")
     return gpkgs[0]
 
 
@@ -118,9 +118,9 @@ def esqueleto(gpkg: Path, prov: int) -> pd.DataFrame:
     parts = [df[k].astype("int64").astype(str) for k in NAT]
     df["parcela_id"] = parts[0].str.cat(parts[1:], sep=":")
     df["recinto_id"] = df["parcela_id"] + ":" + df["recinto"].astype("int64").astype(str)
-    df["superficie_ha"] = (df.pop("dn_surface") / 1e4).round(4)  # área de la geometría
+    df["superficie_ha"] = (df.pop("dn_surface") / 1e4).round(4)  # area of the geometry
     df["lon"], df["lat"] = c.x.round(6).to_numpy(), c.y.round(6).to_numpy()
-    df["fid"] = gdf.index.to_numpy()  # posición en el GeoPackage, para rasterizar
+    df["fid"] = gdf.index.to_numpy()  # position in the GeoPackage, for rasterising
     return df
 
 
@@ -145,7 +145,7 @@ def run(provincias: list[int], borrar_bruto: bool, borrar_zip: bool = False) -> 
             df.to_parquet(parquet, index=False)
             print(f"  {len(df):,} recintos, {df['parcela_id'].nunique():,} fincas -> {parquet.name}")
         if borrar_zip:
-            zip_path.unlink(missing_ok=True)  # el GeoPackage extraído basta para rasterizar
+            zip_path.unlink(missing_ok=True)  # the extracted GeoPackage is enough to rasterise
         if borrar_bruto:
             shutil.rmtree(gpkg.parent, ignore_errors=True)
             zip_path.unlink(missing_ok=True)
@@ -153,10 +153,10 @@ def run(provincias: list[int], borrar_bruto: bool, borrar_zip: bool = False) -> 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--provincias", default="29", help="Códigos separados por comas, o 'all'")
+    ap.add_argument("--provincias", default="29", help="Comma-separated codes, or 'all'")
     ap.add_argument("--borrar-bruto", action="store_true",
-                    help="Borra zip y gpkg al terminar (impide rasterizar después)")
-    ap.add_argument("--borrar-zip", action="store_true", help="Borra el zip tras extraerlo (ahorra disco)")
+                    help="Delete zip and gpkg when finished (prevents rasterising afterwards)")
+    ap.add_argument("--borrar-zip", action="store_true", help="Delete the zip after extracting it (saves disk)")
     a = ap.parse_args()
     provs = sorted(listar()) if a.provincias == "all" else [int(p) for p in a.provincias.split(",")]
     run(provs, a.borrar_bruto, a.borrar_zip)

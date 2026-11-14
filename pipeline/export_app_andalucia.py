@@ -1,21 +1,21 @@
-"""Portada de Andalucía y colores de los municipios de Málaga para la app.
+"""Andalucía landing page and municipality colours of Málaga for the app.
 
-La app abre en Andalucía (8 provincias) y baja a Málaga entre nubes. Este script
-escribe lo que necesitan esos dos niveles:
+The app opens on Andalucía (8 provinces) and descends to Málaga through clouds. This script
+writes what those two levels need:
 
-- las provincias de España (las de Andalucía con sus cifras de fincas sacadas de
-  data/andalucia/csv/*/fincas.csv; el resto, solo como contexto oscuro);
-- por cada municipio de la provincia, la parte de sus fincas que es cultivo
-  (ESA WorldCover) y la lluvia y el déficit hídrico medios de su celda NASA POWER.
+- the provinces of Spain (those of Andalucía with their farm figures taken from
+  data/andalucia/csv/*/fincas.csv; the rest, only as dark context);
+- for each municipality of the province, the share of its farms that is cropland
+  (ESA WorldCover) and the mean rain and water deficit of its POWER cell.
 
-Los límites se dibujan con es-atlas (IGN, CC BY 4.0), porque los CSV no traen
-geometría administrativa.
+The boundaries are drawn with es-atlas (IGN, CC BY 4.0), because the CSVs carry no
+administrative geometry.
 
-Uso:
+Usage:
     python -m pipeline.export_app_andalucia
     python -m pipeline.export_app_andalucia --provincia 29
 
-Salida:
+Output:
     app/public/data/provincias_andalucia.geojson
     app/public/data/municipios_{provincia}_stats.json
 """
@@ -39,7 +39,7 @@ SALIDA = ROOT / "app" / "public" / "data"
 
 
 def _arcos(topo: dict) -> list[list[tuple[float, float]]]:
-    """Decodifica los arcos cuantizados de un TopoJSON."""
+    """Decode the quantised arcs of a TopoJSON."""
     tf = topo["transform"]
     arcos = []
     for arco in topo["arcs"]:
@@ -62,7 +62,7 @@ def _anillo(arcos, indices) -> list[tuple[float, float]]:
 
 
 def _simplifica(puntos, tol: float):
-    """Douglas-Peucker en grados."""
+    """Douglas-Peucker in degrees."""
     if len(puntos) < 5:
         return puntos
     keep = [False] * len(puntos)
