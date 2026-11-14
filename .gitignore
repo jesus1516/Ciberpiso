@@ -31,3 +31,7 @@ venv/
 
 # Sistema
 .DS_Store
+
+# Configuración de agentes (se queda en local, no se publica)
+AGENTS.md
+.agents/
