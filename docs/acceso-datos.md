@@ -1,20 +1,20 @@
-# Acceso a datos: recetas verificadas
+# Data access: verified recipes
 
-Comandos y patrones para descargar las fuentes del reto sin perder tiempo en
-autenticación, formatos y unidades. Todo lo marcado como verificado se probó el
-**14 de noviembre de 2026**.
+Commands and patterns to download the challenge sources without wasting time on
+authentication, formats and units. Everything marked as verified was tested on
+**14 November 2026**.
 
-## Reglas
+## Rules
 
-1. **Nada de secretos en el repo.** Usa variables de entorno o `~/.netrc`.
-2. **Cachea antes de la demo.** Una API en vivo es un punto de fallo.
-3. **Registra fuente, fecha, AOI y unidad** por cada archivo.
-4. **No confundas visualización con dato.** GIBS sirve PNG; los valores salen del
-   DAAC correspondiente.
-5. **Si un endpoint falla, sigue con el MVP.** El reto no exige usar todas las
-   fuentes.
+1. **No secrets in the repo.** Use environment variables or `~/.netrc`.
+2. **Cache before the demo.** A live API is a point of failure.
+3. **Record source, date, AOI and unit** for every file.
+4. **Do not confuse visualisation with data.** GIBS serves PNG; the values come from
+   the corresponding DAAC.
+5. **If an endpoint fails, carry on with the MVP.** The challenge does not require
+   using every source.
 
-## Estructura sugerida
+## Suggested structure
 
 ```text
 data/
@@ -30,7 +30,7 @@ data/
 
 ---
 
-## 1. NASA POWER (sin credenciales)
+## 1. POWER (no credentials)
 
 ### curl
 
@@ -70,24 +70,24 @@ r = requests.get(
 r.raise_for_status()
 data = r.json()["properties"]["parameter"]
 
-# Cada variable es un dict {fecha: valor}. -999 significa sin dato.
+# Each variable is a {date: value} dict. -999 means no data.
 out = Path("data/raw/power/season.json")
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 ```
 
-**Gotchas verificados:**
+**Verified gotchas:**
 
-- Las fechas van como `20240401`, no `2024-04-01`. Con guiones devuelve 422.
-- `T2M_MIN` y `T2M_MAX` son parámetros válidos.
-- `PRECTOTCORR` viene en mm/día.
-- El valor de relleno es `-999`; fíltralo antes de promediar.
+- Dates go as `20240401`, not `2024-04-01`. With hyphens it returns 422.
+- `T2M_MIN` and `T2M_MAX` are valid parameters.
+- `PRECTOTCORR` comes in mm/day.
+- The fill value is `-999`; filter it before averaging.
 
 ---
 
-## 2. SSURGO vía Soil Data Access (sin credenciales)
+## 2. SSURGO via Soil Data Access (no credentials)
 
-### curl mínimo
+### Minimal curl
 
 ```bash
 curl -sS -X POST 'https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest' \
@@ -95,13 +95,13 @@ curl -sS -X POST 'https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest' \
   --data-urlencode "format=JSON"
 ```
 
-Respuesta verificada:
+Verified response:
 
 ```json
 {"Table":[["AK600","Matanuska-Susitna Valley Area, Alaska"],["AK605","Anchorage Area, Alaska"],["AK610","Greater Fairbanks Area, Alaska"]]}
 ```
 
-### Python: componentes y horizontes en un punto
+### Python: components and horizons at a point
 
 ```python
 import requests
@@ -129,16 +129,16 @@ print(rows[:2])
 
 **Gotchas:**
 
-- `SDA_Get_Mukey_from_intersection_with_WktWgs84` acepta un WKT en WGS84.
-- El resultado es una lista de listas, sin nombres de columna. Lleva el orden del
+- `SDA_Get_Mukey_from_intersection_with_WktWgs84` accepts a WKT in WGS84.
+- The result is a list of lists, without column names. It follows the order of the
   `SELECT`.
-- `awc_r` es una fracción; comprueba la definición y la unidad en el diccionario
-  SSURGO antes de multiplicar por profundidad.
-- Para un AOI grande, usa el WKT del polígono o descarga el mosaico SSURGO completo.
+- `awc_r` is a fraction; check the definition and unit in the SSURGO dictionary before
+  multiplying by depth.
+- For a large AOI, use the polygon's WKT or download the complete SSURGO mosaic.
 
 ---
 
-## 3. USGS NWIS (sin credenciales)
+## 3. USGS NWIS (no credentials)
 
 ```bash
 curl -sS 'https://waterservices.usgs.gov/nwis/dv/?format=json&sites=05484500&parameterCd=00060&startDT=2024-01-01&endDT=2024-01-31'
@@ -150,7 +150,7 @@ import requests
 params = {
     "format": "json",
     "sites": "05484500",       # Raccoon River at Van Meter, IA
-    "parameterCd": "00060",    # caudal, ft3/s
+    "parameterCd": "00060",    # discharge, ft3/s
     "startDT": "2024-01-01",
     "endDT": "2024-01-31",
 }
@@ -169,13 +169,13 @@ for row in series[:3]:
 
 **Gotchas:**
 
-- `00060` es caudal en ft³/s; `00065` es nivel en ft. Convierte si usas unidades SI.
-- Los datos provisionales pueden revisarse.
-- La estación no representa toda la cuenca; úsala como contexto.
+- `00060` is discharge in ft³/s; `00065` is level in ft. Convert if you use SI units.
+- Provisional data may be revised.
+- The station does not represent the whole basin; use it as context.
 
 ---
 
-## 4. CMR: metadatos de productos NASA (sin credenciales)
+## 4. CMR: product metadata (no credentials)
 
 ```bash
 curl -sS 'https://cmr.earthdata.nasa.gov/search/collections.json?keyword=SMAP&page_size=5'
@@ -194,14 +194,14 @@ for entry in r.json()["feed"]["entry"]:
     print(entry["entry_id"], "-", entry["title"])
 ```
 
-**Uso:** encontrar el `short_name` y el DAAC correctos antes de descargar. CMR no
-contiene los datos, solo el catálogo.
+**Use:** find the right `short_name` and DAAC before downloading. CMR does not hold the
+data, only the catalogue.
 
 ---
 
-## 5. GIBS WMTS: teselas de visualización (sin credenciales)
+## 5. GIBS WMTS: visualisation tiles (no credentials)
 
-### Descubrir capas
+### Discover layers
 
 ```bash
 curl -sS 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml' \
@@ -211,19 +211,19 @@ grep -oE '<ows:Identifier>[^<]*(SMAP|IMERG|Land_Surface_Temp|GLDAS)[^<]*' gibs.x
   | sed 's/<ows:Identifier>//' | sort -u
 ```
 
-### Plantilla de tesela
+### Tile template
 
 ```text
 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/{layer}/default/{date}/{tilematrixset}/{z}/{y}/{x}.png
 ```
 
-Ejemplo verificado (Iowa, 1 de julio de 2024):
+Verified example (Iowa, 1 July 2024):
 
 ```text
 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_L4_Analyzed_Surface_Soil_Moisture/default/2024-07-01/GoogleMapsCompatible_Level6/6/23/15.png
 ```
 
-Capas verificadas:
+Verified layers:
 
 - `SMAP_L4_Analyzed_Surface_Soil_Moisture`
 - `IMERG_Precipitation_Rate`
@@ -233,29 +233,30 @@ Capas verificadas:
 
 **Gotchas:**
 
-- El `tilematrixset` cambia según la capa (`Level6`, `Level7`). Léelo del XML.
-- La fecha debe estar dentro del rango de la capa.
-- Son PNG con una rampa de color: sirven para el mapa, no para calcular.
+- The `tilematrixset` changes depending on the layer (`Level6`, `Level7`). Read it
+  from the XML.
+- The date must be within the layer's range.
+- They are PNGs with a colour ramp: good for the map, not for computing.
 
 ---
 
 ## 6. Earthdata Login (SMAP, IMERG, Landsat, GEDI...)
 
-### Configurar `~/.netrc`
+### Configure `~/.netrc`
 
 ```text
 machine urs.earthdata.nasa.gov
-  login TU_USUARIO
-  password TU_PASSWORD
+  login YOUR_USER
+  password YOUR_PASSWORD
 ```
 
 ```bash
 chmod 600 ~/.netrc
 ```
 
-No subas `.netrc` al repo. Añádelo a `.gitignore`.
+Do not commit `.netrc` to the repo. Add it to `.gitignore`.
 
-### Buscar y descargar con `earthaccess`
+### Search and download with `earthaccess`
 
 ```python
 import earthaccess
@@ -272,16 +273,16 @@ earthaccess.download(results, "data/raw/smap")
 
 **Gotchas:**
 
-- Empieza con un AOI y un mes, no con un año completo.
-- Los archivos de SMAP/IMERG pueden ser grandes; revisa el tamaño antes de descargar.
-- Para Landsat, el `short_name` y la colección cambian con el nivel de procesamiento;
-  búscalo en CMR.
-- AppEEARS es útil para ECOSTRESS, pero requiere login y tareas asíncronas; no lo
-  uses en la demo en vivo.
+- Start with one AOI and one month, not a whole year.
+- SMAP/IMERG files can be large; check the size before downloading.
+- For Landsat, the `short_name` and the collection change with the processing level;
+  look it up in CMR.
+- AppEEARS is useful for ECOSTRESS, but it requires login and asynchronous tasks; do
+  not use it in the live demo.
 
 ---
 
-## 7. Otras APIs con credenciales
+## 7. Other APIs with credentials
 
 ### ERA5 (CDS)
 
@@ -289,7 +290,7 @@ earthaccess.download(results, "data/raw/smap")
 
 ```text
 url: https://cds.climate.copernicus.eu/api
-key: TU_KEY
+key: YOUR_KEY
 ```
 
 ```python
@@ -314,9 +315,9 @@ client.retrieve(
 
 ### Copernicus Sentinel-2
 
-OAuth en [Copernicus Data Space](https://dataspace.copernicus.eu/). Usa el catálogo
-OData o `sentinelhub`; no pongas el token en el cliente. Para el MVP, Landsat o
-GIBS suelen ser suficientes.
+OAuth at [Copernicus Data Space](https://dataspace.copernicus.eu/). Use the OData
+catalogue or `sentinelhub`; do not put the token in the client. For the MVP, Landsat
+or GIBS are usually enough.
 
 ### USDA QuickStats
 
@@ -324,27 +325,28 @@ GIBS suelen ser suficientes.
 curl -sS "https://quickstats.nass.usda.gov/api/api_GET/?key=${NASS_API_KEY}&commodity_desc=CORN&year=2023&format=JSON"
 ```
 
-Sin key devuelve 401. Los datos son agregados por condado/estado.
+Without a key it returns 401. The data are aggregated by county/state.
 
 ### USDA AMS Market News
 
-API MARS con key. La forma exacta de autenticación depende del endpoint; consulta la
-documentación de MARS y guarda la key en `AMS_API_KEY`. Sin key devuelve 403.
+MARS API with a key. The exact form of authentication depends on the endpoint; see
+the MARS documentation and store the key in `AMS_API_KEY`. Without a key it returns
+403.
 
 ### OpenET
 
-API con key. Úsala solo si el caso de uso está en el oeste de EE. UU. y necesitas ET
-a escala de campo.
+API with a key. Use it only if the use case is in the western US and you need
+field-scale ET.
 
 ---
 
-## 8. Caché y manifiesto
+## 8. Cache and manifest
 
-Cada descarga debe dejar un registro:
+Every download must leave a record:
 
 ```json
 {
-  "source": "NASA POWER",
+  "source": "POWER",
   "url": "https://power.larc.nasa.gov/api/temporal/daily/point?...",
   "retrieved_at": "2026-11-14T10:06:00Z",
   "aoi": {"west": -94.0, "south": 41.5, "east": -93.0, "north": 42.5},
@@ -359,53 +361,54 @@ Cada descarga debe dejar un registro:
 sha256sum data/raw/power/season.json
 ```
 
-**Regla:** si no está en el manifiesto, no existe para la demo.
+**Rule:** if it is not in the manifest, it does not exist for the demo.
 
 ---
 
-## 9. Armonización espacial y temporal
+## 9. Spatial and temporal harmonisation
 
-### Rejilla
+### Grid
 
-- **Proyección:** `EPSG:5070` (NAD83 / Conus Albers) para Iowa. Es de áreas iguales.
-- **Resolución:** 30 m para suelo, cobertura y pendiente; 250 m para clima agregado.
-- **Regla:** agrega lo grueso hacia lo fino solo para visualizar. Para calcular, usa
-  la resolución nativa del dato y documenta la agregación.
+- **Projection:** `EPSG:5070` (NAD83 / Conus Albers) for Iowa. It is equal-area.
+- **Resolution:** 30 m for soil, cover and slope; 250 m for aggregated climate.
+- **Rule:** aggregate the coarse towards the fine only for visualisation. For
+  computing, use the data's native resolution and document the aggregation.
 
-### Tiempo
+### Time
 
-- Define la temporada: 1 de abril – 30 de septiembre (ajústala al cultivo).
-- Convierte todo a fecha ISO (`YYYY-MM-DD`) y a la zona horaria local.
-- Si agregas a mensual, indica si es suma (lluvia) o media (temperatura).
-- Maneja años bisiestos y días sin dato.
+- Define the season: 1 April – 30 September (adjust it to the crop).
+- Convert everything to ISO dates (`YYYY-MM-DD`) and to the local time zone.
+- If you aggregate to monthly, state whether it is a sum (rain) or a mean
+  (temperature).
+- Handle leap years and days without data.
 
-### Unidades
+### Units
 
-| Variable | Unidad típica | Cuidado |
+| Variable | Typical unit | Caution |
 | --- | --- | --- |
-| Temperatura | °C | No mezclar con K |
-| Lluvia | mm/día | Sumar, no promediar |
-| Radiación | MJ/m²/día | Revisar si es W/m² |
-| AWC | fracción | Comprobar cm/cm |
-| Caudal | ft³/s | Convertir a m³/s si hace falta |
-| Pendiente | % o grados | No mezclar |
+| Temperature | °C | Do not mix with K |
+| Rain | mm/day | Sum, do not average |
+| Radiation | MJ/m²/day | Check whether it is W/m² |
+| AWC | fraction | Check cm/cm |
+| Discharge | ft³/s | Convert to m³/s if needed |
+| Slope | % or degrees | Do not mix |
 
-### Nodata y calidad
+### Nodata and quality
 
-- Filtra `-999` en POWER y el `nodata` de cada ráster.
-- Calcula el porcentaje de cobertura del AOI.
-- Si la cobertura es menor del 80 %, marca el indicador como de baja confianza.
-- Guarda el número de píxeles válidos por indicador.
+- Filter `-999` in POWER and the `nodata` of each raster.
+- Compute the AOI coverage percentage.
+- If coverage is below 80%, mark the indicator as low confidence.
+- Store the number of valid pixels per indicator.
 
 ---
 
-## 10. Validación mínima
+## 10. Minimum validation
 
-1. **Lluvia:** compara POWER, PRISM y, si hay, CoCoRaHS para 3 fechas.
-2. **Temperatura:** compara POWER con una estación cercana.
-3. **Suelo:** contrasta SSURGO con Web Soil Survey para el mismo punto.
-4. **Cultivo:** contrasta CDL con NAIP en 2–3 parcelas.
-5. **NDVI:** comprueba que el pico coincide con el calendario de cultivo.
+1. **Rain:** compare POWER, PRISM and, if available, CoCoRaHS for 3 dates.
+2. **Temperature:** compare POWER with a nearby station.
+3. **Soil:** check SSURGO against Web Soil Survey for the same point.
+4. **Crop:** check CDL against NAIP on 2–3 plots.
+5. **NDVI:** check that the peak matches the crop calendar.
 
-Documenta las diferencias en `docs/validacion.md`. Una discrepancia explicada vale
-más que un número perfecto sin contexto.
+Document the differences in `docs/validacion.md`. An explained discrepancy is worth
+more than a perfect number without context.
