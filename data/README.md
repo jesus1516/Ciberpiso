@@ -55,6 +55,6 @@ foráneas cuadran. El pipeline completo está en `docs/fuentes-scraping.md`.
 
 ## Git
 
-`ciberpiso.sqlite` (≈270 MB) y los CSV grandes no se suben: GitHub rechaza ficheros de
-más de 100 MB. Se versionan `schema.sql`, `consultas.sql`, este README y el manifiesto.
-Cualquiera puede regenerar los datos con los comandos de arriba.
+Los CSV sí se suben, así que quien clone el repo tiene los datos. `ciberpiso.sqlite`
+(≈270 MB) no: GitHub rechaza ficheros de más de 100 MB. Se genera desde los CSV en
+segundos con `python -m pipeline.cargar_sqlite`.
