@@ -1,109 +1,110 @@
-# Validación y limitaciones
+# Validation and limitations
 
-> Validación hecha el 14 de noviembre de 2026 sobre los datos reales de Málaga.
-> Solo se valida la nota de agua. Suelo, riesgo y precio siguen siendo reglas
-> expertas y no tienen etiqueta independiente con la que contrastarse.
+> Validation done on 14 November 2026 on the real Málaga data. Only the water score
+> is validated. Soil, risk and price remain expert rules and have no independent
+> label to check them against.
 
-## Qué se comprobó
+## What was checked
 
-| Afirmación | Fuente | Método | Resultado | Confianza |
+| Claim | Source | Method | Result | Confidence |
 | --- | --- | --- | --- | --- |
-| La nota de agua distingue años buenos y malos | NASA POWER + MODIS | 360 finca-campaña, validación dejando un municipio fuera | AUC 0,723; Spearman 0,494 con NDVI jun–ago | Media |
-| El déficit hídrico (lluvia − ET0) predice mejor que la lluvia sola | NASA POWER | Comparación con el modelo antiguo | AUC 0,627 → 0,723 | Media |
-| El modelo no depende de un municipio concreto | NASA POWER + MODIS | Leave-one-municipality-out (12 municipios) | AUC 0,727 → 0,778 | Media |
-| La clase arable del satélite sirve para validar | MODIS | Control negativo | AUC 0,54; sin señal | Baja |
-| Suelo, riesgo y precio | — | Sin etiqueta independiente | No validados | Baja |
+| The water score separates good and bad years | POWER + MODIS | 360 farm-seasons, leave-one-municipality-out validation | AUC 0.723; Spearman 0.494 with Jun–Aug NDVI | Medium |
+| Water deficit (rain − ET0) predicts better than rain alone | POWER | Comparison with the old model | AUC 0.627 → 0.723 | Medium |
+| The model does not depend on a particular municipality | POWER + MODIS | Leave-one-municipality-out (12 municipalities) | AUC 0.727 → 0.778 | Medium |
+| The satellite arable class is useful for validation | MODIS | Negative control | AUC 0.54; no signal | Low |
+| Soil, risk and price | — | No independent label | Not validated | Low |
 
-## Datos de la validación
+## Validation data
 
-- **360 filas** = 60 fincas candidatas × 6 campañas (2020–2025).
-- **12 municipios**, con Antequera, Campillos, Teba y Fuente de Piedra como grupos
-  principales.
-- Etiqueta principal: `exito_estival`, NDVI de junio–agosto ≥ 0,33 (44/360, 12 %).
-- Control negativo: `clase_arable`, clase herbácea de invierno o verano (219/360, 61 %).
-  Es la etiqueta equilibrada, pero **no discrimina**: AUC 0,54. Por eso no se usa para
-  calibrar.
+- **360 rows** = 60 candidate farms × 6 seasons (2020–2025).
+- **12 municipalities**, with Antequera, Campillos, Teba and Fuente de Piedra as the
+  main groups.
+- Main label: `exito_estival`, June–August NDVI ≥ 0.33 (44/360, 12%).
+- Negative control: `clase_arable`, winter or summer herbaceous class (219/360, 61%).
+  It is the balanced label, but it **does not discriminate**: AUC 0.54. That is why it
+  is not used for calibration.
 
-## Resultados
+## Results
 
-Modelo antiguo: la nota de agua dependía solo de la lluvia y se saturaba por encima de
-450 mm. Modelo nuevo: usa el déficit hídrico anual (`lluvia − ET0`).
+Old model: the water score depended only on rainfall and saturated above 450 mm. New
+model: it uses the annual water deficit (`rain − ET0`).
 
-| Métrica | Lluvia | Déficit hídrico |
+| Metric | Rain | Water deficit |
 | --- | --- | --- |
-| AUC con `exito_estival` | 0,627 | **0,723** |
-| Spearman con NDVI jun–ago | 0,256 | **0,494** |
-| Spearman con NDVI máximo | 0,250 | **0,386** |
-| AUC dejando un municipio fuera | 0,727 | **0,778** |
-| Balanced accuracy dejando un municipio fuera | 0,680 | **0,734** |
-| Mejor umbral de éxito | 60,0 | 62,7 |
-| Balanced accuracy en ese umbral | 0,622 | **0,689** |
+| AUC with `exito_estival` | 0.627 | **0.723** |
+| Spearman with Jun–Aug NDVI | 0.256 | **0.494** |
+| Spearman with maximum NDVI | 0.250 | **0.386** |
+| AUC leaving one municipality out | 0.727 | **0.778** |
+| Balanced accuracy leaving one municipality out | 0.680 | **0.734** |
+| Best success threshold | 60.0 | 62.7 |
+| Balanced accuracy at that threshold | 0.622 | **0.689** |
 
-La mejora supera los mínimos fijados de antemano (AUC +0,05, Spearman +0,05 y LOMO
-+0,03), así que se adopta el modelo de déficit con referencia de **900 mm**. Esa
-referencia solo fija la escala: no se ajusta a la etiqueta y no cambia el orden de las
-fincas.
+The improvement exceeds the minimums set in advance (AUC +0.05, Spearman +0.05 and
+LOMO +0.03), so the deficit model is adopted with a reference of **900 mm**. That
+reference only sets the scale: it is not fitted to the label and does not change the
+order of the farms.
 
-## Auditoría de cumplimiento
+## Compliance audit
 
-`python3 pipeline/audit.py` comprueba la salida completa:
+`python3 pipeline/audit.py` checks the complete output:
 
-- 60 fincas, 240 rotaciones y 960 indicadores.
-- 4/4 rotaciones rankeadas en los 3 perfiles de las 60 fincas, sin puestos vacíos.
-- Los cinco campos obligatorios por rotación: por qué, evidencia, beneficios, lagunas
-  y riesgos de revisión local.
-- Fuente, fecha, unidad, confianza y laguna en cada indicador.
-- Rankings coherentes: los empates comparten puesto y las rotaciones con datos
-  incompletos no se rankean.
-- Aviso de herramienta de apoyo, glosario y fuentes en el JSON.
+- 60 farms, 240 rotations and 960 indicators.
+- 4/4 rotations ranked in the 3 profiles of the 60 farms, with no empty places.
+- The five mandatory fields per rotation: why, evidence, benefits, gaps and local
+  review risks.
+- Source, date, unit, confidence and gap on every indicator.
+- Consistent rankings: ties share a place and rotations with incomplete data are not
+  ranked.
+- Support-tool notice, glossary and sources in the JSON.
 
-Resultado actual: **0 fallos**. R1 y R2 ya no son clones: la veza tiene más protección
-de erosión y materia orgánica que el garbanzo. R2 usa el precio nacional de veza grano
-del MAPA (48,79 €/100 kg en 2024) y queda comparable; la limitación es que no hay lonja
-local ni serie Eurostat.
+Current result: **0 failures**. R1 and R2 are no longer clones: vetch gives more
+erosion protection and organic matter than chickpea. R2 uses the national grain vetch
+price from MAPA (€48.79/100 kg in 2024) and is comparable; the limitation is that
+there is no local market (lonja) price or Eurostat series.
 
-## Decisión sobre los umbrales
+## Decision on thresholds
 
-Los umbrales de viabilidad se mantienen en **20 (bloqueo) y 40 (aviso)**. El umbral que
-maximiza balanced accuracy (62,7) cambiaría con cualquier reescala de la nota, no es
-estable entre municipios y la nota no es una probabilidad. Se documenta como diagnóstico,
-no se usa como corte.
+The viability thresholds stay at **20 (block) and 40 (warning)**. The threshold that
+maximises balanced accuracy (62.7) would change with any rescaling of the score, is
+not stable across municipalities and the score is not a probability. It is documented
+as a diagnostic, not used as a cut-off.
 
-## Lo que no se validó
+## What was not validated
 
-- **Suelo:** no hay una etiqueta independiente de calidad del suelo. La fórmula usa
-  arcilla, pH y agua disponible, pero no se contrasta con rendimiento.
-- **Riesgo:** depende de calor, helada y sequía; no hay serie de daños observados.
-- **Precio:** Eurostat da precio nacional anual para trigo, girasol y garbanzo; el
-  MAPA da veza grano nacional y anual (2014–2024). No hay lonja local ni precio
-  provincial. Sin rendimientos ni costes no se puede validar un margen; la nota se
-  llama “precio/mercado”, no rentabilidad.
-- **Rotación observada:** `rotacion_estimada` es una estimación NDVI a 250 m, no cultivo
-  declarado. No distingue trigo de girasol ni la veza del garbanzo; la separación R1/R2
-  sale de los parámetros de cultivo, no del satélite.
-- **Muestra:** 60 fincas y 44 éxitos estivales. Los intervalos de confianza son anchos;
-  los resultados son una señal, no una prueba definitiva.
+- **Soil:** there is no independent soil quality label. The formula uses clay, pH and
+  available water, but it is not checked against yield.
+- **Risk:** it depends on heat, frost and drought; there is no series of observed
+  damage.
+- **Price:** Eurostat gives an annual national price for wheat, sunflower and chickpea;
+  MAPA gives national annual grain vetch (2014–2024). There is no local lonja or
+  provincial price. Without yields or costs a margin cannot be validated; the score is
+  called “price/market”, not profitability.
+- **Observed rotation:** `rotacion_estimada` is a 250 m NDVI estimate, not a declared
+  crop. It does not tell wheat from sunflower or vetch from chickpea; the R1/R2
+  separation comes from the crop parameters, not from the satellite.
+- **Sample:** 60 farms and 44 summer successes. The confidence intervals are wide; the
+  results are a signal, not definitive proof.
 
-## Qué falta para una validación real
+## What is missing for real validation
 
-- Revisión con un agrónomo o extensionista local.
-- Datos de manejo: laboreo, variedad, fechas de siembra y cosecha.
-- Rendimientos y costes por campaña.
-- Cultivo declarado de SIGPAC o una fuente equivalente.
-- Medición de campo o sensor local en al menos una campaña.
+- Review with a local agronomist or extension officer.
+- Management data: tillage, variety, sowing and harvest dates.
+- Yields and costs per season.
+- Declared crop from SIGPAC or an equivalent source.
+- Field measurement or local sensor in at least one season.
 
-## Reproducir
+## Reproduce
 
 ```bash
-python3 pipeline/prepare_inputs.py   # 360 escenarios
-python3 pipeline/calibrate.py        # métricas y decisión
+python3 pipeline/prepare_inputs.py   # 360 scenarios
+python3 pipeline/calibrate.py        # metrics and decision
 python3 pipeline/calculator.py       # indicators.json
 python3 -m unittest discover -s tests -v
 ```
 
-## Registro
+## Log
 
-- **Fecha:** 2026-11-14
-- **Datos:** 60 candidatas, campañas 2020–2025, Eurostat 2000–2024.
-- **Decisión:** adoptar déficit hídrico; mantener umbrales 20/40.
-- **Artefactos:** `data/calibration.json`, `data/processed/validation.json`.
+- **Date:** 2026-11-14
+- **Data:** 60 candidates, seasons 2020–2025, Eurostat 2000–2024.
+- **Decision:** adopt water deficit; keep thresholds 20/40.
+- **Artefacts:** `data/calibration.json`, `data/processed/validation.json`.

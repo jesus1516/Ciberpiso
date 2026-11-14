@@ -1,11 +1,11 @@
-"""Clima diario NASA POWER por celda MERRA-2 (0,5° × 0,625°) e indicadores por campaña.
+"""Daily POWER climate per MERRA-2 cell (0.5° × 0.625°) and indicators per season.
 
-Fuente: https://power.larc.nasa.gov/ (NASA LaRC POWER, comunidad AG, sin clave).
+Source: https://power.larc.nasa.gov/ (LaRC POWER, AG community, no key).
 
-Se descarga una serie diaria 2001–2025 por celda (no por finca) y se resumen
-indicadores por campaña agrícola (octubre del año anterior a septiembre).
+A daily 2001–2025 series is downloaded per cell (not per farm) and indicators are
+summarised per agricultural season (October of the previous year to September).
 
-Uso:
+Usage:
     python -m pipeline.power --provincias 29
 """
 
@@ -21,15 +21,15 @@ from pipeline.common import PROCESSED, RAW, record, session
 
 API = "https://power.larc.nasa.gov/api/temporal/daily/point"
 PARAMS = [
-    "PRECTOTCORR",  # mm/día
+    "PRECTOTCORR",  # mm/day
     "T2M",  # °C
     "T2M_MAX",  # °C
     "T2M_MIN",  # °C
-    "TOA_SW_DWN",  # MJ/m²/día, radiación extraterrestre (Ra)
-    "ALLSKY_SFC_SW_DWN",  # MJ/m²/día
-    "GWETTOP",  # 0–1, humedad del suelo superficial, 0–5 cm (MERRA-2)
-    "GWETROOT",  # 0–1, humedad de la zona radicular, 0–100 cm (MERRA-2)
-    "GWETPROF",  # 0–1, humedad del perfil completo (MERRA-2)
+    "TOA_SW_DWN",  # MJ/m²/day, extraterrestrial radiation (Ra)
+    "ALLSKY_SFC_SW_DWN",  # MJ/m²/day
+    "GWETTOP",  # 0–1, surface soil moisture, 0–5 cm (MERRA-2)
+    "GWETROOT",  # 0–1, root-zone moisture, 0–100 cm (MERRA-2)
+    "GWETPROF",  # 0–1, whole-profile moisture (MERRA-2)
     "RH2M",  # %
     "WS2M",  # m/s
 ]
@@ -40,7 +40,7 @@ OUT = PROCESSED / "power"
 
 
 def celda(lat: pd.Series, lon: pd.Series) -> pd.DataFrame:
-    """Centro de la celda MERRA-2 y un id entero estable."""
+    """Centre of the MERRA-2 cell and a stable integer id."""
     ilat = np.round((lat + 90) / DLAT).astype(int)
     ilon = np.round((lon + 180) / DLON).astype(int)
     return pd.DataFrame(
@@ -78,11 +78,11 @@ def descargar(celda_id: int, lat: float, lon: float) -> pd.DataFrame:
 
 
 def indicadores(d: pd.DataFrame) -> pd.DataFrame:
-    """Indicadores por campaña agrícola (oct del año anterior a sep)."""
+    """Indicators per agricultural season (Oct of the previous year to Sep)."""
     d = d.copy()
     d["campana"] = d.index.year + (d.index.month >= 10)
     m = d.index.month
-    # ET0 de Hargreaves-Samani (mm/día); Ra en MJ/m²/día × 0,408 = mm/día.
+    # Hargreaves-Samani ET0 (mm/day); Ra in MJ/m²/day × 0.408 = mm/day.
     amp = (d["T2M_MAX"] - d["T2M_MIN"]).clip(lower=0)
     d["ET0"] = 0.0023 * (d["T2M"] + 17.8) * np.sqrt(amp) * d["TOA_SW_DWN"] * 0.408
     d["lluvia_oct_may"] = d["PRECTOTCORR"].where((m >= 10) | (m <= 5))
@@ -91,7 +91,7 @@ def indicadores(d: pd.DataFrame) -> pd.DataFrame:
     d["helada"] = (d["T2M_MIN"] <= 0).astype(int)
     d["helada_tardia"] = ((d["T2M_MIN"] <= 0) & m.isin([3, 4])).astype(int)
     d["gwet_mar_may"] = d["GWETROOT"].where(m.isin([3, 4, 5]))
-    d["gwet_oct_nov"] = d["GWETTOP"].where(m.isin([10, 11]))  # tempero en siembra de otoño
+    d["gwet_oct_nov"] = d["GWETTOP"].where(m.isin([10, 11]))  # soil moisture at autumn sowing
     g = d.groupby("campana")
     out = pd.DataFrame(
         {
@@ -107,7 +107,7 @@ def indicadores(d: pd.DataFrame) -> pd.DataFrame:
             "dias_helada": g["helada"].sum(),
             "dias_helada_mar_abr": g["helada_tardia"].sum(),
             "radiacion_mj_m2_dia": g["ALLSKY_SFC_SW_DWN"].mean(),
-            # Humedad del suelo (fracción 0–1 de saturación, MERRA-2 vía POWER)
+            # Soil moisture (fraction 0–1 of saturation, MERRA-2 via POWER)
             "gwettop_media": g["GWETTOP"].mean(),
             "gwetroot_media": g["GWETROOT"].mean(),
             "gwetprof_media": g["GWETPROF"].mean(),
@@ -117,8 +117,8 @@ def indicadores(d: pd.DataFrame) -> pd.DataFrame:
         }
     )
     out["deficit_mm"] = out["et0_mm"] - out["lluvia_mm"]
-    out = out[out["dias"] >= 360].drop(columns="dias")  # solo campañas completas
-    # Anomalía de humedad radicular en primavera respecto a la media de la celda.
+    out = out[out["dias"] >= 360].drop(columns="dias")  # complete seasons only
+    # Spring root-zone moisture anomaly with respect to the cell mean.
     out["gwetroot_mar_may_anomalia"] = out["gwetroot_mar_may"] - out["gwetroot_mar_may"].mean()
     return out.round(2).reset_index()
 
@@ -128,7 +128,7 @@ def resumen(anual: pd.DataFrame) -> dict:
     return {
         "campanas": len(anual),
         "lluvia_media_mm": ll.mean(),
-        "lluvia_p20_mm": ll.quantile(0.2),  # "año seco": 1 de cada 5
+        "lluvia_p20_mm": ll.quantile(0.2),  # "dry year": 1 in 5
         "lluvia_cv": ll.std() / ll.mean(),
         "campana_mas_seca": int(anual.loc[ll.idxmin(), "campana"]),
         "lluvia_min_mm": ll.min(),
@@ -152,10 +152,10 @@ def run(provincias: list[int]) -> None:
         for p in provincias
     )
     celdas = celda(pts["lat"], pts["lon"]).drop_duplicates("celda_power").sort_values("celda_power")
-    print(f"{len(celdas)} celdas POWER para {len(pts):,} recintos")
+    print(f"{len(celdas)} POWER cells for {len(pts):,} enclosures")
     anuales, resumenes = [], []
     for c in celdas.itertuples(index=False):
-        print(f"  celda {c.celda_power} ({c.celda_lat}, {c.celda_lon})")
+        print(f"  cell {c.celda_power} ({c.celda_lat}, {c.celda_lon})")
         anual = indicadores(descargar(c.celda_power, c.celda_lat, c.celda_lon))
         anual.insert(0, "celda_power", c.celda_power)
         anuales.append(anual)

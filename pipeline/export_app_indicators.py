@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Exporta los indicadores de Antequera para la app web.
+"""Export the Antequera indicators for the web app.
 
-Filtra `data/processed/indicators.json` por municipio y comprueba que cada
-`parcela_id` existe en el GeoJSON que usa la app. Así la app no carga las 60
-fincas de la provincia ni datos de municipios que no puede pintar.
+Filters `data/processed/indicators.json` by municipality and checks that each
+`parcela_id` exists in the GeoJSON used by the app. This way the app does not load the 60
+farms of the province nor data of municipalities it cannot draw.
 
-Uso:
+Usage:
     python3 pipeline/export_app_indicators.py
 """
 
@@ -34,12 +34,12 @@ def exportar(
 
     candidates = [c for c in data["candidates"] if c.get("municipio") == municipio]
     if not candidates:
-        raise ValueError(f"No hay candidatas de {municipio} en {indicators_path}")
+        raise ValueError(f"No candidates of {municipio} in {indicators_path}")
 
     faltan = sorted(c["parcela_id"] for c in candidates if c["parcela_id"] not in pids)
     if faltan:
         raise ValueError(
-            f"{len(faltan)} parcelas no están en {geojson_path}: {faltan[:5]}"
+            f"{len(faltan)} plots are not in {geojson_path}: {faltan[:5]}"
         )
 
     top: dict[str, Counter] = {
@@ -85,10 +85,10 @@ def main() -> None:
 
     data = exportar(args.indicators, args.geojson, args.out, args.municipio)
     print(
-        f"{len(data['candidates'])} fincas de {args.municipio} -> "
+        f"{len(data['candidates'])} farms of {args.municipio} -> "
         f"{args.out.relative_to(BASE_DIR)}"
     )
-    print(f"Tamaño: {args.out.stat().st_size / 1e6:.1f} MB")
+    print(f"Size: {args.out.stat().st_size / 1e6:.1f} MB")
 
 
 if __name__ == "__main__":

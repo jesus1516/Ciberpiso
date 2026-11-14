@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Construye la tabla de escenarios finca x campana para la calculadora.
+"""Build the farm x season scenario table for the calculator.
 
-Une las 60 fincas candidatas con su clima, suelo, fenologia y precios. El resultado
-es un CSV intermedio (data/processed/scenarios.csv) y un informe de calidad
-(data/processed/scenarios_qa.json). Solo usa la biblioteca estandar.
+Joins the 60 candidate farms with their climate, soil, phenology and prices. The result
+is an intermediate CSV (data/processed/scenarios.csv) and a quality report
+(data/processed/scenarios_qa.json). It only uses the standard library.
 
-Uso:
+Usage:
     python3 pipeline/prepare_inputs.py
 """
 
@@ -213,7 +213,7 @@ RANGOS = {
 def conectar(db: Path) -> sqlite3.Connection:
     if not db.exists():
         raise FileNotFoundError(
-            f"No existe {db}. Genera la base con: python3 pipeline/cargar_sqlite.py"
+            f"{db} does not exist. Generate the database with: python3 pipeline/cargar_sqlite.py"
         )
     con = sqlite3.connect(db)
     con.row_factory = sqlite3.Row
@@ -221,7 +221,7 @@ def conectar(db: Path) -> sqlite3.Connection:
 
 
 def build_scenarios(db: Path = DB_PATH) -> list[dict]:
-    """Devuelve las 60 candidatas x 6 campanas con clima, suelo y precios."""
+    """Return the 60 candidates x 6 seasons with climate, soil and prices."""
     con = conectar(db)
     try:
         filas = [dict(r) for r in con.execute(SQL, (CAMPANA_MIN, CAMPANA_MAX))]
@@ -248,12 +248,12 @@ def build_scenarios(db: Path = DB_PATH) -> list[dict]:
         fila["precio_completo_r2"] = int(
             trigo is not None and girasol is not None and veza is not None
         )
-        fila["precio_completo_r3"] = 1  # el barbecho no necesita precio
+        fila["precio_completo_r3"] = 1  # fallow does not need a price
     return [{k: fila.get(k) for k in CAMPOS} for fila in filas]
 
 
 def resumen_calidad(filas: list[dict]) -> dict:
-    """Comprueba conteos, nulos criticos, rangos y cobertura de precios."""
+    """Check counts, critical nulls, ranges and price coverage."""
     qa = {
         "filas": len(filas),
         "fincas": len({f["finca_key"] for f in filas}),
@@ -303,17 +303,17 @@ def resumen_calidad(filas: list[dict]) -> dict:
 def errores(qa: dict) -> list[str]:
     fallos = []
     if qa["filas"] != 360:
-        fallos.append(f"se esperaban 360 filas, hay {qa['filas']}")
+        fallos.append(f"360 rows expected, found {qa['filas']}")
     if qa["fincas"] != 60:
-        fallos.append(f"se esperaban 60 fincas, hay {qa['fincas']}")
+        fallos.append(f"60 farms expected, found {qa['fincas']}")
     if qa["duplicados"]:
-        fallos.append(f"{qa['duplicados']} duplicados finca-campana")
+        fallos.append(f"{qa['duplicados']} farm-season duplicates")
     for campo, n in qa["nulos_criticos"].items():
         if n:
-            fallos.append(f"{n} nulos en {campo}")
+            fallos.append(f"{n} nulls in {campo}")
     for campo, r in qa["rangos"].items():
         if r["fuera_de_rango"]:
-            fallos.append(f"{r['fuera_de_rango']} valores fuera de rango en {campo}")
+            fallos.append(f"{r['fuera_de_rango']} out-of-range values in {campo}")
     return fallos
 
 
@@ -343,20 +343,20 @@ def main() -> None:
     escribir(filas, qa, args.out, args.qa)
 
     print(
-        f"{qa['filas']} filas, {qa['fincas']} fincas, campanas {min(qa['campanas'])}-{max(qa['campanas'])}"
+        f"{qa['filas']} rows, {qa['fincas']} farms, seasons {min(qa['campanas'])}-{max(qa['campanas'])}"
     )
     p = qa["precios"]
     print(
         f"Precios: trigo {p['trigo']}/360, girasol {p['girasol']}/360, garbanzo {p['garbanzo']}/360, veza {p['veza']}/360"
     )
     print(
-        f"Rotaciones con precio completo: R0 {p['r0_completo']}, R1 {p['r1_completo']}, R2 {p['r2_completo']}, R3 {p['r3_completo']}"
+        f"Rotations with complete price: R0 {p['r0_completo']}, R1 {p['r1_completo']}, R2 {p['r2_completo']}, R3 {p['r3_completo']}"
     )
     print(f"-> {args.out.relative_to(BASE_DIR)}")
     print(f"-> {args.qa.relative_to(BASE_DIR)}")
 
     if fallos:
-        print("\nQA FALLIDA:")
+        print("\nQA FAILED:")
         for fallo in fallos:
             print(f"  - {fallo}")
         raise SystemExit(1)

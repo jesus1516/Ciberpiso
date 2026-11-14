@@ -1,15 +1,15 @@
-"""Suelo SoilGrids 2.0 (ISRIC, 250 m) por finca.
+"""SoilGrids 2.0 soil (ISRIC, 250 m) per farm.
 
-Fuente: https://maps.isric.org/ (WCS 2.0.1, CC BY 4.0, sin clave).
-Excepción a la regla "solo resources.md", pedida por el equipo (plan de acción:
-"SSURGO … pasa a … SoilGrids"): SSURGO/NRCS de resources.md solo cubre EE. UU.
+Source: https://maps.isric.org/ (WCS 2.0.1, CC BY 4.0, no key).
+Exception to the "only resources.md" rule, requested by the team (action plan:
+"SSURGO … becomes … SoilGrids"): SSURGO/NRCS in resources.md only covers the US.
 
-Se descarga un recorte por propiedad y profundidad para el bbox de la provincia en la
-proyección nativa (Homolosine), se muestrea en el centroide de cada recinto y se
-promedia por finca ponderando por superficie. Devuelve la media 0–30 cm y la capacidad
-de agua disponible (CAD) 0–100 cm estimada con Saxton & Rawls (2006).
+One crop is downloaded per property and depth for the bbox of the province in the
+native projection (Homolosine), sampled at the centroid of each enclosure and
+averaged per farm weighted by area. Returns the 0–30 cm mean and the available
+water capacity (CAD) 0–100 cm estimated with Saxton & Rawls (2006).
 
-Uso:
+Usage:
     python -m pipeline.soilgrids --provincias 29
 """
 
@@ -28,10 +28,10 @@ from pipeline.sigpac import cargar_esqueleto
 
 WCS = "https://maps.isric.org/mapserv?map=/map/{prop}.map"
 IGH = "+proj=igh +lat_0=0 +lon_0=0 +datum=WGS84 +units=m +no_defs"
-# profundidad: grosor en cm
+# depth: thickness in cm
 PROF = {"0-5cm": 5, "5-15cm": 10, "15-30cm": 15, "30-60cm": 30, "60-100cm": 40}
 TOP = ["0-5cm", "5-15cm", "15-30cm"]
-# propiedad: (nombre de salida, divisor a unidad convencional, profundidades)
+# property: (output name, divisor to conventional unit, depths)
 PROPS = {
     "clay": ("arcilla_pct", 10, list(PROF)),  # g/kg -> %
     "sand": ("arena_pct", 10, list(PROF)),
@@ -79,14 +79,14 @@ def muestrear(tif, x: np.ndarray, y: np.ndarray) -> np.ndarray:
     ok = (rows >= 0) & (rows < a.shape[0]) & (cols >= 0) & (cols < a.shape[1])
     out = np.full(len(x), np.nan)
     out[ok] = a[rows[ok], cols[ok]]
-    out[out <= 0] = np.nan  # 0 = sin dato (agua, urbano) en SoilGrids
+    out[out <= 0] = np.nan  # 0 = no data (water, urban) in SoilGrids
     return out
 
 
 def saxton_rawls(arena_pct, arcilla_pct, cos_gkg):
-    """Agua disponible (θ33 − θ1500, fracción volumétrica). Saxton & Rawls 2006."""
+    """Available water (θ33 − θ1500, volumetric fraction). Saxton & Rawls 2006."""
     s, c = arena_pct / 100, arcilla_pct / 100
-    om = np.clip(cos_gkg / 10 * 1.724, 0, 8)  # materia orgánica %
+    om = np.clip(cos_gkg / 10 * 1.724, 0, 8)  # organic matter %
     t1500 = -0.024 * s + 0.487 * c + 0.006 * om + 0.005 * s * om - 0.013 * c * om + 0.068 * s * c + 0.031
     t1500 = t1500 + (0.14 * t1500 - 0.02)
     t33 = -0.251 * s + 0.195 * c + 0.011 * om + 0.006 * s * om - 0.027 * c * om + 0.452 * s * c + 0.299
@@ -112,13 +112,13 @@ def run(provincias: list[int]) -> None:
             for prof in profs:
                 tif = recorte(prop, prof, bbox, f"{prov:02d}")
                 capas[(prop, prof)] = muestrear(tif, np.asarray(x), np.asarray(y)) / div
-            # media ponderada 0–30 cm
+            # weighted mean 0–30 cm
             peso = np.array([PROF[p] for p in TOP], dtype=float)
             pila = np.vstack([capas[(prop, p)] for p in TOP])
             out[nombre] = np.round(np.nansum(pila * peso[:, None], axis=0) / peso.sum(), 2)
             out.loc[np.isnan(pila).all(axis=0), nombre] = np.nan
-            print(f"  [{prov:02d}] {prop}: {np.isfinite(out[nombre]).mean():.1%} recintos con dato")
-        # CAD 0–100 cm (mm), descontando elementos gruesos
+            print(f"  [{prov:02d}] {prop}: {np.isfinite(out[nombre]).mean():.1%} enclosures with data")
+        # CAD 0–100 cm (mm), discounting coarse fragments
         cad = np.zeros(len(out))
         for prof, grosor_cm in PROF.items():
             awc = saxton_rawls(capas[("sand", prof)], capas[("clay", prof)], capas[("soc", prof)])
@@ -127,7 +127,7 @@ def run(provincias: list[int]) -> None:
         out["cad_0_100_mm"] = cad
         out.loc[out["arcilla_pct"].isna(), "cad_0_100_mm"] = np.nan
         partes.append(out)
-    # Media por finca ponderada por la superficie de cada recinto con dato
+    # Mean per farm weighted by the area of each enclosure with data
     r = pd.concat(partes)
     cols = [n for n, _, _ in PROPS.values()] + ["cad_0_100_mm"]
     w = r["superficie_ha"].clip(lower=1e-6).where(r["arcilla_pct"].notna())
@@ -137,7 +137,7 @@ def run(provincias: list[int]) -> None:
                                         / r["superficie_ha"].clip(lower=1e-6).groupby(r["finca_idx"]).sum() * 100)
     suelo = suelo.round({**{c: 2 for c in cols}, "cad_0_100_mm": 1, "pct_superficie_con_dato": 1}).reset_index()
     suelo.to_parquet(OUT / "suelo_fincas.parquet", index=False)
-    print(f"  -> suelo_fincas.parquet ({suelo['arcilla_pct'].notna().sum():,} de {len(suelo):,} fincas con dato)")
+    print(f"  -> suelo_fincas.parquet ({suelo['arcilla_pct'].notna().sum():,} of {len(suelo):,} farms with data)")
 
 
 def main() -> None:

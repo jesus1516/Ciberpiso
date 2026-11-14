@@ -1,317 +1,315 @@
-# Guía paso a paso (48 h)
+# Step-by-step guide (48 h)
 
-Esta guía asume un equipo de 3–4 personas y un hackathon de fin de semana. Los
-tiempos son orientativos; lo importante es el orden y los entregables.
+This guide assumes a team of 3–4 people and a weekend hackathon. The times are
+indicative; what matters is the order and the deliverables.
 
-## Regla de oro
+## Golden rule
 
-No empieces por la UI ni por un modelo de IA. Primero fija el caso de uso, las
-rotaciones y los datos. Si el sábado por la tarde no tienes una tabla de rotaciones
-con evidencia, la demo será una maqueta.
+Do not start with the UI or with an AI model. First fix the use case, the rotations
+and the data. If by Saturday afternoon you do not have a rotation table with
+evidence, the demo will be a mock-up.
 
-Cada fase termina con un entregable concreto y un criterio de "hecho". Si no se
-cumple, no pases a la siguiente.
+Each phase ends with a concrete deliverable and a "done" criterion. If it is not
+met, do not move on to the next one.
 
 ---
 
-## Fase 0 — Alcance y caso de uso (2–3 h)
+## Phase 0 — Scope and use case (2–3 h)
 
-**Objetivo:** elegir un lugar, un perfil de finca y una decisión concreta.
+**Goal:** choose a place, a farm profile and a concrete decision.
 
-### Tareas
+### Tasks
 
-1. **Elige un condado de EE. UU.** Recomendado: centro de Iowa (por ejemplo, Story,
-   Boone o Marshall). Motivo: coinciden CDL, SSURGO, PRISM, NAIP y NWIS, y hay señal
-   satelital de NASA. No elijas un país sin datos de suelo o cultivo.
-2. **Define un perfil de finca.** Ejemplo: 200 ha, secano, suelo franco-limoso,
-   rotación maíz–soja, sin ganado, maquinaria para siembra directa.
-3. **Define la decisión.** "¿Qué rotación propongo para los próximos 3–4 años si mi
-   prioridad es X?" No "predecir el rendimiento".
-4. **Fija las restricciones.** Agua disponible, maquinaria, mercado, mano de obra,
-   ventana de siembra, tolerancia al riesgo.
-5. **Escribe el alcance en una página.** Plantilla:
+1. **Choose a US county.** Recommended: central Iowa (for example Story, Boone or
+   Marshall). Reason: CDL, SSURGO, PRISM, NAIP and NWIS coincide, and there is a
+   satellite signal. Do not choose a country without soil or crop data.
+2. **Define a farm profile.** Example: 200 ha, rainfed, silt loam soil, corn–soybean
+   rotation, no livestock, no-till seeding machinery.
+3. **Define the decision.** "Which rotation do I propose for the next 3–4 years if my
+   priority is X?" Not "predict the yield".
+4. **Fix the constraints.** Available water, machinery, market, labour, sowing
+   window, risk tolerance.
+5. **Write the scope on one page.** Template:
 
 ```text
-AOI: bbox y condado
-Perfil: superficie, suelo, clima, riego, maquinaria
-Rotación actual: ...
-Alternativas: ...
-Prioridades: agua / suelo / rentabilidad / riesgo
-Restricciones: ...
-Decisión que apoya: ...
-Fuera de alcance: ...
+AOI: bbox and county
+Profile: area, soil, climate, irrigation, machinery
+Current rotation: ...
+Alternatives: ...
+Priorities: water / soil / profitability / risk
+Constraints: ...
+Decision supported: ...
+Out of scope: ...
 ```
 
-### Entregable
+### Deliverable
 
-`docs/alcance.md` con la plantilla rellena.
+`docs/alcance.md` with the template filled in.
 
-### Criterio de hecho
+### "Done" criterion
 
-Cualquier miembro del equipo puede explicar en 30 segundos: quién es el usuario, qué
-decisión toma y qué tres rotaciones compara.
-
----
-
-## Fase 1 — Rotaciones y evidencia (3–4 h)
-
-**Objetivo:** convertir la agronomía en una tabla comparable, no en una lista de
-eslóganes.
-
-### Tareas
-
-1. **Define la rotación actual.** En Iowa: maíz–soja.
-2. **Define tres alternativas.** Una por mecanismo:
-   - **Diversidad con cereal pequeño + leguminosa:** maíz–soja–avena + trébol rojo.
-   - **Cobertura de invierno:** maíz–soja–trigo + centeno como cubierta.
-   - **Leguminosa profunda:** maíz–soja–alfalfa (2–3 años).
-3. **Rellena una ficha por rotación** con los cinco campos que exige el reto:
-   - Por qué se sugiere.
-   - Qué evidencia la respalda (mecanismo + fuente).
-   - Qué beneficios ofrece.
-   - Dónde hay lagunas de datos.
-   - Qué riesgos requieren revisión local.
-4. **Separa lo calculable de lo cualitativo.** No inventes un número para el mercado
-   o para la ruptura de plagas si no tienes datos.
-5. **Usa la plantilla de [rotaciones.md](rotaciones.md).**
-
-### Entregable
-
-Tabla con 4 rotaciones × 5 campos, más una lista de indicadores.
-
-### Criterio de hecho
-
-Cada rotación tiene al menos dos fuentes citadas y una frase honesta de "esto no lo
-podemos calcular con los datos disponibles".
+Any team member can explain in 30 seconds: who the user is, what decision they make
+and which three rotations are compared.
 
 ---
 
-## Fase 2 — Datos mínimos y acceso (4–6 h)
+## Phase 1 — Rotations and evidence (3–4 h)
 
-**Objetivo:** tener un AOI descargado y reproducible, no una lista de enlaces.
+**Goal:** turn agronomy into a comparable table, not a list of slogans.
 
-### Tareas
+### Tasks
 
-1. **Elige el paquete mínimo sin credenciales:**
+1. **Define the current rotation.** In Iowa: corn–soybean.
+2. **Define three alternatives.** One per mechanism:
+   - **Diversity with a small grain + legume:** corn–soybean–oat + red clover.
+   - **Winter cover:** corn–soybean–wheat + rye as a cover crop.
+   - **Deep legume:** corn–soybean–alfalfa (2–3 years).
+3. **Fill in one sheet per rotation** with the five fields the challenge requires:
+   - Why it is suggested.
+   - What evidence backs it (mechanism + source).
+   - What benefits it offers.
+   - Where there are data gaps.
+   - What risks require local review.
+4. **Separate what is computable from what is qualitative.** Do not invent a number
+   for the market or for pest breaking if you have no data.
+5. **Use the template in [rotaciones.md](rotaciones.md).**
 
-   | Dato | Fuente | Para qué |
+### Deliverable
+
+Table with 4 rotations × 5 fields, plus a list of indicators.
+
+### "Done" criterion
+
+Each rotation has at least two cited sources and one honest sentence saying "we
+cannot compute this with the available data".
+
+---
+
+## Phase 2 — Minimum data and access (4–6 h)
+
+**Goal:** have a downloaded, reproducible AOI, not a list of links.
+
+### Tasks
+
+1. **Choose the minimum package without credentials:**
+
+   | Data | Source | What for |
    | --- | --- | --- |
-   | Clima diario | NASA POWER | Lluvia, temperatura, heladas, radiación |
-   | Suelo | SSURGO vía Soil Data Access | Textura, drenaje, retención de agua |
-   | Cobertura del suelo | NLCD | Contexto y línea base |
-   | Mapa base y capas | GIBS WMTS | Visualización |
-   | Cultivo histórico | CDL | Rotación actual y diversidad |
-   | Clima local | PRISM | Contraste con POWER |
-   | Agua superficial | NWIS | Contexto de cuenca |
+   | Daily climate | POWER | Rain, temperature, frost, radiation |
+   | Soil | SSURGO via Soil Data Access | Texture, drainage, water retention |
+   | Land cover | NLCD | Context and baseline |
+   | Base map and layers | GIBS WMTS | Visualisation |
+   | Historical crop | CDL | Current rotation and diversity |
+   | Local climate | PRISM | Cross-check with POWER |
+   | Surface water | NWIS | Basin context |
 
-2. **Verifica cada endpoint** con los comandos de [acceso-datos.md](acceso-datos.md).
-   Guarda el código HTTP y la fecha.
-3. **Descarga el AOI** y guárdalo en `data/raw/{fuente}/`.
-4. **Escribe un manifiesto** con URL, fecha, bbox, variable y hash.
-5. **No metas secretos en el repo.** Si usas Earthdata, CDS o una API key, usa
-   variables de entorno o `~/.netrc`.
+2. **Verify each endpoint** with the commands in [acceso-datos.md](acceso-datos.md).
+   Save the HTTP code and the date.
+3. **Download the AOI** and store it in `data/raw/{source}/`.
+4. **Write a manifest** with URL, date, bbox, variable and hash.
+5. **Do not put secrets in the repo.** If you use Earthdata, CDS or an API key, use
+   environment variables or `~/.netrc`.
 
-### Entregable
+### Deliverable
 
-`data/raw/` + `data/manifest.json` + un script que reproduzca la descarga.
+`data/raw/` + `data/manifest.json` + a script that reproduces the download.
 
-### Criterio de hecho
+### "Done" criterion
 
-Otra persona puede borrar `data/raw/`, ejecutar un comando y obtener los mismos
-archivos. Sabes qué está cacheado y qué no.
+Another person can delete `data/raw/`, run one command and obtain the same files. You
+know what is cached and what is not.
 
 ---
 
-## Fase 3 — Pipeline y armonización (8–10 h)
+## Phase 3 — Pipeline and harmonisation (8–10 h)
 
-**Objetivo:** pasar de archivos crudos a indicadores por rotación, con unidades y
-procedencia.
+**Goal:** go from raw files to indicators per rotation, with units and provenance.
 
-### Tareas
+### Tasks
 
-1. **Fija una rejilla común.** Para Iowa, `EPSG:5070` (Albers, áreas iguales).
-   Resolución:
-   - 30 m para suelo, cobertura y pendiente.
-   - 250 m para clima agregado.
-   - No remuestrees lo fino a lo grueso para "mejorar" el clima; agrega lo grueso
-     hacia lo fino solo para visualizar.
-2. **Recorta, reproyecta y agrega.** Documenta el método: media ponderada por área,
-   vecino más cercano o bilineal. No mezcles métodos sin decirlo.
-3. **Calcula indicadores.** Propuesta:
+1. **Fix a common grid.** For Iowa, `EPSG:5070` (Albers, equal area). Resolution:
+   - 30 m for soil, cover and slope.
+   - 250 m for aggregated climate.
+   - Do not resample the fine to the coarse to "improve" the climate; aggregate the
+     coarse towards the fine only for visualisation.
+2. **Clip, reproject and aggregate.** Document the method: area-weighted mean,
+   nearest neighbour or bilinear. Do not mix methods without saying so.
+3. **Compute indicators.** Proposal:
 
-   | Indicador | Cálculo | Fuente | Tipo |
+   | Indicator | Calculation | Source | Type |
    | --- | --- | --- | --- |
-   | Lluvia de temporada | Suma de `PRECTOTCORR`, abr–sep | POWER | Observación modelada |
-   | Días de calor | Días con `T2M_MAX` > 32 °C | POWER | Umbral configurable |
-   | Días de helada | Días con `T2M_MIN` < 0 °C | POWER | Umbral configurable |
-   | Retención de agua | AWC de SSURGO, ponderada por componente | SSURGO | Proxy de suelo |
-   | Pendiente | SRTM o 3DEP, media y p90 | SRTM | Observación |
-   | Cobertura | Meses con cobertura viva o residuo | CDL/NLCD | Proxy |
-   | Diversidad | Índice de Shannon de cultivos en 4 años | CDL | Calculable |
-   | Riesgo de erosión | Pendiente × intensidad de lluvia × factor de cobertura | SRTM + POWER | Proxy, no RUSLE |
-   | N de leguminosa | Años con leguminosa × crédito local | Rotación + literatura | Cualitativo |
-   | Ajuste de mercado | Precio/volumen o respuesta del agricultor | QuickStats/AMS o input | Cualitativo |
+   | Season rainfall | Sum of `PRECTOTCORR`, Apr–Sep | POWER | Modelled observation |
+   | Heat days | Days with `T2M_MAX` > 32 °C | POWER | Configurable threshold |
+   | Frost days | Days with `T2M_MIN` < 0 °C | POWER | Configurable threshold |
+   | Water retention | SSURGO AWC, weighted by component | SSURGO | Soil proxy |
+   | Slope | SRTM or 3DEP, mean and p90 | SRTM | Observation |
+   | Cover | Months with living cover or residue | CDL/NLCD | Proxy |
+   | Diversity | Shannon index of crops over 4 years | CDL | Computable |
+   | Erosion risk | Slope × rainfall intensity × cover factor | SRTM + POWER | Proxy, not RUSLE |
+   | Legume N | Years with legume × local credit | Rotation + literature | Qualitative |
+   | Market fit | Price/volume or farmer's answer | QuickStats/AMS or input | Qualitative |
 
-4. **Controles de calidad:** unidades, `nodata`, rango, cobertura del AOI y fechas.
-5. **Escribe `data/processed/indicators.json`** con un registro por rotación e
-   indicador, incluyendo `source`, `date`, `unit` y `confidence`.
+4. **Quality controls:** units, `nodata`, range, AOI coverage and dates.
+5. **Write `data/processed/indicators.json`** with one record per rotation and
+   indicator, including `source`, `date`, `unit` and `confidence`.
 
-### Entregable
+### Deliverable
 
-Pipeline ejecutable + `indicators.json` + `map.geojson`.
+Executable pipeline + `indicators.json` + `map.geojson`.
 
-### Criterio de hecho
+### "Done" criterion
 
-Cada número de la app se puede rastrear hasta una fuente, una fecha y una fórmula.
-Si no puedes explicar un indicador en una frase, elimínalo.
+Every number in the app can be traced to a source, a date and a formula. If you
+cannot explain an indicator in one sentence, remove it.
 
 ---
 
-## Fase 4 — Modelo de recomendación (6–8 h)
+## Phase 4 — Recommendation model (6–8 h)
 
-**Objetivo:** ordenar las rotaciones según las prioridades del agricultor, con una
-explicación que quepa en una tarjeta.
+**Goal:** rank the rotations according to the farmer's priorities, with an
+explanation that fits on a card.
 
-### Tareas
+### Tasks
 
-1. **Empieza con reglas, no con machine learning.** Un modelo de caja negra no se
-   puede defender en 48 h.
-2. **Normaliza cada indicador a 0–1** entre las rotaciones comparadas. Invierte los
-   que sean "menos es mejor" (erosión, días de helada).
-3. **Pondera según prioridades.** Ejemplo:
+1. **Start with rules, not machine learning.** A black-box model cannot be defended
+   in 48 h.
+2. **Normalise each indicator to 0–1** across the compared rotations. Invert those
+   that are "less is better" (erosion, frost days).
+3. **Weight according to priorities.** Example:
 
    ```text
-   score(rotación) = 0.35·agua + 0.30·suelo + 0.20·rentabilidad + 0.15·riesgo
+   score(rotation) = 0.35·water + 0.30·soil + 0.20·profitability + 0.15·risk
    ```
 
-   Los pesos salen de los sliders del agricultor y deben sumar 1.
-4. **Calcula la confianza** como `cobertura_de_datos × fuerza_de_la_evidencia`.
-   Si falta CDL o SSURGO, baja la confianza; no la escondas.
-5. **Muestra la contribución de cada indicador.** El usuario debe ver qué empuja la
-   recomendación y qué la frena.
-6. **Prueba tres perfiles:** prioridad agua, prioridad suelo, prioridad mercado.
-   Si el ranking cambia, explica por qué.
+   The weights come from the farmer's sliders and must sum to 1.
+4. **Compute confidence** as `data_coverage × evidence_strength`. If CDL or SSURGO is
+   missing, lower the confidence; do not hide it.
+5. **Show the contribution of each indicator.** The user must see what pushes the
+   recommendation up and what holds it back.
+6. **Test three profiles:** water priority, soil priority, market priority. If the
+   ranking changes, explain why.
 
-### Entregable
+### Deliverable
 
-Función pura `score(rotation, profile) -> recommendation` con tests.
+Pure function `score(rotation, profile) -> recommendation` with tests.
 
-### Criterio de hecho
+### "Done" criterion
 
-Para cada rotación puedes decir: "queda arriba por A y B, baja por C, y hay un dato
-que falta: D". Sin esa frase, el modelo no está listo.
-
----
-
-## Fase 5 — Interfaz (10–12 h)
-
-**Objetivo:** que un agricultor entienda la comparación sin saber qué es un píxel.
-
-### Tareas
-
-1. **Pantalla principal:** mapa a la izquierda, tarjetas de rotación a la derecha.
-2. **Barra de prioridades:** agua, suelo, rentabilidad, riesgo. Sliders simples.
-3. **Comparación:** selecciona 2–3 rotaciones y muestra una tabla lado a lado.
-4. **Ficha de rotación:** los cinco campos obligatorios, siempre visibles:
-   - Por qué se sugiere.
-   - Evidencia.
-   - Beneficios.
-   - Lagunas de datos.
-   - Riesgos para revisión local.
-5. **Glosario en lenguaje llano:** evapotranspiración, NDVI, anomalía, balance
-   hídrico, diferencia entre satélite y campo.
-6. **Aviso permanente:** "Herramienta de apoyo; no sustituye la revisión local".
-7. **Accesibilidad:** teclado, contraste, no depender solo del color, textos
-   alternativos en el mapa.
-8. **Móvil:** la demo puede hacerse en portátil, pero la ficha debe leerse en móvil.
-
-### Entregable
-
-App desplegada con datos precalculados.
-
-### Criterio de hecho
-
-Una persona ajena al equipo abre la app y explica en menos de 2 minutos por qué una
-rotación está por delante de otra.
+For each rotation you can say: "it ranks high because of A and B, drops because of C,
+and one data point is missing: D". Without that sentence, the model is not ready.
 
 ---
 
-## Fase 6 — Validación y evidencia (3–4 h)
+## Phase 5 — Interface (10–12 h)
 
-**Objetivo:** saber qué afirmas y qué no.
+**Goal:** a farmer understands the comparison without knowing what a pixel is.
 
-### Tareas
+### Tasks
 
-1. **Prueba de sensibilidad:** mueve los pesos y comprueba si el ranking cambia
-   demasiado. Si todo cambia con cualquier ajuste, el modelo es frágil.
-2. **Contraste con fuentes locales:** compara lluvia de POWER con PRISM y, si hay,
-   con CoCoRaHS. Compara el calendario de cultivos con CDL.
-3. **Prueba con dos personas** fuera del equipo. Anota qué no entienden.
-4. **Escribe `docs/validacion.md`:** qué se comprobó, qué no, qué falta y qué haría
-   falta para validarlo con un agrónomo.
-5. **Revisa las afirmaciones.** Cambia "esta rotación reduce la erosión un 30 %" por
-   "esta rotación añade cobertura en invierno; el efecto sobre erosión depende de la
-   pendiente y del manejo".
+1. **Main screen:** map on the left, rotation cards on the right.
+2. **Priorities bar:** water, soil, profitability, risk. Simple sliders.
+3. **Comparison:** select 2–3 rotations and show a side-by-side table.
+4. **Rotation sheet:** the five mandatory fields, always visible:
+   - Why it is suggested.
+   - Evidence.
+   - Benefits.
+   - Data gaps.
+   - Risks for local review.
+5. **Plain-language glossary:** evapotranspiration, NDVI, anomaly, water balance,
+   difference between satellite and field.
+6. **Permanent notice:** "Support tool; does not replace local review".
+7. **Accessibility:** keyboard, contrast, do not rely on colour alone, alternative
+   texts on the map.
+8. **Mobile:** the demo can be done on a laptop, but the sheet must be readable on a
+   phone.
 
-### Entregable
+### Deliverable
 
-`docs/validacion.md` + lista de limitaciones en la app.
+Deployed app with precomputed data.
 
-### Criterio de hecho
+### "Done" criterion
 
-Puedes defender cada número y cada recomendación sin exagerar.
+A person outside the team opens the app and explains in under 2 minutes why one
+rotation is ahead of another.
 
 ---
 
-## Fase 7 — Demo y entrega (3–4 h)
+## Phase 6 — Validation and evidence (3–4 h)
 
-**Objetivo:** una demo de 3 minutos que funcione sin red.
+**Goal:** know what you claim and what you do not.
 
-### Guion
+### Tasks
 
-| Tiempo | Qué |
+1. **Sensitivity test:** move the weights and check whether the ranking changes too
+   much. If everything changes with any adjustment, the model is fragile.
+2. **Cross-check with local sources:** compare POWER rainfall with PRISM and, if
+   available, with CoCoRaHS. Compare the crop calendar with CDL.
+3. **Test with two people** outside the team. Note what they do not understand.
+4. **Write `docs/validacion.md`:** what was checked, what was not, what is missing and
+   what it would take to validate with an agronomist.
+5. **Review the claims.** Change "this rotation reduces erosion by 30%" to "this
+   rotation adds winter cover; the effect on erosion depends on slope and
+   management".
+
+### Deliverable
+
+`docs/validacion.md` + list of limitations in the app.
+
+### "Done" criterion
+
+You can defend every number and every recommendation without exaggerating.
+
+---
+
+## Phase 7 — Demo and submission (3–4 h)
+
+**Goal:** a 3-minute demo that works without a network.
+
+### Script
+
+| Time | What |
 | --- | --- |
-| 0:00–0:20 | El problema: decisiones de rotación con datos incompletos. |
-| 0:20–0:40 | El usuario y la decisión: finca de Iowa, prioridad agua. |
-| 0:40–1:40 | Demo: mapa, prioridades, comparación de 3 rotaciones. |
-| 1:40–2:10 | Evidencia: fuente, fecha, beneficio y laguna de cada una. |
-| 2:10–2:30 | Incertidumbre y revisión local. |
-| 2:30–3:00 | Impacto, límites y siguiente paso. |
+| 0:00–0:20 | The problem: rotation decisions with incomplete data. |
+| 0:20–0:40 | The user and the decision: Iowa farm, water priority. |
+| 0:40–1:40 | Demo: map, priorities, comparison of 3 rotations. |
+| 1:40–2:10 | Evidence: source, date, benefit and gap of each one. |
+| 2:10–2:30 | Uncertainty and local review. |
+| 2:30–3:00 | Impact, limits and next step. |
 
-### Tareas
+### Tasks
 
-1. **Congela los datos.** Tiles, JSON y capturas en local. Nada de APIs en vivo.
-2. **Prepara un plan B:** vídeo grabado y capturas si falla el portátil.
-3. **Limpia el repo:** README, licencia, créditos, `.env.example`, instrucciones.
-4. **Comprueba la checklist de [checklist-evaluacion.md](checklist-evaluacion.md).**
-5. **Ensaya dos veces con cronómetro.**
+1. **Freeze the data.** Tiles, JSON and screenshots stored locally. No live APIs.
+2. **Prepare a plan B:** recorded video and screenshots in case the laptop fails.
+3. **Clean the repo:** README, licence, credits, `.env.example`, instructions.
+4. **Check the list in [checklist-evaluacion.md](checklist-evaluacion.md).**
+5. **Rehearse twice with a timer.**
 
-### Criterio de hecho
+### "Done" criterion
 
-La demo corre en modo avión y el discurso cubre los cuatro requisitos duros.
+The demo runs in airplane mode and the talk covers the four hard requirements.
 
 ---
 
-## Cronograma de 48 h
+## 48 h schedule
 
-| Momento | Fase | Entregable |
+| Moment | Phase | Deliverable |
 | --- | --- | --- |
-| Viernes noche | 0–1 | Alcance + tabla de rotaciones |
-| Sábado mañana | 2 | Datos descargados y cacheados |
-| Sábado tarde | 3 | Indicadores y mapa base |
-| Sábado noche | 4 | Motor de puntuación con tests |
-| Domingo mañana | 5 | UI y fichas |
-| Domingo mediodía | 6 | Validación y limitaciones |
-| Domingo tarde | 7 | Demo, vídeo y entrega |
+| Friday night | 0–1 | Scope + rotation table |
+| Saturday morning | 2 | Data downloaded and cached |
+| Saturday afternoon | 3 | Indicators and base map |
+| Saturday night | 4 | Scoring engine with tests |
+| Sunday morning | 5 | UI and sheets |
+| Sunday noon | 6 | Validation and limitations |
+| Sunday afternoon | 7 | Demo, video and submission |
 
-## Si el tiempo se acaba
+## If time runs out
 
-Orden de prioridad:
+Order of priority:
 
-1. Tres rotaciones con los cinco campos.
-2. Mapa con datos reales y procedencia.
-3. Comparación explicable.
-4. Incertidumbre y revisión local.
-5. Todo lo demás: datos en vivo, ML, mercado, animaciones.
+1. Three rotations with the five fields.
+2. Map with real data and provenance.
+3. Explainable comparison.
+4. Uncertainty and local review.
+5. Everything else: live data, ML, market, animations.
 
-Es mejor una demo pequeña y honesta que un dashboard enorme sin evidencia.
+A small, honest demo is better than a huge dashboard without evidence.
