@@ -2,7 +2,7 @@ import * as maplibregl from 'maplibre-gl'
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
 import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
-import { disable3D, enable3D, flyToField } from '../lib/terrain'
+import { disable3D, enable3D, estimateSlopePct, flyToField, slopeClass } from '../lib/terrain'
 import { useStore } from '../store'
 
 const EMPTY = { type: 'FeatureCollection' as const, features: [] }
@@ -92,13 +92,21 @@ export function MapView() {
 
   useEffect(() => {
     if (!map || step !== 'dashboard') return
-    const { field, setTerrain, setPanelOpen } = useStore.getState()
+    const { field, setTerrain, setPanelOpen, setConstraints } = useStore.getState()
     if (!field) return
     const ok = enable3D(map, () => setTerrain('flat'))
     setTerrain(ok ? 'on' : 'flat')
     flyToField(map, field, ok)
-    map.once('moveend', () => setPanelOpen(true))
+    const onIdle = () => {
+      const pct = useStore.getState().terrain === 'on' ? estimateSlopePct(map, field) : null
+      if (pct !== null) setConstraints({ slopePct: pct, slope: slopeClass(pct) })
+    }
+    map.once('moveend', () => {
+      setPanelOpen(true)
+      if (ok) map.once('idle', onIdle)
+    })
     return () => {
+      map.off('idle', onIdle)
       disable3D(map)
       map.easeTo({ padding: { top: 0, bottom: 0, left: 0, right: 0 }, duration: 0 })
     }

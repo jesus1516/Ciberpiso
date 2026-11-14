@@ -91,7 +91,8 @@ export const useStore = create<State>((set, get) => ({
     set({ step: 'dashboard', panelOpen: false })
     get().loadClimate(lat, lon)
   },
-  resetField: () => set({ step: 'map', field: null, panelOpen: false, terrain: 'off', drawMode: 'idle' }),
+  resetField: () =>
+    set((s) => ({ step: 'map', field: null, panelOpen: false, terrain: 'off', drawMode: 'idle', constraints: { ...s.constraints, slopePct: null } })),
   setTerrain: (terrain) => set({ terrain }),
   setPanelOpen: (panelOpen) => set({ panelOpen }),
   setTab: (tab) => set({ tab }),

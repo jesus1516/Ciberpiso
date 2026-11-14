@@ -78,3 +78,36 @@ export function flyToField(map: Map, field: Field, pitched: boolean) {
     curve: 1.5,
   })
 }
+
+export function estimateSlopePct(map: Map, field: Field): number | null {
+  const [west, south, east, north] = fieldBbox(field)
+  const n = 5
+  const lat = (south + north) / 2
+  const dx = ((east - west) / (n - 1)) * 111_320 * Math.cos((lat * Math.PI) / 180)
+  const dy = ((north - south) / (n - 1)) * 111_320
+  const grid: number[][] = []
+  for (let i = 0; i < n; i++) {
+    grid.push([])
+    for (let j = 0; j < n; j++) {
+      const z = map.queryTerrainElevation([west + ((east - west) * j) / (n - 1), south + ((north - south) * i) / (n - 1)])
+      if (z === null) return null
+      grid[i].push(z / EXAGGERATION)
+    }
+  }
+  const slopes: number[] = []
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - 1; j++) {
+      const gx = (grid[i][j + 1] - grid[i][j]) / dx
+      const gy = (grid[i + 1][j] - grid[i][j]) / dy
+      slopes.push(Math.hypot(gx, gy) * 100)
+    }
+  }
+  return slopes.reduce((a, b) => a + b, 0) / slopes.length
+}
+
+export function slopeClass(pct: number) {
+  if (pct < 2) return 'flat' as const
+  if (pct < 8) return 'gentle' as const
+  if (pct < 15) return 'moderate' as const
+  return 'steep' as const
+}
