@@ -4,6 +4,10 @@ La organización no publica una rúbrica detallada en la página del reto. Esta 
 basa en los requisitos del enunciado y en lo que un jurado suele buscar en Space Apps:
 problema real, uso sustantivo de datos NASA, rigor, incertidumbre y comunicación.
 
+> **Estado de la calculadora (14 nov 2026):** genera los cinco campos obligatorios,
+> fuentes/unidades por indicador, confianza, empates y restricciones propias.
+> `python3 pipeline/audit.py` da **0 fallos**. La app todavía no consume ese JSON.
+
 ## Requisitos duros
 
 | Requisito | Dónde se demuestra | Evidencia |

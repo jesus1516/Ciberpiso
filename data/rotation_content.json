@@ -1,0 +1,136 @@
+{
+  "R0": {
+    "why": "Es la rotación actual y la línea base: trigo y girasol, dos cultivos con mercado nacional y maquinaria conocida. Sirve para medir si una alternativa mejora algo sin perder lo que ya funciona.",
+    "benefits": [
+      "Mercado líquido y precios públicos para trigo y girasol.",
+      "Maquinaria y calendario de siembra conocidos por el agricultor.",
+      "Permite comparar cualquier alternativa contra la práctica actual."
+    ],
+    "data_gaps": [
+      "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
+      "No hay rendimientos ni costes por campaña; el precio no es margen.",
+      "El precio es nacional y anual, no de lonja local."
+    ],
+    "review_risks": [
+      "Confirmar variedad, fecha de siembra y precio de venta local.",
+      "Vigilar cobertura del suelo y erosión entre cosecha y siembra.",
+      "Revisar presión de malas hierbas y enfermedades del trigo."
+    ],
+    "evidence": [
+      {
+        "source": "NASA POWER",
+        "url": "https://power.larc.nasa.gov/",
+        "date": "2002-2025",
+        "note": "Clima y déficit hídrico de la celda de la finca."
+      },
+      {
+        "source": "MODIS MOD13Q1",
+        "url": "https://planetarycomputer.microsoft.com/dataset/modis-13Q1-061",
+        "date": "2020-2025",
+        "note": "NDVI y clase de cultivo estimada por campaña."
+      },
+      {
+        "source": "Eurostat apri_ap_crpouta",
+        "url": "https://ec.europa.eu/eurostat/databrowser/view/apri_ap_crpouta/default/table",
+        "date": "2024",
+        "note": "Precio medio anual de trigo blando y girasol en España."
+      }
+    ]
+  },
+  "R1": {
+    "why": "Introduce una leguminosa de grano, el garbanzo, que fija nitrógeno y rompe la alternancia repetida de trigo y girasol. Añade diversidad y un cultivo con precio alto, a cambio de un mercado más estrecho.",
+    "benefits": [
+      "Aporta nitrógeno al sistema y reduce la dependencia de fertilizante.",
+      "Diversifica la secuencia y el calendario de trabajo.",
+      "El garbanzo tiene un precio medio alto frente a trigo y girasol."
+    ],
+    "data_gaps": [
+      "Precio nacional de garbanzo; no hay lonja local ni contrato.",
+      "Sin rendimiento y sin costes, el ingreso no se puede calcular.",
+      "El NDVI no distingue garbanzo de otras herbáceas."
+    ],
+    "review_risks": [
+      "Ascochyta y enfermedades del garbanzo; revisar variedad y tratamiento.",
+      "Frío en nascencia y riesgo de helada tardía.",
+      "Mercado más estrecho: confirmar comprador antes de sembrar."
+    ],
+    "evidence": [
+      {
+        "source": "FAO Soils Portal",
+        "url": "https://www.fao.org/soils-portal/en/",
+        "date": "consultado 2026-11-14",
+        "note": "Mecanismo de fijación biológica de nitrógeno por leguminosas; revisar variedad y manejo local."
+      },
+      {
+        "source": "Eurostat apri_ap_crpouta",
+        "url": "https://ec.europa.eu/eurostat/databrowser/view/apri_ap_crpouta/default/table",
+        "date": "2024",
+        "note": "Precio medio anual del garbanzo en España."
+      }
+    ]
+  },
+  "R2": {
+    "why": "Sustituye el garbanzo por veza, una cubierta o forraje que protege el suelo, aporta materia orgánica y fija nitrógeno. Es la alternativa con más beneficio esperado para el suelo, pero depende de que haya semilla y comprador de forraje.",
+    "benefits": [
+      "Mayor cobertura del suelo y protección frente a la erosión.",
+      "Aporte de materia orgánica y fijación de nitrógeno.",
+      "Opción forrajera para ganadería local o para incorporar como abono verde."
+    ],
+    "data_gaps": [
+      "No hay serie de precio de veza en Eurostat; el hueco se declara.",
+      "Sin rendimiento, sin coste y sin demanda forrajera local.",
+      "El NDVI a 250 m no separa veza de otras cubiertas."
+    ],
+    "review_risks": [
+      "La veza consume agua en primavera; revisar el balance en años secos.",
+      "Confirmar disponibilidad de semilla y fecha de terminación.",
+      "Sin comprador de forraje, puede quedarse como abono verde sin ingreso."
+    ],
+    "evidence": [
+      {
+        "source": "FAO Soils Portal",
+        "url": "https://www.fao.org/soils-portal/en/",
+        "date": "consultado 2026-11-14",
+        "note": "Papel de las cubiertas y leguminosas en materia orgánica y erosión; revisar especie y manejo local."
+      },
+      {
+        "source": "SoilGrids 2.0",
+        "url": "https://soilgrids.org/",
+        "date": "2026-11-14",
+        "note": "Textura, pH y agua disponible del suelo de la finca."
+      }
+    ]
+  },
+  "R3": {
+    "why": "Intercala un año de barbecho para reservar agua y controlar malas hierbas. Es la opción que menos agua demanda, pero no genera ingreso ese año y deja el suelo descubierto si no se maneja bien.",
+    "benefits": [
+      "Reduce la demanda hídrica de la rotación y estabiliza el año siguiente.",
+      "Ayuda al control de malas hierbas y a la recarga de agua en el perfil.",
+      "Es una práctica conocida en la Campiña y fácil de explicar."
+    ],
+    "data_gaps": [
+      "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
+      "No hay medición de agua edáfica por finca.",
+      "El NDVI distingue mal el barbecho del pastizal."
+    ],
+    "review_risks": [
+      "Pérdida de ingreso y de cobertura del suelo durante el barbecho.",
+      "Riesgo de erosión y de malas hierbas si queda el suelo desnudo.",
+      "Confirmar la normativa local y el manejo del rastrojo."
+    ],
+    "evidence": [
+      {
+        "source": "NASA POWER",
+        "url": "https://power.larc.nasa.gov/",
+        "date": "2002-2025",
+        "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua."
+      },
+      {
+        "source": "MODIS MOD13Q1",
+        "url": "https://planetarycomputer.microsoft.com/dataset/modis-13Q1-061",
+        "date": "2020-2025",
+        "note": "Patrones B/I observados en las candidatas de la Campiña."
+      }
+    ]
+  }
+}

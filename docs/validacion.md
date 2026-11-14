@@ -44,6 +44,22 @@ La mejora supera los mínimos fijados de antemano (AUC +0,05, Spearman +0,05 y L
 referencia solo fija la escala: no se ajusta a la etiqueta y no cambia el orden de las
 fincas.
 
+## Auditoría de cumplimiento
+
+`python3 pipeline/audit.py` comprueba la salida completa:
+
+- 60 fincas, 240 rotaciones y 960 indicadores.
+- Los cinco campos obligatorios por rotación: por qué, evidencia, beneficios, lagunas
+  y riesgos de revisión local.
+- Fuente, fecha, unidad, confianza y laguna en cada indicador.
+- Rankings coherentes: los empates comparten puesto y las rotaciones con datos
+  incompletos no se rankean.
+- Aviso de herramienta de apoyo, glosario y fuentes en el JSON.
+
+Resultado actual: **0 fallos**. R1 y R2 ya no son clones: la veza tiene más protección
+de erosión y materia orgánica que el garbanzo. R2 sigue sin nota de precio y se muestra
+como “no comparable” hasta que exista una serie fiable de veza.
+
 ## Decisión sobre los umbrales
 
 Los umbrales de viabilidad se mantienen en **20 (bloqueo) y 40 (aviso)**. El umbral que

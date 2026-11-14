@@ -54,13 +54,19 @@ Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep
   fenología y precios de cada campaña (2020–2025). Genera
   `data/processed/scenarios.csv` y `data/processed/scenarios_qa.json`. Es un
   intermedio de trabajo y no se versiona.
+- `data/rotation_content.json`: fichas explicativas de cada rotación (por qué,
+  evidencia, beneficios, lagunas y riesgos de revisión local). Es contenido versionado.
 - `python3 pipeline/calculator.py`: puntúa las cuatro rotaciones por finca y genera
   `data/processed/indicators.json`, la fuente que consume la web. Ese JSON sí se
-  versiona; el resto de `data/processed/` no.
+  versiona; el resto de `data/processed/` no. Acepta `--weights` y `--constraints`
+  para prioridades y restricciones propias.
 - `python3 pipeline/calibrate.py`: compara la nota de agua de lluvia con la de déficit
   hídrico y valida por municipios. Escribe `data/calibration.json` (versionado) y
   `data/processed/validation.json` (intermedio). El resultado está en
   [`docs/validacion.md`](../docs/validacion.md).
+- `python3 pipeline/audit.py`: comprueba los cinco campos obligatorios, las fuentes y
+  unidades de cada indicador, los empates y la coherencia de los rankings. Escribe
+  `data/processed/audit.json`.
 
 ## Crear la base en cualquier equipo
 
