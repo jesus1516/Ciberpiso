@@ -6,6 +6,7 @@ touch night/STOP
 if [ "$1" = "--now" ] && [ -f night/state/run.pid ]; then
   pkill -P "$(cat night/state/run.pid)" 2>/dev/null; kill "$(cat night/state/run.pid)" 2>/dev/null
   pkill -f "night/orchestrator.mjs" 2>/dev/null
+  pkill -f "claude -p --model" 2>/dev/null   # the agents of the shift (never an interactive session)
   echo "Stopped now."
 else
   echo "Stop requested: running tickets finish their attempt, then the shift ends."

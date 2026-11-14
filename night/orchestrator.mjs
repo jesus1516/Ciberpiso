@@ -152,8 +152,14 @@ async function prepareSlot(slot, t, ts) {
   git(dir, 'clean', '-fd')
   git(dir, 'fetch', 'origin', '--prune')
   const branch = `night/${t.id}`
+  // A branch can only be checked out in one worktree: free it if another slot still holds it.
+  const holders = git(ROOT, 'worktree', 'list', '--porcelain').split('\n\n')
+    .filter((b) => b.includes(`branch refs/heads/${branch}`)).map((b) => b.split('\n')[0].slice('worktree '.length))
+  for (const h of holders) if (resolve(h) !== resolve(dir)) git(h, 'checkout', '--detach')
   const exists = tryGit(dir, 'rev-parse', '--verify', branch).ok
-  if (exists && ts.attempts > 0 && !ts.restart) {
+  // Resume an existing branch that already has work (retry, or a session cut by a restart).
+  const hasWork = exists && git(dir, 'rev-list', '--count', `origin/${CONFIG.integration}..${branch}`) !== '0'
+  if (exists && (ts.attempts > 0 || hasWork) && !ts.restart) {
     git(dir, 'checkout', branch)
     // Bring the branch up to date with what other tickets merged meanwhile.
     const merge = tryGit(dir, 'merge', '--no-edit', `origin/${CONFIG.integration}`)
@@ -417,7 +423,12 @@ async function main() {
           log(`${t.id}: orchestrator error ${e.stack}`)
           notify(`${t.id} error`, String(e.message).slice(0, 120))
         })
-        .finally(() => { running.delete(slot); publishSummary(tickets, false) })
+        .finally(() => {
+          // Free the ticket branch so a retry can use it from any slot.
+          tryGit(join(SLOTS_DIR, `slot-${slot}`), 'checkout', '--detach')
+          running.delete(slot)
+          publishSummary(tickets, false)
+        })
       running.set(slot, { t, promise })
       await sleep(2000)
     }
