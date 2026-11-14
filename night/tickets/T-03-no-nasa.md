@@ -4,7 +4,7 @@ title: Remove the word NASA from the repository and the web
 model: sonnet
 effort: medium
 depends: ["T-01", "T-02"]
-files: ["README.md", "resources.md", "resources.json", "tools_available.md", "docs/**/*.md", "data/README.md", "data/*.json", "data/processed/*.json", "app/README.md", "app/src/**", "app/index.html", "app/public/data/indicators_antequera.json", "pipeline/**/*.py", "tests/**/*.py"]
+files: ["README.md", "resources.md", "resources.json", "tools_available.md", "docs/**/*.md", "data/README.md", "data/*.json", "data/processed/*.json", "app/README.md", "app/src/**", "app/index.html", "app/public/data/indicators_antequera.json", "pipeline/**/*.py", "pipeline/sql/**", "tests/**/*.py"]
 maxAttempts: 2
 timeoutMin: 90
 ---

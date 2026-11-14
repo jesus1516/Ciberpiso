@@ -172,7 +172,8 @@ async function prepareSlot(slot, t, ts) {
     git(dir, 'checkout', '-B', branch, `origin/${CONFIG.integration}`)
     ts.restart = false
   }
-  ts.base = git(dir, 'rev-parse', 'HEAD')
+  // Changes are judged against the integration branch, not against where a retry resumed.
+  ts.base = git(dir, 'merge-base', 'HEAD', `origin/${CONFIG.integration}`)
   // Dependencies: reinstall only when the lockfile changed.
   const lock = join(dir, 'app', 'package-lock.json')
   const marker = join(dir, 'app', 'node_modules', '.night-lock')
