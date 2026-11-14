@@ -6,9 +6,12 @@
 *.key
 *.pem
 
-# Datos pesados o generados
+# Datos pesados o generados (se regeneran con pipeline/; ver docs/fuentes-scraping.md)
 data/raw/
 data/cache/
+data/processed/
+data/csv/*.csv
+*.sqlite
 *.nc
 *.grib
 

@@ -1,0 +1,1829 @@
+[
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:23+00:00",
+    "file": "data/raw/pc/modis_29/A2019273_ndvi.tif",
+    "bytes": 1914003,
+    "sha256": "4f4ec396fddb19af3d4fc9e058604a5c08747130bf800aff6e9655b0877fc14c",
+    "item": "MOD13Q1.A2019273.h17v05.061.2020314000304",
+    "fecha": "2019-10-08"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:23+00:00",
+    "file": "data/raw/pc/modis_29/A2019289_ndvi.tif",
+    "bytes": 1927634,
+    "sha256": "be25513da3def80f13dfb0f023fcea321ff8d1e9a08ae8a63a2d261755ba9b1c",
+    "item": "MOD13Q1.A2019289.h17v05.061.2020315231952",
+    "fecha": "2019-10-24"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:24+00:00",
+    "file": "data/raw/pc/modis_29/A2019305_ndvi.tif",
+    "bytes": 1755730,
+    "sha256": "91da02f3d23203614d6ed82fe4ce588e5be8a29e7a7e62e8a33ee3bda8b43a75",
+    "item": "MOD13Q1.A2019305.h17v05.061.2020317200447",
+    "fecha": "2019-11-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:23+00:00",
+    "file": "data/raw/pc/modis_29/A2019321_ndvi.tif",
+    "bytes": 1893926,
+    "sha256": "b984c93ee23ca21c7296c5873b09c28e6b58d52a4414f2430b3d20a95c031daa",
+    "item": "MOD13Q1.A2019321.h17v05.061.2020319012125",
+    "fecha": "2019-11-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:23+00:00",
+    "file": "data/raw/pc/modis_29/A2019337_ndvi.tif",
+    "bytes": 1941512,
+    "sha256": "0e96b5b8287d0c9c4eee5ecb7b2f3870c14bb68617572a7bde0695fd89362c3b",
+    "item": "MOD13Q1.A2019337.h17v05.061.2020321204345",
+    "fecha": "2019-12-11"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:24+00:00",
+    "file": "data/raw/pc/modis_29/A2019353_ndvi.tif",
+    "bytes": 1880469,
+    "sha256": "24129b2f5fa6fb133fcb330f23b586c334e5742a18924db122f3b7cde4eaf4c8",
+    "item": "MOD13Q1.A2019353.h17v05.061.2020323171626",
+    "fecha": "2019-12-27"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:27+00:00",
+    "file": "data/raw/pc/modis_29/A2020001_ndvi.tif",
+    "bytes": 1872709,
+    "sha256": "1708c84d741fb5214b0255101331f732595c26cf735e46f903e1d6acb018ca23",
+    "item": "MOD13Q1.A2020001.h17v05.061.2020326034739",
+    "fecha": "2020-01-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:27+00:00",
+    "file": "data/raw/pc/modis_29/A2020017_ndvi.tif",
+    "bytes": 1825851,
+    "sha256": "2907eeadd4b92d592a480a72b2d8850f62d9bfb41cbe06ba005fe28658965c1e",
+    "item": "MOD13Q1.A2020017.h17v05.061.2020328133628",
+    "fecha": "2020-01-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:27+00:00",
+    "file": "data/raw/pc/modis_29/A2020033_ndvi.tif",
+    "bytes": 2002469,
+    "sha256": "e25e6fa8862ce5c49a2d514ab18f5f9bdffe7a0727132370ea089040ac5ad3ac",
+    "item": "MOD13Q1.A2020033.h17v05.061.2020329061136",
+    "fecha": "2020-02-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:27+00:00",
+    "file": "data/raw/pc/modis_29/A2020049_ndvi.tif",
+    "bytes": 1796329,
+    "sha256": "8d18336a350e5bba4f79be16e60d69bca2995ae20b600f1b0d63fcf9882a0e7b",
+    "item": "MOD13Q1.A2020049.h17v05.061.2020335000522",
+    "fecha": "2020-02-26"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:27+00:00",
+    "file": "data/raw/pc/modis_29/A2020065_ndvi.tif",
+    "bytes": 1847393,
+    "sha256": "3b152629927879b01946318368d7fb72d88694c30c866c934bc8f82a3e2a08f4",
+    "item": "MOD13Q1.A2020065.h17v05.061.2020330152612",
+    "fecha": "2020-03-13"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:27+00:00",
+    "file": "data/raw/pc/modis_29/A2020081_ndvi.tif",
+    "bytes": 1738972,
+    "sha256": "0b17b3786390c2706a3f1b58b39a7f3c9326acc0143f4d7e2fab2d562ed1b8ba",
+    "item": "MOD13Q1.A2020081.h17v05.061.2020335013931",
+    "fecha": "2020-03-29"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:32+00:00",
+    "file": "data/raw/pc/modis_29/A2020097_ndvi.tif",
+    "bytes": 1498676,
+    "sha256": "a1328029123c2380bfe00c791c4721bf50b009b64b07890f687b691e059f0a08",
+    "item": "MOD13Q1.A2020097.h17v05.061.2020332101458",
+    "fecha": "2020-04-14"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:31+00:00",
+    "file": "data/raw/pc/modis_29/A2020113_ndvi.tif",
+    "bytes": 1948179,
+    "sha256": "52432abb8a284b4ece7a144e633786ec1f570c7b9f579106d2d687d72eca4354",
+    "item": "MOD13Q1.A2020113.h17v05.061.2020333050618",
+    "fecha": "2020-04-30"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:31+00:00",
+    "file": "data/raw/pc/modis_29/A2020129_ndvi.tif",
+    "bytes": 1882079,
+    "sha256": "924765206fe918788b5d3cac78d27d8381ea304414b32e8fba9e5f8b5f82138f",
+    "item": "MOD13Q1.A2020129.h17v05.061.2020334195139",
+    "fecha": "2020-05-16"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:31+00:00",
+    "file": "data/raw/pc/modis_29/A2020145_ndvi.tif",
+    "bytes": 1992513,
+    "sha256": "8cd7f1ac1ee16f00f7596aabcc6260085c3bbd79323221e056c172e31de7f406",
+    "item": "MOD13Q1.A2020145.h17v05.061.2020335212904",
+    "fecha": "2020-06-01"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:31+00:00",
+    "file": "data/raw/pc/modis_29/A2020161_ndvi.tif",
+    "bytes": 1836732,
+    "sha256": "41229946b7df750269167e86cfb459f6b67b40a8d880e15e1902210fd6c4e31b",
+    "item": "MOD13Q1.A2020161.h17v05.061.2020336160029",
+    "fecha": "2020-06-17"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:31+00:00",
+    "file": "data/raw/pc/modis_29/A2020177_ndvi.tif",
+    "bytes": 2016148,
+    "sha256": "e2bdd35d38049f798fb6c4de49f80f388cef790fbb7ed13e1a5bcdd634ae906b",
+    "item": "MOD13Q1.A2020177.h17v05.061.2020340101213",
+    "fecha": "2020-07-03"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:33+00:00",
+    "file": "data/raw/pc/modis_29/A2020193_ndvi.tif",
+    "bytes": 2006223,
+    "sha256": "a51ac0a0736d9e2ffdcc896876825287717c58864fcd08c65b4c7ad4c3a9a6b7",
+    "item": "MOD13Q1.A2020193.h17v05.061.2020340132821",
+    "fecha": "2020-07-19"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:34+00:00",
+    "file": "data/raw/pc/modis_29/A2020209_ndvi.tif",
+    "bytes": 2031907,
+    "sha256": "dadb57de515e3b3542ff8bf9249ec6dfaa7168b433e2d21db50be7e2fd53fa19",
+    "item": "MOD13Q1.A2020209.h17v05.061.2020342004750",
+    "fecha": "2020-08-04"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:34+00:00",
+    "file": "data/raw/pc/modis_29/A2020225_ndvi.tif",
+    "bytes": 2043176,
+    "sha256": "07d737772c2fbdc7182a0fd35853fc4696184066fe5463b478b2a6db4db62eb5",
+    "item": "MOD13Q1.A2020225.h17v05.061.2020344191207",
+    "fecha": "2020-08-20"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:34+00:00",
+    "file": "data/raw/pc/modis_29/A2020241_ndvi.tif",
+    "bytes": 2041185,
+    "sha256": "6f280eeebcfb70f5f429850855b0355b3b733c584e3701e46446f72d9b90090d",
+    "item": "MOD13Q1.A2020241.h17v05.061.2020346095345",
+    "fecha": "2020-09-05"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:35+00:00",
+    "file": "data/raw/pc/modis_29/A2020257_ndvi.tif",
+    "bytes": 1934931,
+    "sha256": "d5ad1611f8722805bb74b346c2d3449e9f38065a018600804bd811c3ad8c4041",
+    "item": "MOD13Q1.A2020257.h17v05.061.2020347060139",
+    "fecha": "2020-09-21"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:35+00:00",
+    "file": "data/raw/pc/modis_29/A2020273_ndvi.tif",
+    "bytes": 1849702,
+    "sha256": "535e354e8c8e58c7c138ad1f8e6d2f8073972f145612c985ed1a3315aaa74c16",
+    "item": "MOD13Q1.A2020273.h17v05.061.2020349200944",
+    "fecha": "2020-10-07"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:39+00:00",
+    "file": "data/raw/pc/modis_29/A2020289_ndvi.tif",
+    "bytes": 1963406,
+    "sha256": "78d6a3abb7e526282440fdf0ff4fa5857311eb0936b930507bc153b371ffd131",
+    "item": "MOD13Q1.A2020289.h17v05.061.2020352192509",
+    "fecha": "2020-10-23"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:37+00:00",
+    "file": "data/raw/pc/modis_29/A2020305_ndvi.tif",
+    "bytes": 1998967,
+    "sha256": "4ee302d2393e4a80f45f1b674baaf07118b910e06024a7bf4a9b9f12d911974a",
+    "item": "MOD13Q1.A2020305.h17v05.061.2020353090043",
+    "fecha": "2020-11-08"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:38+00:00",
+    "file": "data/raw/pc/modis_29/A2020321_ndvi.tif",
+    "bytes": 1937816,
+    "sha256": "0871d77de456c5b0e2b62b35bca4505996e3152d0581e5dbba9a1b17c1937e1e",
+    "item": "MOD13Q1.A2020321.h17v05.061.2020357084723",
+    "fecha": "2020-11-24"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:38+00:00",
+    "file": "data/raw/pc/modis_29/A2020337_ndvi.tif",
+    "bytes": 1600482,
+    "sha256": "84e8e1f1d383b4041e4df053fbe10f017255a7586d65dec4eb78204bee812d8f",
+    "item": "MOD13Q1.A2020337.h17v05.061.2021011165422",
+    "fecha": "2020-12-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:38+00:00",
+    "file": "data/raw/pc/modis_29/A2020353_ndvi.tif",
+    "bytes": 1952541,
+    "sha256": "9b1f91cf7acba83e018d0792cbf3ba3f2b9bdc6279eba7c1f739604e47046e4c",
+    "item": "MOD13Q1.A2020353.h17v05.061.2021012025233",
+    "fecha": "2020-12-26"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:38+00:00",
+    "file": "data/raw/pc/modis_29/A2021001_ndvi.tif",
+    "bytes": 1991514,
+    "sha256": "c38749d31db1cc70acacf513161b365212334ebabba890e03b3d86b9d2973b4d",
+    "item": "MOD13Q1.A2021001.h17v05.061.2021043142844",
+    "fecha": "2021-01-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:39+00:00",
+    "file": "data/raw/pc/modis_29/A2021017_ndvi.tif",
+    "bytes": 1942193,
+    "sha256": "a8d626e248e8563887596677d262aa43466d29f68e0002a4d152b254efdcf02f",
+    "item": "MOD13Q1.A2021017.h17v05.061.2021040165305",
+    "fecha": "2021-01-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:40+00:00",
+    "file": "data/raw/pc/modis_29/A2021033_ndvi.tif",
+    "bytes": 1900792,
+    "sha256": "63c7e333655e4ed041a8f05b7501913fcbf573dddcc160763f312c13f8dd2dd7",
+    "item": "MOD13Q1.A2021033.h17v05.061.2021049222515",
+    "fecha": "2021-02-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:40+00:00",
+    "file": "data/raw/pc/modis_29/A2021049_ndvi.tif",
+    "bytes": 1801927,
+    "sha256": "2acf27598a0bb72ef710121737817db16864b213d39e814383ca4e98254a2d39",
+    "item": "MOD13Q1.A2021049.h17v05.061.2021068101503",
+    "fecha": "2021-02-26"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:41+00:00",
+    "file": "data/raw/pc/modis_29/A2021065_ndvi.tif",
+    "bytes": 1956842,
+    "sha256": "c26b3785edd60fc44692d63606aeeb7ca36b5954cd0babbc829d4a229167e98f",
+    "item": "MOD13Q1.A2021065.h17v05.061.2021082134548",
+    "fecha": "2021-03-14"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:44+00:00",
+    "file": "data/raw/pc/modis_29/A2021081_ndvi.tif",
+    "bytes": 2019612,
+    "sha256": "850c69a8a5bd98e956e9b86806c4cf07913f70cb4d3693aba8b829467315bfc5",
+    "item": "MOD13Q1.A2021081.h17v05.061.2021098015943",
+    "fecha": "2021-03-30"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:43+00:00",
+    "file": "data/raw/pc/modis_29/A2021097_ndvi.tif",
+    "bytes": 1620162,
+    "sha256": "20a7d978c27361a208c013f0f1b15d4852cd9e0c66d059300cca666105df4310",
+    "item": "MOD13Q1.A2021097.h17v05.061.2021115210728",
+    "fecha": "2021-04-15"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:42+00:00",
+    "file": "data/raw/pc/modis_29/A2021113_ndvi.tif",
+    "bytes": 1801803,
+    "sha256": "a00f2bbc728e8128fe0781205fac7d5472f70f31ae6b36bfe6bf1633b4a4f810",
+    "item": "MOD13Q1.A2021113.h17v05.061.2021133131740",
+    "fecha": "2021-05-01"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:43+00:00",
+    "file": "data/raw/pc/modis_29/A2021129_ndvi.tif",
+    "bytes": 2019708,
+    "sha256": "8ae9c407bb6f2acc6ddee4573aaf2e2c649a181611ea4a414412dc8e0c00ec3b",
+    "item": "MOD13Q1.A2021129.h17v05.061.2021146092724",
+    "fecha": "2021-05-17"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:43+00:00",
+    "file": "data/raw/pc/modis_29/A2021145_ndvi.tif",
+    "bytes": 1945192,
+    "sha256": "236ccd9ac52017013afd3737e52797b6d12498f3ff19524e3f6b4ccc9c85471d",
+    "item": "MOD13Q1.A2021145.h17v05.061.2021165122605",
+    "fecha": "2021-06-02"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:44+00:00",
+    "file": "data/raw/pc/modis_29/A2021161_ndvi.tif",
+    "bytes": 1998392,
+    "sha256": "48b33015a88e79994bc541803c86935c47efb776a47284dbd6e89054f8825c1e",
+    "item": "MOD13Q1.A2021161.h17v05.061.2021178032142",
+    "fecha": "2021-06-18"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:44+00:00",
+    "file": "data/raw/pc/modis_29/A2021177_ndvi.tif",
+    "bytes": 2041053,
+    "sha256": "8f8781c39326dc6fa27b783cb234a84c76df60641a8fdc6d81a3641552ddf0a7",
+    "item": "MOD13Q1.A2021177.h17v05.061.2021194011758",
+    "fecha": "2021-07-04"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:45+00:00",
+    "file": "data/raw/pc/modis_29/A2021193_ndvi.tif",
+    "bytes": 2023737,
+    "sha256": "27e4c12cc7250c8a414f43d5c922b8b217bdf38e40853e70c63f96666fb180a9",
+    "item": "MOD13Q1.A2021193.h17v05.061.2021213234239",
+    "fecha": "2021-07-20"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:46+00:00",
+    "file": "data/raw/pc/modis_29/A2021209_ndvi.tif",
+    "bytes": 2024765,
+    "sha256": "1c54363d208be1b51928d90441a3f36eeeea478f4a2244cd16cf6bbd0a1dbfa5",
+    "item": "MOD13Q1.A2021209.h17v05.061.2021226040350",
+    "fecha": "2021-08-05"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:58:39+00:00",
+    "file": "data/raw/pc/modis_29/A2021225_ndvi.tif",
+    "bytes": 1927524,
+    "sha256": "bdc84c68e56dfb501823de54349d220074e7d8225ecad776c280752ead2377ee",
+    "item": "MOD13Q1.A2021225.h17v05.061.2026110160351",
+    "fecha": "2021-08-21"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:47+00:00",
+    "file": "data/raw/pc/modis_29/A2021241_ndvi.tif",
+    "bytes": 1982928,
+    "sha256": "cad7cbd6313927da8dc0bd80d8843fe1c58c60b5f53bdc5f8d83053c9d9b4651",
+    "item": "MOD13Q1.A2021241.h17v05.061.2021258033051",
+    "fecha": "2021-09-06"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:58:38+00:00",
+    "file": "data/raw/pc/modis_29/A2021257_ndvi.tif",
+    "bytes": 1994585,
+    "sha256": "91f70c7dae3a3620aec7759eb6aa58b70cdd6fb9470718b1736f6e99f8faf0b2",
+    "item": "MOD13Q1.A2021257.h17v05.061.2021320112548",
+    "fecha": "2021-09-22"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:49+00:00",
+    "file": "data/raw/pc/modis_29/A2021273_ndvi.tif",
+    "bytes": 1923157,
+    "sha256": "ca98255c72802fb46f084978e99d3886249e37b95d47c3e6d711333da5b8eaa9",
+    "item": "MOD13Q1.A2021273.h17v05.061.2021290014122",
+    "fecha": "2021-10-08"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:50+00:00",
+    "file": "data/raw/pc/modis_29/A2021289_ndvi.tif",
+    "bytes": 1999109,
+    "sha256": "fd231c154a5a56284cdb1422ca7b1b4d5ecf7e3b538311fbaaade5d56e086b35",
+    "item": "MOD13Q1.A2021289.h17v05.061.2021306182218",
+    "fecha": "2021-10-24"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:50+00:00",
+    "file": "data/raw/pc/modis_29/A2021305_ndvi.tif",
+    "bytes": 1920300,
+    "sha256": "e0892710a732ccbe337b360c5ca8ccb9a4ccfe64a394dabb367030b127845aa6",
+    "item": "MOD13Q1.A2021305.h17v05.061.2021322012145",
+    "fecha": "2021-11-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:50+00:00",
+    "file": "data/raw/pc/modis_29/A2021321_ndvi.tif",
+    "bytes": 1808739,
+    "sha256": "fc57ca6f8b75e9d66738505d2199d60c58f417293db62e45a7fd38a93fa3a147",
+    "item": "MOD13Q1.A2021321.h17v05.061.2021338161521",
+    "fecha": "2021-11-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:50+00:00",
+    "file": "data/raw/pc/modis_29/A2021337_ndvi.tif",
+    "bytes": 1919457,
+    "sha256": "2ee5158e591da99234e09157bda58a156f7f0d9d64815334403bb620e1c6c5e6",
+    "item": "MOD13Q1.A2021337.h17v05.061.2021355015520",
+    "fecha": "2021-12-11"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:52+00:00",
+    "file": "data/raw/pc/modis_29/A2021353_ndvi.tif",
+    "bytes": 1939802,
+    "sha256": "799a98d566eb3e51694ddfcdf2f708bec122bf88c69420cd2b68a164d169f8c0",
+    "item": "MOD13Q1.A2021353.h17v05.061.2022005001409",
+    "fecha": "2021-12-27"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:54+00:00",
+    "file": "data/raw/pc/modis_29/A2022001_ndvi.tif",
+    "bytes": 1987546,
+    "sha256": "45e5fec8c562b0c964f96645e26285b3be7b8058382359fbf04e1de1f88094dd",
+    "item": "MOD13Q1.A2022001.h17v05.061.2022018200628",
+    "fecha": "2022-01-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:54+00:00",
+    "file": "data/raw/pc/modis_29/A2022017_ndvi.tif",
+    "bytes": 1616051,
+    "sha256": "1786c720edc2378cd2447265e1db2344d336f52a41af8e951b8f475dd942619b",
+    "item": "MOD13Q1.A2022017.h17v05.061.2022035003817",
+    "fecha": "2022-01-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:54+00:00",
+    "file": "data/raw/pc/modis_29/A2022033_ndvi.tif",
+    "bytes": 1896180,
+    "sha256": "e5e3bd16c9d5757e2e7c3f81ef5b8fc8daec7c5b1db4131ceed5ff50b96708f7",
+    "item": "MOD13Q1.A2022033.h17v05.061.2022051005106",
+    "fecha": "2022-02-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:54+00:00",
+    "file": "data/raw/pc/modis_29/A2022049_ndvi.tif",
+    "bytes": 1745390,
+    "sha256": "9a41c2da1c8021b7ea5084071287538eb0251291c53be447308843eeace5d0e6",
+    "item": "MOD13Q1.A2022049.h17v05.061.2022066003640",
+    "fecha": "2022-02-26"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:58:39+00:00",
+    "file": "data/raw/pc/modis_29/A2022065_ndvi.tif",
+    "bytes": 1683655,
+    "sha256": "4b662dcbb194fe273b9457048c5b89549620ff075595ba272852ad4f3fc9fe6f",
+    "item": "MOD13Q1.A2022065.h17v05.061.2022101213250",
+    "fecha": "2022-03-14"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:55+00:00",
+    "file": "data/raw/pc/modis_29/A2022081_ndvi.tif",
+    "bytes": 1201378,
+    "sha256": "ac684f8501d1fc996ee4de3bf52145fa51137f2bf79ceac4a7e58c8c724985e4",
+    "item": "MOD13Q1.A2022081.h17v05.061.2022098000915",
+    "fecha": "2022-03-30"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:58:39+00:00",
+    "file": "data/raw/pc/modis_29/A2022097_ndvi.tif",
+    "bytes": 1861791,
+    "sha256": "64226725471c5e440d8850e5f1ce42042394abcd1652e5aee38cd926519122ee",
+    "item": "MOD13Q1.A2022097.h17v05.061.2022121225647",
+    "fecha": "2022-04-15"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:58+00:00",
+    "file": "data/raw/pc/modis_29/A2022113_ndvi.tif",
+    "bytes": 2002380,
+    "sha256": "8f997d6ac6197685578b5765300e23bdfc26740bd046d983e028e30c2a347616",
+    "item": "MOD13Q1.A2022113.h17v05.061.2022136104750",
+    "fecha": "2022-05-01"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:58+00:00",
+    "file": "data/raw/pc/modis_29/A2022129_ndvi.tif",
+    "bytes": 2003085,
+    "sha256": "e6d437f86694428550b537ebeee52517206ae5cbf89e36d0fbb5dc5cc824831d",
+    "item": "MOD13Q1.A2022129.h17v05.061.2022146012643",
+    "fecha": "2022-05-17"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:57+00:00",
+    "file": "data/raw/pc/modis_29/A2022145_ndvi.tif",
+    "bytes": 2031287,
+    "sha256": "c4c14c8d28be3f8b99533c0207d18a175892ae88055ab9e70a1ddbeffcf1d5c7",
+    "item": "MOD13Q1.A2022145.h17v05.061.2022168103128",
+    "fecha": "2022-06-02"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:53:59+00:00",
+    "file": "data/raw/pc/modis_29/A2022161_ndvi.tif",
+    "bytes": 1943768,
+    "sha256": "4721d3be63610cd4f669b43022302893839b5adc804e2b2535ae01a06b43be4a",
+    "item": "MOD13Q1.A2022161.h17v05.061.2022178180159",
+    "fecha": "2022-06-18"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:00+00:00",
+    "file": "data/raw/pc/modis_29/A2022177_ndvi.tif",
+    "bytes": 1968089,
+    "sha256": "c29d8164fbe6778f5b4b50e1260a8f775f278e705228907a909a105c29500fca",
+    "item": "MOD13Q1.A2022177.h17v05.061.2022195121206",
+    "fecha": "2022-07-04"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:01+00:00",
+    "file": "data/raw/pc/modis_29/A2022193_ndvi.tif",
+    "bytes": 2027284,
+    "sha256": "b2119c7e63fcd43794855813bd373e029e7312effb7fcdc0e526d5a31cb80881",
+    "item": "MOD13Q1.A2022193.h17v05.061.2022215010200",
+    "fecha": "2022-07-20"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:00+00:00",
+    "file": "data/raw/pc/modis_29/A2022209_ndvi.tif",
+    "bytes": 2024105,
+    "sha256": "303046abb60b9da883fc51d371c354fb6c651af020754d28333d8878f5d0eb07",
+    "item": "MOD13Q1.A2022209.h17v05.061.2022232150919",
+    "fecha": "2022-08-05"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:00+00:00",
+    "file": "data/raw/pc/modis_29/A2022225_ndvi.tif",
+    "bytes": 2043750,
+    "sha256": "a3c04fe27f1159ffe40bf429198f455a1c4bb2385289ea9d1f46b4f5117e5520",
+    "item": "MOD13Q1.A2022225.h17v05.061.2022242000748",
+    "fecha": "2022-08-21"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:02+00:00",
+    "file": "data/raw/pc/modis_29/A2022241_ndvi.tif",
+    "bytes": 2029278,
+    "sha256": "9c2c6913120dd621c9c16c6bf7bbd21889c60970243e8d7cc2b6f29102e93362",
+    "item": "MOD13Q1.A2022241.h17v05.061.2022258131448",
+    "fecha": "2022-09-06"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:01+00:00",
+    "file": "data/raw/pc/modis_29/A2022257_ndvi.tif",
+    "bytes": 1961978,
+    "sha256": "5792605e593b951de694b732f96eb18746cca23f09873ed346dcc7e5398ea574",
+    "item": "MOD13Q1.A2022257.h17v05.061.2022274023027",
+    "fecha": "2022-09-22"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:02+00:00",
+    "file": "data/raw/pc/modis_29/A2022273_ndvi.tif",
+    "bytes": 1907587,
+    "sha256": "dd398c3e98e940bcddd8b69666c7e672ad94cb083198c40a3c71ff59b608b0a0",
+    "item": "MOD13Q1.A2022273.h17v05.061.2022297153946",
+    "fecha": "2022-10-08"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:02+00:00",
+    "file": "data/raw/pc/modis_29/A2022289_ndvi.tif",
+    "bytes": 1852704,
+    "sha256": "6559c4a69944a10cf604b69f24ac3b2b98e0237470cba30260fc87cacf838cce",
+    "item": "MOD13Q1.A2022289.h17v05.061.2022307122622",
+    "fecha": "2022-10-24"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:03+00:00",
+    "file": "data/raw/pc/modis_29/A2022305_ndvi.tif",
+    "bytes": 1945854,
+    "sha256": "98dcf8227a839da8b74207fef373582b9652f7495a9bcc1626a2fcfe06a68315",
+    "item": "MOD13Q1.A2022305.h17v05.061.2022322030229",
+    "fecha": "2022-11-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:03+00:00",
+    "file": "data/raw/pc/modis_29/A2022321_ndvi.tif",
+    "bytes": 1824622,
+    "sha256": "d7b8981254f279516a286c37a64dc1161a6619473d06201041b48e075ad49615",
+    "item": "MOD13Q1.A2022321.h17v05.061.2022350213227",
+    "fecha": "2022-11-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:03+00:00",
+    "file": "data/raw/pc/modis_29/A2022337_ndvi.tif",
+    "bytes": 1573594,
+    "sha256": "cf30ac4c83b1648319396f7bd7f27dfe3707c2a862f30eae5d5c15d75817411d",
+    "item": "MOD13Q1.A2022337.h17v05.061.2022360144804",
+    "fecha": "2022-12-11"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:05+00:00",
+    "file": "data/raw/pc/modis_29/A2022353_ndvi.tif",
+    "bytes": 2002303,
+    "sha256": "681c9d073fae5837f8fd472ac5dc5cc010135c5ac3d8ac076e51d73804db3482",
+    "item": "MOD13Q1.A2022353.h17v05.061.2023006035138",
+    "fecha": "2022-12-27"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:06+00:00",
+    "file": "data/raw/pc/modis_29/A2023001_ndvi.tif",
+    "bytes": 1866866,
+    "sha256": "03e0911984cd9cd004684f5dc7b4cc9497dbefa94e44156bcf0c0b715f86a432",
+    "item": "MOD13Q1.A2023001.h17v05.061.2023019192733",
+    "fecha": "2023-01-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:06+00:00",
+    "file": "data/raw/pc/modis_29/A2023017_ndvi.tif",
+    "bytes": 1925133,
+    "sha256": "314df8b492fc237055be8d07aecc6a8686b9a9f7f0950cfcfc44363ff730dd70",
+    "item": "MOD13Q1.A2023017.h17v05.061.2023034180520",
+    "fecha": "2023-01-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:06+00:00",
+    "file": "data/raw/pc/modis_29/A2023033_ndvi.tif",
+    "bytes": 1934306,
+    "sha256": "e307a24c26dece52d0bfaf8aa9679d33b71ccfaa617776ff1fdb6da965b19e78",
+    "item": "MOD13Q1.A2023033.h17v05.061.2023054052755",
+    "fecha": "2023-02-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:07+00:00",
+    "file": "data/raw/pc/modis_29/A2023065_ndvi.tif",
+    "bytes": 1997633,
+    "sha256": "e0e4f92a27c4338f703eff01a8d32bd967391fa7d8cb06d56333ba1d1ba755fc",
+    "item": "MOD13Q1.A2023065.h17v05.061.2023082003244",
+    "fecha": "2023-03-14"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:07+00:00",
+    "file": "data/raw/pc/modis_29/A2023081_ndvi.tif",
+    "bytes": 2008641,
+    "sha256": "9dab939e2a165a7cfd437bb344487d1bd8fbdcb6b840f07436b18bc50e7ef457",
+    "item": "MOD13Q1.A2023081.h17v05.061.2023100010822",
+    "fecha": "2023-03-30"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:08+00:00",
+    "file": "data/raw/pc/modis_29/A2023097_ndvi.tif",
+    "bytes": 2039015,
+    "sha256": "e6adefe8fa3aa9499437931273df12466af834d6fe4287c770cd962884edc174",
+    "item": "MOD13Q1.A2023097.h17v05.061.2023115121252",
+    "fecha": "2023-04-15"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:08+00:00",
+    "file": "data/raw/pc/modis_29/A2023113_ndvi.tif",
+    "bytes": 2028612,
+    "sha256": "3500448f02e5059d48b542307a523b091562105e309a4bf37c2124eb746df75c",
+    "item": "MOD13Q1.A2023113.h17v05.061.2023130001545",
+    "fecha": "2023-05-01"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:09+00:00",
+    "file": "data/raw/pc/modis_29/A2023129_ndvi.tif",
+    "bytes": 1902539,
+    "sha256": "576ff3f5597cf2c681a4ef6122d792113781f76ee86911baa4e7ca1dca748aaf",
+    "item": "MOD13Q1.A2023129.h17v05.061.2023146132309",
+    "fecha": "2023-05-17"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:09+00:00",
+    "file": "data/raw/pc/modis_29/A2023145_ndvi.tif",
+    "bytes": 1901460,
+    "sha256": "c371f3db2e0dd3c4d736d21cb48ffb98e3a7e780ddfe36d4eb268958fb759c28",
+    "item": "MOD13Q1.A2023145.h17v05.061.2023164003548",
+    "fecha": "2023-06-02"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:09+00:00",
+    "file": "data/raw/pc/modis_29/A2023161_ndvi.tif",
+    "bytes": 2045119,
+    "sha256": "4526acb09de852d7cf74a894bae5ebc4f19b1f37467c1ee108935dd2bcccc15a",
+    "item": "MOD13Q1.A2023161.h17v05.061.2023177232939",
+    "fecha": "2023-06-18"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:09+00:00",
+    "file": "data/raw/pc/modis_29/A2023177_ndvi.tif",
+    "bytes": 1995919,
+    "sha256": "b4b0786701b3c2e69f6b6587a09291ec4683583a4932564ce65fe01852ad6c69",
+    "item": "MOD13Q1.A2023177.h17v05.061.2023201061932",
+    "fecha": "2023-07-04"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:12+00:00",
+    "file": "data/raw/pc/modis_29/A2023193_ndvi.tif",
+    "bytes": 2015239,
+    "sha256": "2d819a49ff08c3f0d97e8c853343ba2afae798c4ee7a9ac3e739dbd6a3e7739e",
+    "item": "MOD13Q1.A2023193.h17v05.061.2023215104757",
+    "fecha": "2023-07-20"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:11+00:00",
+    "file": "data/raw/pc/modis_29/A2023209_ndvi.tif",
+    "bytes": 2015877,
+    "sha256": "391c6b2c2a57a2e0ae14f8ca81a3720314b6d9379ff020c38233376315f25aae",
+    "item": "MOD13Q1.A2023209.h17v05.061.2023226000728",
+    "fecha": "2023-08-05"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:12+00:00",
+    "file": "data/raw/pc/modis_29/A2023225_ndvi.tif",
+    "bytes": 2040140,
+    "sha256": "45b62ba9ca042922c585dac67bacb13d6c49f85132d83f4e6efd2d721069a3e6",
+    "item": "MOD13Q1.A2023225.h17v05.061.2023242000749",
+    "fecha": "2023-08-21"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:12+00:00",
+    "file": "data/raw/pc/modis_29/A2023241_ndvi.tif",
+    "bytes": 1956507,
+    "sha256": "0626b3d2d7df88f36138d09fadb78a084876252a52b4afaaa32c30ac066ff43b",
+    "item": "MOD13Q1.A2023241.h17v05.061.2023258000923",
+    "fecha": "2023-09-06"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:12+00:00",
+    "file": "data/raw/pc/modis_29/A2023257_ndvi.tif",
+    "bytes": 2035264,
+    "sha256": "2f8bd709df8cd5cbf853dd570886b054fb0f789e3f40534ca0815c3bd53c475b",
+    "item": "MOD13Q1.A2023257.h17v05.061.2023274001545",
+    "fecha": "2023-09-22"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:12+00:00",
+    "file": "data/raw/pc/modis_29/A2023273_ndvi.tif",
+    "bytes": 2000035,
+    "sha256": "58298647d4f7d03781178b92a45b517216e5415955c601b6b39c7c730584911a",
+    "item": "MOD13Q1.A2023273.h17v05.061.2023290141011",
+    "fecha": "2023-10-08"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:13+00:00",
+    "file": "data/raw/pc/modis_29/A2023289_ndvi.tif",
+    "bytes": 1788608,
+    "sha256": "8330bcb717c190ae1365595f440f87e941a7e1c04085b2c7d0d79eff1cb79f1a",
+    "item": "MOD13Q1.A2023289.h17v05.061.2023305235539",
+    "fecha": "2023-10-24"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:14+00:00",
+    "file": "data/raw/pc/modis_29/A2023305_ndvi.tif",
+    "bytes": 1966931,
+    "sha256": "0c66c8b5e199d0b2800e0b0aad7a4a975f91099404ccc152a399f11e7e09a195",
+    "item": "MOD13Q1.A2023305.h17v05.061.2023322213800",
+    "fecha": "2023-11-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:14+00:00",
+    "file": "data/raw/pc/modis_29/A2023321_ndvi.tif",
+    "bytes": 1916498,
+    "sha256": "afbfb11157cfeb25dcb2999249e1a004ca86444c175d21952c5540aed259bc10",
+    "item": "MOD13Q1.A2023321.h17v05.061.2023340005501",
+    "fecha": "2023-11-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:15+00:00",
+    "file": "data/raw/pc/modis_29/A2023337_ndvi.tif",
+    "bytes": 1860610,
+    "sha256": "ddbdcd3f6f1884e87422638015c9d46b4c4ac837d9229d2ff5b97684b8566b67",
+    "item": "MOD13Q1.A2023337.h17v05.061.2023354004900",
+    "fecha": "2023-12-11"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:15+00:00",
+    "file": "data/raw/pc/modis_29/A2023353_ndvi.tif",
+    "bytes": 1990842,
+    "sha256": "e3def0dbc45d685e0bdaa9c5df761e84aed1596cfb5da21935cb07beb2f94834",
+    "item": "MOD13Q1.A2023353.h17v05.061.2024005135212",
+    "fecha": "2023-12-27"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:15+00:00",
+    "file": "data/raw/pc/modis_29/A2024001_ndvi.tif",
+    "bytes": 1688526,
+    "sha256": "b79f8f324a9eb9632174fe433542cb894ffa03c861d2728dd593cbd2e1404564",
+    "item": "MOD13Q1.A2024001.h17v05.061.2024022132108",
+    "fecha": "2024-01-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:17+00:00",
+    "file": "data/raw/pc/modis_29/A2024017_ndvi.tif",
+    "bytes": 1778959,
+    "sha256": "f2e67bb48c12b6a2116d77b5ac085d56a65673d1dd34f78b6b2b9e91c17d640a",
+    "item": "MOD13Q1.A2024017.h17v05.061.2024038040417",
+    "fecha": "2024-01-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:16+00:00",
+    "file": "data/raw/pc/modis_29/A2024033_ndvi.tif",
+    "bytes": 1683779,
+    "sha256": "089986a04a21d488a904252087630be48c6dbd0aa0e5bcf0773010af21cf2a57",
+    "item": "MOD13Q1.A2024033.h17v05.061.2024051141606",
+    "fecha": "2024-02-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:18+00:00",
+    "file": "data/raw/pc/modis_29/A2024049_ndvi.tif",
+    "bytes": 1887295,
+    "sha256": "f4281ed6cda9d297f5628fd2fed705b988cc78a92cbcb18ce2e420b7d8770da5",
+    "item": "MOD13Q1.A2024049.h17v05.061.2024066070615",
+    "fecha": "2024-02-26"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:17+00:00",
+    "file": "data/raw/pc/modis_29/A2024065_ndvi.tif",
+    "bytes": 1834640,
+    "sha256": "01f5c16f5b1c6cad5e122b140427b4ae0d27d0a349af0a83aad7205ca3ad1524",
+    "item": "MOD13Q1.A2024065.h17v05.061.2024085175123",
+    "fecha": "2024-03-13"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:17+00:00",
+    "file": "data/raw/pc/modis_29/A2024081_ndvi.tif",
+    "bytes": 1488211,
+    "sha256": "575d14a93368745308db5d53361462c3af190340a4b87da75142f77c368bac2c",
+    "item": "MOD13Q1.A2024081.h17v05.061.2024099104713",
+    "fecha": "2024-03-29"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:17+00:00",
+    "file": "data/raw/pc/modis_29/A2024097_ndvi.tif",
+    "bytes": 1943735,
+    "sha256": "0dc4060764e01195248bf30f704a72ff68ca8bdbde91210548a3552a4ac38560",
+    "item": "MOD13Q1.A2024097.h17v05.061.2024115200157",
+    "fecha": "2024-04-14"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:19+00:00",
+    "file": "data/raw/pc/modis_29/A2024113_ndvi.tif",
+    "bytes": 2042466,
+    "sha256": "861967b20a06875c25f917a6f4f9eafa38faa967c5b9393c7d44353ac53f4ab0",
+    "item": "MOD13Q1.A2024113.h17v05.061.2024133221556",
+    "fecha": "2024-04-30"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:58:39+00:00",
+    "file": "data/raw/pc/modis_29/A2024129_ndvi.tif",
+    "bytes": 1983332,
+    "sha256": "45b7383c71b4e2756cccac5034f2bda45b497104314caeb721647650fe0b2879",
+    "item": "MOD13Q1.A2024129.h17v05.061.2024153222159",
+    "fecha": "2024-05-16"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:20+00:00",
+    "file": "data/raw/pc/modis_29/A2024145_ndvi.tif",
+    "bytes": 1944873,
+    "sha256": "fe8a04aa918671357994ee94c19234e349b03b5a2ea2c45a1bab2c7406b5a776",
+    "item": "MOD13Q1.A2024145.h17v05.061.2024162171104",
+    "fecha": "2024-06-01"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:19+00:00",
+    "file": "data/raw/pc/modis_29/A2024161_ndvi.tif",
+    "bytes": 2011652,
+    "sha256": "cb6fa1c889b1b1a4aba1c2062e1a891c58fe4d60ed9e724144b3f3e7d9bb7586",
+    "item": "MOD13Q1.A2024161.h17v05.061.2024181211324",
+    "fecha": "2024-06-17"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:20+00:00",
+    "file": "data/raw/pc/modis_29/A2024177_ndvi.tif",
+    "bytes": 1887452,
+    "sha256": "76fff29a831bd7ba01d52f348c0dc8b861061b920cda65fb3f80516a173c8b01",
+    "item": "MOD13Q1.A2024177.h17v05.061.2024195022813",
+    "fecha": "2024-07-03"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:22+00:00",
+    "file": "data/raw/pc/modis_29/A2024193_ndvi.tif",
+    "bytes": 2034305,
+    "sha256": "130dae58ce39fbbe3db5de01055cc09ed171228c0091abfc3caa1d25e95d41df",
+    "item": "MOD13Q1.A2024193.h17v05.061.2024212093405",
+    "fecha": "2024-07-19"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:24+00:00",
+    "file": "data/raw/pc/modis_29/A2024209_ndvi.tif",
+    "bytes": 2041248,
+    "sha256": "95d5e55be43d07c3ba2c5c4425cb2b10c70f9221d2e3244ff220b0de6827bfa8",
+    "item": "MOD13Q1.A2024209.h17v05.061.2024228023635",
+    "fecha": "2024-08-04"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:22+00:00",
+    "file": "data/raw/pc/modis_29/A2024241_ndvi.tif",
+    "bytes": 2016409,
+    "sha256": "04cc59715942ae4837a7fd36f8ab68b9cf0863224e223fe6b907a2a063f5f887",
+    "item": "MOD13Q1.A2024241.h17v05.061.2024258125604",
+    "fecha": "2024-09-05"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:22+00:00",
+    "file": "data/raw/pc/modis_29/A2024257_ndvi.tif",
+    "bytes": 2020456,
+    "sha256": "e6063c4d8cedb308bc59712687257a0fa6e8925e235c19bfc3c3c2ce4dc5538c",
+    "item": "MOD13Q1.A2024257.h17v05.061.2024275121114",
+    "fecha": "2024-09-21"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:23+00:00",
+    "file": "data/raw/pc/modis_29/A2024273_ndvi.tif",
+    "bytes": 1970357,
+    "sha256": "b6018f4dc14f0c790b1ac2ce52f5f8f1e569e95c4c8787583faf0d4f2eff2c55",
+    "item": "MOD13Q1.A2024273.h17v05.061.2024290024612",
+    "fecha": "2024-10-07"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:22+00:00",
+    "file": "data/raw/pc/modis_29/A2024289_ndvi.tif",
+    "bytes": 1874573,
+    "sha256": "a9d1df5e9aa872872a7b4c3950ff32791bd577a3cf6728081bd93b6a204d1ffd",
+    "item": "MOD13Q1.A2024289.h17v05.061.2024306180457",
+    "fecha": "2024-10-23"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:25+00:00",
+    "file": "data/raw/pc/modis_29/A2024305_ndvi.tif",
+    "bytes": 1912313,
+    "sha256": "d525b06376d00543db4a95104553358b9d6feeff11cf95d7d364a877c551dd78",
+    "item": "MOD13Q1.A2024305.h17v05.061.2024326213908",
+    "fecha": "2024-11-08"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:58:40+00:00",
+    "file": "data/raw/pc/modis_29/A2024321_ndvi.tif",
+    "bytes": 1941130,
+    "sha256": "4d5774807a829cc3574214a719cfaa1095e64ff974dc05f8e85023c52b1aa19d",
+    "item": "MOD13Q1.A2024321.h17v05.061.2025005223123",
+    "fecha": "2024-11-24"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:24+00:00",
+    "file": "data/raw/pc/modis_29/A2024337_ndvi.tif",
+    "bytes": 1969103,
+    "sha256": "6f60d826feac815a099b3ad5a1b4c8edf0280549a292e406a6384a8252e68c83",
+    "item": "MOD13Q1.A2024337.h17v05.061.2024358221911",
+    "fecha": "2024-12-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:27+00:00",
+    "file": "data/raw/pc/modis_29/A2025001_ndvi.tif",
+    "bytes": 1956639,
+    "sha256": "26d587c8bf704285fabc9316b5c701c303204dbe40d95d915ceab72e99bd1824",
+    "item": "MOD13Q1.A2025001.h17v05.061.2025022122746",
+    "fecha": "2025-01-09"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:28+00:00",
+    "file": "data/raw/pc/modis_29/A2025017_ndvi.tif",
+    "bytes": 1728763,
+    "sha256": "b4f376e514b7792d3fd9fff8cf29d39f9888dd5f52c1eb7f93557a93a4e0c1a6",
+    "item": "MOD13Q1.A2025017.h17v05.061.2025035162924",
+    "fecha": "2025-01-25"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:26+00:00",
+    "file": "data/raw/pc/modis_29/A2025033_ndvi.tif",
+    "bytes": 1994341,
+    "sha256": "914ccda73ffcea35a72992db99d495620e3e50471a05395e1dd8aa1fcd92f84f",
+    "item": "MOD13Q1.A2025033.h17v05.061.2025050175757",
+    "fecha": "2025-02-10"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:27+00:00",
+    "file": "data/raw/pc/modis_29/A2025049_ndvi.tif",
+    "bytes": 1773570,
+    "sha256": "5185d160a19b479a1e252c0226a19fc671a7835a5d82be550b69e17ed3984484",
+    "item": "MOD13Q1.A2025049.h17v05.061.2025070114724",
+    "fecha": "2025-02-26"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:27+00:00",
+    "file": "data/raw/pc/modis_29/A2025065_ndvi.tif",
+    "bytes": 1487527,
+    "sha256": "c735413a7fa4e285a09585dce667afbf1d1a9a5ff38b836465f3c477cb44d7b2",
+    "item": "MOD13Q1.A2025065.h17v05.061.2025090104256",
+    "fecha": "2025-03-14"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:28+00:00",
+    "file": "data/raw/pc/modis_29/A2025081_ndvi.tif",
+    "bytes": 1998596,
+    "sha256": "96251f87dc0935d47aba70214d29e3bc9e8d8efed7e7cf6c7d578b1461772b87",
+    "item": "MOD13Q1.A2025081.h17v05.061.2025098171921",
+    "fecha": "2025-03-30"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:28+00:00",
+    "file": "data/raw/pc/modis_29/A2025097_ndvi.tif",
+    "bytes": 1874691,
+    "sha256": "dcd399eedb9abd692bcbd000fb53d721fbfe572804434c64ec819dd748625165",
+    "item": "MOD13Q1.A2025097.h17v05.061.2025114003115",
+    "fecha": "2025-04-15"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:28+00:00",
+    "file": "data/raw/pc/modis_29/A2025113_ndvi.tif",
+    "bytes": 2002715,
+    "sha256": "981efbb51f7775533c5092965fa0403c42e6ac0b9348666275e686c145ab321f",
+    "item": "MOD13Q1.A2025113.h17v05.061.2025148085606",
+    "fecha": "2025-05-01"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:30+00:00",
+    "file": "data/raw/pc/modis_29/A2025129_ndvi.tif",
+    "bytes": 1968838,
+    "sha256": "31e539e074e8e1261f4648805ba5a30346fe5308e216fe12b63cd608d1286710",
+    "item": "MOD13Q1.A2025129.h17v05.061.2025148085334",
+    "fecha": "2025-05-17"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:30+00:00",
+    "file": "data/raw/pc/modis_29/A2025145_ndvi.tif",
+    "bytes": 2015796,
+    "sha256": "02f05e310a26014e6a10260d452a91ba58aec4bb3b10e73cbfad285c0ad00984",
+    "item": "MOD13Q1.A2025145.h17v05.061.2025163020816",
+    "fecha": "2025-06-02"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:30+00:00",
+    "file": "data/raw/pc/modis_29/A2025161_ndvi.tif",
+    "bytes": 1955679,
+    "sha256": "d66e131032895b053c2900db74b58ebd6d92e1cbb6c058ca362ec544cc6a82c9",
+    "item": "MOD13Q1.A2025161.h17v05.061.2025178120221",
+    "fecha": "2025-06-18"
+  },
+  {
+    "source": "NASA MODIS MOD13Q1 v6.1 NDVI (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/modis-13Q1-061",
+    "retrieved_at": "2026-11-14T11:54:31+00:00",
+    "file": "data/raw/pc/modis_29/A2025177_ndvi.tif",
+    "bytes": 2015926,
+    "sha256": "18f2cea1daa63189110cdf16eac55bb46a041042d688da7540bacd30c91ac718",
+    "item": "MOD13Q1.A2025177.h17v05.061.2025195142428",
+    "fecha": "2025-07-04"
+  },
+  {
+    "source": "NASA NASADEM (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/nasadem",
+    "retrieved_at": "2026-11-14T11:52:48+00:00",
+    "file": "data/raw/pc/nasadem_29.tif",
+    "bytes": 60607355,
+    "sha256": "abe7b47f725708a16076c57c87cd8fbcdf119852fedf21b097052cd04fdda14f",
+    "items": [
+      "NASADEM_HGT_n37w006",
+      "NASADEM_HGT_n37w005",
+      "NASADEM_HGT_n37w004",
+      "NASADEM_HGT_n36w006",
+      "NASADEM_HGT_n36w005",
+      "NASADEM_HGT_n36w004"
+    ]
+  },
+  {
+    "source": "ESA WorldCover 2021 v200 (Planetary Computer)",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/esa-worldcover",
+    "retrieved_at": "2026-11-14T11:53:10+00:00",
+    "file": "data/raw/pc/worldcover2021_29.tif",
+    "bytes": 15475556,
+    "sha256": "30b266cab7514cb653b4e2da54336692299af5134dff8fe5ad779259ae56bf01",
+    "items": [
+      "ESA_WorldCover_10m_2021_v200_N36W006"
+    ],
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=36.5&longitude=-5.625&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:15+00:00",
+    "file": "data/raw/power/celda_253279_20010101_20251231.json",
+    "bytes": 1644167,
+    "sha256": "95d46ce46433ad1c0b7d6b33ea8f3fc70e9bc82c9fd8573fb9aab2c0946604f9",
+    "celda_power": 253279,
+    "lat": 36.5,
+    "lon": -5.625
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=36.5&longitude=-5.0&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:19+00:00",
+    "file": "data/raw/power/celda_253280_20010101_20251231.json",
+    "bytes": 1646416,
+    "sha256": "e6837866dc4fa224d4538ba95525ac669174c05e39564dea6939c99293fee7d6",
+    "celda_power": 253280,
+    "lat": 36.5,
+    "lon": -5.0
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=36.5&longitude=-4.375&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:23+00:00",
+    "file": "data/raw/power/celda_253281_20010101_20251231.json",
+    "bytes": 1647561,
+    "sha256": "b72b804c1e162ccf531fbdb2adf8d28632a60520df3d66161c15e5ca89161da2",
+    "celda_power": 253281,
+    "lat": 36.5,
+    "lon": -4.375
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=36.5&longitude=-3.75&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:27+00:00",
+    "file": "data/raw/power/celda_253282_20010101_20251231.json",
+    "bytes": 1648166,
+    "sha256": "ab85c0ccd56cec4721fee77d4efb258e6a5402a2d516ae65d8fadc91c60ac468",
+    "celda_power": 253282,
+    "lat": 36.5,
+    "lon": -3.75
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=37.0&longitude=-5.625&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:31+00:00",
+    "file": "data/raw/power/celda_254279_20010101_20251231.json",
+    "bytes": 1641535,
+    "sha256": "e81391d957f6d59787c7f22fd87b30d7a9687bfb9add6e927b94b24d188b6324",
+    "celda_power": 254279,
+    "lat": 37.0,
+    "lon": -5.625
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=37.0&longitude=-5.0&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:34+00:00",
+    "file": "data/raw/power/celda_254280_20010101_20251231.json",
+    "bytes": 1641071,
+    "sha256": "9e7e9bde6562f5b47095383d0c67635b6cfe03dce763e41143d7a7d946c42d67",
+    "celda_power": 254280,
+    "lat": 37.0,
+    "lon": -5.0
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=37.0&longitude=-4.375&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:37+00:00",
+    "file": "data/raw/power/celda_254281_20010101_20251231.json",
+    "bytes": 1640985,
+    "sha256": "a0d98296922c03fd2cf90650351b37aa0e9e47f48dc81772aa14f7f502dd5abd",
+    "celda_power": 254281,
+    "lat": 37.0,
+    "lon": -4.375
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=37.0&longitude=-3.75&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:40+00:00",
+    "file": "data/raw/power/celda_254282_20010101_20251231.json",
+    "bytes": 1640695,
+    "sha256": "7805702122633678f096c90d33708ebaabd76a45773d772d738a8130d56602ae",
+    "celda_power": 254282,
+    "lat": 37.0,
+    "lon": -3.75
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=37.5&longitude=-5.0&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:43+00:00",
+    "file": "data/raw/power/celda_255280_20010101_20251231.json",
+    "bytes": 1640021,
+    "sha256": "063bd31baf91f881abff87644aa17d39741d7869155864cf6a555bb130abd85c",
+    "celda_power": 255280,
+    "lat": 37.5,
+    "lon": -5.0
+  },
+  {
+    "source": "NASA POWER daily",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M%2CT2M_MAX%2CT2M_MIN%2CTOA_SW_DWN%2CALLSKY_SFC_SW_DWN%2CGWETTOP%2CGWETROOT%2CGWETPROF%2CRH2M%2CWS2M&community=AG&latitude=37.5&longitude=-4.375&start=20010101&end=20251231&format=JSON&time-standard=LST",
+    "retrieved_at": "2026-11-14T11:49:46+00:00",
+    "file": "data/raw/power/celda_255281_20010101_20251231.json",
+    "bytes": 1640427,
+    "sha256": "0975cf5c338622da063e60454903a8877da555ec712a613b8cb928a148c4fe01",
+    "celda_power": 255281,
+    "lat": 37.5,
+    "lon": -4.375
+  },
+  {
+    "source": "FEGA SIGPAC recintos 2026",
+    "url": "https://sigpac-hubcloud.es/geopackages/2026/recintos/29_MALAGA_rec_2026_20251215_gpkg.zip",
+    "retrieved_at": "2026-11-14T11:33:37+00:00",
+    "file": "data/raw/sigpac/2026_recintos/29_MALAGA_rec_2026_20251215_gpkg.zip",
+    "bytes": 403369569,
+    "sha256": "d8e8750a870065043f5c008b4fbbae678c010690ef24794ac11d5fb8e27da85e",
+    "licencia": "CC BY 4.0",
+    "provincia": 29
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/cod_aprovechamiento.json",
+    "retrieved_at": "2026-11-14T11:33:36+00:00",
+    "file": "data/raw/sigpac/codigos/cod_aprovechamiento.json",
+    "bytes": 505,
+    "sha256": "90e6f989eb559e80d7504dcbf8b3126416cc7d1861d2fc216e15b4143f90822c"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/cod_incidencia.json",
+    "retrieved_at": "2026-11-14T11:33:36+00:00",
+    "file": "data/raw/sigpac/codigos/cod_incidencia.json",
+    "bytes": 11389,
+    "sha256": "d7279eed195869d17c75cd55518e36cb769d51450c413744cf8aadea2b75373e"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/cod_lineasad.json",
+    "retrieved_at": "2026-11-14T11:33:37+00:00",
+    "file": "data/raw/sigpac/codigos/cod_lineasad.json",
+    "bytes": 7574,
+    "sha256": "fe6586daa585e7717fa67e78b780a7573257c6c15f13d96a49785a5651bb4ca1"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/cod_producto.json",
+    "retrieved_at": "2026-11-14T11:33:36+00:00",
+    "file": "data/raw/sigpac/codigos/cod_producto.json",
+    "bytes": 44162,
+    "sha256": "ed046e0607ae815819420cb8e8060065cbf04cead4ed18693728e7ad24651ad3"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/cod_region_2023.json",
+    "retrieved_at": "2026-11-14T11:33:37+00:00",
+    "file": "data/raw/sigpac/codigos/cod_region_2023.json",
+    "bytes": 865,
+    "sha256": "3fe71adaedfad0c6c69010db1bbd7c65d6ebe2633769c1f555b4cc628cc3eb27"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/cod_uso_sigpac.json",
+    "retrieved_at": "2026-11-14T11:33:36+00:00",
+    "file": "data/raw/sigpac/codigos/cod_uso_sigpac.json",
+    "bytes": 1941,
+    "sha256": "c3815ea39fc7b231009e19f4a9b5145049e786335a64060f5464dd883022beb7"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/municipio29.json",
+    "retrieved_at": "2026-11-14T11:33:37+00:00",
+    "file": "data/raw/sigpac/codigos/municipio29.json",
+    "bytes": 4662,
+    "sha256": "e2ce94192fc64052af86f075b0cb76b18cac1240820a85cf8acdb1ec52e38c51"
+  },
+  {
+    "source": "FEGA SIGPAC códigos",
+    "url": "https://sigpac-hubcloud.es/codigossigpac/provincia.json",
+    "retrieved_at": "2026-11-14T11:33:35+00:00",
+    "file": "data/raw/sigpac/codigos/provincia.json",
+    "bytes": 2165,
+    "sha256": "7a0552afa2e53c8461bee847ba7c63fe71742c4973569cb33ad4b92c8c57ada0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/bdod.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=bdod_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/bdod_0-5cm_mean.tif",
+    "bytes": 170809,
+    "sha256": "3631e5cad2697eff852dfa73166a559d47ede7e7508d2d6286768ed5b414a7a5",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/bdod.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=bdod_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/bdod_15-30cm_mean.tif",
+    "bytes": 161935,
+    "sha256": "1bdc00def49dfc18ef457a4f6423e97711ab6a3234a1674576e61a1f74a9277d",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/bdod.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=bdod_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/bdod_5-15cm_mean.tif",
+    "bytes": 165006,
+    "sha256": "07ba8f687a453fd4313be99cf0f830e51b5edab7e0956fea9e4d16f59f608e89",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cec.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cec_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:02+00:00",
+    "file": "data/raw/soilgrids/29/cec_0-5cm_mean.tif",
+    "bytes": 227258,
+    "sha256": "90d5a217284154a98278051ef98112cbaff58148f9cc5c747219feec5447a09f",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cec.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cec_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:02+00:00",
+    "file": "data/raw/soilgrids/29/cec_15-30cm_mean.tif",
+    "bytes": 236445,
+    "sha256": "d339edf6279c0b17f1e6235159caac44ca30f1798b861e8a885d6e0c642d9c17",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cec.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cec_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:02+00:00",
+    "file": "data/raw/soilgrids/29/cec_5-15cm_mean.tif",
+    "bytes": 231968,
+    "sha256": "877bb5995dd8fd4838f692969a2d4a56d33122ec236ecffba337c81d8d1c56c4",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cfvo.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cfvo_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/cfvo_0-5cm_mean.tif",
+    "bytes": 260483,
+    "sha256": "096786bc2306039681b7c76f5113e61a5ea21f5fa993bbc51f5591b9b4079be3",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cfvo.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cfvo_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/cfvo_15-30cm_mean.tif",
+    "bytes": 265678,
+    "sha256": "6b305d50faf977b71d5d33d82ca1cb30031af0e9360225bd8505dcd59a82aaaa",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cfvo.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cfvo_30-60cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/cfvo_30-60cm_mean.tif",
+    "bytes": 273122,
+    "sha256": "673f17f690684df306f750756f4b5980fee4c1939688d51055bc1b0a57ec4569",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cfvo.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cfvo_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/cfvo_5-15cm_mean.tif",
+    "bytes": 262652,
+    "sha256": "b6f4384639de7b26e4d80125b3b1c31f3579ad1cb126f1c30cdd1fd59f4e0cb2",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/cfvo.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=cfvo_60-100cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/cfvo_60-100cm_mean.tif",
+    "bytes": 273874,
+    "sha256": "6af91a19c079807c91e23561be395bce37f94b24585ab8fcf35e80dfafbbc849",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=clay_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/clay_0-5cm_mean.tif",
+    "bytes": 269436,
+    "sha256": "b667af2ac5fec66d3ed13bc049512005aebdf46ed1190b1bb2226dcb6cf17b7a",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=clay_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/clay_15-30cm_mean.tif",
+    "bytes": 270133,
+    "sha256": "11a3ff9574bdeb8530f79d6cd08ed753af21459ab227d2243396ff48974bef10",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=clay_30-60cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/clay_30-60cm_mean.tif",
+    "bytes": 269575,
+    "sha256": "e8de33536f3d32a7dd8e262ac8e6371fb0281e8f0f02b91d34ecd5dc757ad836",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=clay_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/clay_5-15cm_mean.tif",
+    "bytes": 273121,
+    "sha256": "5737c94d856de8a21a935608677fb38091b53862e9237e2c953d50f8cdbda202",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=clay_60-100cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/clay_60-100cm_mean.tif",
+    "bytes": 268831,
+    "sha256": "0e30455902c0871102a2142f91236f2c4554e1b50545b673a06f5f89f909f718",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/nitrogen.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=nitrogen_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/nitrogen_0-5cm_mean.tif",
+    "bytes": 312247,
+    "sha256": "8f088958ab39b70b092d7f860fa8cb5c5ef10303d44ad17ca3e070e5864d69c5",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/nitrogen.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=nitrogen_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:02+00:00",
+    "file": "data/raw/soilgrids/29/nitrogen_15-30cm_mean.tif",
+    "bytes": 225025,
+    "sha256": "c21c6d937d1e1a5b32508f6f95d2b5f8102f06b078dde1b0a19293eba0b52708",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/nitrogen.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=nitrogen_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:02+00:00",
+    "file": "data/raw/soilgrids/29/nitrogen_5-15cm_mean.tif",
+    "bytes": 246019,
+    "sha256": "6a5a1558dd01bd3534f55c43594c090017fd09868f6f625b27eba38e7b222fe0",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/phh2o.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=phh2o_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/phh2o_0-5cm_mean.tif",
+    "bytes": 145019,
+    "sha256": "3dfd98cca24853819ee96433d47b2542a3672d2e642a2fa0c9ae227ed416f929",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/phh2o.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=phh2o_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/phh2o_15-30cm_mean.tif",
+    "bytes": 147029,
+    "sha256": "99e12e9269d69acde578aae8b1865a69b72791b2f4b7ed71de10dcb9ffa5c7f1",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/phh2o.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=phh2o_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/phh2o_5-15cm_mean.tif",
+    "bytes": 147318,
+    "sha256": "4f33be25af40940a468377ca94953b4b52d58c62a171d2cc1b62e69cdf8dc8b5",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/sand.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=sand_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/sand_0-5cm_mean.tif",
+    "bytes": 260477,
+    "sha256": "c91cbc0de4272de5c7678e5d8fad19280c0cda1d22444758e52f0b889f62b93b",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/sand.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=sand_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/sand_15-30cm_mean.tif",
+    "bytes": 261036,
+    "sha256": "49a412011b725d716ce1853548746150a0984683d90c55787d98802b294ce090",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/sand.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=sand_30-60cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/sand_30-60cm_mean.tif",
+    "bytes": 260094,
+    "sha256": "818743dee1a84bad00f770a744f4f047a98708afa4126be6022e28e618bfe064",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/sand.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=sand_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/sand_5-15cm_mean.tif",
+    "bytes": 261601,
+    "sha256": "8b777c6b776956555a30da2ec03ebee534c5c47be822fc5f28c0d914f8f786e7",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/sand.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=sand_60-100cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/sand_60-100cm_mean.tif",
+    "bytes": 260053,
+    "sha256": "711be5f94aec49c637e760ea086d40bec09388816c8b9969c697fc01a12ff2f1",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/silt.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=silt_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/silt_0-5cm_mean.tif",
+    "bytes": 270677,
+    "sha256": "1e1a4ad4f6756e2c26b7df7e3a70c0f94e83ecc6baf57f389044646ac4d4f066",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/silt.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=silt_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/silt_15-30cm_mean.tif",
+    "bytes": 269737,
+    "sha256": "510632dcca0cc4015ff179dd0a2fb0993374ab13979e97bae6b8628711165720",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/silt.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=silt_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/silt_5-15cm_mean.tif",
+    "bytes": 270902,
+    "sha256": "bf04cbb8874fffc3e7ffa6ccf4606726ac3582092f6f183cbdbe9316e75b3846",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/soc.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=soc_0-5cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:00+00:00",
+    "file": "data/raw/soilgrids/29/soc_0-5cm_mean.tif",
+    "bytes": 337880,
+    "sha256": "c4702aefa77c61297456442b3722d9ca0404c2b4dbd810cb1b6501d759215790",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/soc.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=soc_15-30cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/soc_15-30cm_mean.tif",
+    "bytes": 266989,
+    "sha256": "6c967abbdefc032b8e595a5bf9aedf16e86004276ec0809c84d141ce495c900a",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/soc.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=soc_30-60cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/soc_30-60cm_mean.tif",
+    "bytes": 260341,
+    "sha256": "08f3eb6a8e312ad1c41c1c72509752834744b71cfa0c4a3bf1f8d0954832c065",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/soc.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=soc_5-15cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/soc_5-15cm_mean.tif",
+    "bytes": 288407,
+    "sha256": "44071e0b8972ca6f5a147cc1b3cbd438efaedbc8c77e45b1444f0a3aa72e30f6",
+    "licencia": "CC BY 4.0"
+  },
+  {
+    "source": "ISRIC SoilGrids 2.0",
+    "url": "https://maps.isric.org/mapserv?map=/map/soc.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=soc_60-100cm_mean&FORMAT=image%2Ftiff&SUBSET=X%28142842%2C351429%29&SUBSET=Y%284039858%2C4152542%29",
+    "retrieved_at": "2026-11-14T12:09:01+00:00",
+    "file": "data/raw/soilgrids/29/soc_60-100cm_mean.tif",
+    "bytes": 239264,
+    "sha256": "05729546c7d38fcbcd4b1353dff195d74d5450967101e965290bc939071bc7d2",
+    "licencia": "CC BY 4.0"
+  }
+]
