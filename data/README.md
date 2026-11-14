@@ -45,6 +45,16 @@ Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo
 
 Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep-2024).
 
+## Catálogo de cultivos y escenarios
+
+- `data/crops.csv`: parámetros iniciales de trigo, girasol, garbanzo, veza y barbecho,
+  con el código de producto Eurostat de cada uno. La veza no tiene serie de precio y
+  se declara como hueco, sin imputar.
+- `python3 pipeline/prepare_inputs.py`: cruza las 60 candidatas con su clima, suelo,
+  fenología y precios de cada campaña (2020–2025). Genera
+  `data/processed/scenarios.csv` y `data/processed/scenarios_qa.json`. Es un
+  intermedio de trabajo y no se versiona.
+
 ## Crear la base en cualquier equipo
 
 Solo hace falta Python 3.8 o superior, sin instalar nada más. Desde la raíz del repo:
