@@ -16,6 +16,6 @@
   "softChecks": [
     "cd app && npx oxlint src",
     "cd app && npm run test --if-present",
-    "python3 -m pytest tests -q"
+    "/opt/anaconda3/bin/python3 -m pytest tests -q"
   ]
 }

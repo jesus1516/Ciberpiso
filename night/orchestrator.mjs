@@ -29,7 +29,7 @@ mkdirSync(LOG_DIR, { recursive: true })
 
 // ------------------------------------------------------------------ small helpers
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
-const now = () => new Date().toISOString().replace('T', ' ').slice(0, 19)
+const now = () => new Date().toLocaleString('sv-SE') // local time, YYYY-MM-DD HH:MM:SS
 function log(msg) {
   const line = `[${now()}] ${msg}`
   console.log(line)
@@ -77,7 +77,8 @@ function run(cmd, args, { cwd, input, timeoutMin = 30, logFile } = {}) {
     else child.stdin.end()
   })
 }
-const sh = (command, cwd, timeoutMin = 20) => run('/bin/bash', ['-lc', command], { cwd, timeoutMin })
+// Non-login shell: keeps the PATH the shift was started with (node, npm, python with pytest).
+const sh = (command, cwd, timeoutMin = 20) => run('/bin/bash', ['-c', command], { cwd, timeoutMin })
 
 // ------------------------------------------------------------------ tickets and state
 function parseTicket(file) {
