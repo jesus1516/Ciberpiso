@@ -59,12 +59,12 @@ class TestRotationCalculator(unittest.TestCase):
         self.assertIn(
             winner,
             {"R1", "R3"},
-            "En sequía, garbanzo (R1) o barbecho (R3) deben ganar en prioridad agua",
+            "In drought, chickpea (R1) or fallow (R3) must win on water priority",
         )
         self.assertGreater(
             results["R3"]["water"],
             results["R0"]["water"],
-            "Barbecho (R3) debe tener mejor nota de agua que la rotación actual (R0)",
+            "Fallow (R3) must have a better water score than the current rotation (R0)",
         )
 
     def test_soil_first_prefers_veza(self):
@@ -72,12 +72,12 @@ class TestRotationCalculator(unittest.TestCase):
         self.assertEqual(
             results["R2"]["rankings"]["soil_first"]["rank"],
             1,
-            "La veza (R2) debe ganar en prioridad suelo",
+            "Vetch (R2) must win on soil priority",
         )
         self.assertGreater(
             results["R2"]["soil"],
             results["R0"]["soil"],
-            "La veza (R2) debe proteger el suelo mejor que R0",
+            "Vetch (R2) must protect the soil better than R0",
         )
 
     def test_profit_first_prefers_current(self):
@@ -85,7 +85,7 @@ class TestRotationCalculator(unittest.TestCase):
         self.assertEqual(
             results["R0"]["rankings"]["profit_first"]["rank"],
             1,
-            "La rotación actual (R0) debe ganar en prioridad rentabilidad",
+            "The current rotation (R0) must win on profitability priority",
         )
 
     def test_all_scores_in_range(self):
@@ -94,11 +94,11 @@ class TestRotationCalculator(unittest.TestCase):
             for key in ["water", "soil", "profit", "risk"]:
                 self.assertTrue(
                     0.0 <= data[key] <= 100.0,
-                    f"Nota {key} de {rid} fuera de rango: {data[key]}",
+                    f"Score {key} of {rid} out of range: {data[key]}",
                 )
             self.assertIn("low", data["confidence"])
             self.assertTrue(
-                len(data["data_gaps"]) >= 2, "Debe haber lagunas de datos declaradas"
+                len(data["data_gaps"]) >= 2, "Data gaps must be declared"
             )
 
     def test_drought_blocks_water_intensive_rotations(self):

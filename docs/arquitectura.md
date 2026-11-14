@@ -1,24 +1,23 @@
-# Arquitectura y modelo de datos
+# Architecture and data model
 
-Diseño pensado para un hackathon: **datos precalculados**, **puntuación explicable**
-y **demo sin red**. La app no necesita un backend en vivo para funcionar.
+Design aimed at a hackathon: **precomputed data**, **explainable scoring** and a
+**demo without a network**. The app does not need a live backend to work.
 
-## Principios
+## Principles
 
-1. **Offline first.** Todo lo que se muestra está cacheado y versionado.
-2. **Explicable.** Cada número tiene fuente, fecha, unidad y confianza.
-3. **Separación de capas.** Pipeline de datos, motor de puntuación y UI se pueden
-   probar por separado.
-4. **Sin secretos en el cliente.** Las claves viven en el pipeline, nunca en el
-   navegador.
-5. **Una sola verdad.** `indicators.json` es la fuente de la verdad; la UI no
-   recalcula datos crudos.
+1. **Offline first.** Everything shown is cached and versioned.
+2. **Explainable.** Every number has a source, date, unit and confidence.
+3. **Layer separation.** The data pipeline, the scoring engine and the UI can be
+   tested separately.
+4. **No secrets in the client.** Keys live in the pipeline, never in the browser.
+5. **Single source of truth.** `indicators.json` is the source of truth; the UI does
+   not recompute raw data.
 
-## Diagrama
+## Diagram
 
 ```mermaid
 flowchart LR
-    subgraph Fuentes
+    subgraph Sources
         P[POWER]
         S[SSURGO / SDA]
         C[CDL]
@@ -28,8 +27,8 @@ flowchart LR
         G[GIBS]
     end
 
-    subgraph Pipeline offline
-        P --> ETL[Descarga + recorte + armonización]
+    subgraph Offline pipeline
+        P --> ETL[Download + clip + harmonisation]
         S --> ETL
         C --> ETL
         N --> ETL
@@ -40,57 +39,57 @@ flowchart LR
     end
 
     subgraph App
-        I --> SCORE[Motor de puntuación]
-        U[Prioridades del agricultor] --> SCORE
-        SCORE --> UI[Mapa + fichas]
+        I --> SCORE[Scoring engine]
+        U[Farmer priorities] --> SCORE
+        SCORE --> UI[Map + cards]
         M --> UI
         G --> UI
     end
 ```
 
-## Componentes
+## Components
 
-### 1. Pipeline de datos (Python, offline)
+### 1. Data pipeline (Python, offline)
 
-Responsabilidades:
+Responsibilities:
 
-- Descargar el AOI de cada fuente.
-- Recortar, reproyectar y agregar a una rejilla común.
-- Calcular indicadores por rotación.
-- Escribir `indicators.json`, `map.geojson` y `manifest.json`.
-- Validar el esquema antes de publicar.
+- Download the AOI from each source.
+- Clip, reproject and aggregate to a common grid.
+- Compute indicators per rotation.
+- Write `indicators.json`, `map.geojson` and `manifest.json`.
+- Validate the schema before publishing.
 
-No se ejecuta en la demo. Se ejecuta antes y se versiona el resultado.
+It does not run in the demo. It runs beforehand and the result is versioned.
 
-### 2. Motor de puntuación (TypeScript o Python)
+### 2. Scoring engine (TypeScript or Python)
 
-Una función pura:
+A pure function:
 
 ```text
 score(rotation, profile) -> recommendation
 ```
 
-No llama a APIs, no lee archivos y no depende del framework. Se puede testear con
-tablas de casos.
+It calls no APIs, reads no files and does not depend on the framework. It can be
+tested with case tables.
 
 ### 3. UI (Next.js + MapLibre)
 
-- Mapa con capas GIBS y el AOI.
-- Panel de prioridades.
-- Tarjetas comparables.
-- Ficha de evidencia.
-- Glosario y aviso legal.
+- Map with GIBS layers and the AOI.
+- Priorities panel.
+- Comparable cards.
+- Evidence sheet.
+- Glossary and legal notice.
 
-### 4. Contenido
+### 4. Content
 
-Las fichas de rotación pueden vivir en JSON/MDX para que el equipo de contenido no
-toque el código. Cada ficha incluye los cinco campos obligatorios.
+Rotation sheets can live in JSON/MDX so the content team does not touch the code.
+Each sheet includes the five mandatory fields.
 
 ---
 
-## Contrato de datos
+## Data contract
 
-### Tipos
+### Types
 
 ```ts
 type Priority = "water" | "soil" | "profit" | "risk";
@@ -102,7 +101,7 @@ interface FarmProfile {
   areaHa: number;
   soil: {
     texture: string;
-    awc: number;          // fracción, documentar unidad
+    awc: number;          // fraction, document the unit
     drainage: string;
   };
   climate: {
@@ -115,7 +114,7 @@ interface FarmProfile {
     machinery: string[];
     market: string[];
   };
-  priorities: Record<Priority, number>; // 0–1, suma 1
+  priorities: Record<Priority, number>; // 0–1, sums to 1
 }
 
 interface Evidence {
@@ -162,7 +161,7 @@ interface Recommendation {
 }
 ```
 
-### Ejemplo de `indicators.json`
+### `indicators.json` example
 
 ```json
 {
@@ -171,18 +170,18 @@ interface Recommendation {
   "rotations": [
     {
       "id": "r1",
-      "name": "Maíz–soja–avena + trébol rojo",
+      "name": "Corn–soybean–oat + red clover",
       "indicators": [
         {
           "id": "water",
-          "label": "Balance hídrico de temporada",
+          "label": "Season water balance",
           "value": 412,
           "unit": "mm",
           "normalized": 0.62,
-          "source": "NASA POWER",
+          "source": "POWER",
           "date": "2024-04-01/2024-09-30",
           "confidence": "medium",
-          "gap": "No incluye ET medida en campo"
+          "gap": "Does not include field-measured ET"
         }
       ]
     }
@@ -192,53 +191,54 @@ interface Recommendation {
 
 ---
 
-## Modelo de puntuación
+## Scoring model
 
-### Fórmula
+### Formula
 
 ```text
 score(r) = Σ_i  w_i · norm_i(r)
 ```
 
-- `w_i`: peso de la prioridad `i`, definido por el agricultor. Suma 1.
-- `norm_i(r)`: indicador normalizado a 0–1 entre las rotaciones comparadas.
-- Si el indicador es "menos es mejor" (erosión, heladas), invierte la normalización:
+- `w_i`: weight of priority `i`, set by the farmer. Sums to 1.
+- `norm_i(r)`: indicator normalised to 0–1 across the compared rotations.
+- If the indicator is "less is better" (erosion, frost), invert the normalisation:
   `1 - (x - min) / (max - min)`.
 
-### Ejemplo
+### Example
 
-| Indicador | Peso | R0 | R1 | R2 | R3 |
+| Indicator | Weight | R0 | R1 | R2 | R3 |
 | --- | --- | --- | --- | --- | --- |
-| Agua | 0,35 | 0,55 | 0,60 | 0,50 | 0,45 |
-| Suelo | 0,30 | 0,40 | 0,75 | 0,80 | 0,85 |
-| Rentabilidad | 0,20 | 0,85 | 0,55 | 0,50 | 0,45 |
-| Riesgo (invertido) | 0,15 | 0,80 | 0,60 | 0,60 | 0,35 |
-| **Total** |  | **0,60** | **0,64** | **0,61** | **0,55** |
+| Water | 0.35 | 0.55 | 0.60 | 0.50 | 0.45 |
+| Soil | 0.30 | 0.40 | 0.75 | 0.80 | 0.85 |
+| Profitability | 0.20 | 0.85 | 0.55 | 0.50 | 0.45 |
+| Risk (inverted) | 0.15 | 0.80 | 0.60 | 0.60 | 0.35 |
+| **Total** |  | **0.60** | **0.64** | **0.61** | **0.55** |
 
-Los números son ilustrativos. Lo importante es que la UI muestre **por qué** R1 gana
-y **qué pasaría** si el agricultor sube el peso de rentabilidad.
+The numbers are illustrative. What matters is that the UI shows **why** R1 wins and
+**what would happen** if the farmer raised the weight of profitability.
 
-### Confianza
+### Confidence
 
 ```text
 confidence(r) = coverage(r) · evidence_strength(r)
 ```
 
-- `coverage`: proporción de indicadores con dato (0–1).
-- `evidence_strength`: alta = 1, media = 0,7, baja = 0,4.
+- `coverage`: share of indicators with data (0–1).
+- `evidence_strength`: high = 1, medium = 0.7, low = 0.4.
 
-Si falta CDL o SSURGO, la confianza baja. No se oculta: se muestra en la ficha.
+If CDL or SSURGO is missing, confidence drops. It is not hidden: it is shown on the
+sheet.
 
-### Reglas de honestidad
+### Honesty rules
 
-- No puntúes un indicador que no tienes. Márcalo como laguna.
-- No mezcles observación y modelo sin etiquetarlos.
-- No uses una puntuación alta para compensar datos faltantes.
-- Muestra la contribución de cada indicador, no solo el total.
+- Do not score an indicator you do not have. Mark it as a gap.
+- Do not mix observation and model without labelling them.
+- Do not use a high score to compensate for missing data.
+- Show the contribution of each indicator, not only the total.
 
 ---
 
-## Estructura del repo propuesta
+## Proposed repo structure
 
 ```text
 .
@@ -251,8 +251,8 @@ Si falta CDL o SSURGO, la confianza baja. No se oculta: se muestra en la ficha.
 │   ├── indicators/
 │   └── validate.py
 ├── data/
-│   ├── raw/          # no versionar si es grande
-│   ├── processed/    # sí versionar para la demo
+│   ├── raw/          # do not version if large
+│   ├── processed/    # do version for the demo
 │   └── manifest.json
 ├── app/
 │   ├── app/
@@ -264,85 +264,84 @@ Si falta CDL o SSURGO, la confianza baja. No se oculta: se muestra en la ficha.
 
 ---
 
-## Flujo de datos
+## Data flow
 
-1. **Selección del AOI.** Un condado o un polígono pequeño.
-2. **Descarga.** Cada fuente a `data/raw/{source}/`.
-3. **Armonización.** Clip, reproyección, resample y agregación documentada.
-4. **Indicadores.** Una fila por rotación e indicador.
-5. **Validación.** Esquema, rangos, cobertura y contraste.
-6. **Publicación.** `indicators.json` + `map.geojson` + `manifest.json`.
-7. **UI.** Lee los JSON; el mapa carga GIBS como raster.
+1. **AOI selection.** A county or a small polygon.
+2. **Download.** Each source to `data/raw/{source}/`.
+3. **Harmonisation.** Clip, reprojection, resample and documented aggregation.
+4. **Indicators.** One row per rotation and indicator.
+5. **Validation.** Schema, ranges, coverage and cross-checking.
+6. **Publication.** `indicators.json` + `map.geojson` + `manifest.json`.
+7. **UI.** Reads the JSON files; the map loads GIBS as a raster.
 
 ---
 
 ## UI
 
-### Pantallas
+### Screens
 
-1. **Inicio:** explicación de 30 segundos y aviso de herramienta de apoyo.
-2. **Perfil:** prioridades y restricciones.
-3. **Mapa:** AOI, capas y leyenda.
-4. **Comparación:** 2–3 rotaciones lado a lado.
-5. **Ficha:** evidencia, beneficios, lagunas y revisión local.
-6. **Glosario:** términos en lenguaje llano.
+1. **Home:** 30-second explanation and support-tool notice.
+2. **Profile:** priorities and constraints.
+3. **Map:** AOI, layers and legend.
+4. **Comparison:** 2–3 rotations side by side.
+5. **Sheet:** evidence, benefits, gaps and local review.
+6. **Glossary:** terms in plain language.
 
-### Requisitos de contenido
+### Content requirements
 
-- Cada tarjeta debe responder: "¿por qué esta rotación?".
-- Cada número debe tener fuente y fecha.
-- Cada recomendación debe incluir al menos una laguna y un riesgo.
-- El aviso "no sustituye la revisión local" debe estar siempre visible.
+- Each card must answer: "why this rotation?".
+- Every number must have a source and date.
+- Every recommendation must include at least one gap and one risk.
+- The notice "does not replace local review" must always be visible.
 
-### Rendimiento
+### Performance
 
-- No cargues GeoJSON enorme en el cliente; usa PMTiles o simplifica.
-- Las teselas GIBS se cargan bajo demanda; no precargues el mundo.
-- Si GIBS da problemas de CORS, usa un proxy o capturas pre-renderizadas para la
-  demo.
+- Do not load huge GeoJSON in the client; use PMTiles or simplify.
+- GIBS tiles load on demand; do not preload the world.
+- If GIBS gives CORS problems, use a proxy or pre-rendered screenshots for the demo.
 
 ---
 
-## Despliegue
+## Deployment
 
-### Opción A: estático (recomendada)
+### Option A: static (recommended)
 
-- Next.js con export estático o Vercel.
-- `data/processed` versionado.
-- Sin backend, sin claves, sin latencia.
+- Next.js with static export or Vercel.
+- `data/processed` versioned.
+- No backend, no keys, no latency.
 
-### Opción B: backend ligero
+### Option B: light backend
 
-- FastAPI para recalcular si el usuario cambia el AOI.
-- Cache en disco.
-- No lo necesitas para la demo; añade complejidad.
+- FastAPI to recompute if the user changes the AOI.
+- Disk cache.
+- You do not need it for the demo; it adds complexity.
 
 ---
 
 ## Testing
 
-- **Unidad:** puntuación, normalización y confianza.
-- **Datos:** esquema, rangos, nulos y cobertura.
-- **E2E:** Playwright para el flujo "perfil → comparación → ficha".
-- **Accesibilidad:** teclado y contraste.
-- **Regresión:** un JSON de ejemplo que no cambie sin querer.
+- **Unit:** scoring, normalisation and confidence.
+- **Data:** schema, ranges, nulls and coverage.
+- **E2E:** Playwright for the "profile → comparison → sheet" flow.
+- **Accessibility:** keyboard and contrast.
+- **Regression:** an example JSON that does not change by accident.
 
 ---
 
-## Riesgos y mitigaciones
+## Risks and mitigations
 
-| Riesgo | Mitigación |
+| Risk | Mitigation |
 | --- | --- |
-| API caída en la demo | Datos cacheados + modo avión |
-| Datos incompletos | Mostrar laguna y bajar confianza |
-| Sobreafirmar precisión | Etiquetar resolución y modelo |
-| GIBS no es dato | Usar solo para visualizar |
-| GeoJSON pesado | PMTiles o simplificación |
-| Claves filtradas | Variables de entorno, `.gitignore` |
-| Cambio de producto NASA | Fijar versión y fecha en el manifiesto |
+| API down during the demo | Cached data + airplane mode |
+| Incomplete data | Show the gap and lower confidence |
+| Overstating precision | Label resolution and model |
+| GIBS is not data | Use it only for visualisation |
+| Heavy GeoJSON | PMTiles or simplification |
+| Leaked keys | Environment variables, `.gitignore` |
+| Change of a space-agency product | Pin version and date in the manifest |
 
-## Alternativas
+## Alternatives
 
-- **Streamlit:** más rápido si el equipo es solo Python; menos control visual.
-- **Observable:** bueno para prototipos de visualización; menos app.
-- **FastAPI + React:** útil si hay un backend real; no es necesario para 48 h.
+- **Streamlit:** faster if the team is Python-only; less visual control.
+- **Observable:** good for visualisation prototypes; less of an app.
+- **FastAPI + React:** useful if there is a real backend; not needed for 48 h.

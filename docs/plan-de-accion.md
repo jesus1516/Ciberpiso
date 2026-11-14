@@ -1,60 +1,59 @@
-# Plan de acción
+# Action plan
 
-> Acordado el 14 de noviembre de 2026. Sustituye el caso de Iowa por una finca de
-> secano en la Campiña de Antequera (Málaga). Es la referencia para actualizar el
-> resto de documentos.
+> Agreed on 14 November 2026. Replaces the Iowa case with a rainfed farm in the
+> Campiña de Antequera (Málaga). It is the reference for updating the rest of the
+> documents.
 
-## La idea
+## The idea
 
-El proyecto tiene buena investigación, pero todavía no tiene datos ni aplicación.
-Hay que pasar de los documentos a una demostración pequeña.
+The project has good research, but no data or application yet. We need to move from
+documents to a small demonstration.
 
-La herramienta no analiza toda Andalucía: analiza **una finca**. En Antequera, una
-finca normal de 150–250 ha tiene entre **5 y 20 parcelas**, algo perfectamente
-manejable.
+The tool does not analyse all of Andalucía: it analyses **one farm**. In Antequera, a
+typical farm of 150–250 ha has between **5 and 20 plots**, which is perfectly
+manageable.
 
-## El caso
+## The case
 
-Una finca de secano de la Campiña de Antequera, con trigo y girasol. Comparamos
-cuatro formas de alternar los cultivos:
+A rainfed farm in the Campiña de Antequera, with wheat and sunflower. We compare
+four ways of alternating the crops:
 
-| ID | Rotación | Papel |
+| ID | Rotation | Role |
 | --- | --- | --- |
-| R0 | Trigo–girasol | La actual |
-| R1 | Trigo–girasol–garbanzo | Leguminosa |
-| R2 | Trigo–girasol–veza | Cubierta / forraje |
-| R3 | Trigo–girasol–barbecho | Conservación de agua |
+| R0 | Wheat–sunflower | The current one |
+| R1 | Wheat–sunflower–chickpea | Legume |
+| R2 | Wheat–sunflower–vetch | Cover crop / forage |
+| R3 | Wheat–sunflower–fallow | Water conservation |
 
-Para cada una calculamos cuánta agua necesita, cuánto protege el suelo, qué riesgo
-tiene en un año seco y qué mercado tiene. Usamos datos de clima de la NASA, el
-catálogo público de parcelas y cultivos de Andalucía, mapas de suelo y precios
-públicos.
+For each one we compute how much water it needs, how much it protects the soil, what
+risk it carries in a dry year and what market it has. We use climate data from POWER,
+the public catalogue of plots and crops of Andalucía, soil maps and public prices.
 
-## El resultado
+## The result
 
-Una página sencilla con cuatro tarjetas, un mapa y una explicación clara de qué
-sabemos y qué no. La app funcionaría sin internet durante la demo.
+A simple page with four cards, a map and a clear explanation of what we know and what
+we do not. The app would work without internet during the demo.
 
-## Primer paso
+## First step
 
-1. Confirmar la finca de Antequera (150–250 ha, 5–20 parcelas).
-2. Descargar el clima y el historial de cultivos.
-3. Calcular la tabla de las cuatro rotaciones.
-4. Construir la aplicación sobre esa tabla.
+1. Confirm the Antequera farm (150–250 ha, 5–20 plots).
+2. Download the climate and the crop history.
+3. Compute the table of the four rotations.
+4. Build the application on top of that table.
 
-## Cambios respecto al plan anterior
+## Changes from the previous plan
 
-- El caso de Iowa pasa a Antequera.
-- Las rotaciones de maíz–soja–avena–alfalfa pasan a trigo–girasol y alternativas.
-- SSURGO, CDL, PRISM y QuickStats pasan a SIGPAC, suelo de Andalucía o SoilGrids,
-  AEMET/SIAR y Lonja/MAPA.
-- NASA POWER y GIBS se mantienen.
-- La arquitectura, el motor de puntuación y la app se reutilizan.
+- The Iowa case becomes Antequera.
+- The corn–soybean–oat–alfalfa rotations become wheat–sunflower and alternatives.
+- SSURGO, CDL, PRISM and QuickStats become SIGPAC, Andalucía soil data or SoilGrids,
+  AEMET/SIAR and Lonja/MAPA.
+- POWER and GIBS are kept.
+- The architecture, the scoring engine and the app are reused.
 
-## Estado
+## Status
 
-- [ ] Finca y AOI confirmados.
-- [ ] Clima e historial de cultivos descargados.
-- [ ] Tabla de indicadores calculada.
-- [ ] App construida.
-- [ ] Demo ensayada sin red.
+- [ ] Farm and AOI confirmed.
+- [ ] Climate and crop history downloaded.
+- [ ] Indicator table computed.
+- [ ] App built.
+- [ ] Demo rehearsed offline.
