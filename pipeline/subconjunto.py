@@ -67,7 +67,7 @@ def crear(de: str, a: str, provincias: list[int]) -> None:
     db.mkdir(parents=True, exist_ok=True)
     for sql in SQL_DIR.glob("*.sql"):
         shutil.copy2(sql, db / sql.name)
-    print(f"-> data/{a}/csv/ y data/{a}/database/*.sql. Carga la base con: python3 pipeline/cargar_sqlite.py {a}")
+    print(f"-> data/{a}/csv/ and data/{a}/database/*.sql. Load the database with: python3 pipeline/cargar_sqlite.py {a}")
 
 
 def main() -> None:

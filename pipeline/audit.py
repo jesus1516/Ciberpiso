@@ -172,14 +172,14 @@ def main() -> None:
     )
 
     print(
-        f"{resultado['fincas']} fincas, {resultado['rotaciones']} rotaciones, "
-        f"{resultado['indicadores']} indicadores"
+        f"{resultado['fincas']} farms, {resultado['rotaciones']} rotations, "
+        f"{resultado['indicadores']} indicators"
     )
-    print(f"Fallos: {len(resultado['fallos'])}; avisos: {len(resultado['avisos'])}")
+    print(f"Failures: {len(resultado['fallos'])}; warnings: {len(resultado['avisos'])}")
     for fallo in resultado["fallos"][:10]:
         print(f"  - {fallo}")
     for aviso in resultado["avisos"][:5]:
-        print(f"  aviso: {aviso}")
+        print(f"  warning: {aviso}")
     print(f"-> {args.out.relative_to(BASE_DIR)}")
     if not resultado["ok"]:
         raise SystemExit(1)

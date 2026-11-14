@@ -259,7 +259,7 @@ def run(provincias: list[int]) -> None:
         base, n = int(fp["finca_idx"].min()) - 1, len(fp)
         assert fp["finca_idx"].max() - base == n, "finca_idx not contiguous in the province"
         g = Rejilla(rec.loc[rec["_prov"] == prov, "lon"], rec.loc[rec["_prov"] == prov, "lat"])
-        print(f"[{prov:02d}] rejilla {g.width}×{g.height}; {n:,} fincas", flush=True)
+        print(f"[{prov:02d}] grid {g.width}×{g.height}; {n:,} farms", flush=True)
         lab = etiquetas(prov, rec, g, base)
         centro = g.celda(fp["lon"], fp["lat"])
         out = pd.DataFrame({"finca_idx": fp["finca_idx"].to_numpy()})
@@ -267,7 +267,7 @@ def run(provincias: list[int]) -> None:
         dem = nasadem(cat, prov, g)
         out["altitud_m"], out["n_pixeles"] = zonal(lab, dem, n, centro)
         out["pendiente_pct"], _ = zonal(lab, pendiente(dem, g), n, centro)
-        print("  NASADEM listo", flush=True)
+        print("  NASADEM ready", flush=True)
 
         wc = worldcover(cat, prov, g)
         H, W = g.height, g.width
@@ -275,7 +275,7 @@ def run(provincias: list[int]) -> None:
             frac = (wc == cod).reshape(H, 3, W, 3).sum(axis=(1, 3), dtype="uint8").astype("float32") * (100 / 9)
             out[f"wc_{nombre}_pct"], _ = zonal(lab, frac, n, centro)
         del wc
-        print("  WorldCover listo", flush=True)
+        print("  WorldCover ready", flush=True)
 
         serie = modis(cat, prov, g)
         f_prov = pd.DatetimeIndex([f for f, _ in serie])
@@ -287,7 +287,7 @@ def run(provincias: list[int]) -> None:
         for j, (_, f) in enumerate(serie):
             with rasterio.open(f) as r:
                 ndvi[filas, j] = zonal(lab, r.read(1), n, centro)[0]
-        print(f"  MODIS listo: {len(serie)} compuestos", flush=True)
+        print(f"  MODIS ready: {len(serie)} composites", flush=True)
         tablas.append(out)
         del lab
 
@@ -310,7 +310,7 @@ def solo_fenologia() -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--provincias", default="29")
-    ap.add_argument("--solo-fenologia", action="store_true", help="Recalcula clases sin descargar")
+    ap.add_argument("--solo-fenologia", action="store_true", help="Recompute classes without downloading")
     a = ap.parse_args()
     if a.solo_fenologia:
         solo_fenologia()

@@ -119,7 +119,7 @@ def provincias() -> dict:
         props = {"id": pid, "nombre": ANDALUCIA.get(pid, g.get("properties", {}).get("name", pid)), "and": int(andaluza)}
         if andaluza:
             props.update(_cifras_provincia(pid))
-            print(f"  {props['nombre']}: {props['fincas']} fincas")
+            print(f"  {props['nombre']}: {props['fincas']} farms")
         features.append({
             "type": "Feature",
             "properties": props,
@@ -161,7 +161,7 @@ def main() -> None:
     stats = municipios(args.provincia)
     ruta = SALIDA / f"municipios_{args.provincia}_stats.json"
     ruta.write_text(json.dumps(stats, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    print(f"{ruta.relative_to(ROOT)}: {len(stats)} municipios")
+    print(f"{ruta.relative_to(ROOT)}: {len(stats)} municipalities")
 
 
 if __name__ == "__main__":

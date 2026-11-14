@@ -37,7 +37,7 @@ class TestCropsCatalog(unittest.TestCase):
                 "source",
                 "confidence",
             ):
-                self.assertTrue(row[field].strip(), f"{row['crop_id']}: {field} vacío")
+                self.assertTrue(row[field].strip(), f"{row['crop_id']}: {field} empty")
             self.assertIn(row["nitrogen_fixer"], {"0", "1"})
             self.assertGreaterEqual(float(row["water_demand_1_5"]), 0)
             self.assertLessEqual(float(row["water_demand_1_5"]), 5)
@@ -55,7 +55,7 @@ class TestCropsCatalog(unittest.TestCase):
 
 @unittest.skipUnless(
     DB_PATH.exists(),
-    f"requiere {DB_PATH}; ejecuta python3 pipeline/cargar_sqlite.py malaga",
+    f"requires {DB_PATH}; run python3 pipeline/cargar_sqlite.py malaga",
 )
 class TestScenarios(unittest.TestCase):
     @classmethod

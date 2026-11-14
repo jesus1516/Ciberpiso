@@ -152,10 +152,10 @@ def run(provincias: list[int]) -> None:
         for p in provincias
     )
     celdas = celda(pts["lat"], pts["lon"]).drop_duplicates("celda_power").sort_values("celda_power")
-    print(f"{len(celdas)} celdas POWER para {len(pts):,} recintos")
+    print(f"{len(celdas)} POWER cells for {len(pts):,} enclosures")
     anuales, resumenes = [], []
     for c in celdas.itertuples(index=False):
-        print(f"  celda {c.celda_power} ({c.celda_lat}, {c.celda_lon})")
+        print(f"  cell {c.celda_power} ({c.celda_lat}, {c.celda_lon})")
         anual = indicadores(descargar(c.celda_power, c.celda_lat, c.celda_lon))
         anual.insert(0, "celda_power", c.celda_power)
         anuales.append(anual)

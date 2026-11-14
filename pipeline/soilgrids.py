@@ -117,7 +117,7 @@ def run(provincias: list[int]) -> None:
             pila = np.vstack([capas[(prop, p)] for p in TOP])
             out[nombre] = np.round(np.nansum(pila * peso[:, None], axis=0) / peso.sum(), 2)
             out.loc[np.isnan(pila).all(axis=0), nombre] = np.nan
-            print(f"  [{prov:02d}] {prop}: {np.isfinite(out[nombre]).mean():.1%} recintos con dato")
+            print(f"  [{prov:02d}] {prop}: {np.isfinite(out[nombre]).mean():.1%} enclosures with data")
         # CAD 0–100 cm (mm), discounting coarse fragments
         cad = np.zeros(len(out))
         for prof, grosor_cm in PROF.items():
@@ -137,7 +137,7 @@ def run(provincias: list[int]) -> None:
                                         / r["superficie_ha"].clip(lower=1e-6).groupby(r["finca_idx"]).sum() * 100)
     suelo = suelo.round({**{c: 2 for c in cols}, "cad_0_100_mm": 1, "pct_superficie_con_dato": 1}).reset_index()
     suelo.to_parquet(OUT / "suelo_fincas.parquet", index=False)
-    print(f"  -> suelo_fincas.parquet ({suelo['arcilla_pct'].notna().sum():,} de {len(suelo):,} farms with data)")
+    print(f"  -> suelo_fincas.parquet ({suelo['arcilla_pct'].notna().sum():,} of {len(suelo):,} farms with data)")
 
 
 def main() -> None:

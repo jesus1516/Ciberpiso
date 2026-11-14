@@ -73,7 +73,7 @@ def guardar(nombre: str, df: pd.DataFrame, nota: str | None = None) -> None:
         meta.append({"label": "Cálculo", "value": nota})
     f = OUT / f"{nombre}.json"
     f.write_text(json.dumps({"rows": df.to_dict("records"), "meta": meta}, ensure_ascii=False), encoding="utf-8")
-    print(f"  {f.name}: {len(df)} filas, {f.stat().st_size / 1e3:.0f} KB")
+    print(f"  {f.name}: {len(df)} rows, {f.stat().st_size / 1e3:.0f} KB")
 
 
 def main() -> None:

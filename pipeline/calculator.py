@@ -106,10 +106,10 @@ def normalizar_pesos(weights: dict) -> dict:
     limpios = {}
     for key, value in weights.items():
         if key not in PRIORITY_KEYS:
-            raise ValueError(f"Prioridad desconocida: {key}")
+            raise ValueError(f"Unknown priority: {key}")
         valor = float(value)
         if valor < 0:
-            raise ValueError(f"Peso negativo en {key}")
+            raise ValueError(f"Negative weight in {key}")
         limpios[key] = valor
     total = sum(limpios.values())
     if total <= 0:
@@ -119,7 +119,7 @@ def normalizar_pesos(weights: dict) -> dict:
 
 def leer_csv(path: Path) -> list[dict]:
     if not path.exists():
-        raise FileNotFoundError(f"No existe {path}")
+        raise FileNotFoundError(f"{path} does not exist")
     with path.open(newline="", encoding="utf-8") as fh:
         return list(csv.DictReader(fh))
 
@@ -157,7 +157,7 @@ def load_calibration(path: Path = CALIBRATION_PATH) -> dict:
 def load_content(path: Path = CONTENT_PATH) -> dict:
     """Load the explanatory sheets of each rotation."""
     if not path.exists():
-        raise FileNotFoundError(f"No existe {path}")
+        raise FileNotFoundError(f"{path} does not exist")
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -914,11 +914,11 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=OUT_PATH)
     ap.add_argument(
         "--weights",
-        help='Pesos personalizados, JSON o ruta. Ej: {"water":0.5,"soil":0.3,"profit":0.1,"risk":0.1}',
+        help='Custom weights, JSON or path. E.g.: {"water":0.5,"soil":0.3,"profit":0.1,"risk":0.1}',
     )
     ap.add_argument(
         "--constraints",
-        help='Restricciones, JSON o ruta. Ej: {"max_water_demand":2.5,"market_safe":true,"max_crops":2}',
+        help='Constraints, JSON or path. E.g.: {"max_water_demand":2.5,"market_safe":true,"max_crops":2}',
     )
     args = ap.parse_args()
 
@@ -934,7 +934,7 @@ def main() -> None:
         json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
 
-    print(f"{data['summary']['fincas']} fincas -> {args.out.relative_to(BASE_DIR)}")
+    print(f"{data['summary']['fincas']} farms -> {args.out.relative_to(BASE_DIR)}")
     for profile, counts in data["summary"]["top_por_perfil"].items():
         print(f"  {profile}: {counts}")
 

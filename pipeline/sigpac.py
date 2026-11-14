@@ -105,7 +105,7 @@ def _extraer(zip_path: Path, prov: int) -> Path:
     with zipfile.ZipFile(zip_path) as z:
         miembros = [m for m in z.namelist() if m.endswith(".gpkg") and "/" not in m.strip("/")]
         if len(miembros) != 1:
-            raise RuntimeError(f"Contenido inesperado en {zip_path.name}: {z.namelist()}")
+            raise RuntimeError(f"Unexpected content in {zip_path.name}: {z.namelist()}")
         z.extract(miembros[0], destino)
     return destino / miembros[0]
 
@@ -135,7 +135,7 @@ def run(provincias: list[int], borrar_bruto: bool, borrar_zip: bool = False) -> 
         zip_path = RAW_SIGPAC / f"{YEAR}_recintos" / name
         extraido = list((RAW_SIGPAC / "extract" / f"{prov:02d}_recintos").glob("*.gpkg"))
         if parquet.exists() and (extraido or borrar_bruto):
-            print("  ya procesado")
+            print("  already processed")
             continue
         download(f"{BASE}/geopackages/{YEAR}/recintos/{quote(name)}", zip_path, f"FEGA SIGPAC recintos {YEAR}",
                  expected_size=size, licencia="CC BY 4.0", provincia=prov)
@@ -143,7 +143,7 @@ def run(provincias: list[int], borrar_bruto: bool, borrar_zip: bool = False) -> 
         if not parquet.exists():
             df = esqueleto(gpkg, prov)
             df.to_parquet(parquet, index=False)
-            print(f"  {len(df):,} recintos, {df['parcela_id'].nunique():,} fincas -> {parquet.name}")
+            print(f"  {len(df):,} enclosures, {df['parcela_id'].nunique():,} farms -> {parquet.name}")
         if borrar_zip:
             zip_path.unlink(missing_ok=True)  # the extracted GeoPackage is enough to rasterise
         if borrar_bruto:

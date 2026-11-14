@@ -106,7 +106,7 @@ def main() -> None:
     dim, precios = normalizar(descargar())
     dim.to_parquet(OUT / "dim_producto_precio.parquet", index=False)
     precios.to_parquet(OUT / "precios_anuales.parquet", index=False)
-    print(f"{len(dim)} productos, {len(precios)} precios ({precios['anio'].min()}–{precios['anio'].max()}) -> {OUT}")
+    print(f"{len(dim)} products, {len(precios)} prices ({precios['anio'].min()}–{precios['anio'].max()}) -> {OUT}")
 
 
 if __name__ == "__main__":

@@ -307,7 +307,7 @@ def errores(qa: dict) -> list[str]:
     if qa["fincas"] != 60:
         fallos.append(f"60 farms expected, found {qa['fincas']}")
     if qa["duplicados"]:
-        fallos.append(f"{qa['duplicados']} duplicados finca-campana")
+        fallos.append(f"{qa['duplicados']} farm-season duplicates")
     for campo, n in qa["nulos_criticos"].items():
         if n:
             fallos.append(f"{n} nulls in {campo}")

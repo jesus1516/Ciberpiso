@@ -389,9 +389,9 @@ def main() -> None:
     base = validacion["modelos"]["precip"]["exito_estival"]
     cand = validacion["modelos"]["deficit"]["exito_estival"]
     print(
-        f"Exito estival (n={base['positivos']}/{base['filas']}): "
+        f"Summer success (n={base['positivos']}/{base['filas']}): "
         f"AUC {base['auc']} -> {cand['auc']}; "
-        f"Spearman NDVI jun {base['spearman_ndvi_jun_ago']} -> {cand['spearman_ndvi_jun_ago']}"
+        f"Spearman NDVI Jun {base['spearman_ndvi_jun_ago']} -> {cand['spearman_ndvi_jun_ago']}"
     )
     print(
         f"LOMO AUC: {validacion['leave_one_municipality_out']['precip']['exito_estival']['auc_ponderada']} "

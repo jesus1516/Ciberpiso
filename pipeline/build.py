@@ -95,7 +95,7 @@ def _guardar(df: pd.DataFrame, nombre: str, pk: list[str], provincia=None) -> No
         g.to_csv(f, index=False, lineterminator="\n", encoding="utf-8")
         total += f.stat().st_size
     donde = "comun/" if provincia is None else f"{len(partes)} provincias"
-    print(f"  {nombre}.csv ({donde}): {len(df):,} filas, {total / 1e6:.1f} MB")
+    print(f"  {nombre}.csv ({donde}): {len(df):,} rows, {total / 1e6:.1f} MB")
 
 
 def construir(provs: list[int], ambito: str) -> None:
@@ -238,7 +238,7 @@ def construir(provs: list[int], ambito: str) -> None:
         dest = GEO / "fincas_candidatas.geojson"
         dest.unlink(missing_ok=True)
         pyogrio.write_dataframe(geo, dest, driver="GeoJSON", COORDINATE_PRECISION=6)
-        print(f"  {dest.relative_to(PROCESSED)}: {len(geo)} fincas")
+        print(f"  {dest.relative_to(PROCESSED)}: {len(geo)} farms")
 
     n = fincas["es_candidata"].sum()
     na = fincas.loc[fincas["municipio_key"] == 29015, "es_candidata"].sum() if 29 in provs else 0
