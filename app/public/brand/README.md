@@ -2,8 +2,9 @@
 
 ## Archivos
 
-- `ciberpiso-logo.svg` / `ciberpiso-logo.png`: lockup horizontal (1600 × 900).
-- `ciberpiso-icon.svg` / `ciberpiso-icon.png`: icono cuadrado (1024 × 1024).
+- `ciberpiso-logo.svg` / `ciberpiso-logo.png`: lockup horizontal con la mascota (1600 × 900).
+- `ciberpiso-icon.svg` / `ciberpiso-icon.png`: icono cuadrado de la mascota (800 × 800).
+- **Mascota:** granjero astronauta con sombrero de paja, casco, mono verde y planta.
 
 ## Paleta
 
