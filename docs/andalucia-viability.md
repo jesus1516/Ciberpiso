@@ -134,27 +134,30 @@ That is 1,570 data files (785 × 2), the largest being about 2 MB each (Sevilla 
 
 ### 2.2 Where to host it
 
-GitHub facts below come from the GitHub Docs search results for "repository limits" and "Git LFS"
-([Repository limits](https://docs.github.com/en/repositories/creating-and-managing-repositories/repository-limits),
+GitHub facts below were checked against GitHub Docs on 2026-11-15 (search results summarising
+[Repository limits](https://docs.github.com/en/repositories/creating-and-managing-repositories/repository-limits),
+[About large files](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github),
+[About releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases),
 [About Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage),
 [Git LFS billing](https://docs.github.com/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage)).
-I could **not** confirm the numbers marked *(verify)*; check them before deciding.
+Some pages carry old metadata, so re-check the live pages before a final decision.
 
-- Single file: blocked at 100 MB. No planned file is anywhere near it (largest ≈ 2 MB).
-- Repository: GitHub recommends keeping it small; the page I found lists 10 GB on disk as the recommended
-  limit and a push limit of 2 GB *(verify: older guidance said < 1 GB ideal, < 5 GB strong limit)*.
+- Single file: warning at 50 MiB, blocked above 100 MiB (browser uploads: 25 MiB). No planned file is anywhere
+  near it (largest ≈ 2 MB).
+- Repository: "Repository limits" gives 10 GB on disk (size of `.git`); "About large files" is stricter: strongly
+  recommended < 5 GB, goal < 1 GB. A single push is capped at 2 GB.
 - Today the repository pack is already **420.5 MiB** (`git count-objects -vH`; blobs total 1.69 GB uncompressed,
   mostly the CSVs). Files are already gzip-compressed, so git cannot shrink them further.
-- LFS: free accounts get 10 GiB storage and 10 GiB/month bandwidth *(verify)*; LFS objects cannot be served
-  by GitHub Pages (docs search result).
-- Release assets: I recall a limit of 1,000 assets per release and 2 GiB per asset *(verify)*, and release
-  downloads redirect to another host without reliable browser CORS headers *(not tested)*.
+- LFS: GitHub Free and Pro include 10 GiB storage and 10 GiB/month bandwidth (Team/Enterprise 250 GiB). Over the
+  quota with a $0 budget, LFS is blocked until the 1st of the next month. LFS objects are not served by GitHub Pages.
+- Release assets: up to 1,000 assets per release, each < 2 GiB, no limit on total size or bandwidth. Whether release
+  downloads send browser CORS headers was **not tested**.
 
 | Option | Fits? | Pros | Cons |
 |---|---|---|---|
-| **A. Commit to git** | 450 MB new + 420 MB existing ≈ 0.9 GB; every regeneration adds another copy to history (~450 MB of incompressible blobs) | Zero new infrastructure; `npm run build` ships it | Repo clones become slow and keep growing; history cannot be pruned without rewriting; every contributor downloads data they do not need |
-| **B. Git LFS** | Storage OK, bandwidth tight if the free quota is 1–10 GiB | Keeps git history small | Not served by Pages; each fetch counts bandwidth; a quota overrun blocks LFS; extra setup for every clone |
-| **C. GitHub Releases** | 1,570 files exceed 1,000 assets/release *(verify)* | Good for one archive (`andalucia-data.tar`, ~450 MB) as a reproducible backup | Not usable for per-file fetch from the browser (CORS, redirects, asset count) |
+| **A. Commit to git** | 450 MB new + 420 MB existing ≈ 0.9 GB (below the 1 GB goal but under the 5 GB / 10 GB limits only while regenerated copies are not added); every regeneration adds another copy to history (~450 MB of incompressible blobs) | Zero new infrastructure; `npm run build` ships it | Repo clones become slow and keep growing; history cannot be pruned without rewriting; every contributor downloads data they do not need |
+| **B. Git LFS** | Storage OK (0.45 of 10 GiB); bandwidth: 10 GiB/month ÷ 0.57 MB ≈ 17,500 municipality visits, then LFS is blocked | Keeps git history small | Not served by Pages; each fetch counts bandwidth; a quota overrun blocks LFS; extra setup for every clone |
+| **C. GitHub Releases** | 1,570 files exceed the 1,000 assets/release limit | Good for one archive (`andalucia-data.tar`, ~450 MB) as a reproducible backup | Not usable for per-file fetch from the browser (CORS, redirects, asset count) |
 | **D. Static bucket + CDN** (Cloudflare R2, S3 + CloudFront, GCS) | 450 MB is tiny; at 0.57 MB per municipality visit, 100 k visits ≈ 57 GB egress | Cheap or free tier; CORS and cache headers under our control; data is decoupled from code releases; the app bundle stays 5 MB | Needs an account, a CORS rule and an upload step; one more thing to keep alive |
 | **E. Hybrid** | Málaga and small files in git, the rest in D | Works offline for the demo province; the repo grows by 3–4 MB only | Two sources of data to document |
 
@@ -192,7 +195,7 @@ time for this purpose. A `--only-download` flag (or a small script) would save a
 - **Outputs:** ≈ 450 MB in `app/public/data` or the staging folder.
 - **Peak** doing one province at a time with `--borrar-zip`, then deleting the `.gpkg`: Granada's zip (0.6 GB)
   + extracted (≤ 1.8 GB assumed) + output ≈ **3 GB**. Keeping everything: ≈ 12 GB.
-- **Reality check on this Mac:** `df -h /` shows **1.8 GiB free** (87 % used). The one-province-at-a-time flow
+- **Reality check on this Mac:** `df -h /` showed **1.8 GiB free** when the draft was written and **816 MiB free** (94 % used) on 2026-11-15. The one-province-at-a-time flow
   would not even fit; free at least **5 GB**, ideally 15 GB, or use an external disk (set `data/raw` to it).
 
 ### 3.3 Machine requirements
@@ -268,7 +271,7 @@ From `docs/fuentes-scraping.md` §5 and the exporters:
 | **File names disagree for provinces < 10** | exporters write `municipios_{prov:02d}.geojson` and `comun_{prov:02d}.json` (`municipios_04.geojson`); the app asks for `municipios_${PROVINCE}` and `comun_${prov}` (`municipios_4`, `comun_4`) | Almería would 404 | One convention (recommend no zero padding, or always the two-digit province code) in both sides |
 | Cleanup for province 04 never matches | `glob("04*")` matches nothing since Almería files are named `4001…` | stale files after a re-export | same fix as above |
 | `loadCommon` is a singleton | `lib/detail.ts` | wrong climate for the second province | single `comun.json` (§4, item 2) |
-| Disk full | 1.8 GiB free on this Mac | the run fails halfway | free ≥ 5–15 GB or external disk |
+| Disk full | 0.8–1.8 GiB free on this Mac | the run fails halfway | free ≥ 5–15 GB or external disk |
 | Geometry export runtime/RAM unknown | §3 | plan error up to 2× | measure on Cádiz first (smallest, 150.8 MB zip) |
 | Data source | FEGA hubcloud URL pinned to `20251215` | URL may change with the 2027 release | the SHA-256 of each zip is in `manifest.json` |
 | Quality of "cultivo" and candidates outside the cereal belt | §5 | misleading farm flags in Almería/Jaén | review thresholds before publishing those two provinces; mark them "experimental" in the UI meanwhile |
@@ -305,4 +308,4 @@ to be agreed**, not measured values).
   them but imports the module that does), sets `pipeline.common.DATA` to the read-only directory, `SALIDA` to a `/tmp` folder, and
   calls `export_app_detalle.exportar(prov)` for each province, timing every call. Python `/opt/anaconda3/bin/python3`, 8 cores, 16 GB.
   The Almería time is from the re-run (58.6 s); the first run took 50.1 s but its files were partly deleted by the Sevilla cleanup.
-- GitHub limits: see the links in section 2.2; items marked *(verify)* were not confirmed.
+- GitHub limits: see the links in section 2.2 (checked 2026-11-15 through GitHub Docs search results).
