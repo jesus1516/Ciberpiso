@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import type { SoilType } from './data/mock/soil'
 import { computeClimate, type Climate } from './lib/climate'
 import { fieldCentroid, type Field } from './lib/geo'
+import { daysAgo, type GibsId } from './lib/gibs'
 import { fetchPower, type PowerSource } from './lib/power'
 
 export type Step = 'map' | 'dashboard'
@@ -28,6 +29,8 @@ export type Constraints = {
   slopePct: number | null
 }
 
+export type LayerState = { visible: boolean; opacity: number; error: boolean }
+
 let climateRequest = 0
 
 type State = {
@@ -42,6 +45,8 @@ type State = {
   climate: ClimateState
   priorities: Priorities
   constraints: Constraints
+  layers: Record<GibsId, LayerState>
+  gibsDate: string
   setMap: (map: Map | null) => void
   setDrawMode: (mode: DrawMode) => void
   setField: (field: Field | null) => void
@@ -54,6 +59,8 @@ type State = {
   loadClimate: (lat: number, lon: number) => Promise<void>
   setPriority: (key: PriorityKey, value: number) => void
   setConstraints: (patch: Partial<Constraints>) => void
+  setLayer: (id: GibsId, patch: Partial<LayerState>) => void
+  setGibsDate: (date: string) => void
 }
 
 export const useStore = create<State>((set, get) => ({
@@ -68,6 +75,12 @@ export const useStore = create<State>((set, get) => ({
   climate: { status: 'idle', data: null, source: null },
   priorities: { water: 3, income: 3, erosion: 3, organic: 3, cost: 3 },
   constraints: { irrigation: 'no', currentCrop: 'wheat', soil: 'loam', slope: 'gentle', slopePct: null },
+  layers: {
+    ndvi: { visible: false, opacity: 0.7, error: false },
+    imerg: { visible: false, opacity: 0.7, error: false },
+    smap: { visible: false, opacity: 0.7, error: false },
+  },
+  gibsDate: daysAgo(7),
   setMap: (map) => set({ map }),
   setDrawMode: (drawMode) => set({ drawMode }),
   setField: (field) => set({ field, drawMode: 'idle' }),
@@ -92,4 +105,10 @@ export const useStore = create<State>((set, get) => ({
   },
   setPriority: (key, value) => set((s) => ({ priorities: { ...s.priorities, [key]: value } })),
   setConstraints: (patch) => set((s) => ({ constraints: { ...s.constraints, ...patch } })),
+  setLayer: (id, patch) => set((s) => ({ layers: { ...s.layers, [id]: { ...s.layers[id], ...patch } } })),
+  setGibsDate: (gibsDate) =>
+    set((s) => ({
+      gibsDate,
+      layers: Object.fromEntries(Object.entries(s.layers).map(([k, v]) => [k, { ...v, error: false }])) as Record<GibsId, LayerState>,
+    })),
 }))

@@ -88,6 +88,21 @@ export const en = {
     waterHolding: 'Available water',
   },
 
+  layers: {
+    intro: 'Overlay NASA satellite imagery on the map for context. Pick a date to see conditions on that day.',
+    date: 'Imagery date',
+    opacity: 'Opacity',
+    legend: (name: string) => `Colour legend for ${name}`,
+    moistureHelp: 'What is soil moisture?',
+    error: 'Some tiles could not load for this date. Try an earlier date, or NASA GIBS may be temporarily down.',
+    note: 'GIBS tiles are pictures for visual context, not measured values for your field. Resolution is much coarser than a field.',
+    items: {
+      ndvi: { name: 'Vegetation greenness (MODIS NDVI, 8-day)', description: 'Higher values mean denser, greener vegetation; low values mean bare soil or dry plants.' },
+      imerg: { name: 'Precipitation rate (GPM IMERG)', description: 'How hard it was raining at the time of observation (mm per hour).' },
+      smap: { name: 'Surface soil moisture (SMAP L4)', description: 'Water in the top 5 cm of soil, from satellite observations combined with a land model.' },
+    },
+  },
+
   priorities: {
     intro: 'Tell us what matters most on your farm. Scores in the Rotations tab are weighted by these choices.',
     heading: 'What matters to you? (0 = not important, 5 = very important)',

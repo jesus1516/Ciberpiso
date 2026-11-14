@@ -1,6 +1,7 @@
 import * as maplibregl from 'maplibre-gl'
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
+import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
 import { disable3D, enable3D, flyToField } from '../lib/terrain'
 import { useStore } from '../store'
 
@@ -32,6 +33,8 @@ export function MapView() {
   const map = useStore((s) => s.map)
   const field = useStore((s) => s.field)
   const step = useStore((s) => s.step)
+  const layers = useStore((s) => s.layers)
+  const gibsDate = useStore((s) => s.gibsDate)
 
   useEffect(() => {
     let instance: maplibregl.Map
@@ -50,6 +53,13 @@ export function MapView() {
     }
     instance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
     instance.on('load', () => useStore.getState().setMap(instance))
+    instance.on('error', (e) => {
+      const sourceId = 'sourceId' in e ? String(e.sourceId) : ''
+      if (!sourceId.startsWith('gibs-')) return
+      const { layers, setLayer } = useStore.getState()
+      const id = sourceId.slice(5) as GibsId
+      if (!layers[id].error) setLayer(id, { error: true })
+    })
     return () => {
       useStore.getState().setMap(null)
       instance.remove()
@@ -60,6 +70,25 @@ export function MapView() {
     const source = map?.getSource<maplibregl.GeoJSONSource>('field')
     source?.setData(field ?? EMPTY)
   }, [map, field])
+
+  useEffect(() => {
+    if (!map) return
+    for (const l of GIBS_LAYERS) {
+      const id = `gibs-${l.id}`
+      const { visible, opacity } = layers[l.id]
+      const tiles = [gibsTiles(l, gibsDate)]
+      const source = map.getSource<maplibregl.RasterTileSource>(id)
+      if (!source) {
+        if (!visible) continue
+        map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'NASA GIBS / ESDIS' })
+        map.addLayer({ id, type: 'raster', source: id }, 'field-fill')
+      } else if (source.tiles?.[0] !== tiles[0]) {
+        source.setTiles(tiles)
+      }
+      map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none')
+      map.setPaintProperty(id, 'raster-opacity', opacity)
+    }
+  }, [map, layers, gibsDate])
 
   useEffect(() => {
     if (!map || step !== 'dashboard') return
