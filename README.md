@@ -62,6 +62,9 @@ sustituir a un agrónomo.
 | [Checklist de evaluación](docs/checklist-evaluacion.md) | Cómo demostrar los requisitos y qué evitar en la demo. |
 | [resources.json](resources.json) | Inventario legible por máquina. |
 
+> `resources.md` y `tools_available.md` son listas rápidas del equipo. La referencia
+> completa y verificada está en `docs/fuentes-de-datos.md` y `resources.json`.
+
 ## Arranque rápido
 
 1. Lee la guía y fija el alcance: un condado, un perfil de finca, tres rotaciones.
