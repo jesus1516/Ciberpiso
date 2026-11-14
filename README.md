@@ -39,6 +39,10 @@ sustituir a un agrónomo.
 
 ## Enfoque propuesto
 
+> **Actualización (14 nov 2026):** el rumbo vigente es una finca de secano en la
+> Campiña de Antequera. Lo que sigue describe el plan anterior de Iowa y se
+> actualizará a partir del [Plan de acción](docs/plan-de-accion.md).
+
 - **Caso de uso:** un condado del centro de Iowa (EE. UU.), con rotación actual
   maíz–soja y tres alternativas con avena, trigo y alfalfa.
 - **Datos:** NASA POWER, SSURGO, NLCD, CDL, PRISM, NWIS y GIBS; SMAP/IMERG opcionales
@@ -52,6 +56,7 @@ sustituir a un agrónomo.
 
 | Documento | Qué contiene |
 | --- | --- |
+| [Plan de acción](docs/plan-de-accion.md) | Rumbo actual: finca de Antequera, cuatro rotaciones y primer paso. |
 | [Guía paso a paso](docs/guia-paso-a-paso.md) | Plan de 48 h, fases, entregables y criterios de "hecho". |
 | [Alcance](docs/alcance.md) | Ficha para fijar AOI, perfil, decisión y rotaciones. |
 | [Rotaciones de ejemplo](docs/rotaciones.md) | Cuatro estrategias con evidencia, beneficios, lagunas y riesgos. |
@@ -114,6 +119,7 @@ sustituir a un agrónomo.
 - [x] Investigación del enunciado y de las fuentes.
 - [x] Verificación de endpoints sin credenciales.
 - [x] Guía, arquitectura y checklist.
+- [x] Plan de acción con el nuevo caso de Antequera.
 - [ ] Caso de uso y datos del AOI.
 - [ ] Pipeline y app.
 - [ ] Validación con un agrónomo o extensionista.
