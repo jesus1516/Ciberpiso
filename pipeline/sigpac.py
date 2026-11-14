@@ -124,7 +124,7 @@ def esqueleto(gpkg: Path, prov: int) -> pd.DataFrame:
     return df
 
 
-def run(provincias: list[int], borrar_bruto: bool) -> None:
+def run(provincias: list[int], borrar_bruto: bool, borrar_zip: bool = False) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     lista = listar()
     for prov in provincias:
@@ -133,6 +133,10 @@ def run(provincias: list[int], borrar_bruto: bool) -> None:
         parquet = OUT / f"esqueleto_{prov:02d}.parquet"
         print(f"[{prov:02d}] {name} ({size / 1e6:.0f} MB)")
         zip_path = RAW_SIGPAC / f"{YEAR}_recintos" / name
+        extraido = list((RAW_SIGPAC / "extract" / f"{prov:02d}_recintos").glob("*.gpkg"))
+        if parquet.exists() and (extraido or borrar_bruto):
+            print("  ya procesado")
+            continue
         download(f"{BASE}/geopackages/{YEAR}/recintos/{quote(name)}", zip_path, f"FEGA SIGPAC recintos {YEAR}",
                  expected_size=size, licencia="CC BY 4.0", provincia=prov)
         gpkg = _extraer(zip_path, prov)
@@ -140,6 +144,8 @@ def run(provincias: list[int], borrar_bruto: bool) -> None:
             df = esqueleto(gpkg, prov)
             df.to_parquet(parquet, index=False)
             print(f"  {len(df):,} recintos, {df['parcela_id'].nunique():,} fincas -> {parquet.name}")
+        if borrar_zip:
+            zip_path.unlink(missing_ok=True)  # el GeoPackage extraído basta para rasterizar
         if borrar_bruto:
             shutil.rmtree(gpkg.parent, ignore_errors=True)
             zip_path.unlink(missing_ok=True)
@@ -150,9 +156,10 @@ def main() -> None:
     ap.add_argument("--provincias", default="29", help="Códigos separados por comas, o 'all'")
     ap.add_argument("--borrar-bruto", action="store_true",
                     help="Borra zip y gpkg al terminar (impide rasterizar después)")
+    ap.add_argument("--borrar-zip", action="store_true", help="Borra el zip tras extraerlo (ahorra disco)")
     a = ap.parse_args()
     provs = sorted(listar()) if a.provincias == "all" else [int(p) for p in a.provincias.split(",")]
-    run(provs, a.borrar_bruto)
+    run(provs, a.borrar_bruto, a.borrar_zip)
 
 
 if __name__ == "__main__":

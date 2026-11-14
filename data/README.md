@@ -1,31 +1,69 @@
 # Datos de Ciberpiso
 
-Fincas de la provincia de Málaga (363.401 parcelas SIGPAC) con clima, humedad del
-suelo, relieve, cobertura, suelo y cultivo estimado por satélite. Las fuentes y sus
-límites están en [`docs/fuentes-scraping.md`](../docs/fuentes-scraping.md).
+Fincas SIGPAC con clima, humedad del suelo, relieve, cobertura, suelo, cultivo estimado
+por satélite y precios. Hay **dos copias independientes**, cada una con sus CSV y su
+base de datos:
+
+| Copia | Provincias | Fincas | CSV | Base SQLite |
+| --- | --- | --- | --- | --- |
+| `malaga/` | 29 Málaga | 363.401 | ~180 MB | ~275 MB |
+| `andalucia/` | las 8 de Andalucía | 2.909.040 | ~1,4 GB | ~2,2 GB |
+
+La copia de Málaga es exactamente la parte de Málaga de la de Andalucía (mismas claves y
+mismas filas). Las fuentes y sus límites están en
+[`docs/fuentes-scraping.md`](../docs/fuentes-scraping.md).
 
 ```text
 data/
-├── csv/                  tablas finales, una por fichero (UTF-8, coma, punto decimal)
-├── database/
-│   ├── ciberpiso.sqlite  base de datos generada a partir de csv/
-│   ├── schema.sql        tablas, claves, índices y vistas
-│   └── consultas.sql     consultas de ejemplo listas para usar
-├── manifest.json         registro de cada descarga (URL, fecha, tamaño, SHA-256)
-├── raw/                  descargas originales (no se versiona)
-└── processed/            intermedios del pipeline (no se versiona)
+├── malaga/
+│   ├── csv/
+│   │   ├── comun/              clima, humedad del suelo, celdas de clima y precios
+│   │   └── 29_malaga/          fincas, recintos, suelo, fenología, NDVI y municipios
+│   └── database/
+│       ├── ciberpiso_malaga.sqlite   (se genera; no se sube a git)
+│       ├── schema.sql          tablas, claves, índices y vistas
+│       └── consultas.sql       16 consultas de ejemplo
+├── andalucia/
+│   ├── csv/
+│   │   ├── comun/
+│   │   ├── 04_almeria/  11_cadiz/  14_cordoba/  18_granada/
+│   │   └── 21_huelva/   23_jaen/   29_malaga/   41_sevilla/
+│   └── database/
+│       ├── ciberpiso_andalucia.sqlite   (se genera; no se sube a git)
+│       ├── schema.sql
+│       └── consultas.sql
+├── manual/precios_veza.csv     serie de veza del MAPA transcrita a mano (se copia a cada csv/comun/)
+├── crops.csv, rotation_content.json, calibration.json   catálogo y contenido de la calculadora
+├── manifest.json               registro de cada descarga (URL, fecha, tamaño, SHA-256)
+├── raw/                        descargas originales (no se versiona)
+└── processed/                  intermedios del pipeline (no se versiona)
 ```
+
+`schema.sql` y `consultas.sql` son iguales en las dos copias; su fuente única está en
+`pipeline/sql/`.
+
+## Crear la base en cualquier equipo
+
+Solo hace falta Python 3.8 o superior, sin instalar nada más. Desde la raíz del repo:
+
+```bash
+python3 pipeline/cargar_sqlite.py malaga       # ~10 s  -> data/malaga/database/ciberpiso_malaga.sqlite
+python3 pipeline/cargar_sqlite.py andalucia    # ~70 s  -> data/andalucia/database/ciberpiso_andalucia.sqlite
+```
+
+En Windows, `py` en lugar de `python3`. El cargador comprueba que cada CSV tiene las
+columnas de su tabla, convierte las celdas vacías en NULL y valida las claves foráneas.
 
 ## Abrir la base de datos
 
-- **Con interfaz:** `sudo dnf install sqlitebrowser` y abre
-  `data/database/ciberpiso.sqlite`. Pega cualquier bloque de `consultas.sql` en
-  "Ejecutar SQL".
-- **Terminal:** `sqlite3 -header -column data/database/ciberpiso.sqlite`.
-- **Python:** `sqlite3.connect("data/database/ciberpiso.sqlite")` con `pandas.read_sql`.
+- **Con interfaz:** `sudo dnf install sqlitebrowser` y abre el `.sqlite` de la copia
+  que quieras. Pega cualquier bloque de `consultas.sql` en "Ejecutar SQL".
+- **Terminal:** `sqlite3 -header -column data/malaga/database/ciberpiso_malaga.sqlite`.
+- **Python:** `sqlite3.connect("data/malaga/database/ciberpiso_malaga.sqlite")` con `pandas.read_sql`.
 
-Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo) y
-`v_candidatas` (las parcelas que encajan con el caso de la finca de secano).
+Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo),
+`v_candidatas` (las parcelas que encajan con el caso de la finca de secano) y
+`v_precios`. En la copia de Andalucía, filtra con `WHERE provincia = 29` (tiene índice).
 
 ## Tablas
 
@@ -45,17 +83,18 @@ Para empezar, usa las vistas `v_fincas` (cada finca con municipio, clima y suelo
 | `precios_veza` | año (2014–2024) | `anio` | MAPA, Anuario de Estadística |
 
 Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep-2024).
+`finca_key` = provincia × 10⁸ + orden, así que es la misma en las dos copias.
 
 ## Catálogo de cultivos y escenarios
 
 - `data/crops.csv`: parámetros iniciales de trigo, girasol, garbanzo, veza y barbecho,
   con el código de producto Eurostat cuando existe. La veza usa la serie nacional del
-  MAPA (`data/csv/precios_veza.csv`), no Eurostat.
-- `python3 pipeline/prepare_inputs.py`: cruza las 60 candidatas con su clima, suelo,
+  MAPA (`data/manual/precios_veza.csv`), no Eurostat.
+- `python3 pipeline/prepare_inputs.py`: usa la copia de Málaga y cruza las 60 candidatas con su clima, suelo,
   fenología y precios de cada campaña (2020–2025). Genera
   `data/processed/scenarios.csv` y `data/processed/scenarios_qa.json`. Es un
   intermedio de trabajo y no se versiona.
-- `data/csv/precios_veza.csv`: serie nacional de veza grano del MAPA (2014–2024),
+- `data/manual/precios_veza.csv`: serie nacional de veza grano del MAPA (2014–2024),
   transcrita de la tabla 7.2.7.2. Cada fila lleva fuente y URL; no se descargó
   automáticamente.
 - `data/rotation_content.json`: fichas explicativas de cada rotación (por qué,
@@ -74,30 +113,17 @@ Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep
 - `python3 pipeline/export_app_indicators.py`: filtra las 26 candidatas de Antequera y
   escribe `app/public/data/indicators_antequera.json` para la web.
 
-## Crear la base en cualquier equipo
+## Volver a generar los CSV desde las fuentes
 
-Solo hace falta Python 3.8 o superior, sin instalar nada más. Desde la raíz del repo:
-
-```bash
-python3 pipeline/cargar_sqlite.py      # Linux y Mac
-py pipeline\cargar_sqlite.py           # Windows
-```
-
-Tarda unos 10 segundos y crea `data/database/ciberpiso.sqlite` a partir de `data/csv/`
-y `schema.sql`. Comprueba que cada CSV tiene las columnas de su tabla, convierte las
-celdas vacías en NULL y valida las claves foráneas.
-
-## Volver a descargar los datos desde las fuentes
-
-Solo si hay que actualizar los CSV. Necesita internet y el entorno del pipeline
-(`pipeline/requirements.txt`); los pasos están en `docs/fuentes-scraping.md`.
+Solo si hay que actualizar los datos. Necesita internet y el entorno del pipeline
+(`pipeline/requirements.txt`); los pasos completos están en `docs/fuentes-scraping.md`.
 
 ```bash
-.venv/bin/python -m pipeline.build --provincias 29   # escribe data/csv/
+.venv/bin/python -m pipeline.build --ambito andalucia            # data/andalucia/csv/
+.venv/bin/python -m pipeline.subconjunto --de andalucia --a malaga   # data/malaga/csv/
 ```
 
 ## Git
 
-Los CSV sí se suben, así que quien clone el repo tiene los datos. `ciberpiso.sqlite`
-(≈270 MB) no: GitHub rechaza ficheros de más de 100 MB. Se genera desde los CSV en
-segundos con `python -m pipeline.cargar_sqlite`.
+Los CSV se suben, así que quien clone el repo tiene los datos. Los `.sqlite` no:
+superan los 100 MB que admite GitHub, y se generan desde los CSV con el comando de arriba.

@@ -17,9 +17,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 RAW = DATA / "raw"
 PROCESSED = DATA / "processed"  # intermedios (parquet, rásteres de trabajo)
-CSV_DIR = DATA / "csv"  # tablas finales, una por fichero
-DB_DIR = DATA / "database"  # ciberpiso.sqlite, schema.sql y consultas.sql
-DB_PATH = DB_DIR / "ciberpiso.sqlite"
+SQL_DIR = ROOT / "pipeline" / "sql"  # schema.sql y consultas.sql (fuente única)
+# Cada ámbito es una copia completa: data/<ámbito>/csv/ y data/<ámbito>/database/
+AMBITOS = {"malaga": [29], "andalucia": [4, 11, 14, 18, 21, 23, 29, 41]}
 MANIFEST = DATA / "manifest.json"
 
 USER_AGENT = "ciberpiso-pipeline/0.1 (NASA Space Apps 2026)"

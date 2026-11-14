@@ -55,7 +55,7 @@ class TestCropsCatalog(unittest.TestCase):
 
 @unittest.skipUnless(
     DB_PATH.exists(),
-    f"requiere {DB_PATH}; ejecuta python3 pipeline/cargar_sqlite.py",
+    f"requiere {DB_PATH}; ejecuta python3 pipeline/cargar_sqlite.py malaga",
 )
 class TestScenarios(unittest.TestCase):
     @classmethod

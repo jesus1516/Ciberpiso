@@ -1,6 +1,8 @@
 -- Esquema de la base de datos de Ciberpiso (SQLite).
--- Se carga con: python -m pipeline.cargar_sqlite
--- Cada tabla corresponde a un CSV de data/csv/ con las mismas columnas.
+-- Se carga con: python3 pipeline/cargar_sqlite.py <malaga|andalucia>
+-- Cada tabla corresponde a un CSV con las mismas columnas: data/<ámbito>/csv/comun/<tabla>.csv o,
+-- para las tablas de fincas, un data/<ámbito>/csv/<pp_provincia>/<tabla>.csv por provincia.
+-- Fuente única: pipeline/sql/schema.sql (se copia a data/<ámbito>/database/).
 -- Las tablas de clave compuesta usan WITHOUT ROWID: la tabla es su propio índice.
 
 -- @tablas ----------------------------------------------------------------------------
@@ -39,6 +41,7 @@ CREATE TABLE dim_celda_power (
 -- Fincas = parcelas SIGPAC (geometría); atributos de NASADEM, WorldCover y MODIS
 CREATE TABLE fincas (
   finca_key           INTEGER PRIMARY KEY,   -- provincia*10^8 + orden
+  provincia           INTEGER NOT NULL,      -- código INE/SIGPAC (29 = Málaga)
   parcela_id          TEXT    NOT NULL UNIQUE, -- prov:mun:agr:zona:pol:parcela (estable)
   municipio_key       INTEGER NOT NULL REFERENCES dim_municipio(municipio_key),
   agregado            INTEGER,
@@ -184,6 +187,7 @@ CREATE TABLE precios_veza (
 );
 
 -- @indices ---------------------------------------------------------------------------
+CREATE INDEX ix_fincas_provincia  ON fincas(provincia);
 CREATE INDEX ix_fincas_municipio  ON fincas(municipio_key);
 CREATE INDEX ix_fincas_celda      ON fincas(celda_power);
 CREATE INDEX ix_fincas_superficie ON fincas(superficie_ha);

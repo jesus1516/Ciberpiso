@@ -1,8 +1,11 @@
--- Consultas de ejemplo para data/database/ciberpiso.sqlite
+-- Consultas de ejemplo. Valen para las dos copias:
+--   data/malaga/database/ciberpiso_malaga.sqlite
+--   data/andalucia/database/ciberpiso_andalucia.sqlite
 -- Ábrelas en DB Browser for SQLite (pestaña "Ejecutar SQL") o con:
---   sqlite3 -header -column data/database/ciberpiso.sqlite < data/database/consultas.sql
+--   sqlite3 -header -column data/malaga/database/ciberpiso_malaga.sqlite < data/malaga/database/consultas.sql
 -- Cambia el código de finca '29:15:0:0:62:14' (Antequera, 96 ha) por el que quieras.
--- Tablas y columnas: data/database/schema.sql. Fuentes: docs/fuentes-scraping.md.
+-- Tablas y columnas: schema.sql (misma carpeta). Fuentes: docs/fuentes-scraping.md.
+-- Fuente única: pipeline/sql/consultas.sql (se copia a data/<ámbito>/database/).
 
 -- 1. Cuántas filas tiene cada tabla
 SELECT 'dim_municipio' AS tabla, COUNT(*) AS filas FROM dim_municipio
@@ -131,3 +134,11 @@ ORDER BY c.campana;
 SELECT anio, precio_eur_100kg, precio_eur_t, fuente
 FROM v_precios_veza
 ORDER BY anio;
+
+-- 17. Resumen por provincia: fincas, superficie, cultivo y candidatas
+SELECT f.provincia, COUNT(*) AS fincas, ROUND(SUM(f.superficie_ha)) AS superficie_ha,
+       ROUND(SUM(f.superficie_ha * COALESCE(f.wc_cultivo_pct, 0) / 100)) AS cultivo_ha,
+       SUM(f.es_candidata) AS candidatas
+FROM fincas f
+GROUP BY f.provincia
+ORDER BY f.provincia;

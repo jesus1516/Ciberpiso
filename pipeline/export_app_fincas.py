@@ -1,7 +1,8 @@
 """Polígonos de las fincas de un municipio para el mapa de la app (app/public/data/).
 
 Une los recintos SIGPAC de cada finca (parcela) en un polígono, lo simplifica un poco
-para que el navegador lo cargue rápido y le añade los atributos de data/csv/fincas.csv.
+para que el navegador lo cargue rápido y le añade los atributos de
+data/<copia>/csv/<pp_provincia>/fincas.csv (las dos copias tienen las mismas filas).
 Necesita el GeoPackage de recintos extraído por pipeline.sigpac.
 
 Uso:
@@ -18,7 +19,7 @@ from pathlib import Path
 import pandas as pd
 import pyogrio
 
-from pipeline.common import CSV_DIR, ROOT
+from pipeline.common import DATA, ROOT
 from pipeline.sigpac import NAT, gpkg_de
 
 TOLERANCIA_M = 1.5  # simplificación en metros (UTM 30N)
@@ -38,7 +39,10 @@ PROPS = {
 
 def exportar(municipio_key: int, salida: Path) -> None:
     prov, mun = divmod(municipio_key, 1000)
-    fincas = pd.read_csv(CSV_DIR / "fincas.csv", usecols=list(PROPS) + ["municipio_key"])
+    csvs = sorted(DATA.glob(f"*/csv/{prov:02d}_*/fincas.csv"))
+    if not csvs:
+        raise SystemExit(f"No hay fincas.csv de la provincia {prov} en data/*/csv/")
+    fincas = pd.read_csv(csvs[0], usecols=list(PROPS) + ["municipio_key"])
     fincas = fincas[fincas["municipio_key"] == municipio_key].drop(columns="municipio_key")
 
     rec = pyogrio.read_dataframe(gpkg_de(prov), layer="recinto", columns=NAT,

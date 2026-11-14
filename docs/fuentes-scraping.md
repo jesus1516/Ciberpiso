@@ -192,7 +192,7 @@ necesario · ⛔ solo EE. UU. · ➖ no es un dataset.
   percibido por el agricultor, nacional, en €/100 kg.
 - **URL:** `https://www.mapa.gob.es/estadistica/pags/anuario/2025/FORMATO%20PDF/AE25-C07/7.2.7.2.pdf`
 - **Contenido:** 2014–2024. 2024 = 48,79 €/100 kg = 487,9 €/t. Se guarda en
-  `data/csv/precios_veza.csv` y se cruza por campaña en `prepare_inputs.py`.
+  `data/manual/precios_veza.csv` (se copia a cada `csv/comun/`) y se cruza por campaña en `prepare_inputs.py`.
 - **Por qué no Eurostat:** la nomenclatura europea no incluye veza grano; sí incluye
   guisante, haba, garbanzo y altramuces. No se usa un proxy.
 - **Límites:** precio nacional y anual, no de lonja; no hay precio provincial. La
@@ -203,7 +203,7 @@ necesario · ⛔ solo EE. UU. · ➖ no es un dataset.
 
 ## 3. Modelo de datos (CSV → SQLite)
 
-Ficheros en `data/csv/`, UTF-8, coma, punto decimal, `NULL` = celda vacía,
+Dos copias, `data/malaga/` y `data/andalucia/`, cada una con `csv/comun/`, `csv/<pp_provincia>/` (una carpeta por provincia) y `database/`. UTF-8, coma, punto decimal, `NULL` = celda vacía,
 ordenados por clave primaria. Claves enteras para JOIN rápidos; el código SIGPAC
 (`parcela_id`, `recinto_id`) es el identificador estable entre versiones.
 
@@ -220,12 +220,12 @@ ordenados por clave primaria. Claves enteras para JOIN rápidos; el código SIGP
 | `suelo_humedad_anual` | celda × campaña | `celda_power, campana` | NASA POWER |
 | `dim_producto_precio` | producto agrario | `producto_codigo` | Eurostat |
 | `precios_anuales` | producto × año | `producto_codigo, anio` | Eurostat |
-| `precios_veza` | año | `anio` | MAPA (veza grano) |
+| `precios_veza` | año | `anio` | MAPA (transcrito) |
 
 - **Esquema** con claves foráneas, índices y vistas (`v_fincas`, `v_candidatas`,
-  `v_clima_suelo_anual`): [`data/database/schema.sql`](../data/database/schema.sql); consultas de ejemplo en [`data/database/consultas.sql`](../data/database/consultas.sql).
-- **Base de datos:** `python -m pipeline.cargar_sqlite` genera
-  `data/database/ciberpiso.sqlite` **a partir de los CSV**, comprueba que las columnas
+  `v_clima_suelo_anual`): [`pipeline/sql/schema.sql`](../pipeline/sql/schema.sql) (se copia a cada `data/<copia>/database/`); consultas de ejemplo en [`pipeline/sql/consultas.sql`](../pipeline/sql/consultas.sql).
+- **Base de datos:** `python3 pipeline/cargar_sqlite.py malaga|andalucia` genera
+  `data/<copia>/database/ciberpiso_<copia>.sqlite` **a partir de los CSV**, comprueba que las columnas
   coinciden con el esquema y valida las claves foráneas.
 - **Tamaños (Málaga):** `fincas` 363.401 filas (57 MB), `recintos` 969.034 (67 MB),
   `suelo_fincas` 356.481 (26 MB), `fenologia_fincas` 296.238 (21 MB), `ndvi_fincas`
@@ -249,28 +249,52 @@ ordenados por clave primaria. Claves enteras para JOIN rápidos; el código SIGP
 ```bash
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r pipeline/requirements.txt
-.venv/bin/python -m pipeline.sigpac --provincias 29     # esqueleto de fincas
-.venv/bin/python -m pipeline.power  --provincias 29     # clima y humedad del suelo
-.venv/bin/python -m pipeline.pc     --provincias 29     # SRTM/NASADEM, WorldCover, MODIS
-.venv/bin/python -m pipeline.soilgrids --provincias 29  # suelo (SoilGrids)
+.venv/bin/python -m pipeline.sigpac --provincias 4,11,14,18,21,23,29,41 --borrar-zip  # esqueleto
+.venv/bin/python -m pipeline.power  --provincias 4,11,14,18,21,23,29,41   # clima y humedad
+.venv/bin/python -m pipeline.pc     --provincias 4,11,14,18,21,23,29,41   # SRTM, WorldCover, MODIS
+.venv/bin/python -m pipeline.soilgrids --provincias 4,11,14,18,21,23,29,41  # suelo
 .venv/bin/python -m pipeline.precios                    # precios (Eurostat)
-.venv/bin/python -m pipeline.build  --provincias 29     # CSV
-.venv/bin/python -m pipeline.cargar_sqlite              # SQLite
+.venv/bin/python -m pipeline.build --ambito andalucia              # CSV de Andalucía
+.venv/bin/python -m pipeline.subconjunto --de andalucia --a malaga  # copia de Málaga
+python3 pipeline/cargar_sqlite.py andalucia                          # SQLite (y malaga)
 ```
 
 Cada descarga queda registrada en `data/manifest.json` (URL o colección, fecha, tamaño
 y SHA-256).
 
-## 5. Ampliar a Andalucía
+## 5. Andalucía (8 provincias)
 
-El pipeline ya acepta varias provincias: `--provincias 4,11,14,18,21,23,29,41`. Los
-recintos de las 8 provincias pesan ~3,0 GB (2,6 GB nuevos, ~20 min a 2,4 MB/s); todas
-caen en la tesela MODIS h17v05. NASA POWER necesitará unas 30–40 celdas.
+Mismo pipeline, `--provincias 4,11,14,18,21,23,29,41`. Ejecutado el 14-11-2026 en ~1 h
+(descarga de SIGPAC 25 min; Planetary Computer 35 min).
+
+| Provincia | Fincas | Superficie, ha | % cultivo | Candidatas |
+| --- | --- | --- | --- | --- |
+| 04 Almería | 487.398 | 876.613 | 4,7 | 6 |
+| 11 Cádiz | 96.831 | 743.329 | 29,1 | 581 |
+| 14 Córdoba | 342.866 | 1.376.610 | 17,3 | 617 |
+| 18 Granada | 590.259 | 1.263.818 | 13,9 | 78 |
+| 21 Huelva | 183.922 | 1.013.163 | 7,9 | 66 |
+| 23 Jaén | 629.141 | 1.348.134 | 4,8 | 34 |
+| 29 Málaga | 363.401 | 730.474 | 12,2 | 60 |
+| 41 Sevilla | 215.222 | 1.404.648 | 35,7 | 1.294 |
+| **Total** | **2.909.040** | **8.756.789** | | **2.736** |
+
+- 6.817.265 recintos; 47 celdas de NASA POWER; base SQLite de 2,2 GB generada desde los
+  CSV en ~70 s.
+- CSV en una carpeta por provincia (`data/andalucia/csv/<pp_provincia>/`); el mayor es
+  `23_jaen/fincas.csv` con 97 MiB, justo por debajo del límite de 100 MiB de GitHub.
+- **Avisos al leer la clase de cultivo fuera de Málaga:** los umbrales de NDVI se
+  calibraron en Málaga. En Almería, los invernaderos cuentan como cultivo en WorldCover
+  pero dan NDVI bajo (`sin_vegetacion`); en el altiplano de Granada pasa algo parecido
+  con el cereal de secano muy pobre. Jaén tiene poco "cultivo" porque WorldCover
+  clasifica casi todo el olivar como arbolado.
+- Para ahorrar disco, `pipeline.sigpac --borrar-zip` borra cada zip tras extraerlo, y
+  los GeoPackages se pueden borrar tras `pipeline.pc` (el GeoJSON de candidatas solo
+  incluye las provincias cuyo GeoPackage siga en disco).
 
 ## 6. Lagunas (por la regla "solo `resources.md`")
 
-- **Precios:** nacionales y anuales (Eurostat para trigo, girasol y garbanzo; MAPA para
-  veza grano); sin precio local de lonja ni serie provincial de veza.
+- **Precios:** solo nacionales y anuales (Eurostat); sin precio local de lonja ni de veza.
 - **Suelo:** la textura y la química vienen de SoilGrids (excepción aprobada, 250 m);
   la humedad, de POWER/MERRA-2 (~50 km). SMAP (9 km) necesitaría Earthdata Login.
 - **Cultivo real:** el cultivo es una **estimación por NDVI** a 250 m, no el cultivo

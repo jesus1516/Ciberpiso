@@ -69,15 +69,19 @@ class Rejilla:
         return (np.clip(np.asarray(r), 0, self.height - 1), np.clip(np.asarray(c), 0, self.width - 1))
 
 
-def etiquetas(prov: int, rec: pd.DataFrame, g: Rejilla) -> np.ndarray:
-    """Raster con el finca_idx de cada píxel (0 = sin finca)."""
-    f = RAW_PC / f"fincas_{prov:02d}.tif"
+def etiquetas(prov: int, rec: pd.DataFrame, g: Rejilla, base: int) -> np.ndarray:
+    """Raster con el índice local de finca de cada píxel (finca_idx - base; 0 = sin finca).
+
+    El índice es local a la provincia, así el ráster sigue valiendo aunque cambie la
+    lista de provincias procesadas.
+    """
+    f = RAW_PC / f"fincas_local_{prov:02d}.tif"
     if f.exists():
         with rasterio.open(f) as r:
             return r.read(1)
     gdf = pyogrio.read_dataframe(gpkg_de(prov), layer="recinto", columns=[], use_arrow=True)
     sub = rec[rec["_prov"] == prov].sort_values("fid")
-    shapes = zip(gdf.geometry.iloc[sub["fid"].to_numpy()], sub["finca_idx"].to_numpy())
+    shapes = zip(gdf.geometry.iloc[sub["fid"].to_numpy()], (sub["finca_idx"] - base).to_numpy())
     lab = rasterize(shapes, out_shape=(g.height, g.width), transform=g.transform, fill=0, dtype="int32")
     with rasterio.open(f, "w", **g.perfil("int32", 0)) as dst:
         dst.write(lab, 1)
@@ -247,21 +251,23 @@ def run(provincias: list[int]) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     RAW_PC.mkdir(parents=True, exist_ok=True)
     rec, fincas = cargar_esqueleto(provincias)
-    n = int(fincas["finca_idx"].max())
+    total = int(fincas["finca_idx"].max())
     cat = Client.open(STAC)
-    tablas, ndvi, fechas = [], np.full((n, 0), np.nan, dtype="float32"), None
+    tablas, ndvi, fechas = [], None, None
     for prov in provincias:
-        es_prov = (fincas["provincia"] == prov).to_numpy()
+        fp = fincas[fincas["provincia"] == prov]
+        base, n = int(fp["finca_idx"].min()) - 1, len(fp)
+        assert fp["finca_idx"].max() - base == n, "finca_idx no contiguo en la provincia"
         g = Rejilla(rec.loc[rec["_prov"] == prov, "lon"], rec.loc[rec["_prov"] == prov, "lat"])
-        print(f"[{prov:02d}] rejilla {g.width}×{g.height}; {es_prov.sum():,} fincas")
-        lab = etiquetas(prov, rec, g)
-        centro = g.celda(fincas["lon"], fincas["lat"])
-        out = pd.DataFrame({"finca_idx": fincas["finca_idx"]})
+        print(f"[{prov:02d}] rejilla {g.width}×{g.height}; {n:,} fincas", flush=True)
+        lab = etiquetas(prov, rec, g, base)
+        centro = g.celda(fp["lon"], fp["lat"])
+        out = pd.DataFrame({"finca_idx": fp["finca_idx"].to_numpy()})
 
         dem = nasadem(cat, prov, g)
         out["altitud_m"], out["n_pixeles"] = zonal(lab, dem, n, centro)
         out["pendiente_pct"], _ = zonal(lab, pendiente(dem, g), n, centro)
-        print("  NASADEM listo")
+        print("  NASADEM listo", flush=True)
 
         wc = worldcover(cat, prov, g)
         H, W = g.height, g.width
@@ -269,17 +275,21 @@ def run(provincias: list[int]) -> None:
             frac = (wc == cod).reshape(H, 3, W, 3).sum(axis=(1, 3), dtype="uint8").astype("float32") * (100 / 9)
             out[f"wc_{nombre}_pct"], _ = zonal(lab, frac, n, centro)
         del wc
-        print("  WorldCover listo")
+        print("  WorldCover listo", flush=True)
 
         serie = modis(cat, prov, g)
-        fechas = pd.DatetimeIndex([f for f, _ in serie])
-        if ndvi.shape[1] == 0:
-            ndvi = np.full((n, len(serie)), np.nan, dtype="float32")
+        f_prov = pd.DatetimeIndex([f for f, _ in serie])
+        if ndvi is None:
+            fechas, ndvi = f_prov, np.full((total, len(serie)), np.nan, dtype="float32")
+        if not f_prov.equals(fechas):
+            raise RuntimeError(f"Provincia {prov}: compuestos MODIS distintos de las demás")
+        filas = fp["finca_idx"].to_numpy() - 1
         for j, (_, f) in enumerate(serie):
             with rasterio.open(f) as r:
-                ndvi[es_prov, j] = zonal(lab, r.read(1), n, centro)[0][es_prov]
-        print(f"  MODIS listo: {len(serie)} compuestos")
-        tablas.append(out[es_prov])
+                ndvi[filas, j] = zonal(lab, r.read(1), n, centro)[0]
+        print(f"  MODIS listo: {len(serie)} compuestos", flush=True)
+        tablas.append(out)
+        del lab
 
     pc = pd.concat(tablas).round({"altitud_m": 1, "pendiente_pct": 1, **{f"wc_{v}_pct": 1 for v in WC_CLASES.values()}})
     pc.to_parquet(OUT / "fincas_pc.parquet", index=False)

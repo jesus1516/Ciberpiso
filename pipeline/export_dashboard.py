@@ -1,6 +1,6 @@
 """Exporta resúmenes pequeños de la base para el panel visual (JSON {rows, meta}).
 
-Lee data/database/ciberpiso.sqlite y escribe data/processed/dashboard/*.json. Cada
+Lee data/malaga/database/ciberpiso_malaga.sqlite y escribe data/processed/dashboard/*.json. Cada
 fichero lleva en `meta` este código y su consulta, para que se pueda comprobar.
 
 Uso:
@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-DB = Path("data/database/ciberpiso.sqlite")
+DB = Path("data/malaga/database/ciberpiso_malaga.sqlite")
 OUT = Path("data/processed/dashboard")
 ANTEQUERA = 29015
 CELDA_ANTEQUERA = 254281  # celda POWER (37,0, −4,375) que cubre la Campiña de Antequera
