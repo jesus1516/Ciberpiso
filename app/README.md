@@ -14,9 +14,34 @@ npm run build    # type-check + production build in dist/
 
 No backend and no API keys: every request goes straight from the browser to public services.
 
+## Explorer (main interface)
+
+`src/App.tsx` mounts `src/explorer/`, the guided funnel **Andalucía → Málaga → municipality → farm** with its transitions:
+
+| Step | Transition | Code |
+| --- | --- | --- |
+| Andalucía → Málaga | The camera dives through a cloud bank (layered fBm shader); layers swap while the screen is covered | `explorer/clouds.ts`, `controller.ts` |
+| Málaga → any municipality | The outline is traced, a low mist passes along the edges and the municipality's farms appear | `controller.ts` |
+| Municipality → farm | The map flies to the farm top-down and hands a snapshot of itself to the 3D terrain, which lifts it | `controller.ts`, `explorer/diorama.ts` |
+
+- Every municipality and farm of Málaga can be opened. Built-up, water and public-land farms cannot be selected; mountain, steep and rocky farms open with a warning (same `apt` rule as the farm map).
+- The 3D block uses real terrain (Terrarium) and imagery (Esri), the farm boundary, a soil profile from SoilGrids, trees where WorldCover and the imagery agree, and the crop seen by MODIS each season (2020–2025) followed by the chosen rotation (2026–2031).
+- R0–R3 scores are computed in the browser for any farm by `lib/calculator.ts`, a port of `calculate_scores` in `pipeline/calculator.py`. `node scripts/check-calculator.ts` checks it against the 26 precomputed Antequera candidates (1,144 values, 0 differences).
+- "Datos completos" opens the Conditions tab (`components/ConditionsTab.tsx`) for the farm.
+- `three` is loaded on demand in its own chunk; the 3D view only renders while something moves and lowers its resolution if the first frames are slow.
+- `?director` shows a small panel to replay transitions at 0.5× or 0.25×.
+
+The Andalucía level needs the provinces and per-municipality colours, built from the CSVs:
+
+```bash
+python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geojson, municipios_29_stats.json
+```
+
+`MapView`, `MapScreen`, `FincaPicker`, `Header`, `SearchBox` and `Dashboard` are no longer mounted; their logic (municipality loading, `apt` rules, farm data) is reused by the explorer.
+
 ## Architecture (10 lines)
 
-1. `src/App.tsx` stacks the full-screen map, the header, the farm picker or dashboard, the disclaimer and the About modal.
+1. `src/App.tsx` mounts the explorer (`src/explorer/`) and the About modal; the components below are the previous map-and-dashboard interface.
 2. `src/store.ts` (Zustand) holds all state: selected farms, step, terrain, climate, priorities, constraints, GIBS layers.
 3. `components/MapView.tsx` owns MapLibre: Esri basemap, farm and selection layers, GIBS overlays, 3D terrain and the fly-to.
 4. `components/FincaPicker.tsx` drives the map funnel (Málaga → municipality → farms) and the selection; `lib/fincas.ts` loads each municipality on demand; `lib/pulse.ts` animates selections.
