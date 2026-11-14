@@ -1,7 +1,7 @@
 import * as maplibregl from 'maplibre-gl'
 import { useEffect } from 'react'
 import { t } from '../i18n'
-import { getFinca } from '../lib/fincas'
+import { firstCandidate, getFinca } from '../lib/fincas'
 import { areaHa, type Finca } from '../lib/geo'
 import { pulse } from '../lib/pulse'
 import { useStore } from '../store'
@@ -21,7 +21,8 @@ export function FincaPicker() {
   const status = useStore((s) => s.fincasStatus)
   const selection = useStore((s) => s.selection)
   const field = useStore((s) => s.field)
-  const { clearSelection, confirmField } = useStore.getState()
+  const { clearSelection, confirmField, openProjectFinca } = useStore.getState()
+  const demoFinca = firstCandidate()
 
   useEffect(() => {
     if (!map || status !== 'ready') return
@@ -70,6 +71,15 @@ export function FincaPicker() {
   return (
     <div className="flex flex-col gap-2 rounded-lg bg-black/70 p-3 text-white">
       <p className="text-sm">{selection.length ? f.hintMore : f.hint}</p>
+      <p className="text-xs text-white/70">{f.candidateHint}</p>
+      {demoFinca && (
+        <button
+          onClick={() => openProjectFinca(demoFinca)}
+          className="self-start rounded-lg bg-field px-3 py-1.5 text-xs font-semibold text-ink hover:bg-yellow-300"
+        >
+          {f.demo}
+        </button>
+      )}
       {selection.length > 0 && (
         <>
           <ul className="max-h-36 space-y-1 overflow-y-auto text-sm" aria-label={f.selected}>
@@ -77,6 +87,9 @@ export function FincaPicker() {
               <li key={s.properties.id} className="flex items-center gap-2 rounded bg-white/10 px-2 py-1">
                 <span className="size-2.5 shrink-0 rounded-full bg-field" aria-hidden />
                 <span className="flex-1">{f.name(s.properties.pol, s.properties.par)}</span>
+                {s.properties.cand === 1 && (
+                  <span className="rounded bg-field px-1.5 py-0.5 text-[10px] font-semibold text-ink">{f.candidate}</span>
+                )}
                 <span className="tabular-nums text-white/80">{t.map.area(s.properties.ha)}</span>
                 <button onClick={() => toggle(s)} aria-label={f.remove(s.properties.pol, s.properties.par)} className="rounded px-1 text-white/70 hover:bg-white/20 hover:text-white">
                   ✕

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { AboutModal } from './components/AboutModal'
 import { Dashboard } from './components/Dashboard'
 import { Disclaimer } from './components/Disclaimer'
@@ -8,6 +9,9 @@ import { useStore } from './store'
 
 export default function App() {
   const step = useStore((s) => s.step)
+  useEffect(() => {
+    useStore.getState().loadIndicators()
+  }, [])
   return (
     <div className="relative h-dvh w-full overflow-hidden">
       <MapView />

@@ -4,6 +4,7 @@ import type { SoilType } from './data/mock/soil'
 import { computeClimate, type Climate } from './lib/climate'
 import { fieldCentroid, toField, weightedSlope, type Field, type Finca } from './lib/geo'
 import { daysAgo, type GibsId } from './lib/gibs'
+import { loadIndicators as fetchIndicators, type Indicators } from './lib/indicators'
 import { fetchPower, type PowerSource } from './lib/power'
 import { slopeClass } from './lib/terrain'
 
@@ -38,6 +39,8 @@ type State = {
   map: Map | null
   step: Step
   fincasStatus: LoadStatus
+  indicatorsStatus: LoadStatus
+  indicators: Indicators | null
   selection: Finca[]
   field: Field | null
   terrain: Terrain
@@ -52,6 +55,8 @@ type State = {
   gibsDate: string
   setMap: (map: Map | null) => void
   setFincasStatus: (status: LoadStatus) => void
+  loadIndicators: () => Promise<void>
+  openProjectFinca: (finca: Finca) => void
   toggleFinca: (finca: Finca) => void
   clearSelection: () => void
   confirmField: () => void
@@ -71,6 +76,8 @@ export const useStore = create<State>((set, get) => ({
   map: null,
   step: 'map',
   fincasStatus: 'loading',
+  indicatorsStatus: 'loading',
+  indicators: null,
   selection: [],
   field: null,
   terrain: 'off',
@@ -89,6 +96,30 @@ export const useStore = create<State>((set, get) => ({
   gibsDate: daysAgo(7),
   setMap: (map) => set({ map }),
   setFincasStatus: (fincasStatus) => set({ fincasStatus }),
+  loadIndicators: async () => {
+    set({ indicatorsStatus: 'loading' })
+    try {
+      const indicators = await fetchIndicators()
+      set({ indicators, indicatorsStatus: 'ready' })
+    } catch {
+      set({ indicatorsStatus: 'error' })
+    }
+  },
+  openProjectFinca: (finca) => {
+    const field = toField([finca])
+    const [lon, lat] = fieldCentroid(field)
+    const slopePct = weightedSlope(field)
+    set((s) => ({
+      selection: [finca],
+      field,
+      step: 'dashboard',
+      panelOpen: true,
+      panelSeen: false,
+      tab: 'rotations',
+      constraints: slopePct === null ? s.constraints : { ...s.constraints, slopePct, slope: slopeClass(slopePct) },
+    }))
+    get().loadClimate(lat, lon)
+  },
   toggleFinca: (finca) =>
     set((s) => {
       const exists = s.selection.some((f) => f.properties.id === finca.properties.id)

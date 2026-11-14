@@ -6,10 +6,11 @@ import { fieldCentroid } from '../lib/geo'
 import { buildStrategies } from '../lib/rotations'
 import { useStore } from '../store'
 import { CoverLegend } from './CoverTimeline'
+import { RealRotations } from './RealRotations'
 import { RotationCard } from './RotationCard'
 
 export function RotationsTab() {
-  const { climate, field, constraints, priorities } = useStore()
+  const { climate, field, constraints, priorities, selection, indicators } = useStore()
 
   const strategies = useMemo(() => {
     if (!climate.data || !field) return null
@@ -24,6 +25,9 @@ export function RotationsTab() {
     }
     return buildStrategies(ctx, priorities)
   }, [climate, field, constraints, priorities])
+
+  const candidate = selection.length === 1 ? indicators?.byPid[selection[0].properties.pid] : undefined
+  if (candidate) return <RealRotations candidate={candidate} />
 
   if (!strategies) {
     return (

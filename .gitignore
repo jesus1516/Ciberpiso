@@ -26,5 +26,8 @@ __pycache__/
 .venv/
 venv/
 
+# Pruebas de interfaz
+.playwright-mcp/
+
 # Sistema
 .DS_Store

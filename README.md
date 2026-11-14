@@ -4,8 +4,9 @@ Herramienta de apoyo a la decisión para explorar **rotaciones de cultivo** con 
 de observación de la Tierra de NASA y contexto local. Proyecto para el **2026 NASA
 Space Apps Challenge**, reto [*Field Shift: Adapting Farms with NASA Data*](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/).
 
-> Estado: documentación de investigación y un MVP de frontend en [`app/`](app/README.md)
-> (mapa 3D, datos NASA POWER y GIBS, comparación de tres rotaciones).
+> Estado: calculadora con datos reales para 60 candidatas de Málaga y MVP de frontend
+> en [`app/`](app/README.md). La app ya muestra las 26 candidatas de Antequera con las
+> cuatro rotaciones calculadas; falta la traducción al inglés y la prueba offline.
 
 ## El reto
 
@@ -37,20 +38,17 @@ sustituir a un agrónomo.
 4. Ser interpretable por usuarios sin formación geoespacial y permitir introducir
    prioridades y restricciones propias (agua, maquinaria, mercado).
 
-## Enfoque propuesto
+## Enfoque actual
 
-> **Actualización (14 nov 2026):** el rumbo vigente es una finca de secano en la
-> Campiña de Antequera. Lo que sigue describe el plan anterior de Iowa y se
-> actualizará a partir del [Plan de acción](docs/plan-de-accion.md).
-
-- **Caso de uso:** un condado del centro de Iowa (EE. UU.), con rotación actual
-  maíz–soja y tres alternativas con avena, trigo y alfalfa.
-- **Datos:** NASA POWER, SSURGO, NLCD, CDL, PRISM, NWIS y GIBS; SMAP/IMERG opcionales
-  con Earthdata Login.
-- **Salida:** mapa + fichas comparables por rotación, con puntuación explicable,
-  evidencia, lagunas y avisos de revisión local.
-- **Modelo:** reglas ponderadas por prioridades, no caja negra. La confianza baja
-  cuando faltan datos.
+- **Caso de uso:** secano de la Campiña de Antequera (Málaga), con 60 parcelas
+  candidatas en la provincia y 26 en Antequera. Rotación actual R0 trigo–girasol y
+  tres alternativas: R1 +garbanzo, R2 +veza, R3 +barbecho.
+- **Datos:** NASA POWER (clima), MODIS MOD13Q1 (NDVI), SoilGrids (suelo), Eurostat
+  (precios de trigo, girasol y garbanzo), MAPA (veza grano) y SIGPAC (parcelas).
+- **Salida:** `data/processed/indicators.json` con las cuatro rotaciones, evidencia,
+  lagunas y riesgos; la app carga las 26 candidatas de Antequera.
+- **Modelo:** reglas ponderadas y explicables, no caja negra. La nota de agua está
+  validada con NDVI (AUC 0,723) y la confianza baja cuando faltan datos.
 
 ## Documentación
 

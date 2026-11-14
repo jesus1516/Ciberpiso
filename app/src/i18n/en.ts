@@ -31,17 +31,21 @@ export const en = {
     error: 'Could not load the farm map. Reload the page to try again.',
     hint: 'Click the farms that make up your holding. Click again to remove one.',
     hintMore: 'Add more farms or analyse your selection.',
+    candidateHint: 'Gold-outlined farms already have precomputed project results.',
+    candidate: 'project data',
+    demo: 'Open a demo farm with project data',
     selected: 'Selected farms',
     name: (pol: number, par: number) => `Polygon ${pol} · Parcel ${par}`,
     remove: (pol: number, par: number) => `Remove polygon ${pol}, parcel ${par}`,
     total: (n: number, ha: number) => `${n} ${n === 1 ? 'farm' : 'farms'} · ${ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha`,
     clear: 'Clear',
     confirm: 'Analyse my farms',
-    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null }) =>
+    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null; cand: number }) =>
       [
         `Polygon ${p.pol} · Parcel ${p.par}`,
         `${p.ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha${p.cover ? ` · ${covers[p.cover] ?? p.cover}` : ''}`,
         p.slope !== null ? `Slope ${p.slope.toFixed(1)} %` : '',
+        p.cand ? `★ ${'project data'}` : '',
       ].filter(Boolean).join('\n'),
   },
 
@@ -270,6 +274,42 @@ export const en = {
       'Your appetite for risk and how much income variation you can absorb.',
       'Advice from local agronomists and extension services before changing the rotation.',
     ],
+  },
+
+  real: {
+    badge: 'Project dataset',
+    intro:
+      'Precomputed results from the project pipeline for this farm: NASA POWER climate, SoilGrids soil, MODIS NDVI and Eurostat/MAPA prices. No live API is needed.',
+    farm: (pid: string, ha: number, rot: string) =>
+      `${pid} · ${ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha · observed pattern ${rot}`,
+    loading: 'Loading precomputed project results…',
+    error: 'Precomputed results could not load. Interactive scoring is still available.',
+    profile: 'Ranking priority',
+    profiles: { water_first: 'Water', soil_first: 'Soil', profit_first: 'Price / market' },
+    rank: (n: number) => `#${n}`,
+    noRank: '—',
+    winner: 'Top for this priority',
+    score: 'Weighted score',
+    confidence: 'Confidence',
+    levels: { low: 'Low', medium: 'Medium', high: 'High' },
+    scores: { water: 'Water', soil: 'Soil', profit: 'Price / market', risk: 'Risk' },
+    sections: {
+      why: 'Why this rotation was suggested',
+      evidence: 'Evidence',
+      benefits: 'Expected benefits',
+      gaps: 'Data gaps',
+      risks: 'Risks to review locally',
+      indicators: 'Indicator details',
+    },
+    source: 'Source',
+    date: 'Date',
+    unit: 'Unit',
+    gap: 'Gap',
+    value: 'Value',
+    partial: 'Not comparable',
+    noProfit: 'No price data',
+    note: 'Project narrative is in Spanish; English translation is pending for the final submission.',
+    footer: 'Decision-support only. Validate with local agronomists before changing a rotation.',
   },
 
   aboutModal: {

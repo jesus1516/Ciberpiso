@@ -669,6 +669,23 @@ def _dynamic_evidence(
     return evidencia
 
 
+def _merge_evidence(static: list[dict], dynamic: list[dict]) -> list[dict]:
+    """Une por fuente para no repetir NASA/MODIS/SoilGrids en cada ficha."""
+    merged: list[dict] = []
+    index: dict[str, int] = {}
+    for item in list(static) + list(dynamic):
+        key = item.get("source", "")
+        if key in index:
+            actual = merged[index[key]]
+            for field in ("url", "date", "value", "note"):
+                if item.get(field) and not actual.get(field):
+                    actual[field] = item[field]
+        else:
+            index[key] = len(merged)
+            merged.append(dict(item))
+    return merged
+
+
 def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
     deficit = scenario.get("deficit_mm")
     return {
@@ -811,8 +828,9 @@ def build_indicators(
             data["benefits"] = ficha.get("benefits", [])
             data["review_risks"] = ficha.get("review_risks", [])
             data["data_gaps"] = list(dict.fromkeys(gaps))
-            data["evidence"] = list(ficha.get("evidence", [])) + _dynamic_evidence(
-                rid, scenario, data, r0_water
+            data["evidence"] = _merge_evidence(
+                list(ficha.get("evidence", [])),
+                _dynamic_evidence(rid, scenario, data, r0_water),
             )
             data["indicators"] = _indicator_metadata(rid, data, scenario)
             (
@@ -853,6 +871,7 @@ def build_indicators(
                     top[profile][rid] += 1
 
     return {
+        "schema_version": 1,
         "aoi": "antequera-malaga",
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "real_data_provisional",

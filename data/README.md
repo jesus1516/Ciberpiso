@@ -71,6 +71,8 @@ Una campaña va de octubre del año anterior a septiembre (2024 = oct-2023 a sep
 - `python3 pipeline/audit.py`: comprueba los cinco campos obligatorios, las fuentes y
   unidades de cada indicador, los empates y la coherencia de los rankings. Escribe
   `data/processed/audit.json`.
+- `python3 pipeline/export_app_indicators.py`: filtra las 26 candidatas de Antequera y
+  escribe `app/public/data/indicators_antequera.json` para la web.
 
 ## Crear la base en cualquier equipo
 
