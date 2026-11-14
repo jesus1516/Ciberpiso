@@ -1,3 +1,12 @@
+const apt: Record<string, string> = {
+  urbano: 'Mostly built-up',
+  agua: 'Mostly water',
+  publico: 'Public land (road, path or stream)',
+  roca: 'Mostly bare rock',
+  monte: 'Mountain or natural vegetation',
+  pendiente: 'Very steep (slope 30 % or more)',
+}
+
 const covers: Record<string, string> = {
   arbolado: 'trees',
   matorral: 'shrubland',
@@ -48,8 +57,15 @@ export const en = {
     clear: 'Clear',
     confirm: 'Analyse my farms',
     covers,
-    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null }, project = false) =>
+    apt,
+    aptShort: { urbano: 'built-up', agua: 'water', publico: 'public', roca: 'rock', monte: 'mountain', pendiente: 'steep' } as Record<string, string>,
+    blocked: (why: string) => `${why}: this is not farmland, so it can't be added. From SIGPAC parcel numbering and ESA WorldCover land cover.`,
+    limitedWarning: (why: string) =>
+      `${why}: farming here is usually limited. Added anyway — check it is really cropland (terraces or pasture can be).`,
+    legend: { title: 'Map legend', farmland: 'Farmland', limited: 'Limited (mountain, steep, rock)', notFarmland: 'Not farmland (built-up, water, roads)' },
+    popup: (p: { pol: number; par: number; ha: number; slope: number | null; cover: string | null; apt: string | null }, project = false) =>
       [
+        p.apt ? `⚠ ${apt[p.apt] ?? p.apt}` : '',
         `Polygon ${p.pol} · Parcel ${p.par}`,
         `${p.ha.toLocaleString('en', { maximumFractionDigits: 1 })} ha${p.cover ? ` · ${covers[p.cover] ?? p.cover}` : ''}`,
         p.slope !== null ? `Slope ${p.slope.toFixed(1)} %` : '',
@@ -63,6 +79,8 @@ export const en = {
     loading: 'Loading the project data for your farms…',
     error: 'Could not load the project data for these farms. Reload the page to try again.',
     missing: 'This farm is not in the project dataset.',
+    aptWarning: (why: string) =>
+      `${why}. Satellite land cover and slope suggest this farm is not typical cropland, so treat the rotation results with extra care.`,
     chooseFarm: 'Farm',
     recordTitle: 'Farm record',
     recordNote: 'SIGPAC parcel (FEGA). Altitude and slope from NASADEM; land cover from ESA WorldCover (10 m).',

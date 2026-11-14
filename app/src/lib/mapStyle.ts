@@ -3,6 +3,24 @@ import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl'
 export const EMPTY = { type: 'FeatureCollection' as const, features: [] }
 export const BASE_LAYER = 'municipios-fill'
 export const GOLD = '#facc15'
+export const NOT_FARMLAND = ['urbano', 'agua', 'publico']
+export const LIMITED = ['monte', 'pendiente', 'roca']
+export const HATCH = 'hatch'
+
+export function hatchImage(size = 12) {
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)'
+  ctx.lineWidth = 1.5
+  for (const offset of [-size, 0, size]) {
+    ctx.beginPath()
+    ctx.moveTo(offset, size)
+    ctx.lineTo(offset + size, 0)
+    ctx.stroke()
+  }
+  return ctx.getImageData(0, 0, size, size)
+}
 
 const state = (key: string): ExpressionSpecification => ['boolean', ['feature-state', key], false]
 
@@ -62,6 +80,27 @@ export const style: StyleSpecification = {
         'line-opacity-transition': { duration: 700 },
         'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.3, 15, 1.2],
       },
+    },
+    {
+      id: 'fincas-limited',
+      type: 'fill',
+      source: 'fincas',
+      filter: ['in', ['get', 'apt'], ['literal', LIMITED]],
+      paint: { 'fill-color': '#0b0b0b', 'fill-opacity': 0.42 },
+    },
+    {
+      id: 'fincas-blocked-tint',
+      type: 'fill',
+      source: 'fincas',
+      filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]],
+      paint: { 'fill-color': '#3f3f46', 'fill-opacity': 0.6 },
+    },
+    {
+      id: 'fincas-blocked',
+      type: 'fill',
+      source: 'fincas',
+      filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]],
+      paint: { 'fill-pattern': HATCH },
     },
     { id: 'fincas-candidate-fill', type: 'fill', source: 'fincas', filter: ['==', ['get', 'id'], -1], paint: { 'fill-color': GOLD, 'fill-opacity': 0.08 } },
     {

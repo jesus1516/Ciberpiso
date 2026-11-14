@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { t } from '../i18n'
 import { fincaByPid, getFinca, getMunicipio, municipioAt, type MunicipioProps } from '../lib/fincas'
 import { areaHa, type Finca } from '../lib/geo'
-import { GOLD } from '../lib/mapStyle'
+import { GOLD, LIMITED, NOT_FARMLAND } from '../lib/mapStyle'
 import { pulse } from '../lib/pulse'
 import { useStore } from '../store'
 
@@ -12,11 +12,37 @@ const AUTO_ENTER_ZOOM = 12.5
 const button = 'rounded-lg px-3 py-2 text-sm font-medium shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-white disabled:opacity-50'
 const glass = 'rounded-xl bg-black/60 text-white shadow-lg ring-1 ring-white/15 backdrop-blur-md'
 
-function toggle(finca: Finca) {
+type Notice = { kind: 'blocked' | 'warning'; text: string } | null
+
+function toggle(finca: Finca): Notice {
   const { map, selection, toggleFinca } = useStore.getState()
+  const apt = finca.properties.apt
+  if (apt && NOT_FARMLAND.includes(apt)) {
+    if (map) pulse(map, finca, '#ef4444', 700)
+    return { kind: 'blocked', text: f.blocked(f.apt[apt]) }
+  }
   const selected = selection.some((s) => s.properties.id === finca.properties.id)
   if (map) pulse(map, finca, selected ? '#ffffff' : GOLD, selected ? 600 : 1100)
   toggleFinca(finca)
+  return !selected && apt && LIMITED.includes(apt) ? { kind: 'warning', text: f.limitedWarning(f.apt[apt]) } : null
+}
+
+function Legend() {
+  const items: [string, string][] = [
+    [f.legend.farmland, 'border border-white bg-[#b9a26e]'],
+    [f.legend.limited, 'border border-white/50 bg-[#4d4636]'],
+    [f.legend.notFarmland, 'border border-white/50 bg-zinc-600 bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.8)_0_1.5px,transparent_1.5px_5px)]'],
+  ]
+  return (
+    <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/80" aria-label={f.legend.title}>
+      {items.map(([label, swatch]) => (
+        <li key={label} className="flex items-center gap-1.5">
+          <span className={`inline-block size-3 rounded-sm ${swatch}`} aria-hidden />
+          {label}
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 function enter(m: MunicipioProps) {
@@ -35,6 +61,7 @@ export function FincaPicker() {
   const indicators = useStore((s) => s.indicators)
   const { clearSelection, confirmField, openProjectFinca, setMunicipio } = useStore.getState()
   const [opening, setOpening] = useState(false)
+  const [notice, setNotice] = useState<Notice>(null)
 
   useEffect(() => {
     if (!map || status !== 'ready') return
@@ -79,7 +106,7 @@ export function FincaPicker() {
     const onClick = (e: maplibregl.MapMouseEvent) => {
       const { finca, municipio: m } = pick(e.point)
       popup.remove()
-      if (finca) toggle(finca)
+      if (finca) setNotice(toggle(finca))
       else if (m) {
         setHover(null)
         enter(m)
@@ -112,6 +139,7 @@ export function FincaPicker() {
     const finca = await fincaByPid(pid).catch(() => undefined)
     setOpening(false)
     if (!finca) return
+    setNotice(null)
     setMunicipio({ key: finca.properties.mun, name: municipioName(finca.properties.mun) })
     openProjectFinca(finca)
   }
@@ -149,6 +177,12 @@ export function FincaPicker() {
       <p className="text-sm">
         {!municipio ? f.hintProvincia : municipioStatus === 'error' ? f.errorMunicipio : selection.length ? f.hintMore : f.hint}
       </p>
+      {notice && (
+        <p role="status" className={`rounded-lg px-2 py-1.5 text-xs ${notice.kind === 'blocked' ? 'bg-red-500/25 ring-1 ring-red-300/50' : 'bg-amber-400/20 ring-1 ring-amber-300/50'}`}>
+          ⚠ {notice.text}
+        </p>
+      )}
+      {municipio && <Legend />}
       {municipio && <p className="text-xs text-white/70">{f.candidateHint}</p>}
       {indicators && (
         <button
@@ -170,11 +204,16 @@ export function FincaPicker() {
                   {f.name(s.properties.pol, s.properties.par)}
                   <span className="block text-[11px] text-white/60">{municipioName(s.properties.mun)}</span>
                 </span>
+                {s.properties.apt && (
+                  <span className="rounded bg-amber-400/25 px-1.5 py-0.5 text-[10px] font-semibold text-amber-100" title={f.apt[s.properties.apt]}>
+                    ⚠ {f.aptShort[s.properties.apt]}
+                  </span>
+                )}
                 {indicators?.byPid[s.properties.pid] && (
                   <span className="rounded bg-field px-1.5 py-0.5 text-[10px] font-semibold text-ink">{f.candidate}</span>
                 )}
                 <span className="tabular-nums text-white/80">{t.map.area(s.properties.ha)}</span>
-                <button onClick={() => toggle(s)} aria-label={f.remove(s.properties.pol, s.properties.par)} className="rounded px-1 text-white/70 hover:bg-white/20 hover:text-white">
+                <button onClick={() => { toggle(s); setNotice(null) }} aria-label={f.remove(s.properties.pol, s.properties.par)} className="rounded px-1 text-white/70 hover:bg-white/20 hover:text-white">
                   ✕
                 </button>
               </li>

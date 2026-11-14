@@ -14,6 +14,7 @@ export type FincaProps = {
   cover: string | null
   rot: string | null
   cand: number
+  apt: string | null
 }
 export type Finca = Feature<Polygon | MultiPolygon, FincaProps>
 export type Field = FeatureCollection<Polygon | MultiPolygon, FincaProps>

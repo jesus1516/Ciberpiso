@@ -71,6 +71,17 @@ The map covers the province of Málaga. It opens on the 103 municipalities
 that municipality's farms (`public/data/fincas/{municipio_key}.geojson.gz`, 35 MB in total, 2.1 MB at
 most). The browser decompresses the files itself, so any static host works.
 
+Farms that do not look like cropland are marked on the map (rule in `aptitud()` in
+`pipeline/export_app_fincas.py`, using ESA WorldCover, NASADEM slope and SIGPAC parcel numbers):
+
+| Class | Rule | On the map |
+| --- | --- | --- |
+| Built-up, water | ≥ 50 % of the farm, or the dominant cover (built-up ≥ 30 %) | Grey hatch; cannot be selected |
+| Public land | SIGPAC parcel 9000 or above (roads, paths, streams) | Grey hatch; cannot be selected |
+| Bare rock, mountain, very steep | ≥ 50 % bare soil; ≥ 50 % shrubland or ≥ 80 % trees + shrubland on ≥ 30 % slope; slope ≥ 30 % | Dimmed; can be selected with a warning |
+
+Trees on gentle slopes are not marked, because in Málaga they are usually olive or almond groves.
+
 To rebuild them, download the SIGPAC GeoPackage with `pipeline.sigpac` and run, from the repo root:
 
 ```bash

@@ -5,14 +5,14 @@ import { t } from '../i18n'
 import { flyToMunicipio, flyToProvincia, maxBoundsFor } from '../lib/camera'
 import { getMunicipio, loadMunicipio, loadMunicipios, municipioBbox, provinciaBbox } from '../lib/fincas'
 import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
-import { BASE_LAYER, EMPTY, GOLD, municipioPaint, style } from '../lib/mapStyle'
+import { BASE_LAYER, EMPTY, GOLD, HATCH, hatchImage, municipioPaint, style } from '../lib/mapStyle'
 import { pulse } from '../lib/pulse'
 import { disable3D, enable3D, flyToField } from '../lib/terrain'
 import { useStore } from '../store'
 
 maplibregl.setWorkerUrl(workerUrl)
 
-const MAP_LAYERS = ['municipios-fill', 'municipios-line', 'municipios-focus', 'fincas-candidate-fill', 'fincas-candidate-line']
+const MAP_LAYERS = ['municipios-fill', 'municipios-line', 'municipios-focus', 'fincas-limited', 'fincas-blocked-tint', 'fincas-blocked', 'fincas-candidate-fill', 'fincas-candidate-line']
 
 export function MapView() {
   const container = useRef<HTMLDivElement>(null)
@@ -43,6 +43,7 @@ export function MapView() {
     }
     instance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
     instance.on('load', () => {
+      if (!instance.hasImage(HATCH)) instance.addImage(HATCH, hatchImage())
       useStore.getState().setMap(instance)
       loadMunicipios()
         .then((data) => {

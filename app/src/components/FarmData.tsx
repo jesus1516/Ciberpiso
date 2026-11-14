@@ -130,6 +130,12 @@ export function FarmData() {
         </label>
       )}
 
+      {p.apt && (
+        <p role="note" className="rounded-lg border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
+          ⚠ {s.aptWarning(t.fincas.apt[p.apt] ?? p.apt)}
+        </p>
+      )}
+
       <ChartCard title={s.recordTitle} note={s.recordNote}>
         <Rows
           rows={[
