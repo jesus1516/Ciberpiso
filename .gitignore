@@ -1,0 +1,27 @@
+# Secretos y credenciales
+.env
+.env.*
+!.env.example
+.netrc
+*.key
+*.pem
+
+# Datos pesados o generados
+data/raw/
+data/cache/
+*.nc
+*.grib
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Sistema
+.DS_Store
