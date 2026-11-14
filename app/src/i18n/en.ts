@@ -35,15 +35,15 @@ export const en = {
     flatFallback: '3D terrain could not load. Showing a flat map.',
   },
 
-  fincas: {
+  farms: {
     loading: 'Loading the map of Málaga…',
     error: 'Could not load the farm map. Reload the page to try again.',
     breadcrumb: 'Map level',
-    provincia: 'Málaga',
-    hintProvincia: 'Click a municipality, search a place or zoom in to see its farms.',
-    loadingMunicipio: 'Loading farms…',
-    errorMunicipio: 'Could not load the farms of this municipality. Try again.',
-    municipioPopup: (m: { nombre: string; fincas: number; ha: number }) =>
+    province: 'Málaga',
+    hintProvince: 'Click a municipality, search a place or zoom in to see its farms.',
+    loadingMunicipality: 'Loading farms…',
+    errorMunicipality: 'Could not load the farms of this municipality. Try again.',
+    municipalityPopup: (m: { nombre: string; fincas: number; ha: number }) =>
       `${m.nombre}\n${m.fincas.toLocaleString('en')} farms · ${m.ha.toLocaleString('en')} ha`,
     hint: 'Click the farms that make up your holding. Click again to remove one.',
     hintMore: 'Add more farms or analyse your selection.',

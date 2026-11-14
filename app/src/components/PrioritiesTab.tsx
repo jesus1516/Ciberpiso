@@ -2,7 +2,7 @@ import { t } from '../i18n'
 import { CROPS, crop } from '../lib/crops'
 import { PRIORITY_KEYS } from '../lib/scoring'
 import { useStore, type Irrigation, type SlopeClass } from '../store'
-import { observedCrop, soilTexture } from '../lib/detalle'
+import { observedCrop, soilTexture } from '../lib/detail'
 import type { SoilType } from '../lib/soil'
 
 const select = 'w-full rounded-lg border border-line bg-white px-2 py-1.5 text-sm'
@@ -11,9 +11,9 @@ const p = t.priorities
 export function PrioritiesTab() {
   const { priorities, constraints, setPriority, setConstraints, selection, farmData } = useStore()
   const largest = [...selection].sort((a, b) => b.properties.ha - a.properties.ha)[0]
-  const detalle = largest ? farmData.byId[largest.properties.id] : undefined
-  const texture = soilTexture(detalle?.suelo ?? null)
-  const observed = observedCrop(detalle)
+  const detail = largest ? farmData.byId[largest.properties.id] : undefined
+  const texture = soilTexture(detail?.suelo ?? null)
+  const observed = observedCrop(detail)
 
   return (
     <div className="flex flex-col gap-4">
@@ -63,8 +63,8 @@ export function PrioritiesTab() {
           <select value={constraints.soil} onChange={(e) => setConstraints({ soil: e.target.value as SoilType })} className={select}>
             {(['sandy', 'loam', 'clay'] as SoilType[]).map((s) => <option key={s} value={s}>{p.soils[s]}</option>)}
           </select>
-          {texture && detalle?.suelo && (
-            <span className="mt-1 block text-xs text-muted">{p.soilFromData(detalle.suelo.arcilla_pct ?? 0, detalle.suelo.arena_pct ?? 0, p.soils[texture])}</span>
+          {texture && detail?.suelo && (
+            <span className="mt-1 block text-xs text-muted">{p.soilFromData(detail.suelo.arcilla_pct ?? 0, detail.suelo.arena_pct ?? 0, p.soils[texture])}</span>
           )}
         </label>
         <label className="text-sm sm:col-span-2">

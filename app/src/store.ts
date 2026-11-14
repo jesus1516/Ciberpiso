@@ -1,8 +1,8 @@
 import type { Map } from 'maplibre-gl'
 import { create } from 'zustand'
 import { computeClimate, type Climate } from './lib/climate'
-import { loadComun, loadDetalles, observedCrop, soilTexture, type Comun, type FincaDetalle } from './lib/detalle'
-import { fieldCentroid, toField, weightedSlope, type BBox, type Field, type Finca } from './lib/geo'
+import { loadCommon, loadDetails, observedCrop, soilTexture, type Common, type FarmDetail } from './lib/detail'
+import { fieldCentroid, toField, weightedSlope, type BBox, type Field, type Farm } from './lib/geo'
 import { daysAgo, type GibsId } from './lib/gibs'
 import { loadIndicators as fetchIndicators, type Indicators } from './lib/indicators'
 import { fetchPower, type PowerSource } from './lib/power'
@@ -13,7 +13,7 @@ export type Step = 'map' | 'dashboard'
 export type Terrain = 'off' | 'on' | 'flat'
 export type Tab = 'conditions' | 'layers' | 'priorities' | 'rotations'
 export type LoadStatus = 'loading' | 'ready' | 'error'
-export type MunicipioFocus = { key: number; name: string; bounds?: BBox }
+export type MunicipalityFocus = { key: number; name: string; bounds?: BBox }
 export type ClimateState = {
   status: 'idle' | 'loading' | 'ready'
   data: Climate | null
@@ -35,7 +35,7 @@ export type Constraints = {
 
 export type LayerState = { visible: boolean; opacity: number; error: boolean }
 
-export type FarmData = { status: LoadStatus | 'idle'; byId: Record<number, FincaDetalle>; comun: Comun | null }
+export type FarmData = { status: LoadStatus | 'idle'; byId: Record<number, FarmDetail>; common: Common | null }
 
 let climateRequest = 0
 let farmRequest = 0
@@ -43,12 +43,12 @@ let farmRequest = 0
 type State = {
   map: Map | null
   step: Step
-  fincasStatus: LoadStatus
-  municipio: MunicipioFocus | null
-  municipioStatus: LoadStatus
+  farmsStatus: LoadStatus
+  municipality: MunicipalityFocus | null
+  municipalityStatus: LoadStatus
   indicatorsStatus: LoadStatus
   indicators: Indicators | null
-  selection: Finca[]
+  selection: Farm[]
   field: Field | null
   terrain: Terrain
   panelOpen: boolean
@@ -61,12 +61,12 @@ type State = {
   layers: Record<GibsId, LayerState>
   gibsDate: string
   setMap: (map: Map | null) => void
-  setFincasStatus: (status: LoadStatus) => void
-  setMunicipio: (municipio: MunicipioFocus | null) => void
-  setMunicipioStatus: (status: LoadStatus) => void
+  setFarmsStatus: (status: LoadStatus) => void
+  setMunicipality: (municipality: MunicipalityFocus | null) => void
+  setMunicipalityStatus: (status: LoadStatus) => void
   loadIndicators: () => Promise<void>
-  openProjectFinca: (finca: Finca) => void
-  toggleFinca: (finca: Finca) => void
+  openProjectFarm: (farm: Farm) => void
+  toggleFarm: (farm: Farm) => void
   clearSelection: () => void
   confirmField: () => void
   resetField: () => void
@@ -86,9 +86,9 @@ type State = {
 export const useStore = create<State>((set, get) => ({
   map: null,
   step: 'map',
-  fincasStatus: 'loading',
-  municipio: null,
-  municipioStatus: 'ready',
+  farmsStatus: 'loading',
+  municipality: null,
+  municipalityStatus: 'ready',
   indicatorsStatus: 'loading',
   indicators: null,
   selection: [],
@@ -108,9 +108,9 @@ export const useStore = create<State>((set, get) => ({
   },
   gibsDate: daysAgo(7),
   setMap: (map) => set({ map }),
-  setFincasStatus: (fincasStatus) => set({ fincasStatus }),
-  setMunicipio: (municipio) => set({ municipio }),
-  setMunicipioStatus: (municipioStatus) => set({ municipioStatus }),
+  setFarmsStatus: (farmsStatus) => set({ farmsStatus }),
+  setMunicipality: (municipality) => set({ municipality }),
+  setMunicipalityStatus: (municipalityStatus) => set({ municipalityStatus }),
   loadIndicators: async () => {
     set({ indicatorsStatus: 'loading' })
     try {
@@ -120,12 +120,12 @@ export const useStore = create<State>((set, get) => ({
       set({ indicatorsStatus: 'error' })
     }
   },
-  openProjectFinca: (finca) => {
-    const field = toField([finca])
+  openProjectFarm: (farm) => {
+    const field = toField([farm])
     const [lon, lat] = fieldCentroid(field)
     const slopePct = weightedSlope(field)
     set((s) => ({
-      selection: [finca],
+      selection: [farm],
       field,
       step: 'dashboard',
       panelOpen: true,
@@ -136,10 +136,10 @@ export const useStore = create<State>((set, get) => ({
     get().loadClimate(lat, lon)
     get().loadFarmData()
   },
-  toggleFinca: (finca) =>
+  toggleFarm: (farm) =>
     set((s) => {
-      const exists = s.selection.some((f) => f.properties.id === finca.properties.id)
-      const selection = exists ? s.selection.filter((f) => f.properties.id !== finca.properties.id) : [...s.selection, finca]
+      const exists = s.selection.some((f) => f.properties.id === farm.properties.id)
+      const selection = exists ? s.selection.filter((f) => f.properties.id !== farm.properties.id) : [...s.selection, farm]
       return { selection, field: selection.length ? toField(selection) : null }
     }),
   clearSelection: () => set({ selection: [], field: null }),
@@ -157,26 +157,26 @@ export const useStore = create<State>((set, get) => ({
     get().loadClimate(lat, lon)
     get().loadFarmData()
   },
-  farmData: { status: 'idle', byId: {}, comun: null },
+  farmData: { status: 'idle', byId: {}, common: null },
   loadFarmData: async () => {
     const selection = get().selection
     const id = ++farmRequest
-    set({ farmData: { status: 'loading', byId: {}, comun: null } })
+    set({ farmData: { status: 'loading', byId: {}, common: null } })
     try {
-      const [byId, comun] = await Promise.all([
-        loadDetalles(selection.map((f) => ({ id: f.properties.id, mun: f.properties.mun }))),
-        loadComun(),
+      const [byId, common] = await Promise.all([
+        loadDetails(selection.map((f) => ({ id: f.properties.id, mun: f.properties.mun }))),
+        loadCommon(),
       ])
       if (id !== farmRequest) return
       const largest = [...selection].sort((a, b) => b.properties.ha - a.properties.ha)[0]
       const texture = soilTexture(byId[largest?.properties.id]?.suelo ?? null)
       const observed = observedCrop(byId[largest?.properties.id])
       set((s) => ({
-        farmData: { status: 'ready', byId, comun },
+        farmData: { status: 'ready', byId, common },
         constraints: { ...s.constraints, ...(texture && { soil: texture }), ...(observed && { currentCrop: observed.crop }) },
       }))
     } catch {
-      if (id === farmRequest) set({ farmData: { status: 'error', byId: {}, comun: null } })
+      if (id === farmRequest) set({ farmData: { status: 'error', byId: {}, common: null } })
     }
   },
   resetField: () =>

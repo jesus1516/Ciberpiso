@@ -1,22 +1,22 @@
-// Terreno 3D de la finca seleccionada ("pieza de territorio").
+// 3D terrain of the selected farm ("territory tile").
 //
-// Recorta un cuadrado de terreno real alrededor de la finca (DEM Mapzen Terrarium y
-// ortofoto Esri, los mismos del mapa), lo levanta como un bloque con perfil de suelo en
-// los laterales y dibuja encima la finca: linde SIGPAC, cultivo por campaña (MODIS) o por
-// escenario de rotación, arbolado (WorldCover + copas de la ortofoto) y anclajes para las
-// tarjetas. La entrada arranca en cenital plana, encajada en el rectángulo que ocupaba la
-// finca en el mapa y con una captura del propio mapa, para que el relevo no se note.
+// Cuts a square of real terrain around the farm (Mapzen Terrarium DEM and Esri
+// orthophoto, the same ones as the map), raises it as a block with a soil profile on
+// the sides and draws the farm on top: SIGPAC boundary, crop per campaign (MODIS) or per
+// rotation scenario, trees (WorldCover + orthophoto canopies) and anchors for the
+// cards. The entry starts flat from above, fitted to the rectangle the farm occupied
+// on the map and with a snapshot of the map itself, so the hand-over goes unnoticed.
 //
-// Rendimiento: solo se pinta mientras algo cambia, las normales se calculan una vez y, si
-// los primeros fotogramas van lentos, baja resolución y sombras. Sin red, el relieve y la
-// ortofoto se sintetizan.
+// Performance: it only paints while something changes, normals are computed once and, if
+// the first frames are slow, resolution and shadows drop. Offline, the terrain and
+// orthophoto are synthesised.
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { Line2 } from 'three/addons/lines/Line2.js'
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
-import { COVER_COLORS, CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type Escena, type Geometry, type Mode, type ViewState } from './escena'
+import { COVER_COLORS, CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type FarmScene, type Geometry, type Mode, type ViewState } from './scene'
 
 type Rect = { x: number; y: number; w: number; h: number }
 type View = { radius: number; polar: number; azimuth: number; ty: number; offset: { x: number; y: number } }
@@ -24,7 +24,7 @@ type View = { radius: number; polar: number; azimuth: number; ty: number; offset
 const ESRI = (z: number, x: number, y: number) => `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`
 const TERRARIUM = (z: number, x: number, y: number) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`
 
-// ------------------------------------------------------------ utilidades
+// ------------------------------------------------------------ utilities
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const range = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
@@ -61,7 +61,7 @@ function makeFrame([w, s, e, n]: BBox): Frame {
   }
 }
 
-// ------------------------------------------------------------ teselas
+// ------------------------------------------------------------ tiles
 function loadImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image()
@@ -76,7 +76,7 @@ function loadImage(url: string) {
   })
 }
 
-/** Pega las teselas que cubren el marco. native=true conserva píxeles (DEM). */
+/** Pastes the tiles that cover the frame. native=true keeps pixels (DEM). */
 async function stitch(frame: Frame, z: number, urlFor: typeof ESRI, out: number, native: boolean) {
   const n = 2 ** z * 256
   const px0 = frame.mx0 * n, px1 = frame.mx1 * n, py0 = frame.my0 * n, py1 = frame.my1 * n
@@ -104,7 +104,7 @@ async function stitch(frame: Frame, z: number, urlFor: typeof ESRI, out: number,
   return { canvas, failed: res.filter((r) => r.status === 'rejected').length, total: jobs.length, px0, px1, py0, py1, ox: tx0 * 256, oy: ty0 * 256 }
 }
 
-/** Media móvil de radio 2 en una dirección: O(n) por pasada. */
+/** Moving average of radius 2 in one direction: O(n) per pass. */
 function boxBlur(h: Float32Array, W: number, H: number, dx: number, dy: number) {
   const o = new Float32Array(W * H)
   for (let y = 0; y < H; y++) {
@@ -126,12 +126,12 @@ type Ortho = { synthetic: boolean; canvas: HTMLCanvasElement }
 
 async function loadDEM(frame: Frame): Promise<Dem> {
   const st = await stitch(frame, frame.S < 2600 ? 15 : 14, TERRARIUM, 0, true)
-  if (st.failed === st.total) throw new Error('DEM sin teselas')
+  if (st.failed === st.total) throw new Error('DEM has no tiles')
   const { width: W, height: H } = st.canvas
   const px = st.canvas.getContext('2d')!.getImageData(0, 0, W, H).data
   let h = new Float32Array(W * H)
   for (let i = 0; i < W * H; i++) h[i] = px[i * 4] * 256 + px[i * 4 + 1] + px[i * 4 + 2] / 256 - 32768
-  // El DEM de origen es ~30 m y a z15 trae escalones: dos pasadas de caja 5×5.
+  // The source DEM is ~30 m and shows steps at z15: two 5×5 box passes.
   for (let pass = 0; pass < 2; pass++) h = boxBlur(boxBlur(h, W, H, 1, 0), W, H, 0, 1)
   return {
     synthetic: false,
@@ -151,14 +151,14 @@ function syntheticDEM(seed: number): Dem {
   return { synthetic: true, sample: (u, v) => 600 + waves.reduce((s, w) => s + Math.sin(u * w.kx * 3.1 + v * w.kz * 3.1 + w.p) * w.a, 0) }
 }
 async function loadOrtho(frame: Frame): Promise<Ortho> {
-  // ~1100 px de imagen real bastan para el bloque en pantalla: z16 en casi todas las
-  // fincas (≈16 teselas) y z17 solo en las pequeñas. La textura no pasa de 2048.
+  // ~1100 px of real image is enough for the on-screen block: z16 on almost all
+  // farms (≈16 tiles) and z17 only on small ones. The texture does not exceed 2048.
   const mPerPx = 156543.034 * Math.cos((frame.lat * Math.PI) / 180)
   const z = Math.max(13, Math.min(17, Math.round(Math.log2((mPerPx * 1100) / frame.S))))
   const native = frame.S / (mPerPx / 2 ** z)
   const out = Math.min(2048, Math.max(1024, 2 ** Math.ceil(Math.log2(native))))
   const st = await stitch(frame, z, ESRI, out, false)
-  if (st.failed > st.total * 0.3) throw new Error('ortofoto incompleta')
+  if (st.failed > st.total * 0.3) throw new Error('incomplete orthophoto')
   return { canvas: st.canvas, synthetic: false }
 }
 function syntheticOrtho(seed: number): Ortho {
@@ -180,7 +180,7 @@ function syntheticOrtho(seed: number): Ortho {
 type Sources = { frame: Frame; dem: Dem; ortho: Ortho }
 const sourceCache = new Map<string, Promise<Sources>>()
 
-/** Descarga relieve y ortofoto de la pieza (se puede llamar al pasar el ratón por la finca). */
+/** Downloads terrain and orthophoto for the tile (can be called when hovering over the farm). */
 export function prefetch(key: string, tile: BBox) {
   if (!sourceCache.has(key)) {
     const frame = makeFrame(tile)
@@ -226,11 +226,11 @@ function terrainMaterial(ortho: THREE.Texture, uniforms: Uniforms) {
         float own = mk.r;
         float glint = (1.0 - smoothstep(0.0, 0.022, abs(sc - edge))) * step(0.001, uSweep) * step(uSweep, 0.999) * own;
         float lum = dot(orthoC.rgb, vec3(0.2126, 0.7152, 0.0722));
-        // Satélite: la ortofoto manda; fuera de la finca se apaga, dentro se tiñe del cultivo.
+        // Satellite: the orthophoto leads; outside the farm it fades out, inside it is tinted with the crop.
         vec3 grey = mix(vec3(lum), orthoC.rgb, 0.4) * vec3(0.66, 0.70, 0.60);
         vec3 sat = mix(orthoC.rgb, grey, uFocus * (1.0 - own));
         sat = mix(sat, mix(sat, sat * crop.rgb * 2.2, 0.55), crop.a * own * uFocus);
-        // Maqueta: colores planos de cultivo sobre un "papel" que conserva la luz de la foto.
+        // Model: flat crop colours over a "paper" that keeps the light of the photo.
         vec3 paper = mix(vec3(0.16, 0.18, 0.11), vec3(0.50, 0.46, 0.33), smoothstep(0.02, 0.22, lum));
         vec3 maq = mix(paper, crop.rgb, crop.a * 0.94);
         maq *= 0.86 + 0.5 * clamp(lum - 0.08, -0.2, 0.3);
@@ -241,7 +241,7 @@ function terrainMaterial(ortho: THREE.Texture, uniforms: Uniforms) {
         col += vec3(1.0, 0.85, 0.5) * glint * 0.55;
         float cs = smoothstep(0.5, 0.78, cpFbm(vMapUv * 2.1 + vec2(uTime * 0.007, uTime * 0.003)));
         col *= 1.0 - cs * 0.2 * uShadowAmt;
-        // Relevo desde el mapa: al principio se ve exactamente la captura del lienzo de MapLibre.
+        // Hand-over from the map: at first exactly the MapLibre canvas snapshot is visible.
         col = mix(col, texture2D(tSnap, vMapUv).rgb, uSnap);
         diffuseColor.rgb *= col;
         vec3 unlitColor = diffuseColor.rgb;`)
@@ -263,7 +263,7 @@ function wallMaterial(uniforms: Uniforms) {
         uniform float uClay; uniform float uLit; varying float vDepthN; varying float vAlong;
         ${NOISE_GLSL}
         vec3 lin(vec3 c) { return pow(c, vec3(2.2)); }`)
-      // Perfil de suelo: horizonte A oscuro, B arcilloso (más oscuro cuanta más arcilla), margas y caliza.
+      // Soil profile: dark A horizon, clayey B (darker the more clay), marl and limestone.
       .replace('#include <color_fragment>', `
         float g = vDepthN + (cpNoise(vec2(vAlong * 0.018, vDepthN * 4.0)) - 0.5) * 0.06 + sin(vAlong * 0.011) * 0.012;
         vec3 cA = lin(vec3(0.27, 0.21, 0.15));
@@ -308,13 +308,13 @@ export type DioramaOptions = {
   onCardsIn?: (anchors: Anchors) => void
 }
 
-export class FincaDiorama {
+export class FarmDiorama {
   container: HTMLElement
   opts: DioramaOptions
   speed = 1
-  state: ViewState = { year: 2025, rotation: 'R1', profile: 'water_first', mode: 'satelite', exaggeration: 2 }
+  state: ViewState = { year: 2025, rotation: 'R1', profile: 'water_first', mode: 'satellite', exaggeration: 2 }
   private preferredExaggeration = 2
-  escena: Escena | null = null
+  farmScene: FarmScene | null = null
   synthetic = false
   leaders: SVGSVGElement
   pin: HTMLDivElement
@@ -340,7 +340,7 @@ export class FincaDiorama {
   private adapted = false
   private ro: ResizeObserver
   private textures: THREE.Texture[] = []
-  // pieza actual
+  // current tile
   private group: THREE.Group | null = null
   private frame!: Frame
   private terrain: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null = null
@@ -376,7 +376,7 @@ export class FincaDiorama {
     container.appendChild(this.bg)
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
-    // 1,5 basta para líneas nítidas; si la máquina va justa, se baja a 1 (ver adapt).
+    // 1.5 is enough for sharp lines; if the machine is struggling, it drops to 1 (see adapt).
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.renderer.toneMapping = THREE.NoToneMapping
@@ -417,12 +417,12 @@ export class FincaDiorama {
     this.resize()
   }
 
-  // -------------------------------------------------------- construcción
-  async load(escena: Escena) {
-    if (this.escena?.key === escena.key && this.group) return
-    const src = await prefetch(escena.key, escena.tile)
+  // -------------------------------------------------------- construction
+  async load(farmScene: FarmScene) {
+    if (this.farmScene?.key === farmScene.key && this.group) return
+    const src = await prefetch(farmScene.key, farmScene.tile)
     this.clear()
-    this.escena = escena
+    this.farmScene = farmScene
     this.frame = src.frame
     this.synthetic = src.dem.synthetic || src.ortho.synthetic
     const { frame } = this
@@ -449,7 +449,7 @@ export class FincaDiorama {
     this.uniforms.tCropA.value = this.cropTex[0]
     this.uniforms.tCropB.value = this.cropTex[1]
     this.front = 0
-    this.uniforms.uClay.value = clamp01(((escena.clay ?? 30) - 15) / 30)
+    this.uniforms.uClay.value = clamp01(((farmScene.clay ?? 30) - 15) / 30)
 
     this.group = new THREE.Group()
     this.scene.add(this.group)
@@ -472,7 +472,7 @@ export class FincaDiorama {
       }
     }
     for (let k = 0; k < base.length; k++) base[k] -= hMin
-    // En sierra (Ronda, Axarquía) ×2 desborda el bloque: el relieve exagerado no pasa del 20 % del lado.
+    // In mountains (Ronda, Axarquía) ×2 overflows the block: exaggerated relief does not exceed 20 % of the side.
     this.relief = hMax - hMin
     const E = Math.max(1, Math.min(this.preferredExaggeration, Math.round(((0.2 * S) / Math.max(this.relief, 1)) * 10) / 10))
     this.state.exaggeration = E
@@ -542,9 +542,9 @@ export class FincaDiorama {
     return { size, lum }
   }
 
-  /** Máscara RGBA: R finca, G resplandor de la linde, B lindes de las fincas vecinas. */
+  /** RGBA mask: R farm, G glow of the boundary, B boundaries of the neighbouring farms. */
   private buildMask() {
-    const size = this.maskSize, { frame } = this, e = this.escena!
+    const size = this.maskSize, { frame } = this, e = this.farmScene!
     const layer = (draw: (ctx: CanvasRenderingContext2D) => void) => {
       const c = document.createElement('canvas')
       c.width = c.height = size
@@ -580,7 +580,7 @@ export class FincaDiorama {
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
         const p = (y * size + x) * 4
-        const o = ((size - 1 - y) * size + x) * 4 // DataTexture: fila 0 = sur
+        const o = ((size - 1 - y) * size + x) * 4 // DataTexture: row 0 = south
         data[o] = own[p]
         data[o + 1] = glow[p]
         data[o + 2] = lines[p]
@@ -602,7 +602,7 @@ export class FincaDiorama {
     return this.ownMask[(Math.min(s - 1, Math.floor(v * s)) * s + Math.min(s - 1, Math.floor(u * s))) * 4] > 200
   }
 
-  /** Altura de mundo en (u,v) para el nivel de "levantado" actual. */
+  /** World height at (u,v) for the current "rise" level. */
   heightAt(u: number, v: number, rise = this.rise) {
     const N = this.N
     const x = clamp01(u) * N, y = clamp01(v) * N
@@ -614,7 +614,7 @@ export class FincaDiorama {
 
   private buildWalls() {
     const N = this.N, { frame } = this
-    // sur, este, norte, oeste (sentido horario visto desde arriba)
+    // south, east, north, west (clockwise seen from above)
     const edges: ((t: number) => [number, number])[] = [(t) => [t, 1], (t) => [1, 1 - t], (t) => [1 - t, 0], (t) => [0, t]]
     const count = edges.length * (N + 1) * 2
     const pos = new Float32Array(count * 3), nor = new Float32Array(count * 3)
@@ -661,7 +661,7 @@ export class FincaDiorama {
     const { frame } = this
     this.boundary = []
     const step = frame.S / 450
-    for (const poly of rings(this.escena!.geometry)) {
+    for (const poly of rings(this.farmScene!.geometry)) {
       const ring = poly[0]
       const pts: [number, number][] = []
       for (let i = 0; i < ring.length - 1; i++) {
@@ -680,7 +680,7 @@ export class FincaDiorama {
       const mk = (width: number, color: string, opacity: number) => {
         const g = new LineGeometry()
         g.setPositions(positions)
-        // Siempre encima: con el terreno plano del inicio, el test de profundidad la puntea.
+        // Always on top: with the flat terrain at the start, the depth test dots it.
         const m = new LineMaterial({ color: new THREE.Color(color), linewidth: width, transparent: true, opacity, depthTest: false, worldUnits: false })
         m.resolution.set(this.width, this.height)
         const l = new Line2(g, m)
@@ -691,7 +691,7 @@ export class FincaDiorama {
       }
       const glow = mk(10, '#E8B86A', 0.22)
       const core = mk(2.6, '#FFF1D2', 0.95)
-      // Cortina luminosa vertical a lo largo de la linde.
+      // Vertical luminous curtain along the boundary.
       const cnt = pts.length
       const ch = new Float32Array(cnt * 2)
       const cidx: number[] = []
@@ -716,9 +716,9 @@ export class FincaDiorama {
     }
   }
 
-  /** Arbolado: WorldCover dice cuánto (fincas vecinas "arbolado" y el % de la finca); la ortofoto, dónde. */
+  /** Trees: WorldCover says how many (neighbouring "tree cover" farms and the farm %); the orthophoto, where. */
   private buildTrees(lum: { size: number; lum: Float32Array } | null) {
-    const { frame } = this, S = frame.S, e = this.escena!
+    const { frame } = this, S = frame.S, e = this.farmScene!
     const mask = document.createElement('canvas')
     mask.width = mask.height = 512
     const mctx = mask.getContext('2d', { willReadFrequently: true })!
@@ -729,7 +729,7 @@ export class FincaDiorama {
       drawRings(mctx, frame, f.geometry, 512)
       mctx.fill('evenodd')
     }
-    const ownShare = clamp01(e.arbolado / 100)
+    const ownShare = clamp01(e.trees / 100)
     if (ownShare > 0) {
       mctx.fillStyle = `rgba(255,255,255,${ownShare})`
       mctx.beginPath()
@@ -749,7 +749,7 @@ export class FincaDiorama {
         if (prob <= 0 || r() > prob) continue
         let tu = u + ((r() - 0.5) * 0.6) / nx, tv = v + ((r() - 0.5) * 0.6) / nz
         if (lum) {
-          // Busca la copa (píxel más oscuro) dentro de la celda.
+          // Look for the canopy (darkest pixel) within the cell.
           const L = lum.size, x0 = Math.floor((gx / nx) * L), x1 = Math.floor(((gx + 1) / nx) * L)
           const y0 = Math.floor((gz / nz) * L), y1 = Math.floor(((gz + 1) / nz) * L)
           let min = 2, mx = 0, my = 0, sum = 0, cnt = 0
@@ -760,7 +760,7 @@ export class FincaDiorama {
               if (l < min) { min = l; mx = x; my = y }
             }
           }
-          // Solo donde hay una copa de verdad: mancha claramente más oscura que su entorno.
+          // Only where there is a real canopy: a patch clearly darker than its surroundings.
           if (cnt && (sum / cnt - min < 0.1 || min > 0.3)) continue
           if (cnt) { tu = (mx + 0.5) / L; tv = (my + 0.5) / L }
         }
@@ -783,7 +783,7 @@ export class FincaDiorama {
     this.trees = { mesh, list: trees, rad }
   }
 
-  /** Punto interior de la finca más cercano a su centro (el centroide puede caer fuera). */
+  /** Interior point of the farm closest to its centre (the centroid may fall outside). */
   private interiorCenter(): [number, number] {
     let sx = 0, sy = 0, n = 0
     const pts: [number, number][] = []
@@ -800,7 +800,7 @@ export class FincaDiorama {
     return pts.reduce((best, p) => (Math.hypot(p[0] - cu, p[1] - cv) < Math.hypot(best[0] - cu, best[1] - cv) ? p : best), pts[0])
   }
 
-  /** Cortijo esquemático (solo en modo maqueta): paredes encaladas, teja y cipreses. */
+  /** Schematic farmhouse (model mode only): whitewashed walls, tiles and cypresses. */
   private buildFarmstead() {
     const { frame } = this, S = frame.S
     const g = new THREE.Group()
@@ -836,10 +836,10 @@ export class FincaDiorama {
       c.castShadow = true
       g.add(c)
     }
-    // Junto a la linde, en el lado que mira a la cámara inicial (suroeste), hacia dentro.
+    // Next to the boundary, on the side facing the initial camera (south-west), inwards.
     const [cu, cv] = this.centerUV
     let best: [number, number] = [cu, cv], score = -Infinity
-    for (const [lon, lat] of rings(this.escena!.geometry)[0][0]) {
+    for (const [lon, lat] of rings(this.farmScene!.geometry)[0][0]) {
       const [u, v] = frame.uv(lon, lat)
       if (v - u * 0.6 > score) { score = v - u * 0.6; best = [u, v] }
     }
@@ -865,7 +865,7 @@ export class FincaDiorama {
     this.group!.add(this.catcher)
   }
 
-  /** Puntos del terreno a los que apuntan las tarjetas: el más bajo (agua), el más alto (riesgo) y el centro. */
+  /** Terrain points the cards point to: the lowest (water), the highest (risk) and the centre. */
   private computeAnchors() {
     let lo = { h: Infinity, u: -1, v: -1 }, hi = { h: -Infinity, u: -1, v: -1 }
     for (let j = 2; j < 120; j++) {
@@ -886,7 +886,7 @@ export class FincaDiorama {
     }
   }
 
-  // -------------------------------------------------------- animación de "levantado"
+  // -------------------------------------------------------- "rise" animation
   setRise(rise: number, wall = rise) {
     if (!this.terrain) return
     if (rise === this.rise && wall === this.wall && !this.dirtyRise) return
@@ -895,8 +895,8 @@ export class FincaDiorama {
     const E = this.state.exaggeration
     const attr = this.terrain.geometry.attributes.position as THREE.BufferAttribute
     const pos = attr.array as Float32Array
-    // Normales calculadas una vez con el relieve completo: durante el levantado la luz aún
-    // se está encendiendo y no se nota, y se ahorran ~5 ms de CPU por fotograma.
+    // Normals computed once with the full relief: during the rise the light is still
+    // turning on and it goes unnoticed, and ~5 ms of CPU per frame are saved.
     if (this.normalsE !== E) {
       for (let k = 0; k < this.base.length; k++) pos[k * 3 + 1] = this.base[k] * E
       this.terrain.geometry.computeVertexNormals()
@@ -970,9 +970,9 @@ export class FincaDiorama {
     mesh.visible = p > 0.001
   }
 
-  // -------------------------------------------------------- cultivos por año
+  // -------------------------------------------------------- crops by year
   private drawCrops(canvas: HTMLCanvasElement, year: number) {
-    const ctx = canvas.getContext('2d')!, size = canvas.width, { frame } = this, e = this.escena!
+    const ctx = canvas.getContext('2d')!, size = canvas.width, { frame } = this, e = this.farmScene!
     ctx.clearRect(0, 0, size, size)
     const histIdx = Math.min(5, Math.max(0, year - 2020))
     for (const f of e.neighbors) {
@@ -1020,7 +1020,7 @@ export class FincaDiorama {
     return this.state.year >= FIRST_SCENARIO_YEAR && this.terrain ? this.paint(this.state.year, false) : Promise.resolve()
   }
   private playToken = 0
-  /** Recorre las campañas hasta 2031 (desde 2020 si ya está al final); onEnd al terminar sin interrupción. */
+  /** Runs through the campaigns up to 2031 (from 2020 if already at the end); onEnd when it finishes uninterrupted. */
   async play(from: number | undefined, onEnd: () => void) {
     const token = ++this.playToken
     let y = from ?? (this.state.year >= LAST_YEAR ? 2020 : this.state.year + 1)
@@ -1034,7 +1034,7 @@ export class FincaDiorama {
   stopPlay() {
     this.playToken++
   }
-  /** Conecta la capa de tarjetas: recibe los anclajes cada fotograma y al entrar. Devuelve la desconexión. */
+  /** Connects the card layer: receives the anchors every frame and on entry. Returns the disconnect function. */
   attachOverlay(o: { onFrame: (a: Anchors) => void; onCardsIn: (a: Anchors) => void; label: string }) {
     this.opts.onFrame = o.onFrame
     this.opts.onCardsIn = o.onCardsIn
@@ -1051,7 +1051,7 @@ export class FincaDiorama {
     this.emit()
   }
   setMode(mode: Mode) {
-    const target = mode === 'maqueta' ? 1 : 0
+    const target = mode === 'model' ? 1 : 0
     this.state.mode = mode
     this.emit()
     if (!this.terrain) {
@@ -1082,7 +1082,7 @@ export class FincaDiorama {
     this.opts.onChange?.({ ...this.state })
   }
 
-  // -------------------------------------------------------- cámara
+  // -------------------------------------------------------- camera
   resize() {
     const w = this.container.clientWidth || window.innerWidth, h = this.container.clientHeight || window.innerHeight
     this.width = w
@@ -1103,13 +1103,13 @@ export class FincaDiorama {
     this.camera.setViewOffset(w, h, -this.viewOffset.x, -this.viewOffset.y, w, h)
     this.camera.updateProjectionMatrix()
   }
-  /** Hueco libre para el bloque según el layout de tarjetas. */
+  /** Free space for the block according to the card layout. */
   private framePadding() {
     const w = this.width, h = this.height
     if (w < 760) return { top: 150, bottom: Math.min(330, h * 0.42), left: 10, right: 10 }
     return { top: 96, bottom: 168, left: w < 1100 ? 230 : 270, right: w < 1100 ? 230 : 270 }
   }
-  /** Cámara cenital que encaja la pieza en un rectángulo de pantalla (el de la finca en el mapa). */
+  /** Top-down camera that fits the tile into a screen rectangle (that of the farm on the map). */
   private topDownFor(rect: Rect): View {
     const fovR = THREE.MathUtils.degToRad(this.camera.fov)
     const H = (this.frame.Sz * this.height) / (2 * Math.tan(fovR / 2) * rect.h)
@@ -1149,13 +1149,13 @@ export class FincaDiorama {
     const sp = new THREE.Spherical().setFromVector3(this.camera.position.clone().sub(this.controls.target))
     return { radius: sp.radius, polar: sp.phi, azimuth: sp.theta, ty: this.controls.target.y, offset: { ...this.viewOffset } }
   }
-  /** Evita la vuelta larga si la cámara ha girado más de media vuelta. */
+  /** Avoids the long way round if the camera has turned more than half a turn. */
   private unwrap(from: View, to: View) {
     while (from.azimuth - to.azimuth > Math.PI) from.azimuth -= Math.PI * 2
     while (to.azimuth - from.azimuth > Math.PI) from.azimuth += Math.PI * 2
   }
 
-  // -------------------------------------------------------- bucle
+  // -------------------------------------------------------- loop
   tween(ms: number, fn: (k: number) => void) {
     return new Promise<void>((resolve) => {
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -1186,12 +1186,12 @@ export class FincaDiorama {
       this.opts.onFrame?.(a)
     }
     this.adapt(now)
-    // Solo se sigue pintando mientras algo cambia (animación o inercia de la cámara), y
-    // un par de segundos más para las sombras de nubes; en reposo no gasta GPU.
+    // It keeps painting only while something changes (animation or camera inertia), and
+    // a couple of seconds more for the cloud shadows; at rest it uses no GPU.
     if (this.tweens.length || moving || this.dragging) this.lastBusy = now
     if (now - this.lastBusy < 2500) this.raf = requestAnimationFrame(this.loop)
   }
-  /** Si los primeros fotogramas van lentos, baja resolución y sombras una vez. */
+  /** If the first frames are slow, resolution and shadows drop once. */
   private adapt(now: number) {
     if (this.adapted) return
     const st = (this.perf ??= { n: 0, t0: now })
@@ -1211,11 +1211,11 @@ export class FincaDiorama {
     const p = new THREE.Vector3(x, this.heightAt(u, v) + yExtra, z).project(this.camera)
     return { x: (p.x * 0.5 + 0.5) * this.width, y: (-p.y * 0.5 + 0.5) * this.height, behind: p.z > 1 }
   }
-  /** Posiciones en pantalla de los anclajes (las usa el panel de tarjetas). */
+  /** Screen positions of the anchors (used by the card panel). */
   anchors(): Anchors | null {
     if (!this.terrain) return null
     const a = this.anchorsUV
-    // Suelo: centro de la pared más de cara a la cámara, a un tercio de profundidad.
+    // Soil: centre of the wall most facing the camera, at a third of the depth.
     const cam = this.camera.position
     const walls: [number, number, number, number][] = [[0.5, 1, 0, 1], [1, 0.5, 1, 0], [0.5, 0, 0, -1], [0, 0.5, -1, 0]]
     const best = walls.reduce((b, w) => (cam.x * w[2] + cam.z * w[3] > cam.x * b[2] + cam.z * b[3] ? w : b))
@@ -1230,12 +1230,12 @@ export class FincaDiorama {
     }
   }
 
-  // -------------------------------------------------------- entrada / salida
+  // -------------------------------------------------------- entry / exit
   /**
-   * Entra en la finca.
-   * fromRect: rectángulo de pantalla que ocupaba la pieza en el mapa (vista cenital).
-   * snapshot: captura del mapa en ese rectángulo; el 3D arranca idéntico al mapa.
-   * traced:   la linde ya estaba dibujada en el mapa; no se vuelve a trazar.
+   * Enters the farm.
+   * fromRect: screen rectangle the tile occupied on the map (top-down view).
+   * snapshot: snapshot of the map in that rectangle; the 3D starts identical to the map.
+   * traced:   the boundary was already drawn on the map; it is not traced again.
    */
   async enter(o: { fromRect?: Rect; snapshot?: HTMLCanvasElement | null; traced?: boolean; duration?: number } = {}) {
     if (!this.terrain) return
@@ -1257,10 +1257,10 @@ export class FincaDiorama {
     this.uniforms.tSnap.value = this.snapTex ?? this.blank
     this.uniforms.uSnap.value = this.snapTex ? 1 : 0
     this.catcher.material.opacity = 0
-    const maqueta = this.state.mode === 'maqueta'
-    this.uniforms.uMode.value = maqueta ? 1 : 0
-    this.farm.group.visible = maqueta
-    this.farm.group.scale.setScalar(maqueta ? 1 : 0.001)
+    const isModel = this.state.mode === 'model'
+    this.uniforms.uMode.value = isModel ? 1 : 0
+    this.farm.group.visible = isModel
+    this.farm.group.scale.setScalar(isModel ? 1 : 0.001)
     this.setCamera(from)
     this.container.classList.remove('cards-in')
     this.bg.style.opacity = o.fromRect ? '0' : '1'
@@ -1285,7 +1285,7 @@ export class FincaDiorama {
     this.controls.enabled = true
     this.emit()
   }
-  /** Vuelve a la vista cenital plana (para devolver el control al mapa). */
+  /** Returns to the flat top-down view (to hand control back to the map). */
   async exit(o: { toRect?: Rect; duration?: number } = {}) {
     if (!this.terrain) return
     const from = this.currentView()

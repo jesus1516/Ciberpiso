@@ -25,14 +25,14 @@ body {
   font-family: var(--font-sans);
 }
 
-.finca-popup .maplibregl-popup-content {
+.farm-popup .maplibregl-popup-content {
   padding: 6px 10px;
   font-size: 12px;
   white-space: pre-line;
   pointer-events: none;
 }
 
-.finca-popup .maplibregl-popup-tip {
+.farm-popup .maplibregl-popup-tip {
   display: none;
 }
 

@@ -1,6 +1,6 @@
 import type { SoilType } from './soil'
 
-export type Suelo = {
+export type SoilData = {
   arcilla_pct: number | null
   arena_pct: number | null
   limo_pct: number | null
@@ -14,7 +14,7 @@ export type Suelo = {
   pct_superficie_con_dato: number | null
 }
 
-export type Fenologia = {
+export type Phenology = {
   campana: number
   ndvi_media: number | null
   ndvi_max: number | null
@@ -26,7 +26,7 @@ export type Fenologia = {
   clase_estimada: string | null
 }
 
-export type FincaDetalle = {
+export type FarmDetail = {
   recintos: number
   celda: number
   altitud_m: number | null
@@ -37,12 +37,12 @@ export type FincaDetalle = {
   campanas: Record<'invierno' | 'verano' | 'barbecho' | 'arables', number | null>
   ndvi_jun_ago_max: number | null
   candidata: number
-  suelo: Suelo | null
-  fenologia: Fenologia[]
+  suelo: SoilData | null
+  fenologia: Phenology[]
   ndvi: [string, number | null][]
 }
 
-export type CampanaClima = {
+export type CampaignClimate = {
   campana: number
   lluvia_mm: number
   lluvia_oct_may_mm: number
@@ -59,7 +59,7 @@ export type CampanaClima = {
   gwetroot_mar_may_anomalia: number | null
 }
 
-export type Celda = {
+export type ClimateCell = {
   resumen: {
     lat: number
     lon: number
@@ -73,15 +73,15 @@ export type Celda = {
     dias_calor_jul_ago_media: number
     dias_helada_media: number
   }
-  campanas: CampanaClima[]
+  campanas: CampaignClimate[]
 }
 
-export type Precio = { producto: string; fuente: string; serie: [number, number][] }
-export type Comun = { celdas: Record<string, Celda>; precios: Record<string, Precio> }
+export type Price = { producto: string; fuente: string; serie: [number, number][] }
+export type Common = { celdas: Record<string, ClimateCell>; precios: Record<string, Price> }
 
 const DATA = `${import.meta.env.BASE_URL}data`
-const municipios = new Map<number, Promise<Record<string, FincaDetalle>>>()
-let comun: Promise<Comun> | null = null
+const municipalities = new Map<number, Promise<Record<string, FarmDetail>>>()
+let common: Promise<Common> | null = null
 
 async function gunzipJson(res: Response) {
   const bytes = new Uint8Array(await res.arrayBuffer())
@@ -90,46 +90,46 @@ async function gunzipJson(res: Response) {
   return JSON.parse(await new Response(gzipped ? stream.pipeThrough(new DecompressionStream('gzip')) : stream).text())
 }
 
-function loadDetalleMunicipio(mun: number) {
-  if (!municipios.has(mun)) {
+function loadDetailMunicipality(mun: number) {
+  if (!municipalities.has(mun)) {
     const request = fetch(`${DATA}/detalle/${mun}.json.gz`).then((res) => {
-      if (!res.ok) throw new Error(`detalle ${mun} ${res.status}`)
+      if (!res.ok) throw new Error(`detail ${mun} ${res.status}`)
       return gunzipJson(res)
     })
-    request.catch(() => municipios.delete(mun))
-    municipios.set(mun, request)
+    request.catch(() => municipalities.delete(mun))
+    municipalities.set(mun, request)
   }
-  return municipios.get(mun)!
+  return municipalities.get(mun)!
 }
 
-export function loadComun(prov = 29) {
-  if (!comun) {
-    comun = fetch(`${DATA}/comun_${prov}.json`).then((res) => {
-      if (!res.ok) throw new Error(`comun ${res.status}`)
+export function loadCommon(prov = 29) {
+  if (!common) {
+    common = fetch(`${DATA}/comun_${prov}.json`).then((res) => {
+      if (!res.ok) throw new Error(`common ${res.status}`)
       return res.json()
     })
-    comun.catch(() => (comun = null))
+    common.catch(() => (common = null))
   }
-  return comun
+  return common
 }
 
-export async function loadDetalles(fincas: { id: number; mun: number }[]) {
-  const out: Record<number, FincaDetalle> = {}
+export async function loadDetails(farms: { id: number; mun: number }[]) {
+  const out: Record<number, FarmDetail> = {}
   await Promise.all(
-    fincas.map(async ({ id, mun }) => {
-      const data = await loadDetalleMunicipio(mun)
+    farms.map(async ({ id, mun }) => {
+      const data = await loadDetailMunicipality(mun)
       if (data[id]) out[id] = data[id]
     }),
   )
   return out
 }
 
-export function latestPrice(p: Precio | undefined) {
+export function latestPrice(p: Price | undefined) {
   const last = p?.serie[p.serie.length - 1]
   return last ? { year: last[0], eurT: last[1] } : null
 }
 
-export function soilTexture(s: Suelo | null): SoilType | null {
+export function soilTexture(s: SoilData | null): SoilType | null {
   if (!s || s.arena_pct === null || s.arcilla_pct === null) return null
   if (s.arcilla_pct >= 35) return 'clay'
   if (s.arena_pct >= 52 && s.arcilla_pct < 20) return 'sandy'
@@ -138,7 +138,7 @@ export function soilTexture(s: Suelo | null): SoilType | null {
 
 const CLASS_TO_CROP: Record<string, string> = { herbaceo_invierno: 'wheat', herbaceo_verano: 'sunflower', permanente: 'olive' }
 
-export function observedCrop(d: FincaDetalle | undefined) {
+export function observedCrop(d: FarmDetail | undefined) {
   const last = d?.fenologia.filter((f) => f.clase_estimada && f.clase_estimada !== 'sin_datos').at(-1)
   if (!last?.clase_estimada) return null
   const crop = CLASS_TO_CROP[last.clase_estimada]

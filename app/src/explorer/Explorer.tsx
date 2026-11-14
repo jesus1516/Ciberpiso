@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
-import { getFinca } from '../lib/fincas'
+import { getFarm } from '../lib/farms'
 import { useStore } from '../store'
 import { ExplorerController } from './controller'
-import { FincaView } from './FincaView'
+import { FarmView } from './FarmView'
 import { useExplorer, type Hover, type Level } from './state'
-import { APT, DISCLAIMER, NOMBRE_COBERTURA, fmt } from './textos'
+import { APT, DISCLAIMER, COVER_NAME, fmt } from './texts'
 import './explorer.css'
 
 const DIRECTOR = new URLSearchParams(location.search).has('director')
@@ -20,48 +20,48 @@ function Metric({ value, label }: { value: string; label: string }) {
 
 function Tooltip({ hover }: { hover: Hover | null }) {
   let body = null
-  if (hover?.kind === 'provincia') {
+  if (hover?.kind === 'province') {
     const p = hover.p
     body = (
       <>
-        <div className="k">Andalucía · provincia</div>
+        <div className="k">Andalucía · province</div>
         <h3>{p.nombre}</h3>
         <div className="m">
-          <Metric value={fmt(p.fincas)} label="fincas SIGPAC" />
-          <Metric value={`${fmt(p.pct_cultivo, 1)} %`} label="de cultivo" />
-          <Metric value={fmt(p.candidatas)} label="candidatas" />
+          <Metric value={fmt(p.fincas)} label="SIGPAC farms" />
+          <Metric value={`${fmt(p.pct_cultivo, 1)} %`} label="cropland" />
+          <Metric value={fmt(p.candidatas)} label="candidates" />
         </div>
-        <div className="a">{p.id === '29' ? 'Clic para entrar en Málaga →' : 'Recorrido aún no preparado'}</div>
+        <div className="a">{p.id === '29' ? 'Click to enter Málaga →' : 'Tour not available yet'}</div>
       </>
     )
-  } else if (hover?.kind === 'municipio') {
+  } else if (hover?.kind === 'municipality') {
     const p = hover.p
     body = (
       <>
-        <div className="k">Málaga · municipio</div>
+        <div className="k">Málaga · municipality</div>
         <h3>{p.nombre}</h3>
         <div className="m">
-          <Metric value={fmt(p.fincas)} label="fincas" />
-          <Metric value={`${fmt(p.pct_cultivo, 1)} %`} label="de cultivo" />
-          <Metric value={fmt(p.candidatas)} label="candidatas" />
+          <Metric value={fmt(p.fincas)} label="farms" />
+          <Metric value={`${fmt(p.pct_cultivo, 1)} %`} label="cropland" />
+          <Metric value={fmt(p.candidatas)} label="candidates" />
         </div>
-        <div className="a">Lluvia {fmt(p.lluvia_mm)} mm · déficit {fmt(p.deficit_mm)} mm · clic para ver sus fincas →</div>
+        <div className="a">Rain {fmt(p.lluvia_mm)} mm · deficit {fmt(p.deficit_mm)} mm · click to see its farms →</div>
       </>
     )
-  } else if (hover?.kind === 'finca') {
+  } else if (hover?.kind === 'farm') {
     const p = hover.p
     const blocked = p.apt === 'urbano' || p.apt === 'agua' || p.apt === 'publico'
     body = (
       <>
-        <div className="k">{p.cand ? '★ Candidata del proyecto · ' : 'Finca · '}SIGPAC {p.pid}</div>
+        <div className="k">{p.cand ? '★ Project candidate · ' : 'Farm · '}SIGPAC {p.pid}</div>
         <h3>{fmt(p.ha, 1)} ha</h3>
         <div className="m">
-          <Metric value={`${fmt(p.slope, 1)} %`} label="pendiente" />
-          <Metric value={`${fmt(p.alt)} m`} label="altitud" />
-          <Metric value={NOMBRE_COBERTURA[p.cover ?? ''] ?? '—'} label="cobertura" />
+          <Metric value={`${fmt(p.slope, 1)} %`} label="slope" />
+          <Metric value={`${fmt(p.alt)} m`} label="altitude" />
+          <Metric value={COVER_NAME[p.cover ?? ''] ?? '—'} label="land cover" />
         </div>
         <div className={`a ${blocked ? 'no' : p.apt ? 'warn' : ''}`}>
-          {blocked ? `${APT[p.apt!]}: no se puede analizar` : p.apt ? `⚠ ${APT[p.apt]}: análisis orientativo` : 'Clic para verla en 3D →'}
+          {blocked ? `${APT[p.apt!]}: cannot be analysed` : p.apt ? `⚠ ${APT[p.apt]}: indicative analysis` : 'Click to see it in 3D →'}
         </div>
       </>
     )
@@ -76,61 +76,61 @@ function Tooltip({ hover }: { hover: Hover | null }) {
 function Narrative() {
   const level = useExplorer((s) => s.level)
   const totals = useExplorer((s) => s.totals)
-  const municipio = useExplorer((s) => s.municipio)
-  const fincas = useExplorer((s) => s.fincasCount)
+  const municipality = useExplorer((s) => s.municipality)
+  const farms = useExplorer((s) => s.farmsCount)
   if (level === 3) return null
   return (
     <section className="narrative" aria-live="polite">
       {level === 0 && (
         <div className="scene" key="l0">
-          <p className="eyebrow">Paso 1 de 4 · Andalucía</p>
-          <h1>¿Dónde está tu finca?</h1>
-          <p>Elige una provincia. El recorrido completo, con fincas y rotaciones, está preparado para Málaga.</p>
-          <div className="fact"><strong>{fmt(totals.andalucia)}</strong><span>fincas SIGPAC<br />en las 8 provincias</span></div>
-          <div className="hint">Haz clic en Málaga</div>
+          <p className="eyebrow">Step 1 of 4 · Andalucía</p>
+          <h1>Where is your farm?</h1>
+          <p>Pick a province. The full tour, with farms and rotations, is available for Málaga.</p>
+          <div className="fact"><strong>{fmt(totals.andalucia)}</strong><span>SIGPAC farms<br />in the 8 provinces</span></div>
+          <div className="hint">Click on Málaga</div>
         </div>
       )}
       {level === 1 && (
         <div className="scene" key="l1">
-          <p className="eyebrow">Paso 2 de 4 · Málaga</p>
-          <h1>Elige el municipio</h1>
-          <p>El color indica qué parte de sus fincas son de cultivo según el satélite (ESA WorldCover).</p>
-          <div className="legend-scale"><div className="bar" /><div className="ticks"><span>0 %</span><span>fincas de cultivo</span><span>{fmt(totals.maxCultivo)} %</span></div></div>
-          <div className="fact"><strong>{fmt(totals.malaga)}</strong><span>fincas en<br />{totals.municipios} municipios</span></div>
-          <div className="hint">Haz clic en un municipio</div>
+          <p className="eyebrow">Step 2 of 4 · Málaga</p>
+          <h1>Choose the municipality</h1>
+          <p>The colour shows what share of its farms is cropland according to the satellite (ESA WorldCover).</p>
+          <div className="legend-scale"><div className="bar" /><div className="ticks"><span>0 %</span><span>cropland farms</span><span>{fmt(totals.maxCropland)} %</span></div></div>
+          <div className="fact"><strong>{fmt(totals.malaga)}</strong><span>farms in<br />{totals.municipalities} municipalities</span></div>
+          <div className="hint">Click on a municipality</div>
         </div>
       )}
-      {level === 2 && municipio && (
-        <div className="scene" key={`l2-${municipio.mun}`}>
-          <p className="eyebrow">Paso 3 de 4 · Málaga</p>
-          <h1>{municipio.nombre}</h1>
+      {level === 2 && municipality && (
+        <div className="scene" key={`l2-${municipality.mun}`}>
+          <p className="eyebrow">Step 3 of 4 · Málaga</p>
+          <h1>{municipality.nombre}</h1>
           <p>
-            {fincas === null ? 'Cargando sus fincas…' : `${fmt(fincas)} fincas SIGPAC.`} Acerca el mapa y elige una
-            {municipio.candidatas ? `; las ${municipio.candidatas} doradas son candidatas del proyecto` : ''}.
+            {farms === null ? 'Loading its farms…' : `${fmt(farms)} SIGPAC farms.`} Zoom in and pick one
+            {municipality.candidatas ? `; the ${municipality.candidatas} gold ones are project candidates` : ''}.
           </p>
           <ul className="chips">
-            <li><i className="sw-ok" />Cultivable</li>
-            {municipio.candidatas > 0 && <li><i className="sw-cand" />Candidata</li>}
-            <li><i className="sw-lim" />Limitada (con aviso)</li>
-            <li><i className="sw-no" />No cultivable</li>
+            <li><i className="sw-ok" />Farmland</li>
+            {municipality.candidatas > 0 && <li><i className="sw-cand" />Candidate</li>}
+            <li><i className="sw-lim" />Limited (with warning)</li>
+            <li><i className="sw-no" />Not farmland</li>
           </ul>
-          <div className="hint">Clic en una finca para verla en 3D</div>
+          <div className="hint">Click on a farm to see it in 3D</div>
         </div>
       )}
     </section>
   )
 }
 
-const LEVEL_NAMES = ['Andalucía', 'Málaga', '', 'Finca']
+const LEVEL_NAMES = ['Andalucía', 'Málaga', '', 'Farm']
 
 function Crumbs({ go }: { go: (l: Level) => void }) {
   const level = useExplorer((s) => s.level)
   const phase = useExplorer((s) => s.phase)
-  const municipio = useExplorer((s) => s.municipio)
+  const municipality = useExplorer((s) => s.municipality)
   const sel = useExplorer((s) => s.sel)
-  const names = [LEVEL_NAMES[0], LEVEL_NAMES[1], municipio?.nombre ?? '', sel ? `Finca ${sel.finca.properties.pol}-${sel.finca.properties.par}` : 'Finca']
+  const names = [LEVEL_NAMES[0], LEVEL_NAMES[1], municipality?.nombre ?? '', sel ? `Farm ${sel.farm.properties.pol}-${sel.farm.properties.par}` : 'Farm']
   return (
-    <nav className="crumbs" aria-label="Ruta">
+    <nav className="crumbs" aria-label="Breadcrumb">
       {names.slice(0, level + 1).map((name, l) => (
         <span key={l}>
           {l > 0 && <i>/</i>}
@@ -147,13 +147,13 @@ function Director({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> }
   const speed = useExplorer((s) => s.speed)
   return (
     <aside className="director glass">
-      <header><b>Director · pruebas</b></header>
+      <header><b>Director · testing</b></header>
       <div className="row">
         {[1, 0.5, 0.25].map((v) => (
           <button key={v} className="d" aria-pressed={speed === v} onClick={() => ctrl.current?.setSpeed(v)}>{v}×</button>
         ))}
       </div>
-      <p>Quita <code>?director</code> de la URL para ocultar este panel.</p>
+      <p>Remove <code>?director</code> from the URL to hide this panel.</p>
     </aside>
   )
 }
@@ -175,7 +175,7 @@ export function Explorer() {
   useEffect(() => {
     const c = new ExplorerController(app.current!, mapEl.current!, dioEl.current!)
     ctrl.current = c
-    if (DIRECTOR) Object.assign(window, { __xp: { ctrl: c, state: useExplorer, getFinca } })
+    if (DIRECTOR) Object.assign(window, { __xp: { ctrl: c, state: useExplorer, getFarm } })
     const onResize = () => c.resize()
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape' || (e.target as HTMLElement).closest('input, textarea, select')) return
@@ -196,30 +196,30 @@ export function Explorer() {
 
   return (
     <div ref={app} className="xp" data-level={level} data-phase={phase}>
-      <div ref={mapEl} className="xp-map" role="application" aria-label="Mapa de Andalucía y Málaga" />
+      <div ref={mapEl} className="xp-map" role="application" aria-label="Map of Andalucía and Málaga" />
       <div className="scrim" />
       <header className="masthead">
         <img src={`${import.meta.env.BASE_URL}brand/ciberpiso-icon.svg`} alt="" width={36} height={36} />
-        <div><b>Ciberpiso</b><span>Del territorio a la parcela</span></div>
-        <button className="sources" onClick={() => setAboutOpen(true)}>Fuentes</button>
+        <div><b>Ciberpiso</b><span>From territory to farm</span></div>
+        <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>
       </header>
       <Narrative />
       <div ref={dioEl} />
-      <FincaView ctrl={ctrl} />
+      <FarmView ctrl={ctrl} />
       <Crumbs go={go} />
       <button className="back" disabled={phase !== 'idle' || level === 0} onClick={() => go((level - 1) as Level)}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="m9 6-6 6 6 6M3 12h18" /></svg>
-        Volver <kbd>Esc</kbd>
+        Back <kbd>Esc</kbd>
       </button>
       {level < 3 && <p className="disclaimer">{DISCLAIMER}</p>}
       <Tooltip hover={hover} />
       <div className={`toast glass ${toast ? 'visible' : ''} ${toast?.kind ?? ''}`} role="status">
         {toast && (<><strong>{toast.title}</strong><p>{toast.body}</p></>)}
       </div>
-      <div className={`prep glass ${preparing ? 'visible' : ''}`} role="status"><i />{level >= 2 || sel ? 'Levantando el terreno…' : 'Cargando las fincas…'}</div>
+      <div className={`prep glass ${preparing ? 'visible' : ''}`} role="status"><i />{level >= 2 || sel ? 'Raising the terrain…' : 'Loading the farms…'}</div>
       {DIRECTOR && <Director ctrl={ctrl} />}
       <div className={`loading ${phase !== 'loading' ? 'done' : ''}`}>
-        <div><b>Ciberpiso</b><span>{error ?? 'Trazando el territorio'}</span></div>
+        <div><b>Ciberpiso</b><span>{error ?? 'Tracing the territory'}</span></div>
       </div>
     </div>
   )
