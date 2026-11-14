@@ -1,15 +1,15 @@
-// Capa de nubes de las transiciones de escala (Andalucía → Málaga y Málaga → municipio).
-// Un lienzo WebGL transparente sobre el mapa: la cámara atraviesa capas de nubes fBm
-// repartidas en profundidad. A mitad de camino tapan la pantalla (ahí el mapa cambia de
-// capas sin que se note) y después se abren como un túnel. Solo se pinta mientras dura.
+// Cloud layer for the scale transitions (Andalucía → Málaga and Málaga → municipality).
+// A transparent WebGL canvas over the map: the camera flies through fBm cloud layers
+// spread in depth. Halfway they cover the screen (the map swaps layers unnoticed)
+// and then open up like a tunnel. It is only drawn while it lasts.
 import * as THREE from 'three'
 
 export type CloudVariant = 'clouds' | 'mist'
 
 const VARIANTS: Record<CloudVariant, { coverage: number; ring: number; veil: number; opacity: number; duration: number }> = {
-  // Andalucía → Málaga: banco de nubes completo, blanqueo total a mitad de camino.
+  // Andalucía → Málaga: full cloud bank, total whiteout halfway.
   clouds: { coverage: 0.64, ring: 0, veil: 0.96, opacity: 1, duration: 2900 },
-  // Málaga → municipio: bruma baja que solo pasa por los bordes, sin blanqueo.
+  // Málaga → municipality: low mist that only passes along the edges, no whiteout.
   mist: { coverage: 0.8, ring: 1, veil: 0.2, opacity: 0.8, duration: 2100 },
 }
 
@@ -39,7 +39,7 @@ vec2 u = f * f * (3.0 - 2.0 * f);
 return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
   }
   const mat2 ROT = mat2(0.8, 0.6, -0.6, 0.8);
-  // fBm de 5 octavas que devuelve también las 3 primeras (se reutilizan para la luz).
+  // 5-octave fBm that also returns the first 3 (reused for lighting).
   float fbm(vec2 p, out float coarse) {
 float v = 0.0, a = 0.5;
 for (int i = 0; i < 5; i++) {
@@ -48,7 +48,7 @@ for (int i = 0; i < 5; i++) {
 }
 return v;
   }
-  // Versión corta para el sombreado: el detalle fino no cambia la luz.
+  // Short version for shading: fine detail does not change the light.
   float fbm3(vec2 p) {
 float v = 0.0, a = 0.5;
 for (int i = 0; i < 3; i++) { v += a * noise(p); p = ROT * p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
@@ -79,15 +79,15 @@ for (int i = N - 1; i >= 0; i--) {
   float bank = 1.0 - smoothstep(0.06, 0.2, abs(z - 0.52));
   float edgeOnly = smoothstep(0.25, 0.85, r);
   float mask = mix(mix(edgeOnly, 1.0, bank), edgeOnly, uRing);
-  // Tras el banco: hueco central fijo en la capa, que al acercarse crece en pantalla
-  // y abre las nubes hacia los bordes (efecto túnel).
+  // After the bank: a fixed central gap in the layer which, as it gets closer, grows on screen
+  // and opens the clouds towards the edges (tunnel effect).
   float after = smoothstep(0.58, 0.64, z) * (1.0 - uRing);
   float tunnel = smoothstep(0.02, 0.07, r * dd);
   mask = mix(mask, tunnel, after);
   float cov = uCoverage * mix(0.62, 1.0, max(bank, after * 0.9) * (1.0 - uRing));
   float a = smoothstep(1.0 - cov, 1.0 - cov + 0.24, n) * w * mask;
   if (a < 0.002) continue;
-  // Luz de arriba a la izquierda: si hay más nube hacia el sol, este punto queda en sombra.
+  // Light from the top left: if there is more cloud towards the sun, this point is in shadow.
   float n2 = fbm3(p + vec2(-0.05, 0.06));
   float shade = clamp(0.7 + (coarse - n2) * 5.5, 0.0, 1.0);
   shade *= 1.0 - 0.18 * smoothstep(0.55, 0.95, n);
@@ -106,13 +106,13 @@ gl_FragColor = vec4(C / max(A, 1e-4), A);
 export type PlayOptions = {
   variant?: CloudVariant
   duration?: number
-  /** true = subir (volver atrás) */
+  /** true = go up (go back) */
   reverse?: boolean
-  /** progreso lineal 0..1 del tiempo, cada fotograma */
+  /** linear progress 0..1 of the time, every frame */
   onProgress?: (t: number) => void
-  /** una vez, cuando la pantalla está tapada */
+  /** once, when the screen is covered */
   onCover?: () => void
-  /** multiplicador de cámara lenta (1 = normal) */
+  /** slow-motion multiplier (1 = normal) */
   speed?: number
   seed?: number
 }
@@ -144,7 +144,7 @@ export class CloudLayer {
     parent.appendChild(this.canvas)
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false, premultipliedAlpha: false })
     this.renderer.setClearColor(0x000000, 0)
-    // Las nubes son blandas: media resolución basta y deja la GPU libre para el mapa.
+    // The clouds are soft: half resolution is enough and leaves the GPU free for the map.
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2) * 0.5)
     this.quad = new THREE.Mesh(
       new THREE.PlaneGeometry(2, 2),
@@ -176,7 +176,7 @@ export class CloudLayer {
     this.uniforms.uSeed.value = seed
   }
 
-  /** Estado visual para un progreso p∈[0,1]. */
+  /** Visual state for a progress p∈[0,1]. */
   render(p: number, time = performance.now() / 1000) {
     this.uniforms.uT.value = p
     this.uniforms.uTime.value = time

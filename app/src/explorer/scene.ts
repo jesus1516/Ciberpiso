@@ -1,22 +1,22 @@
-// Lo que el terreno 3D y su interfaz necesitan de una finca, sin depender de three.js
-// (así la interfaz no arrastra el 3D al paquete principal).
+// What the 3D terrain and its interface need from a farm, without depending on three.js
+// (so the interface does not drag the 3D into the main bundle).
 import type { MultiPolygon, Polygon, Position } from 'geojson'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
 
 export type BBox = [number, number, number, number]
 export type Geometry = Polygon | MultiPolygon
 
-/** Todo lo que el 3D necesita de una finca. */
-export type Escena = {
+/** Everything the 3D needs from a farm. */
+export type Scene = {
   key: string
   geometry: Geometry
   tile: BBox
-  /** Rotación observada 2020–2025 (fincas.csv), p. ej. "I-I-B-B-I-I" */
+  /** Observed rotation 2020–2025 (fincas.csv), e.g. "I-I-B-B-I-I" */
   rot: string | null
-  /** Clase MODIS por campaña cuando la finca tiene fenología */
+  /** MODIS class per campaign when the farm has phenology data */
   campaigns: { y: number; cls: string | null }[]
-  /** % de arbolado WorldCover */
-  arbolado: number
+  /** WorldCover tree cover % */
+  trees: number
   clay: number | null
   neighbors: { geometry: Geometry; cover: string | null; rot: string | null }[]
   crops: Record<RotationKey, string[]>
@@ -24,20 +24,20 @@ export type Escena = {
 
 export type Anchor = { x: number; y: number; behind?: boolean }
 export type Anchors = Record<'water' | 'risk' | 'market' | 'center' | 'soil', Anchor>
-export type Mode = 'satelite' | 'maqueta'
+export type Mode = 'satellite' | 'model'
 export type ViewState = { year: number; rotation: RotationKey; profile: ProfileKey; mode: Mode; exaggeration: number }
-// ------------------------------------------------------------ paleta
+// ------------------------------------------------------------ palette
 export const CROPS: Record<string, { label: string; color: string }> = {
-  trigo: { label: 'Trigo', color: '#D9B45B' },
-  girasol: { label: 'Girasol', color: '#EBC93C' },
-  garbanzo: { label: 'Garbanzo', color: '#9FB86A' },
-  veza: { label: 'Veza', color: '#82A27E' },
-  barbecho: { label: 'Barbecho', color: '#9C7A57' },
-  I: { label: 'Cereal de invierno', color: '#D4B160' },
-  V: { label: 'Cultivo de verano', color: '#E3C24A' },
-  B: { label: 'Barbecho o pastizal', color: '#A3835F' },
-  M: { label: 'Mixto', color: '#B8A76C' },
-  P: { label: 'Permanente', color: '#667E48' },
+  trigo: { label: 'Wheat', color: '#D9B45B' },
+  girasol: { label: 'Sunflower', color: '#EBC93C' },
+  garbanzo: { label: 'Chickpea', color: '#9FB86A' },
+  veza: { label: 'Vetch', color: '#82A27E' },
+  barbecho: { label: 'Fallow', color: '#9C7A57' },
+  I: { label: 'Winter cereal', color: '#D4B160' },
+  V: { label: 'Summer crop', color: '#E3C24A' },
+  B: { label: 'Fallow or pasture', color: '#A3835F' },
+  M: { label: 'Mixed', color: '#B8A76C' },
+  P: { label: 'Permanent crop', color: '#667E48' },
 }
 export const COVER_COLORS: Record<string, string> = {
   pasto: '#A9AA74', arbolado: '#5E7646', matorral: '#7D8558', urbano: '#BEB5A7', suelo_desnudo: '#B39A7A', agua: '#6BA8A3',
@@ -48,7 +48,7 @@ export const LAST_YEAR = 2031
 
 export const rings = (g: Geometry): Position[][][] => (g.type === 'Polygon' ? [g.coordinates] : g.coordinates)
 
-/** Cuadrado en metros centrado en la finca: la pieza de terreno que se recorta. */
+/** Square in metres centred on the farm: the piece of terrain that is cut out. */
 export function tileFor([w, s, e, n]: BBox, factor = 1.55, minM = 950): BBox {
   const cx = (w + e) / 2, cy = (s + n) / 2
   const mx = 111320 * Math.cos((cy * Math.PI) / 180)
@@ -61,8 +61,8 @@ export function yearLetter(rot: string | null, idx: number) {
   return parts[idx] ?? parts.at(-1) ?? ''
 }
 
-/** Qué hay en la finca un año: campaña observada (≤2025) o escenario de rotación. */
-export function cropForYear(e: Escena, year: number, rotation: RotationKey) {
+/** What is on the farm in a given year: observed campaign (≤2025) or rotation scenario. */
+export function cropForYear(e: Scene, year: number, rotation: RotationKey) {
   if (year < FIRST_SCENARIO_YEAR) {
     const c = e.campaigns.find((x) => x.y === year)
     const letter = (c?.cls && CLASS_LETTER[c.cls]) || yearLetter(e.rot, year - 2020)

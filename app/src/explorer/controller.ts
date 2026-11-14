@@ -1,11 +1,11 @@
-// Embudo Andalucía → Málaga → municipio → finca con sus transiciones.
+// Funnel Andalucía → Málaga → municipality → farm, with its transitions.
 //
-// Andalucía ⇄ Málaga: la cámara se zambulle en un banco de nubes y el mapa cambia de
-// capas mientras la pantalla está tapada. Málaga ⇄ municipio: se traza el contorno, pasa
-// una bruma baja por los bordes y las fincas del municipio aparecen durante el vuelo.
-// Municipio → finca: el mapa vuela a la finca en cenital, entrega una captura de sí mismo
-// al terreno 3D y este se levanta. Las fincas que no son tierra de cultivo (urbano, agua,
-// dominio público) no se pueden abrir; las limitadas (monte, pendiente, roca) sí, con aviso.
+// Andalucía ⇄ Málaga: the camera dives into a cloud bank and the map swaps layers
+// while the screen is covered. Málaga ⇄ municipality: the outline is traced, a low mist
+// drifts along the edges and the municipality farms appear during the flight.
+// Municipality → farm: the map flies to the farm from straight above, hands a snapshot of itself
+// to the 3D terrain, which then rises. Farms that are not cropland (urban, water,
+// public domain) cannot be opened; limited ones (forest, slope, rock) can, with a warning.
 import bbox from '@turf/bbox'
 import type { Feature, FeatureCollection, LineString, MultiPolygon, Polygon } from 'geojson'
 import * as maplibregl from 'maplibre-gl'
@@ -49,7 +49,7 @@ const toLines = (g: Geo): FeatureCollection<LineString> => ({
   type: 'FeatureCollection',
   features: outerRings(g).map((coordinates) => ({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } })),
 })
-/** Rectángulo grande con agujeros: oscurece todo lo que no es el territorio del nivel. */
+/** Large rectangle with holes: darkens everything outside the territory of the current level. */
 const focusMask = (geoms: Geo[]): Feature<Polygon> => ({
   type: 'Feature',
   properties: {},
@@ -61,7 +61,7 @@ const boundsOf = (f: Feature | FeatureCollection): [[number, number], [number, n
 }
 const intersects = (a: BBox, b: BBox) => a[0] <= b[2] && a[2] >= b[0] && a[1] <= b[3] && a[3] >= b[1]
 
-/** Zoom "hacia un punto fijo": el punto que acaba centrado se acerca en línea recta, como un pellizco. */
+/** Zoom "towards a fixed point": the point that ends up centred approaches in a straight line, like a pinch. */
 function cameraPath(a: Camera, b: Camera) {
   const ax = mercX(a.center[0]), ay = mercY(a.center[1]), bx = mercX(b.center[0]), by = mercY(b.center[1])
   const k = 2 ** -(b.zoom - a.zoom)
@@ -89,12 +89,12 @@ function style(): maplibregl.StyleSpecification {
       esri: { type: 'raster', tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], tileSize: 256, maxzoom: 19, bounds: [-10.5, 34.8, 0.5, 40.5], attribution: 'Imagery © Esri, Maxar, Earthstar Geographics' },
       dem: { type: 'raster-dem', tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding: 'terrarium', tileSize: 256, maxzoom: 12, attribution: 'Terrain: Mapzen Terrarium / AWS Open Data' },
       resto: { type: 'geojson', data: EMPTY },
-      prov: { type: 'geojson', data: EMPTY, promoteId: 'id', attribution: 'Límites: IGN vía es-atlas (CC BY 4.0)' },
+      prov: { type: 'geojson', data: EMPTY, promoteId: 'id', attribution: 'Boundaries: IGN via es-atlas (CC BY 4.0)' },
       muni: { type: 'geojson', data: EMPTY, promoteId: 'mun' },
       muniTrace: { type: 'geojson', data: EMPTY, lineMetrics: true },
-      // Hasta z14: más allá se reescala. Trocear decenas de miles de fincas en cada zoom
-      // satura el worker y retrasa el resto de capas.
-      fincas: { type: 'geojson', data: EMPTY, promoteId: 'id', maxzoom: 14, buffer: 32, tolerance: 0.5, attribution: 'Fincas: SIGPAC (FEGA, CC BY 4.0)' },
+      // Up to z14: beyond that it is upscaled. Slicing tens of thousands of farms at every zoom
+      // saturates the worker and delays the other layers.
+      fincas: { type: 'geojson', data: EMPTY, promoteId: 'id', maxzoom: 14, buffer: 32, tolerance: 0.5, attribution: 'Farms: SIGPAC (FEGA, CC BY 4.0)' },
       sel: { type: 'geojson', data: EMPTY, lineMetrics: true },
       focus: { type: 'geojson', data: EMPTY },
       pulse: { type: 'geojson', data: EMPTY },
@@ -160,10 +160,10 @@ export class ExplorerController {
       dragPan: false, scrollZoom: false, boxZoom: false, dragRotate: false, keyboard: false, doubleClickZoom: false, touchZoomRotate: false, touchPitch: false,
       maxPitch: 70, fadeDuration: 150,
     })
-    this.map.once('load', () => this.init().catch(() => useExplorer.setState({ error: 'No se han podido cargar los datos del mapa.' })))
+    this.map.once('load', () => this.init().catch(() => useExplorer.setState({ error: 'Could not load the map data.' })))
   }
 
-  /** three.js (nubes y 3D) va en un trozo aparte que se descarga en segundo plano. */
+  /** three.js (clouds and 3D) lives in a separate chunk that downloads in the background. */
   private loadThree() {
     this.three ??= Promise.all([import('./clouds'), import('./diorama')])
     return this.three.then(([c, d]) => {
@@ -211,7 +211,7 @@ export class ExplorerController {
     map.jumpTo(this.cameraFor(0))
     this.prepareLevel(0)
     useExplorer.setState({ phase: 'idle' })
-    // Las nubes de la primera transición tienen que estar listas antes del primer clic.
+    // The clouds of the first transition must be ready before the first click.
     const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 600))
     idle(() => this.loadThree())
   }
@@ -230,7 +230,7 @@ export class ExplorerController {
     this.paint(glow, 'line-gradient', traceExpr(p, AMBER))
     this.paint(line, 'line-gradient', traceExpr(p, core))
   }
-  /** Opacidad de todas las capas de fincas respecto a su valor de reposo (k = 1). */
+  /** Opacity of all farm layers relative to their resting value (k = 1). */
   private fadeFincas(k: number) {
     this.paint('fincas-fill', 'fill-opacity', hoverState(0.24 * k, 0.02 * k))
     this.paint('fincas-line', 'line-opacity', 0.4 * k)
@@ -242,7 +242,7 @@ export class ExplorerController {
     this.paint('fincas-hover', 'line-opacity', hoverState(k, 0))
   }
 
-  // ------------------------------------------------------------ cámara
+  // ------------------------------------------------------------ camera
   private padding(level: Level) {
     const w = window.innerWidth
     if (w < 760) return { top: level === 2 ? 170 : 230, bottom: 70, left: 20, right: 20 }
@@ -276,7 +276,7 @@ export class ExplorerController {
       requestAnimationFrame(step)
     })
   }
-  /** En un municipio se puede mover y acercar el mapa (dentro de sus límites); en el resto, no. */
+  /** In a municipality the map can be panned and zoomed (within its bounds); elsewhere it cannot. */
   private setInteractive(on: boolean) {
     const m = this.map
     for (const h of [m.dragPan, m.scrollZoom, m.doubleClickZoom, m.touchZoomRotate, m.keyboard]) {
@@ -285,8 +285,8 @@ export class ExplorerController {
     }
     if (on) m.touchZoomRotate.disableRotation()
     if (on && this.munBounds) {
-      // El límite parte de la vista de llegada (que incluye el hueco del texto): si fuera solo
-      // el municipio, MapLibre recolocaría la cámara y lo dejaría debajo del texto.
+      // The bound starts from the arrival view (which includes the gap for the text): if it were only
+      // the municipality, MapLibre would reposition the camera and leave it under the text.
       const fit = this.cameraFor(2)
       const v = m.getBounds()
       const [[mw, ms], [me, mn]] = this.munBounds
@@ -300,8 +300,8 @@ export class ExplorerController {
     }
   }
 
-  // ------------------------------------------------------------ niveles
-  /** Deja visibles las capas del nivel y su estilo de reposo. */
+  // ------------------------------------------------------------ levels
+  /** Shows the layers of the level with their resting style. */
   private prepareLevel(level: Level) {
     const fincas = level === 2 || level === 3
     ;['prov-fill', 'prov-line', 'malaga-glow'].forEach((id) => this.vis(id, level === 0))
@@ -330,8 +330,8 @@ export class ExplorerController {
     return this.municipios?.features.find((f) => f.properties.mun === key)
   }
 
-  // ------------------------------------------------------------ transiciones
-  /** Andalucía ⇄ Málaga (nubes) y Málaga ⇄ municipio (bruma). */
+  // ------------------------------------------------------------ transitions
+  /** Andalucía ⇄ Málaga (clouds) and Málaga ⇄ municipality (mist). */
   private async cloudDive(target: Level, variant: CloudVariant) {
     const { clouds } = await this.loadThree()
     const { level, speed } = useExplorer.getState()
@@ -341,14 +341,14 @@ export class ExplorerController {
     const pitchPeak = variant === 'clouds' ? 26 : 18, bearingPeak = variant === 'clouds' ? -8 : 5
     let maskSwapped = false
     if (!back && target === 1) {
-      // Anticipación: Málaga se enciende y el resto se apaga.
+      // Anticipation: Málaga lights up and the rest fades out.
       await this.animate(380, (t) => {
         this.paint('prov-fill', 'fill-opacity', ['case', ['==', ['get', 'id'], '29'], lerp(0.42, 0.75, t), lerp(0.42, 0.18, t)])
         this.paint('malaga-glow', 'line-opacity', lerp(0.35, 0.9, t))
       })
     }
     if (!back && target === 2) {
-      // Anticipación: se traza el contorno del municipio y se apagan los demás.
+      // Anticipation: the municipality outline is traced and the others fade out.
       const key = useExplorer.getState().municipio!.mun
       this.source('muniTrace').setData(toLines(this.munFeature()!.geometry))
       this.vis('muni-trace', true)
@@ -360,8 +360,8 @@ export class ExplorerController {
       })
     }
     if (back && target === 1) {
-      // Municipio → Málaga: las fincas se apagan antes de alejar la cámara y la fuente se vacía,
-      // para no pedir teselas de decenas de miles de fincas en cada zoom del vuelo.
+      // Municipality → Málaga: farms fade out before the camera pulls back and the source is emptied,
+      // so that tiles for tens of thousands of farms are not requested at every zoom of the flight.
       await this.animate(250, (t) => this.fadeFincas(1 - t))
       FINCA_LAYERS.forEach((id) => this.vis(id, false))
       this.source('fincas').setData(EMPTY)
@@ -374,7 +374,7 @@ export class ExplorerController {
         const cam = path(easeInOut(t))
         this.map.jumpTo({ ...cam, pitch: Math.sin(Math.PI * t) * pitchPeak, bearing: Math.sin(Math.PI * t) * bearingPeak })
         if (variant !== 'mist') return
-        // La máscara de foco se apaga, cambia de agujero y vuelve a encenderse.
+        // The focus mask fades out, changes its hole and fades back in.
         this.paint('focus-mask', 'fill-opacity', 0.45 * Math.abs(1 - 2 * range(t, 0.15, 0.85)))
         if (!maskSwapped && t >= 0.5) {
           maskSwapped = true
@@ -383,7 +383,7 @@ export class ExplorerController {
         }
         const ready = this.fincas !== null
         if (back) {
-          // Municipio → Málaga: vuelven los municipios.
+          // Municipality → Málaga: the municipalities come back.
           this.setTrace('muni', 1 - range(t, 0.45, 0.9))
           if (t > 0.3) {
             this.vis('muni-fill', true)
@@ -393,9 +393,9 @@ export class ExplorerController {
           this.paint('sat', 'raster-opacity', lerp(0.62, 0.3, range(t, 0.2, 0.8)))
           this.paint('sat', 'raster-saturation', lerp(-0.35, -0.8, range(t, 0.2, 0.8)))
         } else {
-          // Málaga → municipio: sin blanqueo, así que las capas se funden durante el vuelo.
+          // Málaga → municipality: no whiteout, so the layers cross-fade during the flight.
           this.paint('muni-fill', 'fill-opacity', ['case', ['==', ['get', 'mun'], key ?? -1], lerp(0.72, 0.08, range(t, 0.25, 0.6)), lerp(0.22, 0, range(t, 0.2, 0.5))])
-          // Las fincas aparecen al final, ya cerca de su zoom: así no se trocean en zooms de paso.
+          // Farms appear at the end, already near their zoom: so they are not sliced at intermediate zooms.
           if (ready && t > 0.72) {
             FINCA_LAYERS.forEach((id) => this.vis(id, true))
             this.fadeFincas(range(t, 0.74, 0.98))
@@ -411,7 +411,7 @@ export class ExplorerController {
     this.map.jumpTo(b)
   }
 
-  /** Municipio → finca: se traza la linde, el mapa vuela a la pieza en cenital y el 3D la levanta. */
+  /** Municipality → farm: the boundary is traced, the map flies to the tile from above and the 3D raises it. */
   private async enterFinca(finca: Finca) {
     const { dio, diorama } = await this.loadThree()
     const props = finca.properties
@@ -429,13 +429,13 @@ export class ExplorerController {
     })
     const sel = await escenaP
     const tile = sel.escena.tile
-    // Se entrega con la pieza algo más pequeña: un nivel de zoom menos son ~4× menos teselas
-    // de satélite que descargar; el levantado 3D completa el acercamiento.
+    // Handed over with a slightly smaller tile: one zoom level less is ~4× fewer satellite
+    // tiles to download; the 3D rise completes the approach.
     const b = this.cameraFor(3, [[tile[0], tile[1]], [tile[2], tile[3]]])
     b.zoom -= 0.75
     const path = cameraPath(this.current(), b)
     this.app.classList.add('handoff')
-    // Durante el vuelo solo se ve la linde elegida: así no se trocean las fincas en cada zoom.
+    // During the flight only the chosen boundary is visible: so farms are not sliced at every zoom.
     FINCA_LAYERS.forEach((id) => this.vis(id, false))
     await this.animate(1700, (t) => {
       this.map.jumpTo({ ...path(easeInOut(t)), pitch: Math.sin(Math.PI * t) * 30, bearing: 0 })
@@ -449,7 +449,7 @@ export class ExplorerController {
     const wait = window.setTimeout(() => useExplorer.setState({ preparing: true }), 250)
     useExplorer.setState({ sel, view: { ...dio.state } })
     await dio.load(sel.escena)
-    // Un instante para que se pinten las teselas de esta vista (sin bloquear si la red va lenta).
+    // A moment for the tiles of this view to paint (without blocking if the network is slow).
     await Promise.race([new Promise((r) => this.map.once('idle', r)), new Promise((r) => setTimeout(r, 600))])
     clearTimeout(wait)
     useExplorer.setState({ preparing: false, synthetic: dio.synthetic })
@@ -464,7 +464,7 @@ export class ExplorerController {
     const nw = this.map.project([tile[0], tile[3]]), se = this.map.project([tile[2], tile[1]])
     return { x: nw.x, y: nw.y, w: se.x - nw.x, h: se.y - nw.y }
   }
-  /** Copia del lienzo del mapa en ese rectángulo, leída justo después de pintar (sin preserveDrawingBuffer). */
+  /** Copy of the map canvas in that rectangle, read right after painting (without preserveDrawingBuffer). */
   private snapshot(rect: { x: number; y: number; w: number; h: number }) {
     return new Promise<HTMLCanvasElement | null>((resolve) => {
       const timer = setTimeout(() => resolve(null), 600)
@@ -508,7 +508,7 @@ export class ExplorerController {
       this.paint('hill', 'hillshade-exaggeration', lerp(0, 0.25, range(t, 0.2, 1)))
       this.paint('focus-mask', 'fill-opacity', 0.45 * range(t, 0.3, 1))
     })
-    // Las fincas vuelven ya en su zoom final.
+    // The farms come back already at their final zoom.
     FINCA_LAYERS.forEach((id) => this.vis(id, true))
     await this.animate(450, (t) => {
       this.fadeFincas(t)
@@ -520,7 +520,7 @@ export class ExplorerController {
     useExplorer.setState({ sel: null })
   }
 
-  /** Datos de la finca para el 3D y las tarjetas: vecinas, detalle, clima y notas R0–R3. */
+  /** Farm data for the 3D and the cards: neighbours, detail, climate and R0–R3 scores. */
   private async escena(finca: Finca) {
     const p = finca.properties
     const tile = tileFor(bbox(finca) as BBox)
@@ -565,7 +565,7 @@ export class ExplorerController {
     return b
   }
 
-  /** Carga las fincas del municipio (en paralelo a la animación de entrada). */
+  /** Loads the municipality farms (in parallel with the entry animation). */
   private loadFincas(mun: number) {
     this.fincas = null
     this.fincaBoxes.clear()
@@ -575,13 +575,13 @@ export class ExplorerController {
       this.fincas = data as FC<FincaProps>
       this.source('fincas').setData(data)
       useExplorer.setState({ fincasCount: data.features.length })
-      // Adelanta el detalle del municipio para que abrir una finca sea inmediato.
+      // Prefetches the municipality detail so opening a farm is instant.
       loadDetalles([{ id: -1, mun }]).catch(() => undefined)
       loadComun().catch(() => undefined)
     })
   }
 
-  /** Cambia de nivel con su transición. Ignora clics mientras hay una en curso. */
+  /** Changes level with its transition. Ignores clicks while one is in progress. */
   async go(target: Level, opts: { municipio?: MunicipioInfo; finca?: Finca } = {}) {
     const st = useExplorer.getState()
     if (st.phase !== 'idle' || target === st.level || target < 0 || target > 3) return
@@ -603,7 +603,7 @@ export class ExplorerController {
             await this.cloudDive(2, 'mist')
             if (!this.fincas) {
               useExplorer.setState({ preparing: true })
-              await loading.catch(() => showToast('No se han podido cargar las fincas', 'Revisa la conexión y vuelve a intentarlo.', 'blocked'))
+              await loading.catch(() => showToast('Could not load the farms', 'Check your connection and try again.', 'blocked'))
               useExplorer.setState({ preparing: false })
             }
           } else if (l === 2) {
@@ -634,7 +634,7 @@ export class ExplorerController {
     }
   }
 
-  // ------------------------------------------------------------ hover y clic
+  // ------------------------------------------------------------ hover and click
   private clearHover() {
     if (this.hovered) this.map.setFeatureState(this.hovered, { hover: false })
     this.hovered = null
@@ -649,7 +649,7 @@ export class ExplorerController {
       this.map.setFeatureState(this.hovered, { hover: true })
       useExplorer.setState({ hover: make() })
     }
-    // La posición del tooltip se escribe directa: no hace falta repintar React en cada píxel.
+    // The tooltip position is written directly: React does not need to repaint on every pixel.
     const tip = document.getElementById('xp-tooltip')
     if (tip) {
       const r = tip.getBoundingClientRect()
@@ -680,7 +680,7 @@ export class ExplorerController {
       const p = f.properties as FincaProps
       this.hover('fincas', Number(f.id), e, () => ({ kind: 'finca', x: 0, y: 0, p }))
       const tile = tileFor(bbox(f) as BBox)
-      // Precarga relieve y ortofoto si el ratón se queda un momento encima.
+      // Preload terrain and orthophoto if the mouse rests for a moment.
       window.clearTimeout(this.prefetchTimer)
       if (!p.apt || !NOT_FARMLAND.includes(p.apt)) this.prefetchTimer = window.setTimeout(() => this.three?.then(([, d]) => d.prefetch(String(p.id), tile)), 350)
     })
@@ -690,7 +690,7 @@ export class ExplorerController {
       if (useExplorer.getState().level !== 0) return
       const p = e.features![0].properties as ProvinciaProps
       if (p.id === '29') this.go(1)
-      else showToast(`${p.nombre} · ${(p.fincas ?? 0).toLocaleString('es-ES')} fincas`, 'De momento, el detalle de fincas y rotaciones está preparado para Málaga.')
+      else showToast(`${p.nombre} · ${(p.fincas ?? 0).toLocaleString('en-GB')} farms`, 'For now, farm and rotation detail is only available for Málaga.')
     })
     map.on('click', 'muni-fill', (e) => {
       if (useExplorer.getState().level !== 1) return
@@ -706,10 +706,10 @@ export class ExplorerController {
       const apt = finca.properties.apt
       if (apt && NOT_FARMLAND.includes(apt)) {
         pulse(this.map, finca, '#ef4444', 700)
-        showToast('No es tierra de cultivo', `${APT[apt]}: esta finca no se puede analizar (SIGPAC y ESA WorldCover).`, 'blocked')
+        showToast('Not farmland', `${APT[apt]}: this farm cannot be analysed (SIGPAC and ESA WorldCover).`, 'blocked')
         return
       }
-      if (apt && LIMITED.includes(apt)) showToast('Análisis orientativo', `${APT[apt]}: la finca se puede abrir, pero las rotaciones de herbáceos encajan peor.`, 'warning')
+      if (apt && LIMITED.includes(apt)) showToast('Indicative analysis', `${APT[apt]}: the farm can be opened, but herbaceous rotations fit less well here.`, 'warning')
       this.go(3, { finca })
     })
   }
@@ -729,7 +729,7 @@ export class ExplorerController {
     useExplorer.setState({ speed })
     if (this.dio) this.dio.speed = speed
   }
-  /** Al cambiar el tamaño de la ventana, reencuadra el nivel actual. */
+  /** On window resize, re-frames the current level. */
   resize() {
     const { level, phase } = useExplorer.getState()
     if (phase === 'idle' && level < 2) this.map.jumpTo(this.cameraFor(level))

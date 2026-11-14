@@ -85,7 +85,7 @@
 .xp .tl .play svg {width: 13px; height: 13px;}
 .xp .years {display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; position: relative; padding-top: 14px;}
 .xp .years::before, .xp .years::after {position: absolute; top: 0; font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;}
-.xp .years::before {content: "Lo que vio el satélite"; left: 0; color: var(--cream-3);}
+.xp .years::before {content: "What the satellite saw"; left: 0; color: var(--cream-3);}
 .xp .years::after {content: attr(data-scn); left: 50%; padding-left: 6px; color: var(--amber);}
 .xp .year {border: 0; padding: 0 0 2px; background: none; cursor: pointer; display: grid; gap: 4px;}
 .xp .year i {height: 10px; border-radius: 3px; background: var(--c, #555); opacity: .55; transition: opacity .2s, transform .2s;}
@@ -129,7 +129,7 @@
 .xp .fx-card .bar {margin: 7px 0 0;}
 .xp .dio-leaders {display: none;}
 .xp .fx-dock {bottom: 12px; padding: 10px 10px 9px;}
-.xp .years::before {content: "Satélite";}
+.xp .years::before {content: "Satellite";}
 .xp .year span {font-size: 8.5px;}
 .xp .rots {grid-template-columns: repeat(4, 1fr);}
 .xp .rot {padding: 6px 7px;}
