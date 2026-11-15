@@ -72,13 +72,14 @@ score(rotation, profile) -> recommendation
 It calls no APIs, reads no files and does not depend on the framework. It can be
 tested with case tables.
 
-### 3. UI (Next.js + MapLibre)
+### 3. UI (React + TypeScript + Vite, MapLibre GL, three.js)
 
-- Map with GIBS layers and the AOI.
-- Priorities panel.
-- Comparable cards.
-- Evidence sheet.
-- Glossary and legal notice.
+- A guided explorer: Andalucía → Málaga → municipality → farm, by map, keyboard lists or SIGPAC search.
+- The farm as a 3D block of real terrain, with the risks first (ranked insights).
+- Indicator cards (water, soil, market, climate risk) and the four rotations, with a priority switch.
+- A "Full data" drawer (farm, soil, vegetation, climate) and a data table.
+- An accessibility layer (keyboard, screen reader, text size, contrast, reduced motion, 3D off).
+- The rotation engine runs in the browser (`app/src/lib/calculator.ts`); see [app/README.md](../app/README.md).
 
 ### 4. Content
 
@@ -238,28 +239,22 @@ sheet.
 
 ---
 
-## Proposed repo structure
+## Repository structure
 
 ```text
 .
 ├── README.md
-├── docs/
-├── resources.json
-├── pipeline/
-│   ├── fetch/
-│   ├── transform/
-│   ├── indicators/
-│   └── validate.py
+├── docs/            # documentation (this file, testing, performance, data sources…)
+├── resources.json   # inventory of sources
+├── pipeline/        # Python: download, harmonise, score, export
 ├── data/
-│   ├── raw/          # do not version if large
-│   ├── processed/    # do version for the demo
+│   ├── andalucia/   # CSV per province + SQLite schema and queries
+│   ├── malaga/      # the Málaga copy the pipeline works on
+│   ├── processed/   # indicators.json (versioned)
 │   └── manifest.json
-├── app/
-│   ├── app/
-│   ├── components/
-│   ├── lib/
-│   └── public/
-└── tests/
+├── app/             # the web app (Vite); app/public/data holds the exported data
+├── assets/          # logo and demo video
+└── tests/           # pipeline tests (pytest)
 ```
 
 ---
@@ -304,13 +299,14 @@ sheet.
 
 ## Deployment
 
-### Option A: static (recommended)
+### Option A: static (what is deployed)
 
-- Next.js with static export or Vercel.
-- `data/processed` versioned.
+- The Vite production build of `app/` (`npm run build` → `app/dist/`), hosted on Render:
+  <https://agrospace-w8ej.onrender.com/>.
+- `data/processed` and `app/public/data` versioned.
 - No backend, no keys, no latency.
 
-### Option B: light backend
+### Option B: light backend (not used)
 
 - FastAPI to recompute if the user changes the AOI.
 - Disk cache.
@@ -320,11 +316,11 @@ sheet.
 
 ## Testing
 
-- **Unit:** scoring, normalisation and confidence.
-- **Data:** schema, ranges, nulls and coverage.
-- **E2E:** Playwright for the "profile → comparison → sheet" flow.
-- **Accessibility:** keyboard and contrast.
-- **Regression:** an example JSON that does not change by accident.
+- **Unit (Vitest):** calculator, insights, colour tokens, SIGPAC parsing; 182+ tests.
+- **Calculator check:** the browser engine reproduces the pipeline (1,144 values, 0 differences).
+- **E2E (Playwright):** the whole journey, layout at four screen sizes, keyboard, contrast, touch targets, settings.
+- **Data (pytest):** pipeline exports and schema.
+- Details and commands: [testing.md](testing.md).
 
 ---
 
@@ -340,7 +336,7 @@ sheet.
 | Leaked keys | Environment variables, `.gitignore` |
 | Change of a space-agency product | Pin version and date in the manifest |
 
-## Alternatives
+## Alternatives considered (not used)
 
 - **Streamlit:** faster if the team is Python-only; less visual control.
 - **Observable:** good for visualisation prototypes; less of an app.

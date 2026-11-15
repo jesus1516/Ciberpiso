@@ -257,19 +257,20 @@ Full-screen agritech app mockup, 16:9. Left 60%: 3D low-poly isometric farm dior
 
 | File | What for |
 |---|---|
-| app/src/components/MapView.tsx | Map, layers, satellite, GIBS, farms |
-| app/src/components/FincaPicker.tsx | Farm selection and hover; replace setFilter with feature-state |
-| app/src/lib/terrain.ts | 3D terrain and flyToField; change pitch 65 |
-| app/src/lib/fincas.ts | GeoJSON loading; separate candidates/all |
-| app/src/lib/indicators.ts | Indicators of the 26 candidates |
-| app/src/components/RealRotations.tsx | R0-R3 cards with evidence, gaps and risks |
-| app/public/data/fincas_antequera.geojson | 14,529 farms; 9.38 MB |
+| app/src/explorer/controller.ts | Map, the four levels and their transitions (MapLibre) |
+| app/src/explorer/diorama.ts | The farm in 3D (three.js): terrain, trees, markers |
+| app/src/explorer/FarmView.tsx | Farm column: insights, cards, timeline, rotations |
+| app/src/explorer/FullDataPanel.tsx | "Full data" drawer: farm, soil, vegetation, climate |
+| app/src/lib/farms.ts | Municipality farms, parsed in a Web Worker |
+| app/src/lib/calculator.ts | Rotation engine (port of pipeline/calculator.py) |
+| app/src/lib/indicators.ts | Precomputed results of the 26 Antequera candidates |
+| app/public/data/fincas/ | Farms per municipality (GeoJSON, gzip) |
+| app/public/data/detalle/ | Farm detail per municipality (JSON, gzip) |
 | app/public/data/indicators_antequera.json | 26 candidates; 839 KB |
 | pipeline/export_app_fincas.py | Exports farms for the app |
 | pipeline/export_app_indicators.py | Exports indicators for the app |
 | data/README.md | Data model, CSV and SQLite |
 | docs/rotaciones.md | Use case and rotations |
-| .agents/skills/ | Agent skills of the repo |
 
 ---
 

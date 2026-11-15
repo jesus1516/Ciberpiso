@@ -45,19 +45,19 @@ python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geo
 
 `MapView`, `MapScreen`, `FarmPicker`, `Header`, `SearchBox`, `LayersTab` and `RealRotations` are no longer mounted; their logic (municipality loading, `apt` rules, farm data) is reused by the explorer. The old dashboard and its A/B/C rule engine were removed: see [Rotation engine](#rotation-engine).
 
-## Architecture (10 lines)
+## Architecture
 
-1. `src/App.tsx` mounts the explorer (`src/explorer/`) and the About modal; the components below are the previous map-and-dashboard interface.
-2. `src/store.ts` (Zustand) holds the state shared with the components: selected farms, farm data, climate, About modal, and the old map's terrain and GIBS layers.
-3. `components/MapView.tsx` owns MapLibre: Esri basemap, farm and selection layers, GIBS overlays, 3D terrain and the fly-to.
-4. `components/FarmPicker.tsx` drives the map funnel (Málaga → municipality → farms) and the selection; `lib/farms.ts` loads each municipality on demand; `lib/pulse.ts` animates selections.
-5. `lib/terrain.ts` adds the Terrarium DEM + hillshade and falls back to a flat map on errors; slope comes from the farms' project data.
-6. `lib/power.ts` fetches POWER daily data, caches it in localStorage and falls back to a bundled sample.
-7. `lib/climate.ts` derives monthly climatology, frost days, rain variability, Turc water balance and trends.
-8. `lib/gibs.ts` lists the GIBS layers verified in GetCapabilities and builds the WMTS tile URLs.
+1. `src/main.tsx` → `src/App.tsx` mounts the explorer (`src/explorer/`) and the Sources dialog (`components/AboutModal.tsx`).
+2. `explorer/controller.ts` drives MapLibre and the transitions between the four levels; `explorer/state.ts` (Zustand) holds the explorer state.
+3. `explorer/diorama.ts` (three.js) draws the farm as a 3D block of real terrain with trees and numbered markers; `explorer/clouds.ts` draws the cloud transitions. Both load in a separate chunk, never when the 3D is off.
+4. `explorer/FarmView.tsx` is the farm column: ranked insights (`insights.ts`), indicator cards, the timeline, rotations R0–R3 and the priority; `FullDataPanel.tsx` is the "Full data" drawer and `FarmTable.tsx` the data table.
+5. `explorer/AccessList.tsx`, `SettingsMenu.tsx`, `settings.ts` and `useFocusTrap.ts` are the accessibility layer: keyboard lists, text size, contrast, reduced motion, 3D off.
+6. `explorer/SigpacSearch.tsx` + `sigpac.ts`: search by SIGPAC reference or municipality name.
+7. `lib/farms.ts` + `farms.worker.ts` and `lib/detail.ts` + `detail.worker.ts` load and parse the municipality data in Web Workers; `src/store.ts` keeps the farm data and climate the drawer shows.
+8. `lib/power.ts` fetches POWER daily data (cached, with a bundled sample if offline); `lib/climate.ts` derives the monthly climatology and trends.
 9. `lib/calculator.ts` is the only rotation engine (R0–R3 for any farm); its parameters are `src/data/engine.json`, exported from the pipeline. See [Rotation engine](#rotation-engine).
-10. `lib/indicators.ts` has the R0–R3 and profile types and loads the precomputed pipeline results for the 26 Antequera candidates (used by the calculator check, and by the unmounted `components/RealRotations.tsx`).
-11. All UI text lives in `src/i18n/en.ts`; add `es.ts` with the same shape to translate. Project narrative inside the precomputed JSON is still Spanish.
+10. `explorer/tokens.ts`, `explorer.css` and `access.css` hold the colour tokens and styles; all UI text is in `src/i18n/en.ts`.
+11. `src/components/` still holds the previous map-and-dashboard interface (`MapView`, `FarmPicker`, …); it is not mounted.
 
 ## Real vs demo data
 
@@ -65,12 +65,12 @@ python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geo
 | --- | --- | --- |
 | Daily temperature, min temperature, rain, radiation, humidity (2015 → yesterday) | **Real** | POWER daily point API (AG community) |
 | Climatology, frost days, rain variability, water balance, trends | **Real (derived)** | Computed in the browser from POWER; ET uses the Turc formula and is labelled approximate |
-| MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** | GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
+| MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** (previous map interface, not mounted) | GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
 | Farm boundaries (363,401 farms in the 103 municipalities of Málaga) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/malaga/csv/29_malaga/fincas.csv`; built with `pipeline/export_app_fincas.py` |
 | Farm slope, altitude, land cover | **Real** | Project dataset (`data/malaga/csv/29_malaga/fincas.csv`: SRTM-derived DEM, ESA WorldCover) |
 | Precomputed rotation results for 26 Antequera candidates | **Real** | `data/processed/indicators.json`, filtered by `pipeline/export_app_indicators.py` into `public/data/indicators_antequera.json` |
 | 3D terrain | **Real** | Mapzen Terrarium tiles on AWS Open Data |
-| Basemap, place search | **Real** | Esri World Imagery, OpenStreetMap Nominatim |
+| Basemap | **Real** | Esri World Imagery |
 | Soil per farm (texture, organic carbon, pH, N, CEC, available water) | **Real** | ISRIC SoilGrids 2.0 in the project dataset → `public/data/detalle/` |
 | Seasonal vegetation, NDVI series and observed rotation per farm | **Real** | MODIS NDVI in the project dataset → `public/data/detalle/` |
 | Climate and root-zone soil moisture per season (2002–2025) | **Real** | POWER cell summaries in the project dataset → `public/data/comun_29.json` |
@@ -95,7 +95,7 @@ python -m pipeline.export_app_detalle --provincia 29
 ## Farm map
 
 The map covers the province of Málaga. It opens on the 103 municipalities
-(`public/data/municipios_29.geojson`, 0.4 MB); clicking one, searching a place or zooming in loads only
+(`public/data/municipios_29.geojson`, 0.4 MB); clicking or searching one loads only
 that municipality's farms (`public/data/fincas/{municipio_key}.geojson.gz`, 35 MB in total, 2.1 MB at
 most). The browser decompresses the files itself, so any static host works.
 
