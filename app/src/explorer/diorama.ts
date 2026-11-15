@@ -16,7 +16,8 @@ import { Line2 } from 'three/addons/lines/Line2.js'
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
-import { COVER_COLORS, CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type FarmScene, type Geometry, type Mode, type ViewState } from './scene'
+import { alpha, NEUTRAL, SCENE } from './tokens'
+import { COVER_COLORS, CROPS, cropInfo, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type FarmScene, type Geometry, type Mode, type ViewState } from './scene'
 
 type Rect = { x: number; y: number; w: number; h: number }
 export type Padding = { top: number; bottom: number; left: number; right: number }
@@ -32,6 +33,9 @@ const TERRARIUM = (z: number, x: number, y: number) => `https://s3.amazonaws.com
 
 // ------------------------------------------------------------ utilities
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
+// Canvas masks: only the alpha channel is read by the shaders, so white is "on", not a colour.
+const MASK = '#fff' // colour-ok: alpha mask channel
+const maskAlpha = (a: number) => `rgba(255,255,255,${a})` // colour-ok: alpha mask channel
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const range = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
@@ -172,10 +176,10 @@ function syntheticOrtho(seed: number): Ortho {
   c.width = c.height = 1024
   const ctx = c.getContext('2d')!
   const r = rng(seed)
-  ctx.fillStyle = '#8E8566'
+  ctx.fillStyle = SCENE.ground
   ctx.fillRect(0, 0, 1024, 1024)
   for (let i = 0; i < 900; i++) {
-    ctx.fillStyle = `rgba(${90 + r() * 70},${85 + r() * 60},${55 + r() * 40},${0.18 + r() * 0.3})`
+    ctx.fillStyle = `rgba(${90 + r() * 70},${85 + r() * 60},${55 + r() * 40},${0.18 + r() * 0.3})` // colour-ok: procedural soil speckle around SCENE.ground
     ctx.beginPath()
     ctx.arc(r() * 1024, r() * 1024, 8 + r() * 70, 0, 6.283)
     ctx.fill()
@@ -333,7 +337,7 @@ export class FarmDiorama {
   private scene = new THREE.Scene()
   private camera = new THREE.PerspectiveCamera(32, 1, 1, 100000)
   private controls: OrbitControls
-  private sun = new THREE.DirectionalLight('#FFE7C4', 3.1)
+  private sun = new THREE.DirectionalLight(SCENE.sun, 3.1)
   private uniforms: Uniforms
   private blank: THREE.DataTexture
   private snapTex: THREE.Texture | null = null
@@ -419,7 +423,7 @@ export class FarmDiorama {
 
     this.sun.castShadow = true
     this.sun.shadow.mapSize.set(2048, 2048)
-    this.scene.add(new THREE.HemisphereLight('#E4E6D6', '#4A3E2C', 1.35), this.sun, this.sun.target)
+    this.scene.add(new THREE.HemisphereLight(SCENE.skyLight, SCENE.skyGround, 1.35), this.sun, this.sun.target)
 
     this.blank = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1)
     this.blank.needsUpdate = true
@@ -571,7 +575,7 @@ export class FarmDiorama {
       return ctx.getImageData(0, 0, size, size).data
     }
     const own = layer((ctx) => {
-      ctx.fillStyle = '#fff'
+      ctx.fillStyle = MASK
       ctx.beginPath()
       drawRings(ctx, frame, e.geometry, size)
       ctx.fill('evenodd')
@@ -579,7 +583,7 @@ export class FarmDiorama {
     const glow = layer((ctx) => {
       ctx.lineJoin = 'round'
       for (const [w, a] of [[16, 0.08], [9, 0.18], [4, 0.45]]) {
-        ctx.strokeStyle = `rgba(255,255,255,${a})`
+        ctx.strokeStyle = maskAlpha(a)
         ctx.lineWidth = w
         ctx.beginPath()
         drawRings(ctx, frame, e.geometry, size)
@@ -587,7 +591,7 @@ export class FarmDiorama {
       }
     })
     const lines = layer((ctx) => {
-      ctx.strokeStyle = '#fff'
+      ctx.strokeStyle = MASK
       ctx.lineWidth = 1.4
       ctx.lineJoin = 'round'
       ctx.beginPath()
@@ -670,7 +674,7 @@ export class FarmDiorama {
     this.walls = new THREE.Mesh(geo, wallMaterial(this.uniforms))
     this.walls.castShadow = this.walls.receiveShadow = true
     this.group!.add(this.walls)
-    this.cap = new THREE.Mesh(new THREE.PlaneGeometry(frame.Sx, frame.Sz), new THREE.MeshStandardMaterial({ color: '#211C14', roughness: 1 }))
+    this.cap = new THREE.Mesh(new THREE.PlaneGeometry(frame.Sx, frame.Sz), new THREE.MeshStandardMaterial({ color: SCENE.cap, roughness: 1 }))
     this.cap.rotation.x = Math.PI / 2
     this.group!.add(this.cap)
   }
@@ -707,8 +711,8 @@ export class FarmDiorama {
         this.group!.add(l)
         return l
       }
-      const glow = mk(10, '#E8B86A', 0.22)
-      const core = mk(2.6, '#FFF1D2', 0.95)
+      const glow = mk(10, SCENE.outlineGlow, 0.22)
+      const core = mk(2.6, SCENE.outlineCore, 0.95)
       // Vertical luminous curtain along the boundary.
       const cnt = pts.length
       const ch = new Float32Array(cnt * 2)
@@ -722,7 +726,7 @@ export class FarmDiorama {
       cgeo.setAttribute('aH', new THREE.BufferAttribute(ch, 1))
       cgeo.setIndex(cidx)
       const curtain = new THREE.Mesh(cgeo, new THREE.ShaderMaterial({
-        uniforms: { uOpacity: { value: 0 }, uColor: { value: new THREE.Color('#F2C27A') } },
+        uniforms: { uOpacity: { value: 0 }, uColor: { value: new THREE.Color(SCENE.shimmer) } },
         vertexShader: 'attribute float aH; varying float vH; void main(){ vH = aH; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
         fragmentShader: 'uniform float uOpacity; uniform vec3 uColor; varying float vH; void main(){ gl_FragColor = vec4(uColor, pow(1.0 - vH, 2.2) * uOpacity); }',
         transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
@@ -740,7 +744,7 @@ export class FarmDiorama {
     const mask = document.createElement('canvas')
     mask.width = mask.height = 512
     const mctx = mask.getContext('2d', { willReadFrequently: true })!
-    mctx.fillStyle = '#fff'
+    mctx.fillStyle = MASK
     for (const f of e.neighbors) {
       if (f.cover !== 'arbolado') continue
       mctx.beginPath()
@@ -749,7 +753,7 @@ export class FarmDiorama {
     }
     const ownShare = clamp01(e.trees / 100)
     if (ownShare > 0) {
-      mctx.fillStyle = `rgba(255,255,255,${ownShare})`
+      mctx.fillStyle = maskAlpha(ownShare)
       mctx.beginPath()
       drawRings(mctx, frame, e.geometry, 512)
       mctx.fill('evenodd')
@@ -790,8 +794,8 @@ export class FarmDiorama {
     geo.scale(1, 0.82, 1)
     const mesh = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ roughness: 0.95, flatShading: true }), Math.max(1, trees.length))
     mesh.count = trees.length
-    const c = new THREE.Color(), olive = new THREE.Color('#7A8748')
-    trees.forEach((t, i) => mesh.setColorAt(i, c.set('#55663A').lerp(olive, t.tone)))
+    const c = new THREE.Color(), olive = new THREE.Color(SCENE.treeLight)
+    trees.forEach((t, i) => mesh.setColorAt(i, c.set(SCENE.treeDark).lerp(olive, t.tone)))
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     mesh.castShadow = true
     mesh.frustumCulled = false
@@ -823,9 +827,9 @@ export class FarmDiorama {
     const { frame } = this, S = frame.S
     const g = new THREE.Group()
     const k = Math.max(1, S / 900)
-    const white = new THREE.MeshStandardMaterial({ color: '#F1ECE2', roughness: 0.9 })
-    const roof = new THREE.MeshStandardMaterial({ color: '#B4623E', roughness: 0.85, flatShading: true })
-    const cyp = new THREE.MeshStandardMaterial({ color: '#2E4A2E', roughness: 1, flatShading: true })
+    const white = new THREE.MeshStandardMaterial({ color: SCENE.wall, roughness: 0.9 })
+    const roof = new THREE.MeshStandardMaterial({ color: SCENE.roof, roughness: 0.85, flatShading: true })
+    const cyp = new THREE.MeshStandardMaterial({ color: SCENE.cypress, roughness: 1, flatShading: true })
     const box = (w: number, h: number, d: number, x: number, z: number) => {
       const m = new THREE.Mesh(new THREE.BoxGeometry(w * k, h * k, d * k), white)
       m.position.set(x * k, (h * k) / 2, z * k)
@@ -871,9 +875,9 @@ export class FarmDiorama {
     c.width = c.height = 256
     const ctx = c.getContext('2d')!
     const grad = ctx.createRadialGradient(128, 128, 10, 128, 128, 128)
-    grad.addColorStop(0, 'rgba(6,9,5,0.55)')
-    grad.addColorStop(0.55, 'rgba(6,9,5,0.22)')
-    grad.addColorStop(1, 'rgba(6,9,5,0)')
+    grad.addColorStop(0, alpha(NEUTRAL['n-950'], 0.55))
+    grad.addColorStop(0.55, alpha(NEUTRAL['n-950'], 0.22))
+    grad.addColorStop(1, alpha(NEUTRAL['n-950'], 0))
     ctx.fillStyle = grad
     ctx.fillRect(0, 0, 256, 256)
     const t = new THREE.CanvasTexture(c)
@@ -1001,7 +1005,7 @@ export class FarmDiorama {
       drawRings(ctx, frame, f.geometry, size)
       ctx.fill('evenodd')
     }
-    ctx.fillStyle = CROPS[cropForYear(e, year, this.state.rotation).key]?.color ?? '#A3835F'
+    ctx.fillStyle = cropInfo(cropForYear(e, year, this.state.rotation).key).color
     ctx.beginPath()
     drawRings(ctx, frame, e.geometry, size)
     ctx.fill('evenodd')

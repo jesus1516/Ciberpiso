@@ -20,6 +20,7 @@ import { pulse } from '../lib/pulse'
 import type { CloudLayer, CloudVariant } from './clouds'
 import type { FarmDiorama } from './diorama'
 import { tileFor, type BBox, type FarmScene } from './scene'
+import { ACCENT, MAP, RAMP } from './tokens'
 import { APT } from './texts'
 import { showToast, useExplorer, type Level, type MunicipalityInfo, type ProvinceProps } from './state'
 
@@ -31,7 +32,7 @@ type Camera = { center: [number, number]; zoom: number; pitch: number; bearing: 
 
 const DATA = `${import.meta.env.BASE_URL}data`
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] }
-const AMBER = '#E8B86A'
+const AMBER = ACCENT // the one accent (tokens.ts)
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const range = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
@@ -76,9 +77,10 @@ function cameraPath(a: Camera, b: Camera) {
   }
 }
 
+const CLEAR = 'rgba(0,0,0,0)' // colour-ok: fully transparent, not a visible colour
 function traceExpr(p: number, color: string): maplibregl.ExpressionSpecification {
   const q = Math.min(0.999, Math.max(0.0005, p))
-  return ['interpolate', ['linear'], ['line-progress'], 0, color, q, color, Math.min(1, q + 0.0005), 'rgba(0,0,0,0)', 1, 'rgba(0,0,0,0)']
+  return ['interpolate', ['linear'], ['line-progress'], 0, color, q, color, Math.min(1, q + 0.0005), CLEAR, 1, CLEAR]
 }
 const hoverState = (on: unknown, off: unknown): maplibregl.ExpressionSpecification => ['case', ['boolean', ['feature-state', 'hover'], false], on, off] as maplibregl.ExpressionSpecification
 
@@ -100,30 +102,30 @@ function style(): maplibregl.StyleSpecification {
       pulse: { type: 'geojson', data: EMPTY },
     },
     layers: [
-      { id: 'bg', type: 'background', paint: { 'background-color': '#1E2A1A' } },
+      { id: 'bg', type: 'background', paint: { 'background-color': MAP.bg } },
       { id: 'sat', type: 'raster', source: 'esri', paint: { 'raster-saturation': -0.8, 'raster-opacity': 0.3, 'raster-contrast': 0.05, 'raster-brightness-max': 0.85, 'raster-fade-duration': 150 } },
-      { id: 'hill', type: 'hillshade', source: 'dem', paint: { 'hillshade-exaggeration': 0.45, 'hillshade-shadow-color': '#0E140B', 'hillshade-highlight-color': '#E7D8B8', 'hillshade-accent-color': '#3B4630', 'hillshade-illumination-direction': 315 } },
-      { id: 'resto-fill', type: 'fill', source: 'resto', paint: { 'fill-color': '#121A10', 'fill-opacity': 0.78 } },
-      { id: 'resto-line', type: 'line', source: 'resto', paint: { 'line-color': 'rgba(244,233,216,.12)', 'line-width': 0.6 } },
-      { id: 'focus-mask', type: 'fill', source: 'focus', paint: { 'fill-color': '#0C120A', 'fill-opacity': 0.5 } },
-      { id: 'prov-fill', type: 'fill', source: 'prov', paint: { 'fill-color': hoverState(AMBER, ['case', ['==', ['get', 'id'], '29'], '#6E6A3E', '#2E3B2A']), 'fill-opacity': hoverState(0.55, 0.42) } },
-      { id: 'prov-line', type: 'line', source: 'prov', paint: { 'line-color': ['case', ['==', ['get', 'id'], '29'], AMBER, 'rgba(244,233,216,.55)'], 'line-width': ['case', ['==', ['get', 'id'], '29'], 1.6, 0.9] } },
+      { id: 'hill', type: 'hillshade', source: 'dem', paint: { 'hillshade-exaggeration': 0.45, 'hillshade-shadow-color': MAP.hillShadow, 'hillshade-highlight-color': MAP.hillHighlight, 'hillshade-accent-color': MAP.hillAccent, 'hillshade-illumination-direction': 315 } },
+      { id: 'resto-fill', type: 'fill', source: 'resto', paint: { 'fill-color': MAP.rest, 'fill-opacity': 0.78 } },
+      { id: 'resto-line', type: 'line', source: 'resto', paint: { 'line-color': MAP.restLine, 'line-width': 0.6 } },
+      { id: 'focus-mask', type: 'fill', source: 'focus', paint: { 'fill-color': MAP.focusMask, 'fill-opacity': 0.5 } },
+      { id: 'prov-fill', type: 'fill', source: 'prov', paint: { 'fill-color': hoverState(AMBER, ['case', ['==', ['get', 'id'], '29'], MAP.provinceHome, MAP.province]), 'fill-opacity': hoverState(0.55, 0.42) } },
+      { id: 'prov-line', type: 'line', source: 'prov', paint: { 'line-color': ['case', ['==', ['get', 'id'], '29'], AMBER, MAP.provinceLine], 'line-width': ['case', ['==', ['get', 'id'], '29'], 1.6, 0.9] } },
       { id: 'malaga-glow', type: 'line', source: 'prov', filter: ['==', ['get', 'id'], '29'], paint: { 'line-color': AMBER, 'line-width': 8, 'line-blur': 6, 'line-opacity': 0.35 } },
-      { id: 'muni-fill', type: 'fill', source: 'muni', layout: { visibility: 'none' }, paint: { 'fill-color': '#2E3B2A', 'fill-opacity': 0.72 } },
-      { id: 'muni-line', type: 'line', source: 'muni', layout: { visibility: 'none' }, paint: { 'line-color': 'rgba(20,29,17,.75)', 'line-width': 0.7 } },
+      { id: 'muni-fill', type: 'fill', source: 'muni', layout: { visibility: 'none' }, paint: { 'fill-color': MAP.province, 'fill-opacity': 0.72 } },
+      { id: 'muni-line', type: 'line', source: 'muni', layout: { visibility: 'none' }, paint: { 'line-color': MAP.muniLine, 'line-width': 0.7 } },
       { id: 'muni-hover', type: 'line', source: 'muni', layout: { visibility: 'none' }, paint: { 'line-color': AMBER, 'line-width': 2.2, 'line-opacity': hoverState(1, 0) } },
       { id: 'muni-trace-glow', type: 'line', source: 'muniTrace', layout: { 'line-join': 'round' }, paint: { 'line-width': 10, 'line-blur': 6, 'line-opacity': 0.5, 'line-gradient': traceExpr(0, AMBER) } },
-      { id: 'muni-trace', type: 'line', source: 'muniTrace', layout: { 'line-join': 'round' }, paint: { 'line-width': 2.6, 'line-gradient': traceExpr(0, '#F6DDA8') } },
-      { id: 'farms-fill', minzoom: 8.5, type: 'fill', source: 'farms', layout: { visibility: 'none' }, paint: { 'fill-color': '#F4E9D8', 'fill-opacity': hoverState(0.24, 0.02) } },
-      { id: 'farms-line', minzoom: 8.5, type: 'line', source: 'farms', layout: { visibility: 'none' }, paint: { 'line-color': '#F4E9D8', 'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.18, 13, 0.4, 16, 0.6], 'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.25, 15, 1.1] } },
-      { id: 'farms-limited', minzoom: 8.5, type: 'fill', source: 'farms', filter: ['in', ['get', 'apt'], ['literal', LIMITED]], layout: { visibility: 'none' }, paint: { 'fill-color': '#0B0F09', 'fill-opacity': 0.42 } },
-      { id: 'farms-blocked-tint', minzoom: 8.5, type: 'fill', source: 'farms', filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]], layout: { visibility: 'none' }, paint: { 'fill-color': '#3F3F46', 'fill-opacity': 0.6 } },
+      { id: 'muni-trace', type: 'line', source: 'muniTrace', layout: { 'line-join': 'round' }, paint: { 'line-width': 2.6, 'line-gradient': traceExpr(0, MAP.trace) } },
+      { id: 'farms-fill', minzoom: 8.5, type: 'fill', source: 'farms', layout: { visibility: 'none' }, paint: { 'fill-color': MAP.farm, 'fill-opacity': hoverState(0.24, 0.02) } },
+      { id: 'farms-line', minzoom: 8.5, type: 'line', source: 'farms', layout: { visibility: 'none' }, paint: { 'line-color': MAP.farm, 'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.18, 13, 0.4, 16, 0.6], 'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.25, 15, 1.1] } },
+      { id: 'farms-limited', minzoom: 8.5, type: 'fill', source: 'farms', filter: ['in', ['get', 'apt'], ['literal', LIMITED]], layout: { visibility: 'none' }, paint: { 'fill-color': MAP.limited, 'fill-opacity': 0.42 } },
+      { id: 'farms-blocked-tint', minzoom: 8.5, type: 'fill', source: 'farms', filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]], layout: { visibility: 'none' }, paint: { 'fill-color': MAP.blocked, 'fill-opacity': 0.6 } },
       { id: 'farms-blocked', minzoom: 8.5, type: 'fill', source: 'farms', filter: ['in', ['get', 'apt'], ['literal', NOT_FARMLAND]], layout: { visibility: 'none' }, paint: { 'fill-pattern': HATCH, 'fill-opacity': 0.55 } },
       { id: 'farms-cand', minzoom: 8.5, type: 'fill', source: 'farms', filter: ['==', ['get', 'cand'], 1], layout: { visibility: 'none' }, paint: { 'fill-color': AMBER, 'fill-opacity': hoverState(0.85, 0.6) } },
-      { id: 'farms-cand-line', minzoom: 8.5, type: 'line', source: 'farms', filter: ['==', ['get', 'cand'], 1], layout: { visibility: 'none' }, paint: { 'line-color': '#FFF1D2', 'line-width': 1.2 } },
-      { id: 'farms-hover', minzoom: 8.5, type: 'line', source: 'farms', layout: { visibility: 'none' }, paint: { 'line-color': '#FFF1D2', 'line-width': 2.4, 'line-opacity': hoverState(1, 0) } },
+      { id: 'farms-cand-line', minzoom: 8.5, type: 'line', source: 'farms', filter: ['==', ['get', 'cand'], 1], layout: { visibility: 'none' }, paint: { 'line-color': MAP.highlight, 'line-width': 1.2 } },
+      { id: 'farms-hover', minzoom: 8.5, type: 'line', source: 'farms', layout: { visibility: 'none' }, paint: { 'line-color': MAP.highlight, 'line-width': 2.4, 'line-opacity': hoverState(1, 0) } },
       { id: 'sel-glow', type: 'line', source: 'sel', layout: { 'line-join': 'round' }, paint: { 'line-width': 12, 'line-blur': 7, 'line-opacity': 0.55, 'line-gradient': traceExpr(0, AMBER) } },
-      { id: 'sel-line', type: 'line', source: 'sel', layout: { 'line-join': 'round' }, paint: { 'line-width': 2.8, 'line-gradient': traceExpr(0, '#FFF1D2') } },
+      { id: 'sel-line', type: 'line', source: 'sel', layout: { 'line-join': 'round' }, paint: { 'line-width': 2.8, 'line-gradient': traceExpr(0, MAP.highlight) } },
       { id: 'pulse-fill', type: 'fill', source: 'pulse', paint: { 'fill-opacity': 0 } },
       { id: 'pulse-line-1', type: 'line', source: 'pulse', paint: { 'line-opacity': 0 } },
       { id: 'pulse-line-2', type: 'line', source: 'pulse', paint: { 'line-opacity': 0 } },
@@ -196,7 +198,7 @@ export class ExplorerController {
     this.source('resto').setData({ ...provinces, features: provinces.features.filter((f) => !f.properties.and) })
     this.source('prov').setData({ ...provinces, features: andalucia })
     this.source('muni').setData(this.municipalities)
-    map.setPaintProperty('muni-fill', 'fill-color', hoverState('#F4E9D8', ['interpolate', ['linear'], ['coalesce', ['get', 'pct_cultivo'], 0], 0, '#2E3B2A', maxCropland * 0.33, '#6E7448', maxCropland * 0.66, '#B39A5A', maxCropland, AMBER]))
+    map.setPaintProperty('muni-fill', 'fill-color', hoverState(MAP.farm, ['interpolate', ['linear'], ['coalesce', ['get', 'pct_cultivo'], 0], 0, RAMP[0], maxCropland * 0.33, RAMP[1], maxCropland * 0.66, RAMP[2], maxCropland, RAMP[3]]))
     map.setPaintProperty('muni-fill', 'fill-opacity', hoverState(0.6, 0.72))
     useExplorer.setState({
       totals: {
@@ -226,7 +228,7 @@ export class ExplorerController {
     if (this.map.getLayer(id)) this.map.setPaintProperty(id, prop as Parameters<maplibregl.Map['setPaintProperty']>[1], value as never)
   }
   private setTrace(prefix: 'muni' | 'sel', p: number) {
-    const [glow, line, core] = prefix === 'sel' ? ['sel-glow', 'sel-line', '#FFF1D2'] : ['muni-trace-glow', 'muni-trace', '#F6DDA8']
+    const [glow, line, core] = prefix === 'sel' ? ['sel-glow', 'sel-line', MAP.highlight] : ['muni-trace-glow', 'muni-trace', MAP.trace]
     this.paint(glow, 'line-gradient', traceExpr(p, AMBER))
     this.paint(line, 'line-gradient', traceExpr(p, core))
   }
@@ -720,7 +722,7 @@ export class ExplorerController {
       if (!farm) return
       const apt = farm.properties.apt
       if (apt && NOT_FARMLAND.includes(apt)) {
-        pulse(this.map, farm, '#ef4444', 700)
+        pulse(this.map, farm, MAP.pulseBlocked, 700)
         showToast('Not farmland', `${APT[apt]}: this farm cannot be analysed (SIGPAC and ESA WorldCover).`, 'blocked')
         return
       }

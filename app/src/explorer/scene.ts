@@ -2,6 +2,7 @@
 // (so the interface does not drag the 3D into the main bundle).
 import type { MultiPolygon, Polygon, Position } from 'geojson'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
+import { COVER_TOKENS, CROP_COLORS, CROP_INK } from './tokens'
 
 export type BBox = [number, number, number, number]
 export type Geometry = Polygon | MultiPolygon
@@ -27,20 +28,29 @@ export type Anchors = Record<'water' | 'risk' | 'market' | 'center' | 'soil', An
 export type Mode = 'satellite' | 'model'
 export type ViewState = { year: number; rotation: RotationKey; profile: ProfileKey; mode: Mode; exaggeration: number }
 // ------------------------------------------------------------ palette
-export const CROPS: Record<string, { label: string; color: string }> = {
-  trigo: { label: 'Wheat', color: '#D9B45B' },
-  girasol: { label: 'Sunflower', color: '#EBC93C' },
-  garbanzo: { label: 'Chickpea', color: '#9FB86A' },
-  veza: { label: 'Vetch', color: '#82A27E' },
-  barbecho: { label: 'Fallow', color: '#9C7A57' },
-  I: { label: 'Winter cereal', color: '#D4B160' },
-  V: { label: 'Summer crop', color: '#E3C24A' },
-  B: { label: 'Fallow or pasture', color: '#A3835F' },
-  M: { label: 'Mixed', color: '#B8A76C' },
-  P: { label: 'Permanent crop', color: '#667E48' },
+// Crops are grouped into four colours (tokens.ts); the one-letter `letter` tells the crops of a
+// group apart wherever colour is shown (timeline, legend), so colour is never the only cue.
+export type CropGroup = keyof typeof CROP_COLORS
+export type CropInfo = { label: string; color: string; ink: string; letter: string; group: CropGroup }
+const crop = (label: string, letter: string, group: CropGroup): CropInfo => ({ label, letter, group, color: CROP_COLORS[group], ink: CROP_INK[group] })
+export const CROPS: Record<string, CropInfo> = {
+  trigo: crop('Wheat', 'W', 'arable'),
+  girasol: crop('Sunflower', 'S', 'arable'),
+  garbanzo: crop('Chickpea', 'C', 'legume'),
+  veza: crop('Vetch', 'V', 'legume'),
+  barbecho: crop('Fallow', 'F', 'fallow'),
+  I: crop('Winter cereal', 'W', 'arable'),
+  V: crop('Summer crop', 'S', 'arable'),
+  B: crop('Fallow or pasture', 'F', 'fallow'),
+  M: crop('Mixed', 'M', 'arable'),
+  P: crop('Permanent crop', 'P', 'permanent'),
 }
+/** Fallback for an unknown class: shown as fallow, with a question mark. */
+export const UNKNOWN_CROP: CropInfo = { label: 'Unknown', letter: '?', group: 'fallow', color: CROP_COLORS.fallow, ink: CROP_INK.fallow }
+export const cropInfo = (key: string): CropInfo => CROPS[key] ?? UNKNOWN_CROP
 export const COVER_COLORS: Record<string, string> = {
-  pasto: '#A9AA74', arbolado: '#5E7646', matorral: '#7D8558', urbano: '#BEB5A7', suelo_desnudo: '#B39A7A', agua: '#6BA8A3',
+  pasto: COVER_TOKENS.natural, matorral: COVER_TOKENS.natural, arbolado: COVER_TOKENS.trees,
+  urbano: COVER_TOKENS.built, suelo_desnudo: COVER_TOKENS.built, agua: COVER_TOKENS.water,
 }
 export const CLASS_LETTER: Record<string, string> = { herbaceo_invierno: 'I', herbaceo_verano: 'V', barbecho_o_pastizal: 'B', mixto: 'M', permanente: 'P' }
 export const FIRST_SCENARIO_YEAR = 2026
