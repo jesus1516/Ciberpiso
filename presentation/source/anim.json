@@ -1,0 +1,193 @@
+{
+  "slides": {
+    "1": {
+      "transition": "fadeblack",
+      "dur": 1200,
+      "anims": [
+        {
+          "names": [
+            "tagline"
+          ],
+          "fx": "rise",
+          "at": 900,
+          "dur": 800
+        },
+        {
+          "names": [
+            "sub"
+          ],
+          "fx": "fade",
+          "at": 1500,
+          "dur": 700
+        },
+        {
+          "names": [
+            "event",
+            "team"
+          ],
+          "fx": "fade",
+          "at": 2100,
+          "dur": 700
+        }
+      ]
+    },
+    "2": {
+      "transition": "morph",
+      "dur": 1600,
+      "anims": []
+    },
+    "3": {
+      "transition": "morph",
+      "dur": 1600,
+      "anims": []
+    },
+    "4": {
+      "transition": "morph",
+      "dur": 1400,
+      "anims": []
+    },
+    "5": {
+      "transition": "fade",
+      "dur": 900,
+      "anims": [
+        {
+          "prefix": "card0_",
+          "fx": "rise",
+          "at": 200,
+          "dur": 600
+        },
+        {
+          "prefix": "card1_",
+          "fx": "rise",
+          "at": 500,
+          "dur": 600
+        },
+        {
+          "prefix": "card2_",
+          "fx": "rise",
+          "at": 800,
+          "dur": 600
+        },
+        {
+          "prefix": "card3_",
+          "fx": "rise",
+          "at": 1100,
+          "dur": 600
+        },
+        {
+          "names": [
+            "gframe",
+            "gifc"
+          ],
+          "fx": "fade",
+          "at": 1700,
+          "dur": 600
+        },
+        {
+          "names": [
+            "rec"
+          ],
+          "fx": "fade",
+          "at": 2000,
+          "dur": 600
+        },
+        {
+          "prefix": "chip",
+          "fx": "zoom",
+          "at": 2500,
+          "dur": 450
+        },
+        {
+          "names": [
+            "foot"
+          ],
+          "fx": "fade",
+          "at": 2900,
+          "dur": 500
+        }
+      ]
+    },
+    "6": {
+      "transition": "fade",
+      "dur": 900,
+      "anims": [
+        {
+          "names": [
+            "srch"
+          ],
+          "fx": "fade",
+          "at": 100,
+          "dur": 400
+        },
+        {
+          "prefix": "src0_",
+          "fx": "fade",
+          "at": 250,
+          "dur": 450
+        },
+        {
+          "prefix": "src1_",
+          "fx": "fade",
+          "at": 400,
+          "dur": 450
+        },
+        {
+          "prefix": "src2_",
+          "fx": "fade",
+          "at": 550,
+          "dur": 450
+        },
+        {
+          "prefix": "src3_",
+          "fx": "fade",
+          "at": 700,
+          "dur": 450
+        },
+        {
+          "prefix": "src4_",
+          "fx": "fade",
+          "at": 850,
+          "dur": 450
+        },
+        {
+          "prefix": "src5_",
+          "fx": "fade",
+          "at": 1000,
+          "dur": 450
+        },
+        {
+          "names": [
+            "chh",
+            "chart"
+          ],
+          "fx": "fade",
+          "at": 1300,
+          "dur": 700
+        },
+        {
+          "prefix": "rs0_",
+          "fx": "rise",
+          "at": 2100,
+          "dur": 600
+        },
+        {
+          "prefix": "rs1_",
+          "fx": "rise",
+          "at": 2400,
+          "dur": 600
+        },
+        {
+          "prefix": "honest_",
+          "fx": "rise",
+          "at": 3000,
+          "dur": 700
+        }
+      ]
+    },
+    "7": {
+      "transition": "morph",
+      "dur": 1600,
+      "anims": []
+    }
+  }
+}
