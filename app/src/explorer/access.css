@@ -177,3 +177,21 @@
 /* Below the masthead whatever its height (--mh is measured in Explorer.tsx). */
 .xp .narrative {top: calc(16px + var(--mh, 104px) + 10px); max-height: calc(100% - 26px - var(--mh, 104px) - 76px * var(--ts));}
 }
+
+/* ------------------------------------------------------------ phones: the narrative folds away from the map */
+.xp .eyebrow-row {display: flex; align-items: center; justify-content: space-between; gap: 8px;}
+.xp .fold {display: none;}
+@media (max-width: 759px) {
+.xp .eyebrow-row .eyebrow {margin-bottom: 0;}
+.xp .fold {display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 44px; min-width: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--n-500); background: var(--glass); color: var(--n-200); font-size: calc(12px * var(--ts)); pointer-events: auto;}
+.xp[data-compact="true"] .narrative .scene > :not(.eyebrow-row):not(h1) {display: none;}
+.xp[data-compact="true"] .narrative .scene h1 {font-size: calc(22px * var(--ts)); margin: 2px 0 0;}
+.xp[data-compact="true"] .masthead .search {display: none;}
+}
+
+/* ------------------------------------------------------------ farm view: the 3D frame starts below the tools, whatever their rows */
+.xp .dio-frame {top: max(72px, calc(var(--tools-b, 0px) + 16px));}
+@media (max-width: 759px) {
+/* + room for the numbered markers, which rise above the far edge of the block */
+.xp .dio-frame {top: max(58px, calc(var(--tools-b, 0px) + 44px));}
+}

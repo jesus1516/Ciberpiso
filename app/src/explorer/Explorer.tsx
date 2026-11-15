@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getFarm } from '../lib/farms'
 import { useStore } from '../store'
 import { AccessList } from './AccessList'
@@ -80,7 +80,20 @@ function Tooltip({ hover }: { hover: Hover | null }) {
   )
 }
 
-function Narrative({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> }) {
+/** Step line. On phones it carries the button that folds the panel away from the map. */
+function Eyebrow({ children, compact, onToggle }: { children: React.ReactNode; compact: boolean; onToggle: () => void }) {
+  return (
+    <div className="eyebrow-row">
+      <p className="eyebrow">{children}</p>
+      <button type="button" className="fold" aria-expanded={!compact} aria-label={compact ? 'Show the details' : 'Hide the details over the map'} onClick={onToggle}>
+        {compact ? 'Details' : 'Hide'}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d={compact ? 'm6 9 6 6 6-6' : 'm6 15 6-6 6 6'} /></svg>
+      </button>
+    </div>
+  )
+}
+
+function Narrative({ ctrl, compact, onToggle }: { ctrl: React.RefObject<ExplorerController | null>; compact: boolean; onToggle: () => void }) {
   const level = useExplorer((s) => s.level)
   const phase = useExplorer((s) => s.phase)
   const totals = useExplorer((s) => s.totals)
@@ -91,7 +104,7 @@ function Narrative({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> 
     <section className="narrative" aria-label="Where you are" inert={phase !== 'idle'}>
       {level === 0 && (
         <div className="scene" key="l0">
-          <p className="eyebrow">Step 1 of 4 · Andalucía</p>
+          <Eyebrow compact={compact} onToggle={onToggle}>Step 1 of 4 · Andalucía</Eyebrow>
           <h1 id="xp-heading" tabIndex={-1}>Where is your farm?</h1>
           <p>Pick a province. The full tour, with farms and rotations, is available for Málaga.</p>
           <div className="fact"><strong>{fmt(totals.andalucia)}</strong><span>SIGPAC farms<br />in the 8 provinces</span></div>
@@ -101,7 +114,7 @@ function Narrative({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> 
       )}
       {level === 1 && (
         <div className="scene" key="l1">
-          <p className="eyebrow">Step 2 of 4 · Málaga</p>
+          <Eyebrow compact={compact} onToggle={onToggle}>Step 2 of 4 · Málaga</Eyebrow>
           <h1 id="xp-heading" tabIndex={-1}>Choose the municipality</h1>
           <p>The colour shows what share of its farms is cropland according to the satellite (ESA WorldCover).</p>
           <div className="legend-scale"><div className="bar" /><div className="ticks"><span>0 %</span><span>cropland farms</span><span>{fmt(totals.maxCropland)} %</span></div></div>
@@ -112,7 +125,7 @@ function Narrative({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> 
       )}
       {level === 2 && municipality && (
         <div className="scene" key={`l2-${municipality.mun}`}>
-          <p className="eyebrow">Step 3 of 4 · Málaga</p>
+          <Eyebrow compact={compact} onToggle={onToggle}>Step 3 of 4 · Málaga</Eyebrow>
           <h1 id="xp-heading" tabIndex={-1}>{municipality.nombre}</h1>
           <p>
             {farms === null ? 'Loading its farms…' : `${fmt(farms)} SIGPAC farms.`} Zoom in and pick one
@@ -174,6 +187,8 @@ export function Explorer() {
   const mapEl = useRef<HTMLDivElement>(null)
   const dioEl = useRef<HTMLDivElement>(null)
   const masthead = useRef<HTMLElement>(null)
+  // Phones: the narrative (and the search) can be folded away so the map is visible.
+  const [compact, setCompact] = useState(false)
   // The masthead wraps (search row on phones, large text): its real height places the narrative below it.
   useEffect(() => {
     const el = masthead.current
@@ -261,7 +276,7 @@ export function Explorer() {
   const go = (l: Level) => ctrl.current?.go(l)
 
   return (
-    <div ref={app} className="xp" data-level={level} data-phase={phase} data-flat={flat}>
+    <div ref={app} className="xp" data-level={level} data-phase={phase} data-flat={flat} data-compact={compact}>
       <div ref={mapEl} className="xp-map" role="region" aria-label="Map of Andalucía and Málaga" aria-describedby="xp-map-summary" />
       <p id="xp-map-summary" className="vh">{summary}</p>
       <p className="vh" role="status" aria-live="polite" aria-atomic="true" data-testid="announcer">{announcement}</p>
@@ -283,7 +298,7 @@ export function Explorer() {
         <SigpacSearch ctrl={ctrl} />
       </header>
       <main className="xp-main" aria-label="Explorer">
-        <Narrative ctrl={ctrl} />
+        <Narrative ctrl={ctrl} compact={compact} onToggle={() => setCompact((c) => !c)} />
         <div ref={dioEl} />
         <FarmView ctrl={ctrl} />
       </main>

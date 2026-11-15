@@ -206,6 +206,26 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
   const [showFullData, setShowFullData] = useState(false)
   const [showTable, setShowTable] = useState(false)
   const fullBtn = useRef<HTMLButtonElement>(null)
+  // The farm tools wrap to two rows on narrow screens: their real bottom (--tools-b, read by
+  // .dio-frame in access.css) keeps the 3D block and its numbered markers below them.
+  const tools = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = tools.current
+    const xp = el?.closest<HTMLElement>('.xp')
+    if (!el || !xp || typeof ResizeObserver === 'undefined') return
+    let raf = 0
+    const ro = new ResizeObserver(() => {
+      let y = el.offsetHeight
+      for (let n: HTMLElement | null = el; n && n !== xp; n = n.offsetParent as HTMLElement | null) y += n.offsetTop
+      const v = `${Math.ceil(y)}px`
+      if (xp.style.getPropertyValue('--tools-b') === v) return
+      xp.style.setProperty('--tools-b', v)
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => ctrl.current?.refit())
+    })
+    ro.observe(el)
+    return () => { ro.disconnect(); cancelAnimationFrame(raf) }
+  }, [ctrl])
   const playToken = useRef(0)
   const [hot, setHot] = useState<CardKey | null>(null)
   const [picked, setPicked] = useState<InsightTarget | null>(null)
@@ -364,7 +384,7 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
       </section>
 
       <div className="fx-stage">
-      <div className="fx-tools">
+      <div ref={tools} className="fx-tools">
         {!flat && (
           <>
             <div className="seg" role="group" aria-label="Terrain style">

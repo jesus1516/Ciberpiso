@@ -199,6 +199,11 @@ export class ExplorerController {
   private async init() {
     const map = this.map
     if (!map.hasImage(HATCH)) map.addImage(HATCH, hatchImage())
+    // The compact attribution opens itself and only closes on a drag, which this map does not allow: start
+    // it closed (its (i) button still opens it). Open, it covered the breadcrumb on phones.
+    const attrib = map.getContainer().querySelector('.maplibregl-ctrl-attrib')
+    attrib?.classList.remove('maplibregl-compact-show')
+    attrib?.removeAttribute('open')
     const [provinces, municipalities, stats] = await Promise.all([
       fetch(`${DATA}/provincias_andalucia.geojson`).then((r) => r.json() as Promise<FC<ProvinceProps>>),
       loadMunicipalities(),
