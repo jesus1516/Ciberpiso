@@ -239,7 +239,7 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
   t(s, "Scan it and explore\nyour own farm", { x: 0.75, y: 2.85, w: 6.6, h: 1.35, fontFace: HEAD, fontSize: 36, color: K.green, objectName: "cta" });
   t(s, "Live demo in the browser, nothing to install.", { x: 0.75, y: 4.25, w: 6.6, h: 0.35, fontSize: 16, color: "3E5A45", objectName: "cta2" });
   t(s, "TEAM CIBERPISO", { x: 0.75, y: 5.15, w: 6.6, h: 0.3, fontSize: 12, bold: true, color: "6B7A62", charSpacing: 4, objectName: "teamh" });
-  t(s, "Gael Espín  ·  Nikhil Baxani  ·  Jesus Rodrigue\nJavier Díaz  ·  Yeray Moraleda",
+  t(s, "Gael Espín  ·  Nikhil Baxani  ·  Jesus Rodríguez\nJavier Díaz  ·  Yeray Moraleda",
     { x: 0.75, y: 5.5, w: 6.8, h: 0.8, fontSize: 17, color: K.green, lineSpacingMultiple: 1.2, objectName: "names" });
   t(s, "Space Apps Challenge 2026 · Málaga", { x: 0.75, y: 6.75, w: 6, h: 0.3, fontSize: 12, color: "6B7A62", objectName: "event" });
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 8.15, y: 0.95, w: 4.45, h: 5.6, rectRadius: 0.2, fill: { color: "FFFFFF" }, line: { color: "E8DCC0", width: 1 },
