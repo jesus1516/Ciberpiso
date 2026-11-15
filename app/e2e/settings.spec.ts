@@ -71,6 +71,23 @@ test('corrupt saved settings fall back to the defaults', async ({ page }) => {
   expect(errors).toEqual([])
 })
 
+test('settings inside a farm: the panel opens under its button and fits the screen', async ({ page }) => {
+  test.setTimeout(150_000)
+  await openApp(page)
+  await toFarm(page, MUNICIPALITIES.antequera, FARMS.antequera)
+  const btn = page.locator('.fx-tools .settings-btn')
+  await btn.click()
+  const panel = page.getByRole('dialog', { name: 'Settings' })
+  await expect(panel).toBeVisible()
+  const b = (await btn.boundingBox())!
+  const p = (await panel.boundingBox())!
+  const vp = page.viewportSize()!
+  expect(p.y).toBeGreaterThanOrEqual(b.y + b.height)
+  expect(p.y).toBeLessThan(b.y + b.height + 30)
+  expect(p.y + p.height).toBeLessThanOrEqual(vp.height)
+  expect(p.x + p.width).toBeLessThanOrEqual(vp.width)
+})
+
 // --------------------------------------------------------------------------- the data table
 
 test('data table: indicators per rotation as a real table, available next to the 3D', async ({ page }) => {

@@ -57,7 +57,9 @@
 .xp .settings-btn svg {width: 14px; height: 14px;}
 .xp .in-tools .settings-btn {height: calc(36px * var(--ts)); border-radius: 11px; padding: 0 12px; font-size: calc(12px * var(--ts));}
 .xp .settings-panel {position: absolute; z-index: 95; top: calc(100% + 10px); left: 0; width: calc(320px * var(--ts)); max-width: calc(100vw - 24px); box-sizing: border-box; padding: 14px 16px 14px; background: var(--n-800); border: 1px solid var(--n-500); border-radius: 14px; font-size: calc(12px * var(--ts)); color: var(--n-100); text-align: left; box-shadow: 0 18px 50px color-mix(in srgb, var(--n-950) 60%, transparent);}
-.xp .in-tools .settings-panel {left: auto; right: 0;}
+/* In the farm toolbar the panel hangs from its own button (without this it anchored to the whole view and opened at the bottom). */
+.xp .settings.in-tools {position: relative;}
+.xp .in-tools .settings-panel {left: auto; right: 0; max-height: calc(100dvh - 90px); overflow-y: auto;}
 .xp .settings-panel .head {display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;}
 .xp .settings-panel h2 {margin: 0; font: 500 calc(18px * var(--ts))/1.1 Fraunces, Georgia, serif;}
 .xp .settings-panel .x {border: 0; background: none; color: var(--n-200); font-size: calc(15px * var(--ts)); padding: 4px 8px; border-radius: 6px;}
