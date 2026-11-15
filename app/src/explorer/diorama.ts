@@ -431,6 +431,13 @@ export class FarmDiorama {
     this.controls.addEventListener('start', () => { this.dragging = true; this.kick() })
     this.controls.addEventListener('end', () => { this.dragging = false; this.kick() })
     this.controls.addEventListener('change', () => this.kick())
+    // Phones / touch screens: the block stays still (no rotate or zoom gestures). The 3D then paints only
+    // when something changes (year, rotation, relief), and a vertical swipe over it scrolls the page.
+    if (LIGHT_DEVICE) {
+      this.controls.enableRotate = false
+      this.controls.enableZoom = false
+      this.renderer.domElement.style.touchAction = 'pan-y'
+    }
 
     this.sun.castShadow = true
     this.sun.shadow.mapSize.set(LIGHT_DEVICE ? 1024 : 2048, LIGHT_DEVICE ? 1024 : 2048)

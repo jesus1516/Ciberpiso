@@ -148,6 +148,10 @@
 .xp .settings-panel .row {min-height: 44px; align-items: center;}
 .xp .settings-panel .opts span {padding: 12px 6px;}
 .xp .maplibregl-ctrl-attrib-button {width: 44px; height: 44px;}
+/* The (i) icon is a 24 px background image: at 44 px it tiled into four icons. One, centred. */
+.xp .maplibregl-ctrl-attrib-button {background-repeat: no-repeat; background-position: center;}
+/* Above the Back button (bottom right), not under it. */
+.xp .maplibregl-ctrl-bottom-right {bottom: 64px;}
 .xp .in-tools .settings-btn span {display: none;}
 .xp .in-tools .settings-btn {width: 44px; padding: 0; justify-content: center;}
 .xp .al-list li {padding: 10px 9px;}
