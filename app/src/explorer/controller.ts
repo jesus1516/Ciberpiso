@@ -22,7 +22,7 @@ import type { FarmDiorama } from './diorama'
 import { tileFor, type BBox, type FarmScene } from './scene'
 import { ACCENT, MAP, RAMP } from './tokens'
 import { APT } from './texts'
-import { reducedMotion, use3d } from './settings'
+import { is3dEnabled, reducedMotion } from './settings'
 import { showToast, useExplorer, type FarmItem, type Level, type MunicipalityInfo, type ProvinceProps } from './state'
 
 maplibregl.setWorkerUrl(workerUrl)
@@ -360,7 +360,7 @@ export class ExplorerController {
   /** Andalucía ⇄ Málaga (clouds) and Málaga ⇄ municipality (mist). */
   private async cloudDive(target: Level, variant: CloudVariant) {
     // With the 3D switched off the clouds (WebGL) are not even downloaded: the map just flies.
-    const clouds = use3d() ? (await this.loadThree()).clouds : null
+    const clouds = is3dEnabled() ? (await this.loadThree()).clouds : null
     const { level, speed } = useExplorer.getState()
     const back = target < level
     const a = this.current(), b = this.cameraFor(target)
@@ -451,7 +451,7 @@ export class ExplorerController {
 
   /** Municipality → farm: the boundary is traced, the map flies to the tile from above and the 3D raises it. */
   private async enterFarm(farm: Farm) {
-    if (!use3d()) return this.enterFarmFlat(farm)
+    if (!is3dEnabled()) return this.enterFarmFlat(farm)
     const { dio, diorama } = await this.loadThree()
     const props = farm.properties
     const farmSceneP = this.farmScene(farm)

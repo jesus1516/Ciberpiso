@@ -79,7 +79,7 @@ const osReducedMotion = () => {
 /** True when animations must be skipped: the operating system asks for it or the setting is on. */
 export const reducedMotion = () => osReducedMotion() || useSettings.getState().reduceMotion
 /** True when the 3D terrain and the clouds may be used. */
-export const use3d = () => useSettings.getState().use3d
+export const is3dEnabled = () => useSettings.getState().use3d
 
 /** Writes the settings to <html>. Called once at start and on every change. */
 export function applySettings(s: Settings = useSettings.getState(), root: HTMLElement = document.documentElement) {

@@ -1,31 +1,10 @@
 // Data table alternative to the 3D terrain: the indicators of every rotation for this farm, in a
 // real <table> that screen readers can navigate cell by cell. Shown over the terrain on request,
 // and always when the 3D is switched off.
-import type { RotationScore } from '../lib/calculator'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
-import { cropInfo } from './scene'
 import type { Selection } from './state'
-import { PROFILES, SHORT_ROTATION, fmt } from './texts'
-
-const ROTATIONS: RotationKey[] = ['R0', 'R1', 'R2', 'R3']
-
-/** Rows of the table as plain data (also used by the unit test). */
-export function tableRows(scores: Record<RotationKey, RotationScore>, profile: ProfileKey) {
-  return ROTATIONS.map((k) => {
-    const r = scores[k]
-    return {
-      code: k,
-      name: SHORT_ROTATION[k],
-      crops: r.crops.map((c) => cropInfo(c).label).join(', '),
-      water: r.water,
-      soil: r.soil,
-      market: r.profit,
-      risk: r.risk,
-      score: r.score[profile],
-      rank: r.rank[profile],
-    }
-  })
-}
+import { tableRows } from './tableRows'
+import { PROFILES, fmt } from './texts'
 
 export function FarmTable({ sel, profile, rotation, onPick }: {
   sel: Selection; profile: ProfileKey; rotation: RotationKey; onPick?: (r: RotationKey) => void

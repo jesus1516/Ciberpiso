@@ -3,30 +3,11 @@
 // Tab reaches it, typing filters, ↑ ↓ Home End move, Enter chooses (the same transition as a click),
 // Esc closes the list. The focus stays in the input; the highlighted option is `aria-activedescendant`.
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { useExplorer, type FarmItem } from './state'
-import { APT, fmt } from './texts'
+import { farmEntry, filterEntries, fold, MAX_OPTIONS, type ListEntry } from './listing'
+import { useExplorer } from './state'
+import { fmt } from './texts'
 import type { ExplorerController } from './controller'
 import type { Level } from './state'
-
-export type ListEntry = { id: string; label: string; detail: string; note?: string; search: string }
-
-/** Options rendered at once. Málaga has up to 36,000 farms in one municipality: the rest is reached by typing. */
-export const MAX_OPTIONS = 60
-
-/** Entries whose text contains every word typed (case and accents ignored). */
-export function filterEntries(items: ListEntry[], query: string): ListEntry[] {
-  const words = fold(query).split(/\s+/).filter(Boolean)
-  return words.length ? items.filter((i) => words.every((w) => i.search.includes(w))) : items
-}
-export const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
-
-export const farmEntry = (f: FarmItem): ListEntry => ({
-  id: String(f.id),
-  label: `Farm ${f.pol}-${f.par}`,
-  detail: `${fmt(f.ha, 1)} ha`,
-  note: f.cand ? '★ Project candidate' : f.apt ? `⚠ Indicative: ${APT[f.apt]?.toLowerCase() ?? f.apt}` : undefined,
-  search: fold(`farm ${f.pol}-${f.par} ${f.pol} ${f.par} ${f.pid} ${f.ha.toFixed(1)} ${f.cand ? 'candidate' : ''}`),
-})
 
 function Combobox({ label, hint, entries, onChoose, noun }: {
   label: string; hint: string; entries: ListEntry[]; onChoose: (id: string) => void; noun: string

@@ -13,11 +13,14 @@ export function focusables(root: HTMLElement) {
 
 export function useFocusTrap(ref: React.RefObject<HTMLElement | null>, onEscape: () => void, initial?: () => HTMLElement | null, returnTo?: () => HTMLElement | null) {
   const esc = useRef(onEscape)
-  esc.current = onEscape
   const first = useRef(initial)
-  first.current = initial
   const back = useRef(returnTo)
-  back.current = returnTo
+  // The latest callbacks are kept without re-running the trap on every render.
+  useEffect(() => {
+    esc.current = onEscape
+    first.current = initial
+    back.current = returnTo
+  })
   useEffect(() => {
     const root = ref.current
     if (!root) return

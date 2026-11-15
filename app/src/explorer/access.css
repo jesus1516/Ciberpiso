@@ -110,8 +110,7 @@
 :root[data-contrast="high"] .xp .eyebrow, :root[data-contrast="high"] .xp .hint {text-shadow: none;}
 :root[data-contrast="high"] .xp .fx-col .fx-card.recede:not(.hot) {border-color: var(--n-500);}
 :root[data-contrast="high"] .xp .settings-panel .opts input:checked + span {background: var(--accent); color: var(--n-900);}
-/* The light-surface parts (Full data drawer, Sources dialog) */
-:root[data-contrast="high"] {--color-ink: #000000; --color-ink-2: #1a1a1a; --color-muted: #262626; --color-line: #4d4d4d; --color-surface: #ffffff;}
+/* The light-surface parts (Full data drawer, Sources dialog) get their high-contrast tokens in index.css. */
 
 /* ------------------------------------------------------------ phones: touch targets of at least 44 × 44 px */
 @media (max-width: 759px) {
