@@ -15,7 +15,7 @@ CREATE TABLE dim_municipio (
   nombre        TEXT    NOT NULL
 );
 
--- Celdas NASA POWER (MERRA-2 0,5° x 0,625°) con resumen climático 2002–2025
+-- Celdas POWER (MERRA-2 0,5° x 0,625°) con resumen climático 2002–2025
 CREATE TABLE dim_celda_power (
   celda_power               INTEGER PRIMARY KEY,
   lat                       REAL NOT NULL,   -- centro de la celda
@@ -38,7 +38,7 @@ CREATE TABLE dim_celda_power (
   gwetroot_mar_may_p20      REAL
 );
 
--- Fincas = parcelas SIGPAC (geometría); atributos de NASADEM, WorldCover y MODIS
+-- Fincas = parcelas SIGPAC (geometría); atributos de SRTM-derived DEM, WorldCover y MODIS
 CREATE TABLE fincas (
   finca_key           INTEGER PRIMARY KEY,   -- provincia*10^8 + orden
   provincia           INTEGER NOT NULL,      -- código INE/SIGPAC (29 = Málaga)
@@ -54,8 +54,8 @@ CREATE TABLE fincas (
   lat                 REAL,
   celda_power         INTEGER REFERENCES dim_celda_power(celda_power),
   n_pixeles           INTEGER,               -- píxeles de 1/4000° dentro de la finca
-  altitud_m           REAL,                  -- NASADEM
-  pendiente_pct       REAL,                  -- NASADEM
+  altitud_m           REAL,                  -- SRTM-derived DEM
+  pendiente_pct       REAL,                  -- SRTM-derived DEM
   wc_arbolado_pct     REAL,                  -- ESA WorldCover 2021
   wc_matorral_pct     REAL,
   wc_pasto_pct        REAL,
@@ -124,7 +124,7 @@ CREATE TABLE ndvi_fincas (
   PRIMARY KEY (finca_key, fecha)
 ) WITHOUT ROWID;
 
--- Clima NASA POWER por celda y campaña (oct-sep)
+-- Clima POWER por celda y campaña (oct-sep)
 CREATE TABLE clima_anual (
   celda_power         INTEGER NOT NULL REFERENCES dim_celda_power(celda_power),
   campana             INTEGER NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE clima_anual (
   PRIMARY KEY (celda_power, campana)
 ) WITHOUT ROWID;
 
--- Humedad del suelo NASA POWER (MERRA-2, fracción 0-1 de saturación) por celda y campaña
+-- Humedad del suelo POWER (MERRA-2, fracción 0-1 de saturación) por celda y campaña
 CREATE TABLE suelo_humedad_anual (
   celda_power               INTEGER NOT NULL REFERENCES dim_celda_power(celda_power),
   campana                   INTEGER NOT NULL,
