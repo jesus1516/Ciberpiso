@@ -245,8 +245,10 @@ export class ExplorerController {
   // ------------------------------------------------------------ camera
   private padding(level: Level) {
     const w = window.innerWidth
+    // The farm is handed to the 3D already centred in the area the information column leaves free.
+    if (level === 3 && this.dio) return this.dio.framePadding()
     if (w < 760) return { top: level === 2 ? 170 : 230, bottom: 70, left: 20, right: 20 }
-    if (level === 3) return { top: 90, bottom: 170, left: 280, right: 280 }
+    if (level === 3) return { top: 90, bottom: 170, left: 480, right: 30 }
     return { top: 80, bottom: 80, left: w < 1100 ? 330 : 390, right: 70 }
   }
   private boundsFor(level: Level): [[number, number], [number, number]] {

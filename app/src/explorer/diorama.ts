@@ -3,8 +3,8 @@
 // Cuts a square of real terrain around the farm (Mapzen Terrarium DEM and Esri
 // orthophoto, the same ones as the map), raises it as a block with a soil profile on
 // the sides and draws the farm on top: SIGPAC boundary, crop per campaign (MODIS) or per
-// rotation scenario, trees (WorldCover + orthophoto canopies) and anchors for the
-// cards. The entry starts flat from above, fitted to the rectangle the farm occupied
+// rotation scenario, trees (WorldCover + orthophoto canopies) and numbered markers
+// (1–4) that match the indicator cards. The entry starts flat from above, fitted to the rectangle the farm occupied
 // on the map and with a snapshot of the map itself, so the hand-over goes unnoticed.
 //
 // Performance: it only paints while something changes, normals are computed once and, if
@@ -19,6 +19,12 @@ import type { ProfileKey, RotationKey } from '../lib/indicators'
 import { COVER_COLORS, CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type FarmScene, type Geometry, type Mode, type ViewState } from './scene'
 
 type Rect = { x: number; y: number; w: number; h: number }
+export type Padding = { top: number; bottom: number; left: number; right: number }
+export type MarkerKey = 'water' | 'soil' | 'market' | 'risk'
+export type MarkerSpec = { key: MarkerKey; n: number; label: string }
+type Marker = { key: MarkerKey; el: HTMLDivElement; css: string; slot: number; hidden: boolean }
+/** Badge positions tried around a marker's dot (dx, lift), nearest first. */
+const MARKER_SLOTS: [number, number][] = [[0, 16], [-30, 14], [30, 14], [-22, 40], [22, 40], [0, 44], [-34, 66], [34, 66], [0, 72]]
 type View = { radius: number; polar: number; azimuth: number; ty: number; offset: { x: number; y: number } }
 
 const ESRI = (z: number, x: number, y: number) => `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`
@@ -304,8 +310,6 @@ type Tween = { start: number; ms: number; fn: (k: number) => void; resolve: () =
 
 export type DioramaOptions = {
   onChange?: (state: ViewState) => void
-  onFrame?: (anchors: Anchors) => void
-  onCardsIn?: (anchors: Anchors) => void
 }
 
 export class FarmDiorama {
@@ -316,12 +320,15 @@ export class FarmDiorama {
   private preferredExaggeration = 2
   farmScene: FarmScene | null = null
   synthetic = false
-  leaders: SVGSVGElement
-  pin: HTMLDivElement
   width = 1
   height = 1
 
   private bg: HTMLDivElement
+  /** Invisible box placed by CSS (explorer.css, .dio-frame): the free area where the block is framed. */
+  private frameEl: HTMLDivElement
+  private markerLayer: HTMLDivElement
+  private markers: Marker[] = []
+  private markerEvents: { onHover?: (k: MarkerKey | null) => void; onSelect?: (k: MarkerKey) => void } = {}
   private renderer: THREE.WebGLRenderer
   private scene = new THREE.Scene()
   private camera = new THREE.PerspectiveCamera(32, 1, 1, 100000)
@@ -366,6 +373,9 @@ export class FarmDiorama {
   private cropCanvases: HTMLCanvasElement[] = []
   private cropTex: THREE.CanvasTexture[] = []
   private front = 0
+  /** Size the current framing was computed for (to re-frame after a real resize). */
+  private fitted: { w: number; h: number } | null = null
+  private refit = 0
 
   constructor(container: HTMLElement, opts: DioramaOptions = {}) {
     this.container = container
@@ -388,10 +398,18 @@ export class FarmDiorama {
 
     const overlay = document.createElement('div')
     overlay.className = 'dio-overlay'
-    overlay.innerHTML = '<svg class="dio-leaders" aria-hidden="true"></svg><div class="dio-pin" aria-hidden="true"></div>'
+    overlay.innerHTML = '<div class="dio-frame"></div><div class="dio-markers" aria-hidden="true"></div>'
     container.appendChild(overlay)
-    this.leaders = overlay.querySelector('svg')!
-    this.pin = overlay.querySelector('.dio-pin')!
+    this.frameEl = overlay.querySelector('.dio-frame')!
+    this.markerLayer = overlay.querySelector('.dio-markers')!
+    // Hovering a marker highlights its card; clicking it brings the card into view.
+    const keyOf = (e: Event) => ((e.target as HTMLElement).closest('.dio-mk') as HTMLElement | null)?.dataset.k as MarkerKey | undefined
+    this.markerLayer.addEventListener('pointerover', (e) => this.markerEvents.onHover?.(keyOf(e) ?? null))
+    this.markerLayer.addEventListener('pointerout', () => this.markerEvents.onHover?.(null))
+    this.markerLayer.addEventListener('click', (e) => {
+      const k = keyOf(e)
+      if (k) this.markerEvents.onSelect?.(k)
+    })
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     Object.assign(this.controls, { enableDamping: true, dampingFactor: 0.08, enablePan: false, rotateSpeed: 0.55, zoomSpeed: 0.7, enabled: false })
@@ -1034,16 +1052,77 @@ export class FarmDiorama {
   stopPlay() {
     this.playToken++
   }
-  /** Connects the card layer: receives the anchors every frame and on entry. Returns the disconnect function. */
-  attachOverlay(o: { onFrame: (a: Anchors) => void; onCardsIn: (a: Anchors) => void; label: string }) {
-    this.opts.onFrame = o.onFrame
-    this.opts.onCardsIn = o.onCardsIn
-    this.pin.dataset.label = o.label
+  /**
+   * Connects the card column: one numbered marker per card, attached to its point on the
+   * terrain (they follow the camera every frame). Returns the disconnect function.
+   */
+  attachOverlay(o: { markers: MarkerSpec[]; onHover?: (k: MarkerKey | null) => void; onSelect?: (k: MarkerKey) => void }) {
+    this.markerLayer.innerHTML = ''
+    this.markers = o.markers.map(({ key, n, label }) => {
+      const el = document.createElement('div')
+      el.className = 'dio-mk'
+      el.dataset.k = key
+      el.title = label
+      el.innerHTML = `<i></i><b>${n}</b>`
+      this.markerLayer.appendChild(el)
+      return { key, el, css: '', slot: -1, hidden: false }
+    })
+    this.markerEvents = { onHover: o.onHover, onSelect: o.onSelect }
+    const a = this.anchors()
+    if (a) this.placeMarkers(a)
     return () => {
-      this.opts.onFrame = undefined
-      this.opts.onCardsIn = undefined
-      this.leaders.innerHTML = ''
+      this.markerLayer.innerHTML = ''
+      this.markers = []
+      this.markerEvents = {}
       this.stopPlay()
+    }
+  }
+  /** Highlights the marker of the card under the pointer or with focus (null: none). */
+  highlight(key: MarkerKey | null) {
+    for (const m of this.markers) m.el.classList.toggle('on', m.key === key)
+  }
+  /**
+   * Places the markers on their anchors. Each one is a dot on the exact point, a short stem
+   * and a numbered badge. When points are close (the lowest and the highest point of a small
+   * farm, say), the badge moves to the first free slot around its dot, so badges never cover
+   * each other or another marker's dot.
+   */
+  private placeMarkers(a: Anchors) {
+    if (!this.markers.length) return
+    const R = 13 // badge radius + a little air
+    const badges: { x: number; y: number }[] = []
+    const visible = this.markers.filter((m) => !a[m.key].behind)
+    const dots = visible.map((m) => a[m.key])
+    // From the bottom of the screen up: the nearest markers keep the shortest stems.
+    for (const m of [...this.markers].sort((p, q) => a[q.key].y - a[p.key].y)) {
+      const p = a[m.key]
+      const hidden = !!p.behind
+      if (hidden !== m.hidden) {
+        m.el.classList.toggle('hidden', hidden)
+        m.hidden = hidden
+      }
+      if (hidden) continue
+      const free = (i: number) => {
+        const bx = p.x + MARKER_SLOTS[i][0], by = p.y - MARKER_SLOTS[i][1] - 12
+        return badges.every((q) => Math.hypot(q.x - bx, q.y - by) >= 2 * R) && dots.every((d) => d === p || Math.hypot(d.x - bx, d.y - by) >= R + 4)
+      }
+      let slot = 0
+      while (slot < MARKER_SLOTS.length - 1 && !free(slot)) slot++
+      const [dx, lift] = MARKER_SLOTS[slot]
+      badges.push({ x: p.x + dx, y: p.y - lift - 12 })
+      const css = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`
+      if (css !== m.css) {
+        m.el.style.transform = css
+        m.css = css
+      }
+      if (slot !== m.slot) {
+        // The stem goes from the dot to the bottom of the badge.
+        m.el.style.setProperty('--dx', `${dx}px`)
+        m.el.style.setProperty('--lift', `${lift}px`)
+        m.el.style.setProperty('--len', `${Math.hypot(dx, lift)}px`)
+        m.el.style.setProperty('--ang', `${Math.atan2(dx, lift)}rad`)
+        m.slot = slot
+      }
     }
   }
   setProfile(profile: ProfileKey) {
@@ -1094,20 +1173,33 @@ export class FarmDiorama {
       b.core.material.resolution.set(w, h)
       b.glow.material.resolution.set(w, h)
     }
-    this.leaders.setAttribute('viewBox', `0 0 ${w} ${h}`)
     this.lastBusy = performance.now()
     this.kick()
+    // A real change of size (window resized, tablet rotated) can move the column breakpoint:
+    // once it settles, the block is framed again in the new free area.
+    if (this.active && this.fitted && (Math.abs(w - this.fitted.w) > 40 || Math.abs(h - this.fitted.h) > 40)) {
+      clearTimeout(this.refit)
+      this.refit = window.setTimeout(() => {
+        if (this.active && this.controls.enabled) this.resetView()
+      }, 250)
+    }
   }
   private applyViewOffset() {
     const { width: w, height: h } = this
     this.camera.setViewOffset(w, h, -this.viewOffset.x, -this.viewOffset.y, w, h)
     this.camera.updateProjectionMatrix()
   }
-  /** Free space for the block according to the card layout. */
-  private framePadding() {
-    const w = this.width, h = this.height
-    if (w < 760) return { top: 150, bottom: Math.min(330, h * 0.42), left: 10, right: 10 }
-    return { top: 96, bottom: 168, left: w < 1100 ? 230 : 270, right: w < 1100 ? 230 : 270 }
+  /**
+   * Free space for the block: what the information column and the controls leave. It is read
+   * from .dio-frame, which explorer.css places with the same breakpoints as the column, so the
+   * layout and the camera never disagree. The map uses it too, to hand over the tile already
+   * centred in that area.
+   */
+  framePadding(): Padding {
+    const w = this.container.clientWidth || this.width, h = this.container.clientHeight || this.height
+    const f = this.frameEl
+    if (f.offsetWidth < 40 || f.offsetHeight < 40) return { top: 0, bottom: 0, left: 0, right: 0 }
+    return { top: f.offsetTop, left: f.offsetLeft, right: w - f.offsetLeft - f.offsetWidth, bottom: h - f.offsetTop - f.offsetHeight }
   }
   /** Top-down camera that fits the tile into a screen rectangle (that of the farm on the map). */
   private topDownFor(rect: Rect): View {
@@ -1115,19 +1207,49 @@ export class FarmDiorama {
     const H = (this.frame.Sz * this.height) / (2 * Math.tan(fovR / 2) * rect.h)
     return { radius: H, polar: 0.0001, azimuth: 0, ty: 0, offset: { x: rect.x + rect.w / 2 - this.width / 2, y: rect.y + rect.h / 2 - this.height / 2 } }
   }
+  /**
+   * Three-quarter view that fits the whole block (walls included) into the free area: the
+   * corners of the block are projected with a scratch camera, the distance is scaled until
+   * the block fills ~94 % of the area and the view offset centres it there.
+   */
   private isoView(): View {
     const pad = this.framePadding()
-    const fovR = THREE.MathUtils.degToRad(this.camera.fov)
-    const availH = this.height - pad.top - pad.bottom, availW = this.width - pad.left - pad.right
-    const r = Math.hypot(this.frame.S * 0.8, (this.relief * this.state.exaggeration + this.depth) / 2)
-    const dV = (r / Math.sin(fovR / 2)) * (this.height / Math.max(availH, 120))
-    const fovH = 2 * Math.atan(Math.tan(fovR / 2) * this.camera.aspect)
-    const dH = (r / Math.sin(fovH / 2)) * (this.width / Math.max(availW, 120))
-    return {
-      radius: Math.max(dV, dH) * 0.64, polar: 0.98, azimuth: -0.55,
+    const availW = Math.max(120, this.width - pad.left - pad.right), availH = Math.max(120, this.height - pad.top - pad.bottom)
+    const view: View = {
+      radius: this.frame.S * 2.5, polar: 0.98, azimuth: -0.55,
       ty: this.relief * this.state.exaggeration * 0.35 - this.depth * 0.18,
-      offset: { x: (pad.left - pad.right) / 2, y: (pad.top - pad.bottom) / 2 },
+      offset: { x: 0, y: 0 },
     }
+    let box = this.blockBox(view)
+    // Perspective size goes roughly as 1/distance, so a few rescales converge.
+    for (let i = 0; i < 4; i++) {
+      view.radius *= Math.max(box.w / (availW * 0.94), box.h / (availH * 0.94))
+      box = this.blockBox(view)
+    }
+    view.offset = { x: pad.left + availW / 2 - box.cx, y: pad.top + availH / 2 - box.cy }
+    this.fitted = { w: this.width, h: this.height }
+    return view
+  }
+  /** Screen box (no view offset) of the raised block seen from a view. */
+  private blockBox(v: View) {
+    const cam = this.camera.clone()
+    cam.clearViewOffset()
+    const t = new THREE.Vector3(0, v.ty, 0)
+    cam.position.copy(t).add(new THREE.Vector3().setFromSpherical(new THREE.Spherical(v.radius, v.polar, v.azimuth)))
+    cam.up.set(0, 1, 0)
+    cam.lookAt(t)
+    cam.updateMatrixWorld()
+    const top = this.relief * this.state.exaggeration, p = new THREE.Vector3()
+    let l = Infinity, r = -Infinity, tp = Infinity, b = -Infinity
+    for (const [u, w] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+      const [x, z] = this.frame.world(u, w)
+      for (const y of [top, -this.depth]) {
+        p.set(x, y, z).project(cam)
+        const sx = (p.x * 0.5 + 0.5) * this.width, sy = (-p.y * 0.5 + 0.5) * this.height
+        l = Math.min(l, sx); r = Math.max(r, sx); tp = Math.min(tp, sy); b = Math.max(b, sy)
+      }
+    }
+    return { w: r - l, h: b - tp, cx: (l + r) / 2, cy: (tp + b) / 2 }
   }
   private setCamera(v: View) {
     const t = new THREE.Vector3(0, v.ty, 0)
@@ -1180,11 +1302,8 @@ export class FarmDiorama {
     }
     const moving = this.controls.enabled && this.controls.update()
     this.renderer.render(this.scene, this.camera)
-    const a = this.anchors()
-    if (a) {
-      this.pin.style.transform = `translate(${a.center.x}px, ${a.center.y}px)`
-      this.opts.onFrame?.(a)
-    }
+    const a = this.markers.length ? this.anchors() : null
+    if (a) this.placeMarkers(a)
     this.adapt(now)
     // It keeps painting only while something changes (animation or camera inertia), and
     // a couple of seconds more for the cloud shadows; at rest it uses no GPU.
@@ -1244,6 +1363,7 @@ export class FarmDiorama {
     this.resize()
     const from = this.topDownFor(o.fromRect ?? this.defaultRect())
     const to = this.isoView()
+    this.allowDistance(to)
     this.controls.enabled = false
     this.setRise(0)
     this.setTrace(o.traced ? 1 : 0)
@@ -1276,11 +1396,7 @@ export class FarmDiorama {
       this.setCurtain(easeOut(range(p, 0.5, 0.86)))
       this.setTrees(range(p, 0.5, 0.95))
       this.catcher.material.opacity = range(p, 0.3, 0.7)
-      if (p > 0.78 && !this.container.classList.contains('cards-in')) {
-        const a = this.anchors()
-        if (a) this.opts.onCardsIn?.(a)
-        this.container.classList.add('cards-in')
-      }
+      if (p > 0.78 && !this.container.classList.contains('cards-in')) this.container.classList.add('cards-in')
     })
     this.controls.enabled = true
     this.emit()
@@ -1308,9 +1424,14 @@ export class FarmDiorama {
   }
   hide() {
     this.active = false
+    clearTimeout(this.refit)
     this.container.classList.remove('active', 'cards-in')
     cancelAnimationFrame(this.raf)
     this.raf = 0
+  }
+  /** On narrow screens the fitted view is further away than the default zoom limit: widen it. */
+  private allowDistance(v: View) {
+    this.controls.maxDistance = Math.max(this.frame.S * 4.2, v.radius * 1.4)
   }
   private defaultRect(): Rect {
     const pad = this.framePadding()
@@ -1319,6 +1440,7 @@ export class FarmDiorama {
   }
   resetView() {
     const from = this.currentView(), to = this.isoView()
+    this.allowDistance(to)
     this.unwrap(from, to)
     this.controls.enabled = false
     return this.tween(900, (p) => this.setCamera(this.lerpView(from, to, easeInOut(p)))).then(() => {
