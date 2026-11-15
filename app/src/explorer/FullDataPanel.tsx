@@ -1,7 +1,7 @@
 // Content of the "Full data" drawer, in the explorer's look. Four tabs (Farm, Soil, Vegetation,
 // Climate); each opens with its key numbers and has at most two charts, so nothing is crammed.
 // Data: the farm detail already loaded for the 3D (sel.detail), the climate cell of the project
-// (store farmData.common) and the live NASA POWER series (store climate). Colours: tokens.ts only.
+// (store farmData.common) and the live POWER series (store climate). Colours: tokens.ts only.
 import { useId, useRef, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { t } from '../i18n'
