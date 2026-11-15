@@ -458,10 +458,10 @@
 .xp .search .drop p { margin: 0; padding: 7px 9px; font-size: 11.5px; line-height: 1.4; color: var(--n-300); }
 .xp .search .drop p.err { color: var(--bad); }
 .xp[data-phase="transitioning"] .search { opacity: .55; pointer-events: none; }
-/* On the farm view, next to Back and clear of the view tools (~390 px on the right). Below 1200 px
-   there is no room: the search is used from the municipality map. */
+/* On the farm view, next to Back and clear of the view tools (~390 px on the right). Below 1400 px
+   there is no safe room (font metrics vary): the search is used from the municipality map. */
 .xp[data-level="3"] .search { top: 18px; left: calc(var(--fx-col) + 148px); transform: none; min-width: 0; width: min(300px, 100vw - var(--fx-col) - 576px); }
-@media (min-width: 760px) and (max-width: 1199px) { .xp[data-level="3"] .search { display: none; } }
+@media (min-width: 760px) and (max-width: 1399px) { .xp[data-level="3"] .search { display: none; } }
 @media (max-width: 759px) {
   .xp .search { top: 58px; left: 16px; right: 16px; transform: none; width: auto; min-width: 0; height: 38px; }
   .xp .narrative { top: 108px; }
