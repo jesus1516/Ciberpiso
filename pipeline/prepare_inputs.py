@@ -19,7 +19,7 @@ from collections import Counter
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DB_PATH = BASE_DIR / "data" / "malaga" / "database" / "ciberpiso_malaga.sqlite"
+DB_PATH = BASE_DIR / "data" / "malaga" / "database" / "agrospace_malaga.sqlite"
 OUT_PATH = BASE_DIR / "data" / "processed" / "scenarios.csv"
 QA_PATH = BASE_DIR / "data" / "processed" / "scenarios_qa.json"
 

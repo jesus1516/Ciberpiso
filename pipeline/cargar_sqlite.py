@@ -7,8 +7,8 @@ the foreign keys.
 It only uses the standard library: it works with any Python 3.8+ without installing anything.
 
 Usage (from the repo root):
-    python3 pipeline/cargar_sqlite.py malaga      # -> data/malaga/database/ciberpiso_malaga.sqlite
-    python3 pipeline/cargar_sqlite.py andalucia   # -> data/andalucia/database/ciberpiso_andalucia.sqlite
+    python3 pipeline/cargar_sqlite.py malaga      # -> data/malaga/database/agrospace_malaga.sqlite
+    python3 pipeline/cargar_sqlite.py andalucia   # -> data/andalucia/database/agrospace_andalucia.sqlite
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 def rutas(ambito: str) -> tuple[Path, Path, Path]:
     """(CSV folder, schema.sql, default database) of data/<scope>/."""
     base = DATA / ambito
-    return base / "csv", base / "database" / "schema.sql", base / "database" / f"ciberpiso_{ambito}.sqlite"
+    return base / "csv", base / "database" / "schema.sql", base / "database" / f"agrospace_{ambito}.sqlite"
 
 
 def ambitos() -> list[str]:

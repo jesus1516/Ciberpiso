@@ -1,4 +1,4 @@
-# Ciberpiso · Crop Rotation Explorer (frontend MVP)
+# AgroSpace · the web app
 
 A decision-support web app that helps farmers explore crop-rotation strategies using Earth
 observations. It supports farmer judgment; it does not replace it.

@@ -1,8 +1,8 @@
 -- Consultas de ejemplo. Valen para las dos copias:
---   data/malaga/database/ciberpiso_malaga.sqlite
---   data/andalucia/database/ciberpiso_andalucia.sqlite
+--   data/malaga/database/agrospace_malaga.sqlite
+--   data/andalucia/database/agrospace_andalucia.sqlite
 -- Ábrelas en DB Browser for SQLite (pestaña "Ejecutar SQL") o con:
---   sqlite3 -header -column data/malaga/database/ciberpiso_malaga.sqlite < data/malaga/database/consultas.sql
+--   sqlite3 -header -column data/malaga/database/agrospace_malaga.sqlite < data/malaga/database/consultas.sql
 -- Cambia el código de finca '29:15:0:0:62:14' (Antequera, 96 ha) por el que quieras.
 -- Tablas y columnas: schema.sql (misma carpeta). Fuentes: docs/fuentes-scraping.md.
 -- Fuente única: pipeline/sql/consultas.sql (se copia a data/<ámbito>/database/).

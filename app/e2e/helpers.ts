@@ -96,7 +96,7 @@ export async function clearTransient(page: Page) {
 
 // ---------------------------------------------------------------- accessibility helpers (T-09)
 
-export const SETTINGS_KEY = 'ciberpiso.settings.v1'
+export const SETTINGS_KEY = 'agrospace.settings.v1'
 
 /** Opens the app with saved settings (text size, contrast, motion, 3D) already in localStorage. */
 export async function openAppWith(page: Page, settings: Record<string, unknown>, viewport: { width: number; height: number } = VIEWPORTS.desktop): Promise<ErrorLog> {

@@ -1,127 +1,170 @@
-# Ciberpiso
+<p align="center">
+  <img src="assets/logo/agrospace/agrospace-transparent.gif" alt="AgroSpace logo: an astronaut farmer in a straw hat with a pitchfork" width="560">
+</p>
 
-Decision-support tool to explore **crop rotations** using Earth observation data and
-local context. Project for the **2026 Space Apps Challenge**, challenge
-[*Field Shift: Adapting Farms with Space Data*](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/).
+<p align="center">
+  <b>From territory to farm.</b><br>
+  Satellite, climate and soil data to choose the next crop rotation for any farm in Málaga.
+</p>
 
-> Status: calculator with real data for 60 candidate plots in Málaga and a frontend MVP
-> in [`app/`](app/README.md). The app already shows the 26 Antequera candidates with the
-> four computed rotations; the English translation and the offline test are still pending.
+<p align="center">
+  <a href="https://agrospace-w8ej.onrender.com/"><b>▶ Live demo</b></a> ·
+  <a href="assets/video/agrospace-demo.mp4">30-second video</a> ·
+  <a href="#run-it-locally">Run it locally</a>
+</p>
 
-## The challenge
+---
 
-Farmers need to choose rotations that protect the soil, conserve water and withstand
-extreme events, but every crop involves trade-offs: one improves the soil and uses too
-much water, another opens a market but does not fit in the sowing window.
+**AgroSpace** is our entry for the **Space Apps Challenge Málaga 2026**, challenge 06
+*Field Shift: Adapting Farms with Space Data* ([spaceappschallenge.org](https://www.spaceappschallenge.org/)).
+It takes a farmer from the whole region down to one farm and answers one question with
+open data: **what should this field grow next?**
 
-The challenge asks for a tool that combines Earth observations with soils, crops and
-the farmer's priorities to compare rotations. It does not ask to predict yield or to
-replace an agronomist.
+It is a decision-support tool: it ranks rotation options and states its uncertainty; it
+does not replace the farmer, the agronomist or a field visit.
 
-### Challenge sheet
+**Live demo:** <https://agrospace-w8ej.onrender.com/>
 
-| Field | Value |
-| --- | --- |
-| Event | 2026 Space Apps Challenge |
-| Difficulty | Advanced + Intermediate |
-| Subjects | Arts & Multimedia, Earth Science, Software |
-| Tabs | Details, Resources, Teams |
-| Video | 6 s teaser, no technical content |
-| Dates / rubric | Not published on the challenge page |
+## Screenshots
 
-### Hard requirements
+| | |
+|:--:|:--:|
+| ![Map of Andalucía with its eight provinces](docs/screenshots/1-andalucia.jpg) | ![Map of Málaga shaded by cropland](docs/screenshots/2-malaga.jpg) |
+| **1 · Andalucía** · 2,909,040 SIGPAC farms in 8 provinces | **2 · Málaga** · 103 municipalities, shaded by cropland |
+| ![Antequera with every farm outlined](docs/screenshots/3-antequera.jpg) | ![One farm in 3D with its risks and scores](docs/screenshots/4-farm-3d.jpg) |
+| **3 · Antequera** · 14,529 farms; the 26 gold ones are project candidates | **4 · One farm** · real relief in 3D, risks first, then the best rotation |
+| ![Full data panel, climate tab](docs/screenshots/5-full-data.jpg) | <img src="docs/screenshots/6-phone.jpg" alt="AgroSpace on a phone" width="250"> |
+| **Full data** · farm, soil, vegetation and climate | **On a phone** · map first; the 3D stays still to save battery |
 
-1. Compare **at least 3 rotation strategies**, including the current one.
-2. For each one, explain: why it is suggested, what evidence backs it, what benefits
-   it offers, **where data is missing** and **what risks need local review**.
-3. Be a **support** tool, not a substitute for the farmer's judgement.
-4. Be interpretable by users without geospatial training and let them enter their own
-   priorities and constraints (water, machinery, market).
+## What it does
 
-## Current approach
+- **A guided journey:** Andalucía → Málaga → municipality → farm, by clicking the map,
+  with keyboard lists, or by typing a SIGPAC reference into the search.
+- **One farm at a time:** its own terrain in 3D, the risks that matter first (heat,
+  water deficit, steep slope…) and four rotations compared on **water, soil, market and
+  climate risk**: R0 the current one (wheat–sunflower), R1 + chickpea, R2 + vetch and
+  R3 + fallow, with the best one for the priority you choose.
+- **Explainable:** weighted rules, not a black box. The scores in the browser match the
+  data pipeline exactly (1,144 values, 0 differences), and the water score is checked
+  against what the satellite saw (NDVI).
+- **For everyone, on any screen:** the whole journey works with a keyboard or a screen
+  reader; text up to 150 %, high contrast, reduced motion, a "3D off" mode for slow
+  devices, and a phone layout.
 
-- **Use case:** rainfed farming in the Campiña de Antequera (Málaga), with 60 candidate
-  plots in the province and 26 in Antequera. Current rotation R0 wheat–sunflower and
-  three alternatives: R1 +chickpea, R2 +vetch, R3 +fallow.
-- **Data:** POWER (climate), MODIS MOD13Q1 (NDVI), SoilGrids (soil), Eurostat
-  (wheat, sunflower and chickpea prices), MAPA (grain vetch) and SIGPAC (plots).
-- **Output:** `data/processed/indicators.json` with the four rotations, evidence,
-  gaps and risks; the app loads the 26 Antequera candidates.
-- **Model:** weighted, explainable rules, not a black box. The water score is
-  validated against NDVI (AUC 0.723) and confidence drops when data is missing.
+## Data
 
-## Documentation
+| Layer | Source | Detail |
+|---|---|---|
+| Farms | SIGPAC (FEGA) | 2.9 M parcels in Andalucía |
+| Vegetation | MODIS NDVI | 250 m, seasons 2020–2025 |
+| Climate | POWER Project, Langley Research Center | daily, seasons 2002–2025 |
+| Soil | SoilGrids 2.0 (ISRIC) | 250 m, top 100 cm |
+| Land cover | ESA WorldCover | 10 m |
+| Relief | SRTM-derived DEM | slope and 3D terrain |
+| Prices | Eurostat, MAPA | wheat, sunflower, chickpea, vetch |
+
+The data is precomputed by the Python pipeline and shipped with the app
+(`app/public/data/`), so the demo needs **no backend and no API keys**. Map imagery,
+elevation tiles and the live monthly climate are loaded by the browser from public
+services.
+
+## Run it locally
+
+**You need:** [Git](https://git-scm.com/) and [Node.js 24](https://nodejs.org/) (it comes
+with npm). Python is only needed to rebuild the data.
+
+1. **Get the code**
+
+   ```bash
+   git clone https://github.com/jesus1516/Ciberpiso.git
+   cd Ciberpiso/app
+   ```
+
+2. **Install the dependencies**
+
+   ```bash
+   npm ci
+   ```
+
+3. **Start it** and open <http://localhost:5173>
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Production build** (what the live demo serves), then open <http://localhost:4173>
+
+   ```bash
+   npm run build
+   npm run preview
+   ```
+
+5. **On your phone** (optional, same Wi‑Fi): serve it on the network and open
+   `http://<your-computer-ip>:4173` on the phone.
+
+   ```bash
+   npm run preview -- --host 0.0.0.0
+   ```
+
+6. **Run the checks** (optional)
+
+   ```bash
+   npx tsc -b                                # types
+   npm run test                              # 182 unit tests (Vitest)
+   node scripts/check-calculator.ts          # calculator = pipeline, 0 differences
+   npx playwright install --only-shell chromium
+   E2E_BROWSER=chromium npm run test:e2e     # 123 browser tests, about 20 minutes
+   ```
+
+   Details: [docs/testing.md](docs/testing.md).
+
+### Rebuild the data (optional)
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r pipeline/requirements.txt
+python3 pipeline/cargar_sqlite.py malaga      # CSV → SQLite for Málaga (~10 s)
+```
+
+The full pipeline (download, scoring, export to the app) is described step by step in
+[data/README.md](data/README.md) and [docs/fuentes-scraping.md](docs/fuentes-scraping.md).
+
+## Repository
+
+```
+app/        the web app: React + TypeScript + Vite, MapLibre GL, three.js
+pipeline/   Python pipeline that downloads, scores and exports the data
+data/       CSV and SQLite data for Málaga and Andalucía
+docs/       testing, performance, data sources, architecture, validation
+assets/     logo and the 30-second demo video
+tests/      pipeline tests (pytest)
+```
 
 | Document | What it contains |
 | --- | --- |
-| [Action plan](docs/plan-de-accion.md) | Current direction: Antequera farm, four rotations and first step. |
-| [Scraped sources](docs/fuentes-scraping.md) | Málaga data pipeline: sources from `resources.md`, CSV, SQLite and gaps. |
-| [Data](data/README.md) | Two copies, `data/malaga/` and `data/andalucia/`, with their CSVs, SQLite database, schema and queries. |
-| [Step-by-step guide](docs/guia-paso-a-paso.md) | 48 h plan, phases, deliverables and "done" criteria. |
-| [Scope](docs/alcance.md) | Sheet to fix AOI, profile, decision and rotations. |
-| [Example rotations](docs/rotaciones.md) | Four strategies with evidence, benefits, gaps and risks. |
-| [Data sources](docs/fuentes-de-datos.md) | What each source offers, resolution, access, use and limits. |
-| [Data access](docs/acceso-datos.md) | Verified API examples, authentication, caching and harmonisation. |
-| [Architecture](docs/arquitectura.md) | Stack, data contracts, scoring model and deployment. |
-| [Validation](docs/validacion.md) | Log of checks, limits and what is still to be validated. |
-| [Evaluation checklist](docs/checklist-evaluacion.md) | How to demonstrate the requirements and what to avoid in the demo. |
-| [resources.json](resources.json) | Machine-readable inventory. |
-
-> `resources.md` and `tools_available.md` are the team's quick lists. The complete,
-> verified reference is in `docs/fuentes-de-datos.md` and `resources.json`.
-> (The documents in `docs/` keep their original Spanish file names.)
-
-## Quick start
-
-1. Read the guide and fix the scope: one county, one farm profile, three rotations.
-2. Check access to the sources that need no credentials with the commands in
-   `docs/acceso-datos.md`.
-3. Download and cache the AOI. Do not query live APIs during the demo.
-4. Compute the indicators and store them as versioned JSON/GeoJSON.
-5. Build the UI on that data; the scoring engine must be a pure function.
-6. Rehearse a 3-minute demo without a network connection.
-
-## Recommended stack
-
-- **Pipeline:** Python 3.11 + `requests` + `geopandas`/`rioxarray` (offline only).
-- **App:** Next.js + TypeScript + MapLibre GL JS.
-- **Data:** precomputed JSON and GeoJSON; no backend in the demo.
-- **Quick alternative:** Streamlit if the team is Python-only and prioritises the model
-  over visual polish.
+| [App](app/README.md) | How the web app is built: explorer, rotation engine, data. |
+| [Testing](docs/testing.md) | Every test suite and how to run it. |
+| [Performance](docs/performance.md) | Measurements on slow computers and what was optimised. |
+| [Example rotations](docs/rotaciones.md) | The four strategies with evidence, benefits, gaps and risks. |
+| [Data sources](docs/fuentes-de-datos.md) | What each source offers, resolution, access and limits. |
+| [Data pipeline](docs/fuentes-scraping.md) | Sources, CSV, SQLite and gaps. |
+| [Data access](docs/acceso-datos.md) | Verified API examples, caching and harmonisation. |
+| [Architecture](docs/arquitectura.md) | Data contracts and scoring model. |
+| [Validation](docs/validacion.md) | Checks done, limits and what still needs field validation. |
+| [Andalucía viability](docs/andalucia-viability.md) | What it takes to open the farm view for all of Andalucía. |
+| [Data](data/README.md) | Data model, CSV and SQLite. |
 
 ## What it is not
 
-- It is not an agronomic prescription per plot.
-- It does not replace the farmer, the agronomist or field data.
-- It does not promise plot-level resolution with SMAP (9 km) or POWER (0.5°).
-- It is not a real-time satellite dashboard.
+- Not an agronomic prescription for a plot.
+- Not a replacement for the farmer, the agronomist or field data.
+- Not field-level climate: POWER cells are about 50 km wide.
 
-## Risks and gaps
+## Credits
 
-- **GRACE** is cited in the challenge text without its own link; the specific product
-  (mascons) must be located and documented. **GEDI** does have a link in Resources.
-- **CDL and SSURGO** only cover the US; for a global case, switch to GAEZ and to the
-  FAO harmonised soil database.
-- **OpenET** only covers the western US.
-- **SMAP** is 9 km with gaps; it is not suitable for plot scale.
-- **GIBS** has SMAP/IMERG layers, but they are visualisation PNGs, not data.
-- **Market:** QuickStats and AMS require a key; if unavailable, use a curated CSV with
-  average prices and a cited source.
-
-## Sources and credits
-
-- Official challenge: [Space Apps Challenge 2026](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/).
-- Data: USDA, USGS, ECMWF/Copernicus and ESA, plus the space agency's open data. Each
-  document states the source, the verification date and the licence or terms of use.
-- The challenge organisers do not endorse non-federal entities; respect each site's
-  terms.
-
-## Status
-
-- [x] Research of the challenge text and of the sources.
-- [x] Verification of endpoints without credentials.
-- [x] Guide, architecture and checklist.
-- [x] Action plan with the new Antequera case.
-- [ ] Use case and AOI data.
-- [ ] Pipeline and app.
-- [ ] Validation with an agronomist or extension officer.
+- **Data:** SIGPAC (FEGA), POWER Project (Langley Research Center), MODIS, SoilGrids
+  (ISRIC), ESA WorldCover, SRTM-derived DEM, Eurostat and MAPA. Each document states its
+  source, licence and terms of use.
+- **Challenge:** Space Apps Challenge Málaga 2026 · challenge 06 *Field Shift* ([spaceappschallenge.org](https://www.spaceappschallenge.org/)).
+- **AI disclosure:** an AI coding assistant (Claude, by Anthropic) helped write the code,
+  the tests and the texts. The team chose the data, the method and the checks.

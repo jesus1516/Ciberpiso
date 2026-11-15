@@ -9,7 +9,7 @@ const channel = process.env.E2E_BROWSER === 'chromium' ? undefined : 'chrome'
 const inCI = !!process.env.GITHUB_ACTIONS
 // Generated output (traces, screenshots, HTML report) lives outside the repository and outside
 // node_modules: `npm ci` deletes node_modules and fails with ENOTEMPTY if a browser is still writing there.
-const outDir = process.env.E2E_OUTPUT_DIR ?? join(tmpdir(), 'ciberpiso-e2e')
+const outDir = process.env.E2E_OUTPUT_DIR ?? join(tmpdir(), 'agrospace-e2e')
 
 export default defineConfig({
   testDir: './e2e',

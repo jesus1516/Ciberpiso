@@ -1,4 +1,4 @@
-# Ciberpiso data
+# AgroSpace data
 
 SIGPAC farms with climate, soil moisture, relief, land cover, soil, satellite-estimated
 crop and prices. There are **two independent copies**, each with its own CSVs and its
@@ -20,7 +20,7 @@ data/
 │   │   ├── comun/              climate, soil moisture, climate cells and prices
 │   │   └── 29_malaga/          farms, enclosures, soil, phenology, NDVI and municipalities
 │   └── database/
-│       ├── ciberpiso_malaga.sqlite   (generated; not pushed to git)
+│       ├── agrospace_malaga.sqlite   (generated; not pushed to git)
 │       ├── schema.sql          tables, keys, indexes and views
 │       └── consultas.sql       16 example queries
 ├── andalucia/
@@ -29,7 +29,7 @@ data/
 │   │   ├── 04_almeria/  11_cadiz/  14_cordoba/  18_granada/
 │   │   └── 21_huelva/   23_jaen/   29_malaga/   41_sevilla/
 │   └── database/
-│       ├── ciberpiso_andalucia.sqlite   (generated; not pushed to git)
+│       ├── agrospace_andalucia.sqlite   (generated; not pushed to git)
 │       ├── schema.sql
 │       └── consultas.sql
 ├── manual/precios_veza.csv     MAPA vetch series transcribed by hand (copied to each csv/comun/)
@@ -47,8 +47,8 @@ data/
 All you need is Python 3.8 or later, nothing else to install. From the repo root:
 
 ```bash
-python3 pipeline/cargar_sqlite.py malaga       # ~10 s  -> data/malaga/database/ciberpiso_malaga.sqlite
-python3 pipeline/cargar_sqlite.py andalucia    # ~70 s  -> data/andalucia/database/ciberpiso_andalucia.sqlite
+python3 pipeline/cargar_sqlite.py malaga       # ~10 s  -> data/malaga/database/agrospace_malaga.sqlite
+python3 pipeline/cargar_sqlite.py andalucia    # ~70 s  -> data/andalucia/database/agrospace_andalucia.sqlite
 ```
 
 On Windows, `py` instead of `python3`. The loader checks that each CSV has the columns of
@@ -58,8 +58,8 @@ its table, turns empty cells into NULL and validates the foreign keys.
 
 - **With a GUI:** `sudo dnf install sqlitebrowser` and open the `.sqlite` of the copy
   you want. Paste any block of `consultas.sql` into "Execute SQL".
-- **Terminal:** `sqlite3 -header -column data/malaga/database/ciberpiso_malaga.sqlite`.
-- **Python:** `sqlite3.connect("data/malaga/database/ciberpiso_malaga.sqlite")` with `pandas.read_sql`.
+- **Terminal:** `sqlite3 -header -column data/malaga/database/agrospace_malaga.sqlite`.
+- **Python:** `sqlite3.connect("data/malaga/database/agrospace_malaga.sqlite")` with `pandas.read_sql`.
 
 To get started, use the views `v_fincas` (each farm with municipality, climate and soil),
 `v_candidatas` (the plots that fit the rainfed-farm case) and `v_precios`. In the

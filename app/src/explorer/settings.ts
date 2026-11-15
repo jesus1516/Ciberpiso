@@ -21,7 +21,7 @@ export type Settings = {
 }
 
 export const DEFAULT_SETTINGS: Settings = { textSize: 100, highContrast: false, reduceMotion: false, use3d: true }
-export const STORAGE_KEY = 'ciberpiso.settings.v1'
+export const STORAGE_KEY = 'agrospace.settings.v1'
 
 /** Reads and validates the stored settings; anything unexpected falls back to the defaults. */
 export function parseSettings(raw: string | null): Settings {

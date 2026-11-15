@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explainable crop rotation calculator (Ciberpiso - Campiña de Antequera).
+"""Explainable crop rotation calculator (AgroSpace - Campiña de Antequera).
 
 Reads the crop catalogue and the real per-farm scenarios, computes the four
 rotations and writes `data/processed/indicators.json` for the web. No black box:

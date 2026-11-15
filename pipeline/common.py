@@ -22,7 +22,7 @@ SQL_DIR = ROOT / "pipeline" / "sql"  # schema.sql and consultas.sql (single sour
 AMBITOS = {"malaga": [29], "andalucia": [4, 11, 14, 18, 21, 23, 29, 41]}
 MANIFEST = DATA / "manifest.json"
 
-USER_AGENT = "ciberpiso-pipeline/0.1 (Space Apps 2026)"
+USER_AGENT = "agrospace-pipeline/0.1 (Space Apps 2026)"
 
 
 def session() -> requests.Session:

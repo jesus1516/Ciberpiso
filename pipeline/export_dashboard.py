@@ -1,6 +1,6 @@
 """Export small summaries of the database for the visual dashboard (JSON {rows, meta}).
 
-Reads data/malaga/database/ciberpiso_malaga.sqlite and writes data/processed/dashboard/*.json. Each
+Reads data/malaga/database/agrospace_malaga.sqlite and writes data/processed/dashboard/*.json. Each
 file carries this code and its query in `meta`, so that it can be checked.
 
 Usage:
@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-DB = Path("data/malaga/database/ciberpiso_malaga.sqlite")
+DB = Path("data/malaga/database/agrospace_malaga.sqlite")
 OUT = Path("data/processed/dashboard")
 ANTEQUERA = 29015
 CELDA_ANTEQUERA = 254281  # POWER cell (37.0, −4.375) that covers the Campiña de Antequera

@@ -227,7 +227,7 @@ SIGPAC code (`parcela_id`, `recinto_id`) is the stable identifier across version
 - **Schema** with foreign keys, indexes and views (`v_fincas`, `v_candidatas`,
   `v_clima_suelo_anual`): [`pipeline/sql/schema.sql`](../pipeline/sql/schema.sql) (copied to each `data/<copy>/database/`); example queries in [`pipeline/sql/consultas.sql`](../pipeline/sql/consultas.sql).
 - **Database:** `python3 pipeline/cargar_sqlite.py malaga|andalucia` generates
-  `data/<copy>/database/ciberpiso_<copy>.sqlite` **from the CSVs**, checks that the
+  `data/<copy>/database/agrospace_<copy>.sqlite` **from the CSVs**, checks that the
   columns match the schema and validates the foreign keys.
 - **Sizes (Málaga):** `fincas` 363,401 rows (57 MB), `recintos` 969,034 (67 MB),
   `suelo_fincas` 356,481 (26 MB), `fenologia_fincas` 296,238 (21 MB), `ndvi_fincas`

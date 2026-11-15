@@ -1,4 +1,4 @@
--- Esquema de la base de datos de Ciberpiso (SQLite).
+-- Esquema de la base de datos de AgroSpace (SQLite).
 -- Se carga con: python3 pipeline/cargar_sqlite.py <malaga|andalucia>
 -- Cada tabla corresponde a un CSV con las mismas columnas: data/<ámbito>/csv/comun/<tabla>.csv o,
 -- para las tablas de fincas, un data/<ámbito>/csv/<pp_provincia>/<tabla>.csv por provincia.
