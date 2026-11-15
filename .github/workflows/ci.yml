@@ -18,7 +18,6 @@ jobs:
     env:
       # Playwright uses the bundled chromium here instead of the Google Chrome installed locally.
       E2E_BROWSER: chromium
-      E2E_OUTPUT_DIR: ${{ runner.temp }}/e2e
     steps:
       - uses: actions/checkout@v4
 
@@ -49,6 +48,9 @@ jobs:
       - name: End-to-end tests (against vite preview of the build)
         # The build above is already in dist/, so run Playwright directly.
         run: npx playwright test
+        # `runner` is not available in the job-level env, so the output folder is set here.
+        env:
+          E2E_OUTPUT_DIR: ${{ runner.temp }}/e2e
 
       - name: Upload the Playwright report
         if: ${{ !cancelled() }}
