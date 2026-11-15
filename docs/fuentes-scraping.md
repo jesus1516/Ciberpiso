@@ -12,7 +12,7 @@
 | --- | --- | --- | --- |
 | Daily climate 2001–2025 → indicators per season | **POWER** | ✅ #6–7 | `clima_anual`, `dim_celda_power` |
 | Soil moisture (surface, root zone, profile) | **POWER** (MERRA-2) | ✅ #6–7 | `suelo_humedad_anual` |
-| Altitude and slope | **SRTM** (SRTM-derived DEM version) via Planetary Computer | ✅ #28 (and SRTM, #3–4) | `fincas` |
+| Altitude and slope | **SRTM** (reprocessed DEM version) via Planetary Computer | ✅ #28 (and SRTM, #3–4) | `fincas` |
 | Soil texture, carbon, pH and available water | **ISRIC SoilGrids 2.0** | ⚠️ approved exception | `suelo_fincas` |
 | Farm-gate agricultural prices in Spain, annual 2000–2024 | **Eurostat** `apri_ap_crpouta` | ⚠️ approved exception | `precios_anuales`, `dim_producto_precio` |
 | Land cover (% crop, trees, grass…) | **ESA WorldCover 2021** via Planetary Computer | ✅ #28 | `fincas` |

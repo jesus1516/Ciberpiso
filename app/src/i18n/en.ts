@@ -205,7 +205,7 @@ export const en = {
   },
 
   layers: {
-    intro: 'Overlay Satellite imagery on the map for context. Pick a date to see conditions on that day.',
+    intro: 'Overlay satellite imagery on the map for context. Pick a date to see conditions on that day.',
     date: 'Imagery date',
     opacity: 'Opacity',
     legend: (name: string) => `Colour legend for ${name}`,
