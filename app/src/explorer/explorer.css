@@ -302,7 +302,7 @@
 .xp[data-level="3"] .masthead {display: none;}
 .xp .province-label {pointer-events: none; font: 600 10px/1 Inter, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(244,233,216,.82); text-shadow: 0 1px 6px rgba(0,0,0,.9); white-space: nowrap; transition: opacity .3s;}
 .xp .province-label.malaga {color: var(--amber);}
-.xp .province-label.malaga::after {content: "Recorrido disponible"; display: block; margin-top: 5px; font-size: 8.5px; letter-spacing: .1em; color: rgba(232,184,106,.8); text-align: center;}
+.xp .province-label.malaga::after {content: "Tour available"; display: block; margin-top: 5px; font-size: 8.5px; letter-spacing: .1em; color: rgba(232,184,106,.8); text-align: center;}
 .xp .callout {pointer-events: none; padding: 7px 10px; border-radius: 8px; background: rgba(27,37,23,.9); border: 1px solid rgba(232,184,106,.55); color: var(--amber); font: 600 10px/1 Inter, sans-serif; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; transition: opacity .3s;}
 .xp .hidden-label {opacity: 0 !important;}
 .xp .tooltip {position: fixed; z-index: 70; left: 0; top: 0; width: 236px; padding: 13px 14px 12px; pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s;}
