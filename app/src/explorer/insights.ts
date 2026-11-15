@@ -28,9 +28,9 @@
 // its threshold (value ÷ threshold, or threshold ÷ value when lower is worse). Ties keep the
 // order of the table. At most 3 are returned; the "best" insight is always a candidate, so a
 // farm with scores always gets at least one.
-import { PROFILES as WEIGHTS, ROTATIONS, type RotationScore } from '../lib/calculator'
+import { PROFILES as WEIGHTS, type RotationScore } from '../lib/calculator'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
-import { APT, PROFILES, fmt } from './texts'
+import { APT, PROFILES, SHORT_ROTATION, fmt } from './texts'
 
 export type Severity = 'critical' | 'warning' | 'good'
 /** Element of the farm column the insight is about: one of the four cards or the rotation dock. */
@@ -111,7 +111,7 @@ export function farmInsights(f: FarmFacts): Insight[] {
   if (f.apt && f.apt !== 'pendiente') {
     const share = LAND_USE_COVER[f.apt] ? pct(...LAND_USE_COVER[f.apt][0]) : null
     const what = share !== null
-      ? `${fmt(share)} % of the farm is ${LAND_USE_COVER[f.apt][1]} by satellite land cover`
+      ? `${fmt(share)}\u00a0% of the farm is ${LAND_USE_COVER[f.apt][1]} by satellite land cover`
       : f.apt === 'publico' ? 'SIGPAC marks it as public domain (track, road or watercourse; plot 9000 or above)'
       : `Satellite land cover and SIGPAC point to ${(APT[f.apt] ?? f.apt).toLowerCase()}`
     add({ id: 'land-use', severity: 'warning', target: 'rotations', headline: `${shortApt(f.apt)}: rotations are indicative`,
@@ -124,18 +124,18 @@ export function farmInsights(f: FarmFacts): Insight[] {
       add({ id: 'permanent', severity: 'warning', target: 'rotations', headline: 'Looks like a permanent crop: rotations are indicative',
         detail: permanent >= T.permanentSeasons
           ? `${permanent} of the ${letters.length} seasons seen by satellite look like a permanent crop (olive, almond…), so a rotation would mean replanting.`
-          : `Satellite land cover is ${trees !== null ? `${fmt(trees)} % trees` : 'mostly trees'} (in Málaga usually olive or almond groves), so a rotation would mean replanting.` }, pinned)
+          : `Satellite land cover is ${trees !== null ? `${fmt(trees)}\u00a0% trees` : 'mostly trees'} (in Málaga usually olive or almond groves), so a rotation would mean replanting.` }, pinned)
     }
   }
 
   // Slope (erosion and machinery).
   if (f.apt === 'pendiente' || (f.slope !== null && f.slope >= T.slopeVerySteep)) {
-    add({ id: 'slope', severity: 'critical', target: 'soil', headline: `Very steep slope${f.slope !== null ? ` (${fmt(f.slope, 1)} %)` : ''}: hard to farm`,
-      detail: `${f.slope !== null ? `A mean slope of ${fmt(f.slope, 1)} % is` : 'The slope is'} at or above the ${T.slopeVerySteep} % where tillage and machinery become very difficult and erosion is severe.` },
+    add({ id: 'slope', severity: 'critical', target: 'soil', headline: `Very steep slope${f.slope !== null ? ` (${fmt(f.slope, 1)}\u00a0%)` : ''}: hard to farm`,
+      detail: `${f.slope !== null ? `A mean slope of ${fmt(f.slope, 1)}\u00a0% is` : 'The slope is'} at or above the ${T.slopeVerySteep}\u00a0% where tillage and machinery become very difficult and erosion is severe.` },
     (f.slope ?? T.slopeVerySteep) / T.slopeVerySteep)
   } else if (f.slope !== null && f.slope >= T.slopeSteep) {
-    add({ id: 'slope', severity: 'warning', target: 'soil', headline: `Steep slope (${fmt(f.slope, 1)} %): erosion risk`,
-      detail: `A mean slope of ${fmt(f.slope, 1)} % is above the ${T.slopeSteep} % the project allows for candidate farms, so bare soil between crops can wash away.` },
+    add({ id: 'slope', severity: 'warning', target: 'soil', headline: `Steep slope (${fmt(f.slope, 1)}\u00a0%): erosion risk`,
+      detail: `A mean slope of ${fmt(f.slope, 1)}\u00a0% is above the ${T.slopeSteep}\u00a0% the project allows for candidate farms, so bare soil between crops can wash away.` },
     f.slope / T.slopeSteep)
   }
 
@@ -143,18 +143,18 @@ export function farmInsights(f: FarmFacts): Insight[] {
   const deficit = f.climate?.deficit ?? null
   const p20 = r0?.waterP20 ?? null
   const deficitTxt = deficit !== null && f.climate
-    ? `Crops need ${fmt(deficit)} mm a year more than the ${fmt(f.climate.rain)} mm of rain, ${fmt((deficit / T.referenceDeficit) * 100)} % of the ${T.referenceDeficit} mm reference deficit.`
+    ? `Crops need ${fmt(deficit)}\u00a0mm a year more than the ${fmt(f.climate.rain)}\u00a0mm of rain, ${fmt((deficit / T.referenceDeficit) * 100)}\u00a0% of the ${T.referenceDeficit}\u00a0mm reference deficit.`
     : ''
   if ((p20 !== null && p20 < T.waterP20Blocker) || (deficit !== null && deficit >= T.referenceDeficit)) {
     const byP20 = p20 !== null && p20 < T.waterP20Blocker
     add({ id: 'water', severity: 'critical', target: 'water',
-      headline: deficit !== null ? `Extreme water deficit (${fmt(deficit)} mm/yr)` : 'Extreme water deficit in dry years',
+      headline: deficit !== null ? `Extreme water deficit (${fmt(deficit)}\u00a0mm/yr)` : 'Extreme water deficit in dry years',
       detail: byP20 ? `In a dry year (P20) the water score of the current rotation falls to ${fmt(p20, 1)}/100, below the limit of ${T.waterP20Blocker}.` : deficitTxt },
     Math.max(deficit !== null ? deficit / T.referenceDeficit : 0, p20 !== null ? T.waterP20Blocker / Math.max(p20, 1) : 0))
   } else if ((p20 !== null && p20 < T.waterP20Warning) || (deficit !== null && deficit >= T.deficitHigh)) {
     const byDeficit = deficit !== null && deficit >= T.deficitHigh
     add({ id: 'water', severity: 'warning', target: 'water',
-      headline: byDeficit ? `Severe water deficit (${fmt(deficit)} mm/yr)` : 'Water stress likely in dry years',
+      headline: byDeficit ? `Severe water deficit (${fmt(deficit)}\u00a0mm/yr)` : 'Water stress likely in dry years',
       detail: byDeficit ? deficitTxt : `In a dry year (P20) the water score of the current rotation falls to ${fmt(p20, 1)}/100, below ${T.waterP20Warning}.` },
     Math.max(deficit !== null ? deficit / T.deficitHigh : 0, p20 !== null ? T.waterP20Warning / Math.max(p20, 1) : 0))
   }
@@ -163,11 +163,11 @@ export function farmInsights(f: FarmFacts): Insight[] {
   if (f.climate) {
     const heat = f.climate.hotDays
     const cut = Math.min(100, (heat / T.heatZero) * 100)
-    const heatTxt = `${fmt(heat)} days a year reach 32 °C in May–June, when grain fills; heat alone cuts the climate-risk score by ${fmt(cut)} %.`
-    if (heat > T.heatVeryHigh) add({ id: 'heat', severity: 'critical', target: 'risk', headline: `Very high heat risk in May–June (${fmt(heat)} days)`, detail: heatTxt }, heat / T.heatVeryHigh)
-    else if (heat >= T.heatHigh) add({ id: 'heat', severity: 'warning', target: 'risk', headline: `High heat risk in May–June (${fmt(heat)} days)`, detail: heatTxt }, heat / T.heatHigh)
+    const heatTxt = `${fmt(heat)}\u00a0days a year reach 32 °C in May–June, when grain fills; heat alone cuts the climate-risk score by ${fmt(cut)}\u00a0%.`
+    if (heat > T.heatVeryHigh) add({ id: 'heat', severity: 'critical', target: 'risk', headline: `Very high heat risk in May–June (${fmt(heat)}\u00a0days)`, detail: heatTxt }, heat / T.heatVeryHigh)
+    else if (heat >= T.heatHigh) add({ id: 'heat', severity: 'warning', target: 'risk', headline: `High heat risk in May–June (${fmt(heat)}\u00a0days)`, detail: heatTxt }, heat / T.heatHigh)
     if (f.climate.frostDays > T.frost) {
-      add({ id: 'frost', severity: 'warning', target: 'risk', headline: `Frost risk (${fmt(f.climate.frostDays)} days a year)`,
+      add({ id: 'frost', severity: 'warning', target: 'risk', headline: `Frost risk (${fmt(f.climate.frostDays)}\u00a0days a year)`,
         detail: `A median of ${fmt(f.climate.frostDays)} frost days a year, above the calculator's limit of ${T.frost}.` }, f.climate.frostDays / T.frost)
     }
   }
@@ -175,8 +175,8 @@ export function farmInsights(f: FarmFacts): Insight[] {
   // Soil that holds little water.
   const cad = f.soil?.cad_0_100_mm ?? null
   if (cad !== null && cad <= T.soilWater) {
-    add({ id: 'soil-water', severity: 'warning', target: 'soil', headline: `Soil with little available water (${fmt(cad)} mm)`,
-      detail: `The top metre holds ${fmt(cad)} mm of water plants can use; at ${T.soilWater} mm or less the soil gets no points for storage.` },
+    add({ id: 'soil-water', severity: 'warning', target: 'soil', headline: `Soil with little available water (${fmt(cad)}\u00a0mm)`,
+      detail: `The top metre holds ${fmt(cad)}\u00a0mm of water plants can use; at ${T.soilWater}\u00a0mm or less the soil gets no points for storage.` },
     T.soilWater / Math.max(cad, 1))
   }
 
@@ -237,15 +237,16 @@ export function recommendation(scores: Record<RotationKey, RotationScore> | null
   if (best === 'R0') {
     const next = (Object.keys(scores) as RotationKey[]).filter((k) => k !== 'R0' && scores[k].score[profile] !== null)
       .sort((x, y) => (scores[y].score[profile] as number) - (scores[x].score[profile] as number))[0]
-    return `Keep the current rotation: it scores ${fmt(r0.score[profile], 1)} for the ${prio} priority${next ? `, ahead of ${next} (${fmt(scores[next].score[profile], 1)})` : ''}.`
+    return `Keep the current rotation: it is best for ${prio} (${fmt(r0.score[profile], 1)})${next ? `, ahead of ${next} (${fmt(scores[next].score[profile], 1)})` : ''}.`
   }
   const w = WEIGHTS[profile]
   const parts = (Object.keys(w) as (keyof typeof w)[])
     .map((k) => ({ k, d: (b[k] ?? 0) - (r0[k] ?? 0), c: w[k] * ((b[k] ?? 0) - (r0[k] ?? 0)) }))
   const up = parts.filter((p) => p.d > 0.05).sort((x, y) => y.c - x.c)[0]
   const down = parts.filter((p) => p.d < -0.05).sort((x, y) => x.c - y.c)[0]
+  const signed = (d: number) => `${d < 0 ? '−' : '+'}${fmt(Math.abs(d), 1)}`
   const why = up
-    ? `, mainly for ${GAIN[up.k][0]} (+${fmt(up.d, 1)})${down ? `, which outweighs ${GAIN[down.k][1]} (${fmt(down.d, 1)})` : ''}`
+    ? `, mainly ${GAIN[up.k][0]} (${signed(up.d)})${down ? ` despite ${GAIN[down.k][1]} (${signed(down.d)})` : ''}`
     : ''
-  return `${best} (${ROTATIONS[best].name}) is best for the ${prio} priority: ${fmt(b.score[profile], 1)} vs. ${fmt(r0.score[profile], 1)} now${why}.`
+  return `${best} (${SHORT_ROTATION[best]}) is best for ${prio}: ${fmt(b.score[profile], 1)} vs. ${fmt(r0.score[profile], 1)} now${why}.`
 }

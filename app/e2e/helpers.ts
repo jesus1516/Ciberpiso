@@ -10,6 +10,10 @@ export const FARMS = {
   ronda: 2900263939,
   /** Ronda, urban: cannot be opened. */
   urban: 2900264015,
+  /** Antequera, apt = "pendiente" (53.7 % slope, mostly permanent crop): opens with a critical insight. */
+  steep: 2900063712,
+  /** Ronda, plain farmland with nothing to warn about: the only insight is the best rotation. */
+  calm: 2900261494,
 } as const
 export const MUNICIPALITIES = { antequera: 29015, ronda: 29084 } as const
 

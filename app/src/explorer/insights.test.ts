@@ -58,9 +58,9 @@ describe('real farms', () => {
   it('Antequera 2900059683: heat and water deficit, then R1 as the best option', () => {
     const ins = farmInsights(realFarm(29015, 2900059683))
     expect(ids(ins)).toEqual(['warning:heat', 'warning:water', 'good:best'])
-    expect(ins[0].headline).toBe('High heat risk in May–June (14 days)')
-    expect(ins[0].detail).toContain('35 %') // 14 / 40 of the climate-risk score
-    expect(ins[1].headline).toBe('Severe water deficit (823 mm/yr)')
+    expect(ins[0].headline).toBe('High heat risk in May–June (14\u00a0days)')
+    expect(ins[0].detail).toContain('35\u00a0%') // 14 / 40 of the climate-risk score
+    expect(ins[1].headline).toBe('Severe water deficit (823\u00a0mm/yr)')
     expect(ins[2].headline).toBe('Best option: R1 (+2.8 points over current)') // 67.0 vs 64.2
     expect(ins[0].target).toBe('risk')
   })
@@ -73,7 +73,7 @@ describe('real farms', () => {
   it('Ronda 2900263939: steep slope (14.8 %), no water or heat warning', () => {
     const ins = farmInsights(realFarm(29084, 2900263939))
     expect(ids(ins)).toEqual(['warning:slope', 'good:best'])
-    expect(ins[0].headline).toBe('Steep slope (14.8 %): erosion risk')
+    expect(ins[0].headline).toBe('Steep slope (14.8\u00a0%): erosion risk')
     expect(ins[0].target).toBe('soil')
     expect(ins[1].headline).toBe('Best option: R1 (+2.4 points over current)')
   })
@@ -83,14 +83,14 @@ describe('real farms', () => {
     expect(facts.apt).toBe('pendiente')
     const ins = farmInsights(facts)
     expect(ids(ins)).toEqual(['critical:slope', 'warning:permanent', 'warning:water'])
-    expect(ins[0].headline).toBe('Very steep slope (53.7 %): hard to farm')
+    expect(ins[0].headline).toBe('Very steep slope (53.7\u00a0%): hard to farm')
   })
 
   it('a farm with apt = "monte" (2900063216): the land-use caveat leads the warnings', () => {
     const ins = farmInsights(realFarm(29015, 2900063216))
     expect(ins[0].id).toBe('land-use')
     expect(ins[0].headline).toBe('Forest or scrub: rotations are indicative')
-    expect(ins[0].detail).toMatch(/^\d+ % of the farm is scrub or trees by satellite land cover/)
+    expect(ins[0].detail).toMatch(/^\d+\u00a0% of the farm is scrub or trees by satellite land cover/)
     expect(ins.find((i) => i.id === 'permanent')).toBeUndefined()
   })
 })
@@ -104,7 +104,7 @@ describe('rules and thresholds', () => {
     expect(farmInsights(synthetic({ deficitMm: T.deficitHigh - 1 })).find((i) => i.id === 'water')).toBeUndefined()
     expect(farmInsights(synthetic({ deficitMm: T.deficitHigh })).find((i) => i.id === 'water')?.severity).toBe('warning')
     const crit = farmInsights(synthetic({ deficitMm: 955, deficitP20Mm: 1070 }))[0]
-    expect(crit).toMatchObject({ id: 'water', severity: 'critical', headline: 'Extreme water deficit (955 mm/yr)', target: 'water' })
+    expect(crit).toMatchObject({ id: 'water', severity: 'critical', headline: 'Extreme water deficit (955\u00a0mm/yr)', target: 'water' })
   })
 
   it('water: a P20 blocker of the calculator is critical even with a moderate mean deficit', () => {
@@ -138,13 +138,13 @@ describe('rules and thresholds', () => {
   it('soil water: warning at 100 mm or less', () => {
     const soil = (cad: number) => farmInsights(synthetic({ soil: { arcilla_pct: 30, ph_h2o: 7, cad_0_100_mm: cad } })).find((i) => i.id === 'soil-water')
     expect(soil(101)).toBeUndefined()
-    expect(soil(91)).toMatchObject({ severity: 'warning', headline: 'Soil with little available water (91 mm)', target: 'soil' })
+    expect(soil(91)).toMatchObject({ severity: 'warning', headline: 'Soil with little available water (91\u00a0mm)', target: 'soil' })
   })
 
   it('permanent crop: tree cover, or 4 seasons out of 6 seen as permanent', () => {
     const perm = (f: Partial<FarmFacts>) => farmInsights(synthetic({}, f)).find((i) => i.id === 'permanent')
     expect(perm({ cover: 'arbolado' })?.headline).toBe('Looks like a permanent crop: rotations are indicative')
-    expect(perm({ cover: 'arbolado', landCover: { arbolado: 71.5 } })?.detail).toContain('72 % trees')
+    expect(perm({ cover: 'arbolado', landCover: { arbolado: 71.5 } })?.detail).toContain('72\u00a0% trees')
     expect(perm({ seasons: 'P-P-P-B-B-B' })).toBeUndefined()
     expect(perm({ seasons: 'P-P-P-P-B-B' })?.detail).toContain('4 of the 6 seasons')
   })
@@ -198,15 +198,15 @@ describe('recommendation', () => {
     const f = realFarm(29015, 2900059683)
     expect(bestRotation(f.scores!, 'water_first')).toBe('R1')
     expect(recommendation(f.scores, 'water_first')).toBe(
-      'R1 (Wheat–Sunflower–Chickpea) is best for the Water priority: 67.0 vs. 64.2 now, mainly for better soil (+7.5), which outweighs a weaker market (-4.8).',
+      'R1 (+ Chickpea) is best for Water: 67.0 vs. 64.2 now, mainly better soil (+7.5) despite a weaker market (−4.8).',
     )
     expect(bestRotation(f.scores!, 'soil_first')).toBe('R2')
-    expect(recommendation(f.scores, 'soil_first')).toMatch(/^R2 \(Wheat–Sunflower–Vetch\) is best for the Soil priority: 68\.4 vs\. 63\.3 now, mainly for better soil/)
+    expect(recommendation(f.scores, 'soil_first')).toMatch(/^R2 \(\+ Vetch\) is best for Soil: 68\.4 vs\. 63\.3 now, mainly better soil/)
   })
 
   it('says to keep the current rotation when it ranks first', () => {
     const f = realFarm(29015, 2900059683)
-    expect(recommendation(f.scores, 'profit_first')).toBe('Keep the current rotation: it scores 68.6 for the Market priority, ahead of R1 (67.4).')
+    expect(recommendation(f.scores, 'profit_first')).toBe('Keep the current rotation: it is best for Market (68.6), ahead of R1 (67.4).')
   })
 
   it('is null without scores', () => {

@@ -3,7 +3,8 @@ import { clearTransient, FARMS, MUNICIPALITIES, openApp, reachLevel, toFarm, VIE
 import { measureLayout } from './layout'
 
 // Every level (and a few extra states) at 1440×900, 1280×720, 1024×768 and 390×844: panels must not overlap, must
-// stay inside the viewport and text must not be cut off. A problem is a failing test with the
+// stay inside the viewport (a panel in the scrolling farm column may be below the fold: it is
+// checked again with the column scrolled to the end) and text must not be cut off. A problem is a failing test with the
 // offending elements in the message. Known problems are listed in KNOWN and marked `test.fail`
 // (see docs/testing.md); once one is fixed its test "unexpectedly passes" and the entry must go.
 
@@ -21,6 +22,8 @@ const scenarios: Scenario[] = [
   { id: 'level2', title: 'level 2 · municipality (Antequera)', setup: (p) => reachLevel(p, 2) },
   { id: 'level3', title: 'level 3 · farm (Antequera 2900059683)', setup: (p) => reachLevel(p, 3) },
   { id: 'level3-ronda', title: 'level 3 · farm (Ronda 2900263939)', setup: (p) => toFarm(p, MUNICIPALITIES.ronda, FARMS.ronda) },
+  { id: 'level3-steep', title: 'level 3 · farm with apt set (Antequera 2900063712)', setup: (p) => toFarm(p, MUNICIPALITIES.antequera, FARMS.steep) },
+  { id: 'level3-calm', title: 'level 3 · farm with only an opportunity (Ronda 2900261494)', setup: (p) => toFarm(p, MUNICIPALITIES.ronda, FARMS.calm) },
   {
     id: 'level2-toast',
     title: 'level 2 · with the "not farmland" toast',
@@ -73,6 +76,23 @@ for (const [vpName, viewport] of Object.entries(LAYOUT_VIEWPORTS)) {
       expect.soft(overlaps, `Overlapping panels at ${where}`).toEqual([])
       expect.soft(r.outside, `Panels outside the viewport at ${where}`).toEqual([])
       expect.soft(r.clipped, `Clipped text at ${where}`).toEqual([])
+
+      // The farm column scrolls when its content is taller than the screen (phones, short
+      // laptops): what scrolls into view must not collide or be cut off either.
+      const scrolled = await page.evaluate(() => {
+        const col = document.querySelector('.xp .fx-col')
+        if (!col || col.scrollHeight <= col.clientHeight + 1) return false
+        col.scrollTop = col.scrollHeight
+        return true
+      })
+      if (scrolled) {
+        await page.waitForTimeout(300)
+        const end = await measureLayout(page)
+        const endOverlaps = sc.coversOthers ? end.overlaps.filter((o) => !o.includes('xp-sheet')) : end.overlaps
+        expect.soft(endOverlaps, `Overlapping panels at ${where}, column scrolled to the end`).toEqual([])
+        expect.soft(end.outside, `Panels outside the viewport at ${where}, column scrolled to the end`).toEqual([])
+        expect.soft(end.clipped, `Clipped text at ${where}, column scrolled to the end`).toEqual([])
+      }
     })
   }
 }

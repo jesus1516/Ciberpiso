@@ -41,6 +41,28 @@ export function measureLayout(page: Page, tolerance = OVERLAP_TOLERANCE_PX): Pro
         return cs.display !== 'contents' && r.width > 0 && r.height > 0
       }
 
+      // Scrollable ancestors (overflow-y auto/scroll with content to scroll), innermost first. A panel
+      // inside one is reachable by scrolling, so it may extend past the viewport as long as the
+      // scrolling box itself is inside it; and only the part shown in that box can collide with others.
+      const scrollers = (el: Element) => {
+        const out: Element[] = []
+        for (let e = el.parentElement; e && e !== document.body; e = e.parentElement) {
+          const s = getComputedStyle(e)
+          if ((s.overflowY === 'auto' || s.overflowY === 'scroll') && e.scrollHeight > e.clientHeight + 1) out.push(e)
+        }
+        return out
+      }
+      /** The part of the element that is on screen: its box clipped by every scrolling ancestor. */
+      const shown = (el: Element) => {
+        const r = el.getBoundingClientRect()
+        let { left, top, right, bottom } = r
+        for (const s of scrollers(el)) {
+          const b = s.getBoundingClientRect()
+          left = Math.max(left, b.left); top = Math.max(top, b.top); right = Math.min(right, b.right); bottom = Math.min(bottom, b.bottom)
+        }
+        return { left, top, right, bottom, empty: right - left <= 0 || bottom - top <= 0 }
+      }
+
       const panels = [...new Set(selectors.flatMap((s) => [...document.querySelectorAll(`.xp ${s}`)]))].filter(visible)
       // A panel that contains another one is a wrapper, not something that can collide with its content.
       const leaves = panels.filter((p) => !panels.some((q) => q !== p && p.contains(q)))
@@ -48,13 +70,21 @@ export function measureLayout(page: Page, tolerance = OVERLAP_TOLERANCE_PX): Pro
       const overlaps: string[] = []
       const outside: string[] = []
       for (let i = 0; i < leaves.length; i++) {
-        const a = leaves[i].getBoundingClientRect()
-        if (a.left < -1 || a.top < -1 || a.right > vw + 1 || a.bottom > vh + 1) {
-          outside.push(`${describe(leaves[i])} sticks out of the ${vw}x${vh} viewport (left ${Math.round(a.left)}, top ${Math.round(a.top)}, right ${Math.round(a.right)}, bottom ${Math.round(a.bottom)})`)
+        const box = leaves[i].getBoundingClientRect()
+        // Vertically, a panel in a scrolling box is measured by that box (it scrolls into view);
+        // horizontally there is no scrolling, so it must always be inside the viewport.
+        const scroll = scrollers(leaves[i]).at(-1)?.getBoundingClientRect()
+        const top = scroll ? scroll.top : box.top
+        const bottom = scroll ? scroll.bottom : box.bottom
+        if (box.left < -1 || top < -1 || box.right > vw + 1 || bottom > vh + 1) {
+          outside.push(`${describe(leaves[i])} sticks out of the ${vw}x${vh} viewport (left ${Math.round(box.left)}, top ${Math.round(top)}, right ${Math.round(box.right)}, bottom ${Math.round(bottom)})${scroll ? ' (its scrolling column)' : ''}`)
         }
+        const a = shown(leaves[i])
+        if (a.empty) continue
         for (let j = i + 1; j < leaves.length; j++) {
           if (leaves[i].contains(leaves[j]) || leaves[j].contains(leaves[i])) continue
-          const b = leaves[j].getBoundingClientRect()
+          const b = shown(leaves[j])
+          if (b.empty) continue
           const w = Math.min(a.right, b.right) - Math.max(a.left, b.left)
           const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
           if (w > tol && h > tol) overlaps.push(`${describe(leaves[i])} overlaps ${describe(leaves[j])} by ${Math.round(w)}x${Math.round(h)} px`)
