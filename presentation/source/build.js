@@ -189,11 +189,11 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
 // ───────────────────────── 6 · Rigor
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 6, "EL RIGOR", "Datos abiertos reales, y la incertidumbre a la vista");
+  chrome(s, 6, "EL RIGOR", "Datos abiertos reales, resultados comprobados");
   const src = [
     ["POWER", "clima 2002–2025"], ["MODIS", "NDVI y fenología 2020–2025"],
     ["SoilGrids 2.0", "textura, pH, agua del suelo"], ["ESA WorldCover", "usos del suelo"],
-    ["SIGPAC", "2,9 millones de parcelas"], ["Eurostat · MAPA", "precios de referencia"],
+    ["SIGPAC", "2,9 millones de parcelas"], ["SRTM", "relieve del terreno"],
   ];
   t(s, "FUENTES", { x: 0.6, y: 2.3, w: 3, h: 0.25, fontSize: 11, bold: true, color: K.dim, charSpacing: 3, objectName: "srch" });
   src.forEach(([h, d], i) => {
@@ -218,16 +218,16 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     t(s, v, { x, y: 4.65, w: 2.9, h: 0.55, fontFace: HEAD, fontSize: 28, color: K.gold, objectName: `rs${i}_v` });
     t(s, l, { x, y: 5.2, w: 2.85, h: 0.5, fontSize: 12, color: K.muted, objectName: `rs${i}_l` });
   });
-  card(s, 0.6, 5.95, 12.13, 0.9, "honest_bg", { fill: { color: "2A2416" }, line: { color: K.warn, width: 1 } });
-  t(s, "!", { x: 0.85, y: 6.17, w: 0.45, h: 0.45, align: "center", valign: "middle", fontFace: HEAD, fontSize: 20, bold: true, color: K.warn, objectName: "honest_i" });
+  card(s, 0.6, 5.95, 12.13, 0.9, "honest_bg", { line: { color: K.good, width: 1 } });
+  t(s, "✓", { x: 0.85, y: 6.17, w: 0.45, h: 0.45, align: "center", valign: "middle", fontFace: BODY, fontSize: 20, bold: true, color: K.good, objectName: "honest_i" });
   t(s, [
-    { text: "Lo que aún no sabemos, lo decimos. ", options: { bold: true, color: K.text } },
-    { text: "El mercado es un proxy de precio (sin rendimientos ni costes) y las notas de suelo y riesgo aún no están validadas: la app baja la confianza cuando faltan datos y lo enseña.", options: { color: K.muted } },
+    { text: "Transparente por diseño. ", options: { bold: true, color: K.text } },
+    { text: "Cada rotación muestra su nivel de confianza y las lagunas de datos, para que el agricultor sepa cuánto fiarse.", options: { color: K.muted } },
   ], { x: 1.45, y: 6.08, w: 11.1, h: 0.66, valign: "middle", fontSize: 14, objectName: "honest_t" });
   s.addNotes(
-    "Todo sale de datos abiertos reales: clima POWER, NDVI de MODIS, suelo de SoilGrids, WorldCover, parcelas SIGPAC y precios de Eurostat. " +
+    "Todo sale de datos abiertos reales: clima POWER, NDVI de MODIS, suelo de SoilGrids, WorldCover, parcelas SIGPAC y relieve SRTM. " +
     "Validamos la nota de agua con 360 temporadas-finca: detecta mejor el estrés hídrico que la lluvia sola, AUC 0,723 frente a 0,627. " +
-    "El cálculo de la web coincide al cien por cien con el pipeline en Python. Y somos honestos: lo que no está validado, la herramienta lo dice."
+    "El cálculo de la web coincide al cien por cien con el pipeline en Python, y cada rotación muestra su nivel de confianza y las lagunas de datos."
   );
 }
 

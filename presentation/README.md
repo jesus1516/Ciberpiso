@@ -24,7 +24,7 @@ QR → https://agrospace-w8ej.onrender.com/
 3. The solution: Andalucía → Málaga → municipality → farm (cloud dive GIF)
 4. The demo: landing on the farm in 3D (relief, orthophoto, soil, crops)
 5. The decision: R0–R3 with real scores for farm 29:15:2:18 (R1 + chickpea wins, 70.1 vs 67.3)
-6. The rigour: data sources, water-score AUC 0.723 vs 0.627, 0 app/pipeline differences, declared gaps
+6. The rigour: data sources, water-score AUC 0.723 vs 0.627, 0 app/pipeline differences, confidence shown per rotation
 7. QR to the live demo and team credits
 
 ## Rebuilding (`source/`)

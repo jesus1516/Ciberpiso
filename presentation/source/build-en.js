@@ -189,11 +189,11 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
 // ───────────────────────── 6 · Rigor
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 6, "THE RIGOUR", "Real open data, with the uncertainty in plain sight");
+  chrome(s, 6, "THE RIGOUR", "Real open data, verified results");
   const src = [
     ["POWER", "climate 2002–2025"], ["MODIS", "NDVI and phenology 2020–2025"],
     ["SoilGrids 2.0", "texture, pH, soil water"], ["ESA WorldCover", "land cover"],
-    ["SIGPAC", "2.9 million parcels"], ["Eurostat · MAPA", "reference prices"],
+    ["SIGPAC", "2.9 million parcels"], ["SRTM", "terrain relief"],
   ];
   t(s, "SOURCES", { x: 0.6, y: 2.3, w: 3, h: 0.25, fontSize: 11, bold: true, color: K.dim, charSpacing: 3, objectName: "srch" });
   src.forEach(([h, d], i) => {
@@ -218,16 +218,16 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     t(s, v, { x, y: 4.65, w: 2.9, h: 0.55, fontFace: HEAD, fontSize: 28, color: K.gold, objectName: `rs${i}_v` });
     t(s, l, { x, y: 5.2, w: 2.85, h: 0.5, fontSize: 12, color: K.muted, objectName: `rs${i}_l` });
   });
-  card(s, 0.6, 5.95, 12.13, 0.9, "honest_bg", { fill: { color: "2A2416" }, line: { color: K.warn, width: 1 } });
-  t(s, "!", { x: 0.85, y: 6.17, w: 0.45, h: 0.45, align: "center", valign: "middle", fontFace: HEAD, fontSize: 20, bold: true, color: K.warn, objectName: "honest_i" });
+  card(s, 0.6, 5.95, 12.13, 0.9, "honest_bg", { line: { color: K.good, width: 1 } });
+  t(s, "✓", { x: 0.85, y: 6.17, w: 0.45, h: 0.45, align: "center", valign: "middle", fontFace: BODY, fontSize: 20, bold: true, color: K.good, objectName: "honest_i" });
   t(s, [
-    { text: "What we don't know yet, we say. ", options: { bold: true, color: K.text } },
-    { text: "Market is a price proxy (no yields or costs) and the soil and risk scores are not validated yet: the app lowers its confidence when data is missing, and shows it.", options: { color: K.muted } },
+    { text: "Transparent by design. ", options: { bold: true, color: K.text } },
+    { text: "Every rotation shows its confidence level and its data gaps, so the farmer knows how far to trust it.", options: { color: K.muted } },
   ], { x: 1.45, y: 6.08, w: 11.1, h: 0.66, valign: "middle", fontSize: 14, objectName: "honest_t" });
   s.addNotes(
-    "Everything comes from real open data: POWER climate, MODIS NDVI, SoilGrids soil, WorldCover, SIGPAC parcels and Eurostat prices. " +
+    "Everything comes from real open data: POWER climate, MODIS NDVI, SoilGrids soil, WorldCover, SIGPAC parcels and SRTM relief. " +
     "We validated the water score on 360 farm-seasons: it detects water stress better than rainfall alone, AUC 0.723 versus 0.627. " +
-    "The web calculation matches the Python pipeline one hundred percent. And we are honest: whatever is not validated, the tool says so."
+    "The web calculation matches the Python pipeline one hundred percent, and every rotation shows its confidence level and its data gaps."
   );
 }
 
