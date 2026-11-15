@@ -30,6 +30,11 @@ No backend and no API keys: every request goes straight from the browser to publ
 - "Full data" opens the Conditions tab (`components/ConditionsTab.tsx`) for the farm.
 - `three` is loaded on demand in its own chunk; the 3D view only renders while something moves and lowers its resolution if the first frames are slow.
 - `?director` shows a small panel to replay transitions at 0.5× or 0.25×.
+- Shareable links (`explorer/share.ts`): the URL fragment follows the view on screen, so copying the address
+  shares it — `#f=29:15:0:0:62:14&r=R2&p=soil&y=2027&v=model&x=3.5` (farm, rotation, priority, year, mode, relief)
+  or `#m=15` (a municipality). It uses `history.replaceState` (no history entries) and the fragment never reaches
+  the server, so it works on any static host. Wrong values are left out; a link to a missing farm shows a notice
+  and the explorer starts as usual. Without a fragment nothing changes.
 - The search at the top centre (`explorer/SigpacSearch.tsx`, parser in `explorer/sigpac.ts`) goes from any level
   straight to a municipality or a farm. It accepts the SIGPAC reference as a farmer has it in the CAP declaration:
   `Antequera 100 1`, `29:15:100:1`, `29:15:0:0:100:1`, `15:100:1`, or just `100 1` for the municipality on screen

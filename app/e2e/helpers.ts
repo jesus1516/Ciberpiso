@@ -29,13 +29,13 @@ export type ErrorLog = string[]
  * Opens the app in director mode with every external request (map imagery, elevation tiles)
  * answered locally, and waits until the first level is interactive.
  */
-export async function openApp(page: Page, viewport: { width: number; height: number } = VIEWPORTS.desktop): Promise<ErrorLog> {
+export async function openApp(page: Page, viewport: { width: number; height: number } = VIEWPORTS.desktop, path = '/?director'): Promise<ErrorLog> {
   const errors: ErrorLog = []
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`console: ${m.text()}`) })
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
   await page.setViewportSize(viewport)
   await page.route((url) => !['127.0.0.1', 'localhost'].includes(url.hostname), (route) => route.fulfill({ status: 200, contentType: 'image/png', body: BLANK_PNG }))
-  await page.goto('/?director')
+  await page.goto(path)
   await page.waitForFunction(() => (window as any).__xp?.state.getState().phase === 'idle', null, { timeout: 60_000 })
   await page.evaluate(() => (window as any).__xp.ctrl.setSpeed(50))
   return errors

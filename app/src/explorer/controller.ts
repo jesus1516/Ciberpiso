@@ -20,6 +20,7 @@ import { pulse } from '../lib/pulse'
 import type { CloudLayer, CloudVariant } from './clouds'
 import type { FarmDiorama } from './diorama'
 import { tileFor, type BBox, type FarmScene } from './scene'
+import { farmHash, munCode, municipalityHash, parseShare, type Shared, type SharedView } from './share'
 import { ACCENT, MAP, RAMP } from './tokens'
 import { APT } from './texts'
 import { is3dEnabled, reducedMotion } from './settings'
@@ -247,6 +248,12 @@ export class ExplorerController {
     // The clouds of the first transition must be ready before the first click.
     const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 600))
     if (is3dEnabled()) idle(() => this.loadThree()) // with the 3D off, three.js is never downloaded
+    // A shared link (#f=… or #m=…) opens its place; the address then follows what is on screen.
+    const shared = parseShare(location.hash)
+    if (shared) await this.openShared(shared)
+    if (this.disposed) return
+    this.syncHash()
+    window.addEventListener('hashchange', this.onHashChange)
   }
 
   private source(id: string) {
@@ -877,6 +884,61 @@ export class ExplorerController {
     }
     await this.openFarm(farm)
   }
+
+  // ------------------------------------------------------------ shareable links (share.ts)
+  /** Fragment last written to the address bar, so a hashchange can tell a pasted link from our own. */
+  private written = location.hash
+  private unsync: (() => void) | null = null
+  /** Keeps the URL fragment on the view on screen. replaceState: no history entries, Back works as before. */
+  private syncHash() {
+    const write = (s: ReturnType<typeof useExplorer.getState>) => {
+      if (s.phase !== 'idle') return
+      const h = s.level === 3 && s.sel ? farmHash(s.sel.farm.properties.pid, s.view)
+        : s.level === 2 && s.municipality ? municipalityHash(s.municipality.mun) : ''
+      if (h === this.written) return
+      this.written = h
+      history.replaceState(history.state, '', h || location.pathname + location.search)
+    }
+    this.unsync = useExplorer.subscribe(write)
+    write(useExplorer.getState())
+  }
+  /** A link pasted into the address bar of the open tab. */
+  private onHashChange = () => {
+    if (location.hash === this.written) return
+    const shared = parseShare(location.hash)
+    if (shared) void this.openShared(shared)
+  }
+  /** Goes to the place of a shared link and restores its view. A link to nothing says so and stays put. */
+  private async openShared(s: Shared) {
+    const m = this.municipalities?.features.find((f) => munCode(f.properties.mun) === s.mun)?.properties
+    if (!m) return showToast('Link not found', `Málaga has no municipality with SIGPAC code ${s.mun}.`, 'warning')
+    if (s.kind === 'municipality') return this.jumpTo(m)
+    let farm: Farm | undefined
+    try {
+      farm = (await loadMunicipality(m.mun)).features.find((f) => f.properties.pol === s.pol && f.properties.par === s.par) as Farm | undefined
+    } catch {
+      return showToast('Could not load the farms', 'Check your connection and try again.', 'blocked')
+    }
+    if (this.disposed) return
+    if (!farm) return showToast('Link not found', `${m.nombre} has no SIGPAC parcel ${s.pol}/${s.par}.`, 'warning')
+    await this.jumpTo(m, farm)
+    const st = useExplorer.getState()
+    if (st.level === 3 && st.sel?.farm.properties.id === farm.properties.id) await this.applyView(s.view)
+  }
+  private async applyView(v: SharedView) {
+    const d = useExplorer.getState().flat ? null : this.dio
+    if (!d) {
+      // Flat farm view (3D off): only the data the table shows; the map stays a satellite picture.
+      const { mode: _m, exaggeration: _x, ...rest } = v
+      return useExplorer.setState((s) => ({ view: { ...s.view, ...rest } }))
+    }
+    if (v.profile) d.setProfile(v.profile)
+    if (v.rotation) await d.setRotation(v.rotation)
+    if (v.year !== undefined) await d.setYear(v.year)
+    if (v.mode && v.mode !== d.state.mode) await d.setMode(v.mode)
+    if (v.exaggeration !== undefined && Math.abs(v.exaggeration - d.state.exaggeration) > 0.01) await d.setExaggeration(v.exaggeration)
+  }
+
   private labelsFor() {
     const tweak: Record<string, [number, number]> = { '29': [0.05, -0.12], '04': [0.1, 0], '11': [0.05, 0.05] }
     for (const f of this.provinces!.features.filter((x) => x.properties.and)) {
@@ -909,6 +971,8 @@ export class ExplorerController {
   }
   dispose() {
     this.disposed = true
+    this.unsync?.()
+    window.removeEventListener('hashchange', this.onHashChange)
     this.clouds?.dispose()
     this.dio?.dispose()
     this.map.remove()
