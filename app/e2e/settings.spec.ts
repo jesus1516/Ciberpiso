@@ -167,13 +167,18 @@ for (const [vpName, vp] of Object.entries(LAYOUT_VPS)) {
           const scrolled = await page.evaluate((s) => { const el = document.querySelector(s); if (!el || el.scrollHeight <= el.clientHeight + 1) return false; el.scrollTop = el.scrollHeight; return true }, sel)
           if (scrolled) { await page.waitForTimeout(250); await check(`${sel} scrolled to the end`) }
         }
-        // The combobox open (level 0–2) must stay inside the narrative box and the viewport.
+        // The combobox open (level 0–2): the narrative stays inside the viewport and the highlighted option is visible in it.
         if (level < 3) {
           await page.getByRole('combobox').focus()
-          await page.waitForTimeout(200)
-          const box = await page.evaluate(() => { const n = document.querySelector('.narrative')!.getBoundingClientRect(); const l = document.querySelector('.al-list:not([hidden])')?.getBoundingClientRect(); return l ? { inside: l.bottom <= n.bottom + 1 || n.bottom <= innerHeight, bottom: l.bottom, vh: innerHeight } : null })
-          expect(box, 'the list is open').not.toBeNull()
-          expect(box!.bottom, 'open list inside the viewport').toBeLessThanOrEqual(box!.vh + 1)
+          await page.waitForTimeout(300)
+          const box = await page.evaluate(() => {
+            const n = document.querySelector('.narrative')!.getBoundingClientRect()
+            const o = document.querySelector('.al-list:not([hidden]) li.on')?.getBoundingClientRect()
+            return o ? { narrativeBottom: n.bottom, vh: innerHeight, optionInside: o.top >= n.top - 1 && o.bottom <= n.bottom + 1 } : null
+          })
+          expect(box, 'the list is open with a highlighted option').not.toBeNull()
+          expect(box!.narrativeBottom, 'narrative inside the viewport').toBeLessThanOrEqual(box!.vh + 1)
+          expect(box!.optionInside, 'highlighted option scrolled into view inside the narrative').toBe(true)
         }
       })
     }
@@ -186,12 +191,14 @@ test('high contrast: text contrast measured on the rendered page (farm view and 
   await reachLevel(page, 2)
   await clearTransient(page)
   await page.waitForTimeout(800)
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur()) // the focus ring is not text
   const map = await textContrast(page, ['.masthead', '.narrative', '.crumbs', '.back', '.disclaimer'])
   expect(map.checked).toBeGreaterThan(5)
   expect(map.failures, `lowest: ${JSON.stringify(map.lowest)}`).toEqual([])
   await reachLevel(page, 3)
   await clearTransient(page)
   await page.waitForTimeout(1000)
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur()) // the focus ring is not text
   const farm = await textContrast(page, ['.fx-col', '.fx-stage', '.fx-legend', '.crumbs', '.back'])
   expect(farm.checked).toBeGreaterThan(20)
   expect(farm.failures, `lowest: ${JSON.stringify(farm.lowest)}`).toEqual([])

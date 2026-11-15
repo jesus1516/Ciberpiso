@@ -15,12 +15,13 @@
 .xp .xp-main {display: contents;}
 
 /* ------------------------------------------------------------ narrative: scrolls instead of overlapping */
-.xp .narrative {pointer-events: auto; max-height: calc(100% - 150px - 96px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px;}
+.xp .narrative {pointer-events: auto; max-height: calc(100% - 150px - 106px * var(--ts)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px;}
 @media (min-width: 760px) and (max-width: 1099px) {
-.xp .narrative {max-height: calc(100% - 150px - 190px);}
+.xp .narrative {max-height: calc(100% - 150px - 190px * var(--ts));}
 }
 @media (max-width: 759px) {
-.xp .narrative {max-height: calc(100% - 64px - 76px);}
+.xp .narrative {max-height: calc(100% - 64px - 76px * var(--ts));}
+.xp .crumbs {flex-wrap: wrap; max-width: calc(100% - 96px * var(--ts) - 24px);}
 }
 .xp .narrative {width: calc(320px * var(--ts));}
 @media (max-width: 759px) {
