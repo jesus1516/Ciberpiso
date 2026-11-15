@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { deltaE, minDistance, simulate } from './colorMath'
+import { contrast, deltaE, minDistance, simulate } from './colorMath'
 import { ALL_PAIRS, ratio } from './contrastPairs'
 import { ACCENT, COVER_TOKENS, CROP_COLORS, MAP, mix, NEUTRAL, RAMP, STATUS } from './tokens'
 import { CROPS } from './scene'
@@ -69,6 +69,20 @@ describe('colour-blind safety (Machado 2009 simulation, CIEDE2000)', () => {
     expect(minDistance(CROP_COLORS, 'normal').d).toBeGreaterThanOrEqual(15)
     expect(minDistance(CROP_COLORS, 'protanopia').d).toBeGreaterThanOrEqual(10)
     expect(minDistance(CROP_COLORS, 'deuteranopia').d).toBeGreaterThanOrEqual(10)
+  })
+})
+
+describe('light-surface tokens (index.css, used outside the explorer)', () => {
+  const index = readFileSync(join(dir, '..', 'index.css'), 'utf8')
+  const get = (n: string) => index.match(new RegExp(`--color-${n}:\\s*(#[0-9a-fA-F]{6})`))![1].toUpperCase()
+  const surface = get('surface')
+  const light = { good: get('good'), warn: get('warning'), bad: get('critical') }
+  it.each([['ink', 7], ['ink-2', 4.5], ['muted', 4.5], ['brand', 4.5], ['good', 4.5], ['warning', 4.5], ['critical', 4.5]] as const)('--color-%s reads on the surface (≥ %s:1)', (n, min) => {
+    expect(contrast(get(n), surface)).toBeGreaterThanOrEqual(min)
+  })
+  it('the light status colours are distinguishable with protanopia and deuteranopia', () => {
+    expect(minDistance(light, 'protanopia').d).toBeGreaterThanOrEqual(15)
+    expect(minDistance(light, 'deuteranopia').d).toBeGreaterThanOrEqual(15)
   })
 })
 

@@ -8,9 +8,12 @@
   --color-surface: #fcfcfb;
   --color-line: #e1e0d9;
   --color-brand: #1c5cab;
-  --color-good: #0ca30c;
-  --color-warning: #fab219;
-  --color-critical: #d03b3b;
+  /* Status colours for light surfaces: blue / orange / magenta-red, distinguishable with deuteranopia and
+     protanopia and ≥ 4.5:1 on --color-surface (tokens.test.ts). Always pair them with a word or an icon.
+     The dark explorer has its own set (--good / --warn / --bad in explorer/explorer.css). */
+  --color-good: #0b63c5;
+  --color-warning: #a85a00;
+  --color-critical: #b3205f;
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -20,7 +23,7 @@ html, body, #root {
 }
 
 body {
-  background: #0d0d0d;
+  background: var(--color-ink);
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
