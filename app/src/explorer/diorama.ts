@@ -192,6 +192,9 @@ type Sources = { frame: Frame; dem: Dem; ortho: Ortho }
 const sourceCache = new Map<string, Promise<Sources>>()
 
 /** Downloads terrain and orthophoto for the tile (can be called when hovering over the farm). */
+/** Small or touch screen (phones, tablets): lighter rendering. */
+const LIGHT_DEVICE = window.matchMedia('(max-width: 759px), (pointer: coarse)').matches
+
 export function prefetch(key: string, tile: BBox) {
   if (!sourceCache.has(key)) {
     const frame = makeFrame(tile)
@@ -390,12 +393,13 @@ export class FarmDiorama {
     this.bg.className = 'dio-bg'
     container.appendChild(this.bg)
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
+    // Phones / touch screens: no MSAA on dense screens (it does not show at 2×+), lower density, smaller shadows.
+    this.renderer = new THREE.WebGLRenderer({ antialias: !(LIGHT_DEVICE && (window.devicePixelRatio || 1) >= 2), alpha: true, powerPreference: 'high-performance' })
     // T-05: checking every shader for errors calls getProgramInfoLog / getShaderInfoLog, which wait for the
     // compiler on the main thread (seconds on slow GPUs). Only in development.
     this.renderer.debug.checkShaderErrors = import.meta.env.DEV
     // 1.5 is enough for sharp lines; if the machine is struggling, it drops to 1 (see adapt).
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LIGHT_DEVICE ? 1.25 : 1.5))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.renderer.toneMapping = THREE.NoToneMapping
     this.renderer.shadowMap.enabled = true
@@ -429,7 +433,7 @@ export class FarmDiorama {
     this.controls.addEventListener('change', () => this.kick())
 
     this.sun.castShadow = true
-    this.sun.shadow.mapSize.set(2048, 2048)
+    this.sun.shadow.mapSize.set(LIGHT_DEVICE ? 1024 : 2048, LIGHT_DEVICE ? 1024 : 2048)
     this.scene.add(new THREE.HemisphereLight(SCENE.skyLight, SCENE.skyGround, 1.35), this.sun, this.sun.target)
 
     this.blank = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1)

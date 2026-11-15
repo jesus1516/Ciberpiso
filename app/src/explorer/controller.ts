@@ -37,6 +37,8 @@ const AMBER = ACCENT // the one accent (tokens.ts)
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const range = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
+/** Small or touch screen (phones, tablets): lighter rendering. */
+const LIGHT_DEVICE = window.matchMedia('(max-width: 759px), (pointer: coarse)').matches
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 /**
  * The farms the keyboard list offers: farmland only (urban, water and public-domain farms cannot be
@@ -176,6 +178,9 @@ export class ExplorerController {
     this.app = app
     this.dioEl = dioEl
     this.map = new maplibregl.Map({
+      // Phones have 2.5–3.5× screens: drawing the map (hillshade, 14,529 farms) at that density made the
+      // transitions slow. 1.5× on small / touch screens, 2× elsewhere; text and lines stay sharp enough.
+      pixelRatio: Math.min(window.devicePixelRatio || 1, LIGHT_DEVICE ? 1.5 : 2),
       container: mapEl, style: style(), center: [-4.6, 37.4], zoom: 6.4, attributionControl: { compact: true }, renderWorldCopies: false,
       dragPan: false, scrollZoom: false, boxZoom: false, dragRotate: false, keyboard: false, doubleClickZoom: false, touchZoomRotate: false, touchPitch: false,
       maxPitch: 70, fadeDuration: 150,
