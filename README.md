@@ -10,6 +10,7 @@
 <p align="center">
   <a href="https://agrospace-w8ej.onrender.com/"><b>▶ Live demo</b></a> ·
   <a href="assets/video/agrospace-demo.mp4">30-second video</a> ·
+  <a href="presentation/">Pitch deck</a> ·
   <a href="#run-it-locally">Run it locally</a>
 </p>
 
@@ -137,11 +138,13 @@ pipeline/   Python pipeline that downloads, scores and exports the data
 data/       CSV and SQLite data for Málaga and Andalucía
 docs/       testing, performance, data sources, architecture, validation
 assets/     logo and the 30-second demo video
+presentation/  the judges' deck (PowerPoint, English and Spanish, with PDF backups)
 tests/      pipeline tests (pytest)
 ```
 
 | Document | What it contains |
 | --- | --- |
+| [Presentation](presentation/README.md) | The 7-slide judges' deck and how to present or rebuild it. |
 | [App](app/README.md) | How the web app is built: explorer, rotation engine, data. |
 | [Testing](docs/testing.md) | Every test suite and how to run it. |
 | [Performance](docs/performance.md) | Measurements on slow computers and what was optimised. |
