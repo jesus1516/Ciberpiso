@@ -349,7 +349,6 @@ export class FarmDiorama {
   private viewOffset = { x: 0, y: 0 }
   private active = false
   private raf = 0
-  private dragging = false
   private lastBusy = 0
   private perf: { n: number; t0: number } | null = null
   private adapted = false
@@ -427,17 +426,11 @@ export class FarmDiorama {
     })
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-    Object.assign(this.controls, { enableDamping: true, dampingFactor: 0.08, enablePan: false, rotateSpeed: 0.55, zoomSpeed: 0.7, enabled: false })
-    this.controls.addEventListener('start', () => { this.dragging = true; this.kick() })
-    this.controls.addEventListener('end', () => { this.dragging = false; this.kick() })
-    this.controls.addEventListener('change', () => this.kick())
-    // Phones / touch screens: the block stays still (no rotate or zoom gestures). The 3D then paints only
-    // when something changes (year, rotation, relief), and a vertical swipe over it scrolls the page.
-    if (LIGHT_DEVICE) {
-      this.controls.enableRotate = false
-      this.controls.enableZoom = false
-      this.renderer.domElement.style.touchAction = 'pan-y'
-    }
+    // The block stays still on every device: no rotate, zoom or pan gestures. The 3D then paints only when
+    // something changes (year, rotation, relief), the wheel scrolls the page and a vertical swipe too.
+    // The controls are kept only as the camera target the framing code tweens.
+    Object.assign(this.controls, { enableDamping: false, enablePan: false, enableRotate: false, enableZoom: false, enabled: false })
+    this.renderer.domElement.style.touchAction = 'pan-y'
 
     this.sun.castShadow = true
     this.sun.shadow.mapSize.set(LIGHT_DEVICE ? 1024 : 2048, LIGHT_DEVICE ? 1024 : 2048)
@@ -1333,7 +1326,7 @@ export class FarmDiorama {
     this.adapt(now)
     // It keeps painting only while something changes (animation or camera inertia), and
     // a couple of seconds more for the cloud shadows; at rest it uses no GPU.
-    if (this.tweens.length || moving || this.dragging) this.lastBusy = now
+    if (this.tweens.length || moving) this.lastBusy = now
     if (now - this.lastBusy < 2500) this.raf = requestAnimationFrame(this.loop)
   }
   /** If the first frames are slow, resolution and shadows drop once. */

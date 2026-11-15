@@ -398,9 +398,6 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
                 <button key={e} aria-pressed={Math.abs(view.exaggeration - e) < 0.01} aria-label={`Relief exaggeration ×${fmt(e, e % 1 ? 1 : 0)}`} onClick={() => dio()?.setExaggeration(e)}>×{fmt(e, e % 1 ? 1 : 0)}</button>
               ))}
             </div>
-            <button className="icon-btn" aria-label="Re-centre view" title="Re-centre view" onClick={() => dio()?.resetView()}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" /><path d="M4 4v4.5h4.5" /></svg>
-            </button>
             <button className="full-data-btn" aria-pressed={showTable} onClick={() => setShowTable(!showTable)}>Data table</button>
           </>
         )}

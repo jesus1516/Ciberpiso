@@ -170,8 +170,6 @@
 .xp .seg {display: inline-flex; padding: 3px; border-radius: 11px; background: var(--glass); border: 1px solid var(--line);}
 .xp .seg button {border: 0; background: transparent; padding: 7px 11px; border-radius: 8px; font-size: calc(12px * var(--ts)); color: var(--n-200); cursor: pointer;}
 .xp .seg button[aria-pressed="true"] {background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent);}
-.xp .icon-btn {width: calc(36px * var(--ts)); height: calc(36px * var(--ts)); display: grid; place-items: center; border-radius: 11px; border: 1px solid var(--n-500); background: var(--glass); cursor: pointer;}
-.xp .icon-btn svg {width: 16px; height: 16px;}
 .xp .fx-legend {position: absolute; right: 20px; bottom: calc(18px + (var(--ts) - 1) * 190px); max-width: 330px; padding: 7px 10px; border-radius: 10px; background: color-mix(in srgb, var(--n-900) 78%, transparent); border: 1px solid var(--line);
   font-size: calc(10.5px * var(--ts)); line-height: 1.5; color: var(--n-200); pointer-events: none;}
 .xp .fx-legend .sw {display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 10px;}

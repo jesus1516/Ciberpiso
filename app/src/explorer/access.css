@@ -122,11 +122,10 @@
 /* ------------------------------------------------------------ phones: touch targets of at least 44 × 44 px */
 @media (max-width: 759px) {
 .xp :is(button, summary, .al-list li, .al-field input) {min-height: 44px;}
-.xp :is(.seg button, .crumb, .icon-btn, .play, .back, .sources, .settings-btn, .full-data-btn, .x, .close) {min-height: 44px; min-width: 44px;}
+.xp :is(.seg button, .crumb, .play, .back, .sources, .settings-btn, .full-data-btn, .x, .close) {min-height: 44px; min-width: 44px;}
 .xp .masthead .sources {display: inline-block; margin-left: 4px;}
 .xp .masthead {gap: 8px;}
 .xp .masthead b {font-size: calc(20px * var(--ts));}
-.xp .icon-btn {width: 44px; height: 44px;}
 .xp .tl .play {width: 44px; height: 44px;}
 .xp .back {height: 44px; padding: 0 14px;}
 .xp[data-level="3"] .back {height: 44px;}
