@@ -1,5 +1,6 @@
-// Genera la maqueta del deck (sin transiciones ni animaciones).
+// Genera la maqueta del deck (sin transiciones ni animaciones). Versión v2: arranca por el problema.
 // Después: python3 tools/animate.py build/agrospace-base.pptx anim.json AgroSpace.pptx
+// Guion de 2–3 minutos en las notas del orador.
 const pptxgen = require("pptxgenjs");
 const fs = require("fs");
 
@@ -27,12 +28,13 @@ pres.defineSlideMaster({ title: "OSCURO", background: { color: K.bg } });
 pres.defineSlideMaster({ title: "MARFIL", background: { color: K.ivory } });
 
 const t = (s, text, o) => s.addText(text, { isTextBox: true, margin: 0, fontFace: BODY, color: K.text, valign: "top", ...o });
+const pg = (s, n) => t(s, `0${n} / 07`, { x: 11.3, y: 0.48, w: 1.5, h: 0.3, fontSize: 11, color: K.dim, align: "right", charSpacing: 2, objectName: "!!pg" });
 
-// Elementos fijos de las diapositivas oscuras (mismo nombre en todas: Morph los deja quietos)
+// Elementos fijos de las diapositivas oscuras con marca (mismo nombre: Morph los deja quietos)
 function chrome(s, n, eyebrow, title) {
   s.addImage({ path: IMG + "agrospace-mark.png", x: 0.55, y: 0.38, w: 0.6, h: 0.6 * 251 / 292, objectName: "!!logo" });
   t(s, "AgroSpace", { x: 1.28, y: 0.44, w: 2.2, h: 0.4, fontFace: HEAD, fontSize: 16, objectName: "!!brand" });
-  t(s, `0${n} / 07`, { x: 11.3, y: 0.48, w: 1.5, h: 0.3, fontSize: 11, color: K.dim, align: "right", charSpacing: 2, objectName: "!!pg" });
+  pg(s, n);
   t(s, eyebrow, { x: 0.6, y: 1.12, w: 7, h: 0.3, fontSize: 12, color: K.gold, bold: true, charSpacing: 4, objectName: "!!eyebrow" });
   if (title) t(s, title, { x: 0.6, y: 1.42, w: 12.1, h: 0.75, fontFace: HEAD, fontSize: 32, objectName: "!!title" });
 }
@@ -43,48 +45,60 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
   t(s, label, { x, y, w: d, h: d, align: "center", valign: "middle", fontFace: HEAD, fontSize: 16, color, objectName: name + "_n" });
 };
 
-// ───────────────────────── 1 · Portada (marfil)
+// ───────────────────────── 1 · Gancho: la España vacía
+{
+  const s = pres.addSlide({ masterName: "OSCURO" });
+  s.addImage({ path: IMG + "campo-oscuro.jpg", x: 0, y: 0, w: W, h: 7.5, objectName: "bgcampo" });
+  t(s, "LA ESPAÑA VACÍA", { x: 0.8, y: 1.35, w: 8, h: 0.35, fontSize: 14, color: K.gold, bold: true, charSpacing: 5, objectName: "eyebrow" });
+  t(s, "3.834", { x: 0.75, y: 1.85, w: 8, h: 1.6, fontFace: HEAD, fontSize: 110, color: K.gold, objectName: "big" });
+  t(s, "municipios de España perdieron población\nsolo en 2023: casi la mitad.", { x: 0.8, y: 3.55, w: 8.5, h: 1.05, fontFace: HEAD, fontSize: 28, lineSpacingMultiple: 1.05, objectName: "what" });
+  t(s, "Cuando vivir del campo deja de compensar, el pueblo se vacía.", { x: 0.8, y: 4.95, w: 8.5, h: 0.45, fontSize: 20, color: K.muted, objectName: "why" });
+  t(s, "Fuente: INE, Censo Anual de Población a 1 de enero de 2024", { x: 0.8, y: 6.8, w: 8, h: 0.3, fontSize: 11, color: K.dim, objectName: "src" });
+  s.addNotes(
+    "[≈20 s] Todos hemos oído hablar de la España vacía: pueblos que se quedan sin gente. Solo en 2023, casi la mitad de los municipios de España perdió población. " +
+    "Y en el campo suele empezar igual: una sequía, una mala campaña, una decisión equivocada sobre qué sembrar… y vivir de la tierra deja de compensar."
+  );
+}
+
+// ───────────────────────── 2 · El problema concreto
+{
+  const s = pres.addSlide({ masterName: "OSCURO" });
+  s.addImage({ path: IMG + "mapa-andalucia-oscuro.png", x: 4.3, y: 0, w: 7.5 * 1180 / 720, h: 7.5, objectName: "!!mapa" });
+  t(s, "EL PROBLEMA", { x: 0.6, y: 1.12, w: 7, h: 0.3, fontSize: 12, color: K.gold, bold: true, charSpacing: 4, objectName: "eyebrow" });
+  t(s, "Sembrar a ciegas\nen plena sequía", { x: 0.6, y: 1.5, w: 6.2, h: 1.6, fontFace: HEAD, fontSize: 44, objectName: "q" });
+  t(s, "Cada otoño, el agricultor de secano decide qué sembrar. Se juega la campaña entre agua, suelo y mercado, y los datos de satélite que podrían ayudarle no le llegan.",
+    { x: 0.6, y: 3.3, w: 5.4, h: 1.5, fontSize: 17, color: K.muted, lineSpacingMultiple: 1.15, objectName: "body" });
+  const st = [["453 mm", "lluvia media\nal año"], ["302 mm", "en 2023: un tercio\nmenos de lluvia"], ["792 mm", "de déficit hídrico\nal año"]];
+  st.forEach(([v, l], i) => {
+    const x = 0.6 + i * 1.95;
+    t(s, v, { x, y: 5.15, w: 1.9, h: 0.6, fontFace: HEAD, fontSize: 30, color: i === 1 ? K.warn : K.gold, objectName: `stat${i}_v` });
+    t(s, l, { x, y: 5.8, w: 1.9, h: 0.6, fontSize: 13, color: K.muted, objectName: `stat${i}_l` });
+  });
+  t(s, "Finca de secano 29:15:2:18, Antequera (Málaga) · clima POWER", { x: 0.6, y: 6.85, w: 6, h: 0.25, fontSize: 10, color: K.dim, objectName: "src" });
+  s.addNotes(
+    "[≈25 s] Bajemos a una finca real de secano en Antequera, Málaga. Llueven 453 litros al año de media; en 2023, solo 302, un tercio menos. " +
+    "Y el cultivo necesitaría casi 800 más de los que caen. Cada otoño el agricultor decide qué sembrar: ¿trigo y girasol otra vez, una leguminosa, barbecho? " +
+    "Los datos de satélite existen y son abiertos, pero no le llegan."
+  );
+}
+
+// ───────────────────────── 3 · La revelación: AgroSpace (marfil)
 {
   const s = pres.addSlide({ masterName: "MARFIL" });
   const lw = 7.4, lh = lw * 320 / 1100;
-  s.addImage({ path: media("logo-once.gif", "logo-still.png"), x: (W - lw) / 2, y: 1.35, w: lw, h: lh, objectName: "!!logo" });
-  t(s, "From territory to farm", { x: 1, y: 3.75, w: W - 2, h: 0.6, align: "center", fontFace: HEAD, fontSize: 30, italic: true, color: K.green, objectName: "tagline" });
-  t(s, "Explorador de rotaciones de cultivo con datos de observación de la Tierra", { x: 1.5, y: 4.45, w: W - 3, h: 0.45, align: "center", fontSize: 19, color: "3E5A45", objectName: "sub" });
-  t(s, "Space Apps Challenge 2026  ·  Reto «Field Shift»  ·  Málaga", { x: 1, y: 6.35, w: W - 2, h: 0.3, align: "center", fontSize: 13, color: "6B7A62", charSpacing: 1, objectName: "event" });
-  t(s, "Equipo Ciberpiso", { x: 1, y: 6.7, w: W - 2, h: 0.3, align: "center", fontSize: 13, bold: true, color: K.green, objectName: "team" });
+  s.addImage({ path: media("logo-once.gif", "logo-still.png"), x: (W - lw) / 2, y: 1.45, w: lw, h: lh, objectName: "!!logo" });
+  t(s, "From territory to farm", { x: 1, y: 3.85, w: W - 2, h: 0.6, align: "center", fontFace: HEAD, fontSize: 30, italic: true, color: K.green, objectName: "tagline" });
+  t(s, "Llevamos los datos de satélite a la decisión de cada finca", { x: 1.5, y: 4.55, w: W - 3, h: 0.45, align: "center", fontSize: 20, color: "3E5A45", objectName: "sub" });
+  t(s, "Space Apps Challenge 2026  ·  Reto «Field Shift»  ·  Equipo Ciberpiso", { x: 1, y: 6.6, w: W - 2, h: 0.3, align: "center", fontSize: 13, color: "6B7A62", charSpacing: 1, objectName: "event" });
   s.addNotes(
-    "Buenos días. Somos el equipo Ciberpiso y os presentamos AgroSpace: «from territory to farm», del territorio a la finca. " +
-    "Es una herramienta para que un agricultor de secano compare rotaciones de cultivo usando datos de observación de la Tierra, sin necesitar formación geoespacial."
+    "[≈10 s] Por eso hemos creado AgroSpace: del territorio a la finca. Lleva los datos de satélite a la decisión de cada agricultor, sin necesitar formación técnica."
   );
 }
 
-// ───────────────────────── 2 · Problema
+// ───────────────────────── 4 · Del territorio a tu finca
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  // Mapa a sangre: Morph lo lleva al marco del GIF de nubes en la diapositiva 3
-  s.addImage({ path: IMG + "mapa-andalucia-oscuro.png", x: 4.3, y: 0, w: 7.5 * 1180 / 720, h: 7.5, objectName: "!!mapa" });
-  chrome(s, 2, "EL PROBLEMA", "");
-  t(s, "¿Trigo y girasol\notra vez?", { x: 0.6, y: 1.5, w: 6, h: 1.6, fontFace: HEAD, fontSize: 44, objectName: "q" });
-  t(s, "En el secano de Antequera, el agricultor decide cada año qué sembrar. Cada rotación es un compromiso entre agua, suelo y mercado, y los datos de satélite que podrían ayudarle no están a su alcance.",
-    { x: 0.6, y: 3.3, w: 5.4, h: 1.5, fontSize: 17, color: K.muted, lineSpacingMultiple: 1.15, objectName: "body" });
-  const st = [["453 mm", "lluvia media\nal año"], ["792 mm", "de déficit hídrico\nal año"], ["14.529", "fincas SIGPAC\nsolo en Antequera"]];
-  st.forEach(([v, l], i) => {
-    const x = 0.6 + i * 1.95;
-    t(s, v, { x, y: 5.15, w: 1.9, h: 0.6, fontFace: HEAD, fontSize: 30, color: K.gold, objectName: `stat${i}_v` });
-    t(s, l, { x, y: 5.8, w: 1.9, h: 0.6, fontSize: 13, color: K.muted, objectName: `stat${i}_l` });
-  });
-  t(s, "Finca 29:15:2:18, Antequera · clima POWER 2002–2025", { x: 0.6, y: 6.85, w: 6, h: 0.25, fontSize: 10, color: K.dim, objectName: "src" });
-  s.addNotes(
-    "Imaginad una finca de secano en Antequera. Llueven unos 453 milímetros al año, y el cultivo necesitaría 792 más. " +
-    "Cada otoño el agricultor elige: ¿repito trigo y girasol, meto una leguminosa, dejo barbecho? Cada opción gana en algo y pierde en otra cosa. " +
-    "Los datos de satélite existen y son abiertos, pero no están pensados para él."
-  );
-}
-
-// ───────────────────────── 3 · Solución: el embudo
-{
-  const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 3, "LA SOLUCIÓN", "Del territorio a tu finca, en cuatro pasos");
+  chrome(s, 4, "LA SOLUCIÓN", "Del territorio a tu finca, en cuatro pasos");
   card(s, 6.12, 2.32, 6.66, 4.06, "!!frame");
   s.addImage({ path: media("a-nubes.l.gif", "a-still.png"), x: 6.2, y: 2.4, w: 6.5, h: 6.5 * 720 / 1180, objectName: "!!mapa" });
   t(s, "Andalucía → Málaga: la cámara atraviesa las nubes · demo real", { x: 6.2, y: 6.5, w: 6.5, h: 0.3, fontSize: 11, color: K.dim, objectName: "cap" });
@@ -102,15 +116,15 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     t(s, d, { x: 1.45, y: y + 0.36, w: 4.4, h: 0.3, fontSize: 14, color: K.muted, objectName: `step${i}_d` });
   });
   s.addNotes(
-    "AgroSpace lleva al usuario como un embudo: empieza en Andalucía, con casi tres millones de fincas SIGPAC, baja a Málaga, luego al municipio, y aterriza en su finca. " +
-    "Cada transición está pensada para orientarse sin saber nada de mapas: al entrar en Málaga, la cámara atraviesa las nubes."
+    "[≈20 s] Empieza en Andalucía, con casi tres millones de parcelas SIGPAC, y baja como un embudo: Málaga, el municipio y su finca. " +
+    "Al entrar en Málaga, la cámara atraviesa las nubes."
   );
 }
 
-// ───────────────────────── 4 · Demo 3D
+// ───────────────────────── 5 · Demo 3D
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 4, "LA DEMO", "Aterriza en tu finca, en 3D");
+  chrome(s, 5, "LA DEMO", "Aterriza en tu finca, en 3D");
   const gh = 4.72, gw = gh * 1100 / 720;
   card(s, 0.52, 2.32, gw + 0.16, gh + 0.16, "!!frame");
   s.addImage({ path: media("b-aterrizaje.l.gif", "b-still.png"), x: 0.6, y: 2.4, w: gw, h: gh, objectName: "!!mapa" });
@@ -127,16 +141,15 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     t(s, d, { x: 9.25, y: y + 0.33, w: 3.55, h: 0.6, fontSize: 13, color: K.muted, objectName: `pt${i}_d` });
   });
   s.addNotes(
-    "Al elegir una finca, el mapa vuela en cenital y se la entrega a una escena 3D que arranca idéntica píxel a píxel. " +
-    "Es su relieve real, su ortofoto real, el perfil de suelo de SoilGrids en los laterales, y los cultivos que el satélite MODIS vio cada campaña desde 2020. " +
+    "[≈20 s] Y aterriza en su finca en 3D: su relieve real, su ortofoto, el perfil de suelo y los cultivos que el satélite MODIS vio cada campaña desde 2020. " +
     "El agricultor reconoce su tierra al instante."
   );
 }
 
-// ───────────────────────── 5 · Rotaciones
+// ───────────────────────── 6 · La decisión (y la prueba de que funciona)
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 5, "LA DECISIÓN", "Cuatro rotaciones, una recomendación que se explica");
+  chrome(s, 6, "LA DECISIÓN", "Cuatro rotaciones, una recomendación que se explica");
   const R = [
     { code: "R0", name: "Actual · trigo–girasol", score: "67,3", v: [64.8, 67.5, 74.9, 68.2], c: K.cereal },
     { code: "R1", name: "+ garbanzo", score: "70,1", v: [67.2, 75.0, 70.1, 72.8], c: K.legume, best: true },
@@ -161,73 +174,30 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
       t(s, v.toFixed(1).replace(".", ","), { x: x + 2.38, y: yy, w: 0.45, h: 0.22, fontSize: 11, color: K.text, align: "right", objectName: `${p}v${j}` });
     });
   });
-  // Abajo: GIF de la línea temporal y la recomendación
-  const gh = 1.95, gw = gh * 1120 / 720;
-  card(s, 0.52, 5.17, gw + 0.16, gh + 0.16, "gframe");
-  s.addImage({ path: media("c-rotacion.l.gif", "c-still.png"), x: 0.6, y: 5.25, w: gw, h: gh, objectName: "gifc" });
-  const rx = 0.6 + gw + 0.45;
+  // Abajo a la izquierda: la recomendación y lo que explica
   t(s, [
     { text: "Recomendación (prioridad agua): ", options: { bold: true, color: K.gold } },
     { text: "R1 con garbanzo, 70,1 frente a 67,3 de hoy. Gana sobre todo en suelo (+7,5), aunque pierde en mercado (−4,8)." },
-  ], { x: rx, y: 5.22, w: 12.73 - rx, h: 0.75, fontSize: 15, lineSpacingMultiple: 1.1, objectName: "rec" });
+  ], { x: 0.6, y: 5.25, w: 7.5, h: 0.75, fontSize: 15, lineSpacingMultiple: 1.1, objectName: "rec" });
   const chips = [["Por qué", K.good], ["Evidencia", K.good], ["Lagunas de datos", K.warn], ["Riesgos a revisar en campo", K.warn]];
-  let cx = rx;
+  let cx = 0.6;
   chips.forEach(([c, col], i) => {
     const w = 0.42 + c.length * 0.085;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: cx, y: 6.12, w, h: 0.36, rectRadius: 0.18, fill: { color: K.card }, line: { color: col, width: 1 }, objectName: `chip${i}_bg` });
-    t(s, c, { x: cx, y: 6.12, w, h: 0.36, align: "center", valign: "middle", fontSize: 12, color: col, objectName: `chip${i}_t` });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: cx, y: 6.2, w, h: 0.36, rectRadius: 0.18, fill: { color: K.card }, line: { color: col, width: 1 }, objectName: `chip${i}_bg` });
+    t(s, c, { x: cx, y: 6.2, w, h: 0.36, align: "center", valign: "middle", fontSize: 12, color: col, objectName: `chip${i}_t` });
     cx += w + 0.15;
   });
-  t(s, "Cada rotación lo muestra. El agricultor elige la prioridad: agua, suelo o mercado.", { x: rx, y: 6.65, w: 12.73 - rx, h: 0.3, fontSize: 13, color: K.muted, objectName: "foot" });
+  t(s, "Datos abiertos reales: POWER · MODIS · SoilGrids · WorldCover · SIGPAC · SRTM", { x: 0.6, y: 6.78, w: 7.6, h: 0.3, fontSize: 12, color: K.dim, objectName: "srcs" });
+  // Abajo a la derecha: la prueba de que funciona
+  card(s, 8.45, 5.17, 4.28, 1.95, "proof_bg", { line: { color: K.good, width: 1 } });
+  t(s, "NOTA DE AGUA VALIDADA", { x: 8.7, y: 5.33, w: 3.9, h: 0.25, fontSize: 11, bold: true, color: K.good, charSpacing: 2, objectName: "proof_h" });
+  t(s, "0,723", { x: 8.7, y: 5.6, w: 1.9, h: 0.75, fontFace: HEAD, fontSize: 40, color: K.gold, objectName: "proof_v" });
+  t(s, "AUC frente a 0,627\ncon solo lluvia", { x: 10.55, y: 5.72, w: 2.1, h: 0.6, fontSize: 13, color: K.text, objectName: "proof_c" });
+  t(s, "Detecta las campañas con estrés hídrico (360 temporadas-finca)", { x: 8.7, y: 6.5, w: 3.95, h: 0.45, fontSize: 12, color: K.muted, objectName: "proof_d" });
   s.addNotes(
-    "Para esa finca comparamos la rotación actual, trigo y girasol, con tres alternativas: meter garbanzo, veza o barbecho. " +
-    "Cada una se puntúa en agua, suelo, mercado y riesgo climático, con reglas explicables, no con una caja negra. " +
-    "Con prioridad agua gana R1, con garbanzo: 70,1 frente a 67,3. Y la herramienta dice por qué, con qué evidencia, qué datos faltan y qué hay que revisar en campo."
-  );
-}
-
-// ───────────────────────── 6 · Rigor
-{
-  const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 6, "EL RIGOR", "Datos abiertos reales, resultados comprobados");
-  const src = [
-    ["POWER", "clima 2002–2025"], ["MODIS", "NDVI y fenología 2020–2025"],
-    ["SoilGrids 2.0", "textura, pH, agua del suelo"], ["ESA WorldCover", "usos del suelo"],
-    ["SIGPAC", "2,9 millones de parcelas"], ["SRTM", "relieve del terreno"],
-  ];
-  t(s, "FUENTES", { x: 0.6, y: 2.3, w: 3, h: 0.25, fontSize: 11, bold: true, color: K.dim, charSpacing: 3, objectName: "srch" });
-  src.forEach(([h, d], i) => {
-    const x = 0.6 + (i % 2) * 2.95, y = 2.65 + Math.floor(i / 2) * 0.82;
-    card(s, x, y, 2.8, 0.68, `src${i}_bg`);
-    t(s, h, { x: x + 0.18, y: y + 0.08, w: 2.5, h: 0.28, fontFace: HEAD, fontSize: 14, objectName: `src${i}_h` });
-    t(s, d, { x: x + 0.18, y: y + 0.37, w: 2.55, h: 0.25, fontSize: 11, color: K.muted, objectName: `src${i}_d` });
-  });
-  // Validación (gráfico nativo)
-  t(s, "¿Detecta las campañas con estrés hídrico? (AUC, 360 temporadas-finca)", { x: 6.9, y: 2.3, w: 5.9, h: 0.25, fontSize: 11, bold: true, color: K.dim, charSpacing: 1, objectName: "chh" });
-  s.addChart(pres.charts.BAR, [{ name: "AUC", labels: ["Solo lluvia", "Nota de agua AgroSpace"], values: [627, 723] }], {
-    x: 6.8, y: 2.55, w: 6.0, h: 2.0, barDir: "bar", objectName: "chart",
-    chartColors: [K.dim, K.straw], invertedColors: [K.dim], valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
-    valAxisMinVal: 500, valAxisMaxVal: 750,
-    catAxisLabelColor: K.text, catAxisLabelFontSize: 13, catAxisLabelFontFace: BODY, catAxisLineShow: false,
-    showValue: true, dataLabelColor: K.text, dataLabelFontSize: 14, dataLabelFontFace: HEAD, dataLabelFormatCode: '"0,"000', dataLabelPosition: "outEnd",
-    barGapWidthPct: 55, showLegend: false,
-  });
-  const st = [["1.144 · 0", "valores comparados entre la app y el\npipeline Python, sin ninguna diferencia"], ["960 · 0", "indicadores auditados, sin ningún fallo"]];
-  st.forEach(([v, l], i) => {
-    const x = 6.9 + i * 3.0;
-    t(s, v, { x, y: 4.65, w: 2.9, h: 0.55, fontFace: HEAD, fontSize: 28, color: K.gold, objectName: `rs${i}_v` });
-    t(s, l, { x, y: 5.2, w: 2.85, h: 0.5, fontSize: 12, color: K.muted, objectName: `rs${i}_l` });
-  });
-  card(s, 0.6, 5.95, 12.13, 0.9, "honest_bg", { line: { color: K.good, width: 1 } });
-  t(s, "✓", { x: 0.85, y: 6.17, w: 0.45, h: 0.45, align: "center", valign: "middle", fontFace: BODY, fontSize: 20, bold: true, color: K.good, objectName: "honest_i" });
-  t(s, [
-    { text: "Transparente por diseño. ", options: { bold: true, color: K.text } },
-    { text: "Cada rotación muestra su nivel de confianza y las lagunas de datos, para que el agricultor sepa cuánto fiarse.", options: { color: K.muted } },
-  ], { x: 1.45, y: 6.08, w: 11.1, h: 0.66, valign: "middle", fontSize: 14, objectName: "honest_t" });
-  s.addNotes(
-    "Todo sale de datos abiertos reales: clima POWER, NDVI de MODIS, suelo de SoilGrids, WorldCover, parcelas SIGPAC y relieve SRTM. " +
-    "Validamos la nota de agua con 360 temporadas-finca: detecta mejor el estrés hídrico que la lluvia sola, AUC 0,723 frente a 0,627. " +
-    "El cálculo de la web coincide al cien por cien con el pipeline en Python, y cada rotación muestra su nivel de confianza y las lagunas de datos."
+    "[≈30 s] Para esa finca comparamos la rotación actual con tres alternativas, puntuadas en agua, suelo, mercado y riesgo con reglas explicables. " +
+    "Con prioridad agua gana meter garbanzo: 70,1 frente a 67,3, y la herramienta explica por qué, con qué evidencia y qué revisar en campo. " +
+    "Todo con datos abiertos reales, y la nota de agua está validada: detecta las campañas con estrés hídrico mejor que la lluvia sola."
   );
 }
 
@@ -248,8 +218,8 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
   t(s, "agrospace-w8ej.onrender.com", { x: 8.15, y: 5.3, w: 4.45, h: 0.35, align: "center", fontSize: 16, bold: true, color: K.green, objectName: "url" });
   t(s, "From territory to farm", { x: 8.15, y: 5.72, w: 4.45, h: 0.35, align: "center", fontFace: HEAD, fontSize: 14, italic: true, color: "6B7A62", objectName: "tag" });
   s.addNotes(
-    "Os dejamos el QR: abre la demo en vivo, sin instalar nada. Podéis buscar cualquier finca de Málaga por su referencia SIGPAC. " +
-    "Somos Gael, Nikhil, Jesús, Javier y Yeray, el equipo Ciberpiso. Muchas gracias."
+    "[≈15 s] Escanead el QR y probadlo en vivo con cualquier finca de Málaga. Que decidir qué sembrar no sea una apuesta. " +
+    "Somos el equipo Ciberpiso: Gael, Nikhil, Jesús, Javier y Yeray. Gracias."
   );
 }
 

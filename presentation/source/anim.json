@@ -6,10 +6,104 @@
       "anims": [
         {
           "names": [
+            "eyebrow"
+          ],
+          "fx": "fade",
+          "at": 400,
+          "dur": 600
+        },
+        {
+          "names": [
+            "big"
+          ],
+          "fx": "zoom",
+          "at": 900,
+          "dur": 800
+        },
+        {
+          "names": [
+            "what"
+          ],
+          "fx": "rise",
+          "at": 1700,
+          "dur": 700
+        },
+        {
+          "names": [
+            "why"
+          ],
+          "fx": "fade",
+          "at": 2700,
+          "dur": 700
+        },
+        {
+          "names": [
+            "src"
+          ],
+          "fx": "fade",
+          "at": 3200,
+          "dur": 500
+        }
+      ]
+    },
+    "2": {
+      "transition": "fade",
+      "dur": 900,
+      "anims": [
+        {
+          "names": [
+            "q"
+          ],
+          "fx": "rise",
+          "at": 200,
+          "dur": 700
+        },
+        {
+          "names": [
+            "body"
+          ],
+          "fx": "fade",
+          "at": 800,
+          "dur": 600
+        },
+        {
+          "prefix": "stat0_",
+          "fx": "rise",
+          "at": 1300,
+          "dur": 600
+        },
+        {
+          "prefix": "stat1_",
+          "fx": "rise",
+          "at": 1700,
+          "dur": 600
+        },
+        {
+          "prefix": "stat2_",
+          "fx": "rise",
+          "at": 2100,
+          "dur": 600
+        },
+        {
+          "names": [
+            "src"
+          ],
+          "fx": "fade",
+          "at": 2600,
+          "dur": 500
+        }
+      ]
+    },
+    "3": {
+      "transition": "fade",
+      "dur": 1000,
+      "anims": [
+        {
+          "names": [
             "tagline"
           ],
           "fx": "rise",
-          "at": 900,
+          "at": 1900,
           "dur": 800
         },
         {
@@ -17,36 +111,30 @@
             "sub"
           ],
           "fx": "fade",
-          "at": 1500,
+          "at": 2600,
           "dur": 700
         },
         {
           "names": [
-            "event",
-            "team"
+            "event"
           ],
           "fx": "fade",
-          "at": 2100,
-          "dur": 700
+          "at": 3200,
+          "dur": 600
         }
       ]
     },
-    "2": {
-      "transition": "morph",
-      "dur": 1600,
-      "anims": []
-    },
-    "3": {
-      "transition": "morph",
-      "dur": 1600,
-      "anims": []
-    },
     "4": {
+      "transition": "morph",
+      "dur": 1600,
+      "anims": []
+    },
+    "5": {
       "transition": "morph",
       "dur": 1400,
       "anims": []
     },
-    "5": {
+    "6": {
       "transition": "fade",
       "dur": 900,
       "anims": [
@@ -76,110 +164,30 @@
         },
         {
           "names": [
-            "gframe",
-            "gifc"
+            "rec"
           ],
           "fx": "fade",
           "at": 1700,
           "dur": 600
         },
         {
-          "names": [
-            "rec"
-          ],
-          "fx": "fade",
-          "at": 2000,
-          "dur": 600
-        },
-        {
           "prefix": "chip",
           "fx": "zoom",
-          "at": 2500,
-          "dur": 450
-        },
-        {
-          "names": [
-            "foot"
-          ],
-          "fx": "fade",
-          "at": 2900,
-          "dur": 500
-        }
-      ]
-    },
-    "6": {
-      "transition": "fade",
-      "dur": 900,
-      "anims": [
-        {
-          "names": [
-            "srch"
-          ],
-          "fx": "fade",
-          "at": 100,
-          "dur": 400
-        },
-        {
-          "prefix": "src0_",
-          "fx": "fade",
-          "at": 250,
-          "dur": 450
-        },
-        {
-          "prefix": "src1_",
-          "fx": "fade",
-          "at": 400,
-          "dur": 450
-        },
-        {
-          "prefix": "src2_",
-          "fx": "fade",
-          "at": 550,
-          "dur": 450
-        },
-        {
-          "prefix": "src3_",
-          "fx": "fade",
-          "at": 700,
-          "dur": 450
-        },
-        {
-          "prefix": "src4_",
-          "fx": "fade",
-          "at": 850,
-          "dur": 450
-        },
-        {
-          "prefix": "src5_",
-          "fx": "fade",
-          "at": 1000,
-          "dur": 450
-        },
-        {
-          "names": [
-            "chh",
-            "chart"
-          ],
-          "fx": "fade",
-          "at": 1300,
-          "dur": 700
-        },
-        {
-          "prefix": "rs0_",
-          "fx": "rise",
           "at": 2100,
-          "dur": 600
+          "dur": 450
         },
         {
-          "prefix": "rs1_",
-          "fx": "rise",
-          "at": 2400,
-          "dur": 600
+          "names": [
+            "srcs"
+          ],
+          "fx": "fade",
+          "at": 2500,
+          "dur": 500
         },
         {
-          "prefix": "honest_",
+          "prefix": "proof_",
           "fx": "rise",
-          "at": 3000,
+          "at": 2900,
           "dur": 700
         }
       ]
