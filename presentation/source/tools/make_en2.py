@@ -5,8 +5,8 @@ s = Path("build.js").read_text()
 R = [
  ('pres.author = "Equipo Ciberpiso"', 'pres.author = "Team Ciberpiso"'),
  ('"build/agrospace-static.pptx" : "build/agrospace-base.pptx"', '"build/agrospace-en-static.pptx" : "build/agrospace-en-base.pptx"'),
- ('pres.title = "AgroSpace · Del satélite a la huerta"', 'pres.title = "AgroSpace · From satellite to farm"'),
- ('"Del satélite a la huerta"', '"From satellite to farm"'),
+ ('pres.title = "AgroSpace · Del satélite al campo"', 'pres.title = "AgroSpace · From satellite to farm"'),
+ ('"Del satélite al campo"', '"From satellite to farm"'),
  # 1
  ('"LA ESPAÑA VACÍA"', '"EMPTY SPAIN"'),
  ('"3.834"', '"3,834"'),
