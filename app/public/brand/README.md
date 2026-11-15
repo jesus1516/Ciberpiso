@@ -1,25 +1,14 @@
-# Ciberpiso — brand
+# AgroSpace — brand (web)
 
-## Archivos
+Source: `assets/logo/agrospace/` (transparent logo, still and animated) and `assets/brand/agrospace-v2/`
+(vector originals). Colours: green `#103B2D`, straw `#F4BA38`, ivory `#FFF3DA`.
 
-- `ciberpiso-logo.svg` / `ciberpiso-logo.png`: lockup horizontal con la mascota (1600 × 900).
-- `ciberpiso-icon.svg` / `ciberpiso-icon.png`: icono cuadrado de la mascota (800 × 800).
-- **Mascota:** granjero astronauta con sombrero de paja, casco, mono verde y planta.
-
-## Paleta
-
-| Uso | Color |
+| File | Use |
 |---|---|
-| Verde profundo | `#1B4332` |
-| Verde | `#2D6A4F` |
-| Oliva | `#588157` |
-| Arena | `#F7F4EA` |
-| Oro | `#FACC15` |
-| Azul espacial | `#0B3D91` |
+| `agrospace-mark.gif` | Header mark: the astronaut farmer, animated, transparent (91 × 80 px, shown at 45 × 40). Cropped from `agrospace-transparent.webp`, 12.5 fps, same 8.1 s loop. |
+| `agrospace-mark.png` | The same mark, still (last frame). Shown when motion is reduced (Settings or the OS). |
+| `agrospace-symbol.svg` | The mark as a vector, transparent. Favicon. |
+| `agrospace-logo.svg` / `agrospace-logo.png` | Full horizontal logo with the wordmark (1100 × 320), transparent. The wordmark is dark green: use it on light backgrounds only. |
 
-## Uso
-
-- Mantén el espacio libre alrededor del lockup.
-- No estires, recolorees ni añadas sombras al logo.
-- Usa el icono para favicon, avatar o app; el lockup para cabeceras, slides y submission.
-- El nombre es **Ciberpiso**; el descriptor es **Crop Rotation Explorer**.
+The product name in the interface is **AgroSpace**; the descriptor is **From territory to farm**.
+Do not stretch, recolour or add shadows to the logo.

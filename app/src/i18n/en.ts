@@ -18,7 +18,7 @@ const covers: Record<string, string> = {
 }
 
 export const en = {
-  appName: 'Ciberpiso',
+  appName: 'AgroSpace',
   appTagline: 'Crop rotation explorer',
   about: 'About / Data sources',
   disclaimer: 'Decision-support only. Validate with local agronomists and extension services.',
@@ -245,7 +245,7 @@ export const en = {
   aboutModal: {
     title: 'About / Data sources',
     close: 'Close',
-    intro: 'Ciberpiso is a decision-support prototype built for the Space Apps Challenge. It helps you explore crop-rotation options; it does not replace your judgment or local advice.',
+    intro: 'AgroSpace is a decision-support prototype built for the Space Apps Challenge. It helps you explore crop-rotation options; it does not replace your judgment or local advice.',
     real: 'Real data',
     demo: 'How the scores work, and estimates',
     realItems: [

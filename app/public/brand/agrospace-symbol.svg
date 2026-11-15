@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 280" width="360" height="280" role="img" aria-labelledby="title description">
+<title id="title">AgroSpace: astronaut farmer with a pitchfork</title>
+<desc id="description">Astronaut with an opaque visor, a straw hat and a three-tine pitchfork.</desc>
+
+<g transform="translate(10 8)"><g id="astronauta-entrada" class="astronaut-entry"><g id="astronauta-agricultor" class="mascot-float"><g id="traje">
+  <path fill="#103B2D" d="M28 238C32 211 59 196 89 194H168C197 196 224 211 229 238 230 243 226 246 222 246H35C30 246 27 242 28 238Z"/>
+  <path fill="#FFF3DA" d="M37 238C43 216 65 204 89 202H168C192 204 214 216 220 238Z"/>
+  <path fill="#103B2D" d="M64 206 83 201C94 213 98 227 99 238H80C79 226 74 214 64 206ZM172 201 191 206C181 218 178 229 178 238H159C160 224 163 212 172 201Z"/>
+</g><g id="cabeza-saludo" class="head-gesture"><g id="sombrero-ala-trasera">
+<path fill="#103B2D" d="M24 80C40 64 84 59 128 59 172 59 217 64 232 80 243 94 208 110 128 110 48 110 13 94 24 80Z"/>
+<path fill="#F4BA38" d="M31 84C47 72 85 67 128 67 171 67 209 72 225 84 211 96 170 102 128 102 86 102 45 96 31 84Z"/>
+</g><g id="casco">
+  <path fill="#103B2D" d="M57 117C58 73 84 56 127 56 172 56 198 77 199 117 213 117 219 127 219 141V157C219 171 210 179 198 179 186 203 160 216 128 216 95 216 70 202 58 180 43 180 36 169 36 156V141C36 128 42 119 57 117Z"/>
+  <path fill="#FFF3DA" d="M64 121C64 83 88 64 127 64 166 64 192 84 192 121 206 122 211 128 211 141V157C211 168 205 173 192 172 182 195 159 208 128 208 96 208 74 194 64 172 49 174 44 166 44 156V141C44 128 50 123 64 123Z"/>
+  <path id="visor-opaco" fill="#103B2D" d="M76 132C76 101 94 84 127 84 161 84 182 103 182 134V150C182 179 162 196 128 196 95 196 76 179 76 150Z"/>
+  <path id="reflejo" class="shine" fill="#FFF3DA" d="M91 163C93 148 103 140 117 137 123 136 126 141 120 144 109 149 103 155 100 165 98 171 90 170 91 163Z"/>
+  <rect fill="#F4BA38" x="52" y="135" width="6" height="27" rx="3"/>
+  <rect fill="#F4BA38" x="198" y="135" width="6" height="27" rx="3"/>
+</g><g id="sombrero-puesto">
+<g id="sombrero-copa">
+<path fill="#103B2D" d="M66 90 76 44C83 20 102 11 126 11 151 11 171 24 179 45L190 90C164 103 92 103 66 90Z"/>
+<path fill="#F4BA38" d="M76 89 84 46C90 27 105 19 126 19 147 19 164 29 171 48L180 89C155 100 101 100 76 89Z"/>
+<path fill="#103B2D" d="M85 48C110 39 141 39 167 48L170 56C141 47 111 47 82 56Z"/>
+<path fill="#103B2D" d="M78 70C109 62 146 62 177 71L183 90C151 101 103 101 72 90Z"/>
+</g>
+<g id="sombrero-ala-delantera">
+<path fill="#103B2D" d="M23 81C53 88 86 95 128 95 170 95 203 88 233 81L233 96C204 109 167 118 128 118 89 118 52 109 23 96Z"/>
+<path fill="#F4BA38" d="M31 89C59 97 91 103 128 103 165 103 197 97 225 89V91C198 102 163 110 128 110 93 110 58 102 31 91Z"/>
+</g>
+</g></g><g id="collar" transform="translate(0 12)">
+  <path fill="#103B2D" d="M77 191C98 182 157 182 179 191V207C160 225 97 225 77 207Z"/>
+  <path fill="#FFF3DA" d="M85 195C107 188 149 188 171 195V203C153 216 104 216 85 203Z"/>
+  <rect fill="#F4BA38" x="116" y="199" width="24" height="15" rx="6"/>
+</g></g></g><g id="horca-entrada" class="fork-entry"><g id="horca-saludo" class="fork-gesture"><g id="horca" class="fork-sway">
+<g id="horca-inclinacion" transform="translate(-20 -8) rotate(15 232 155)">
+<g transform="translate(40 12)">
+  <path id="mango-contorno" fill="#103B2D" d="M224 112H240V230C240 241 224 241 224 230Z"/>
+  <path id="mango" fill="#F4BA38" d="M229 119H235V230C235 234 229 234 229 230Z"/>
+  <path id="dientes-horca" fill="#103B2D" d="M207 39C207 31 217 31 217 39V80C217 89 221 95 227 98V29C227 21 237 21 237 29V98C243 95 247 89 247 80V39C247 31 257 31 257 39V80C257 96 250 108 239 112V125H225V112C214 108 207 96 207 80Z"/>
+  <path fill="#F4BA38" d="M225 109H239V119H225Z"/>
+</g></g></g></g></g></g>
+</svg>

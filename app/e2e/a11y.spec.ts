@@ -39,7 +39,7 @@ function unnamedImages(page: Page) {
 test('the document has a language and a title', async ({ page }) => {
   await openApp(page)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-  await expect(page).toHaveTitle(/Ciberpiso/)
+  await expect(page).toHaveTitle(/AgroSpace/)
 })
 
 for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {

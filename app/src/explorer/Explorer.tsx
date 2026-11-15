@@ -14,6 +14,7 @@ import './explorer.css'
 import './access.css'
 
 const DIRECTOR = new URLSearchParams(location.search).has('director')
+const BRAND = `${import.meta.env.BASE_URL}brand/`
 
 function Metric({ value, label }: { value: string; label: string }) {
   return (
@@ -266,8 +267,16 @@ export function Explorer() {
       <p className="vh" role="status" aria-live="polite" aria-atomic="true" data-testid="announcer">{announcement}</p>
       <div className="scrim" />
       <header ref={masthead} className="masthead">
-        <img src={`${import.meta.env.BASE_URL}brand/ciberpiso-icon.svg`} alt="" width={36} height={36} />
-        <div><b>Ciberpiso</b><span>From territory to farm</span></div>
+        {/* The animated AgroSpace mark (transparent GIF); a still frame when motion is reduced (Settings or the OS). */}
+        {settings.reduceMotion ? (
+          <img className="mark" src={`${BRAND}agrospace-mark.png`} alt="" width={45} height={40} />
+        ) : (
+          <picture>
+            <source media="(prefers-reduced-motion: reduce)" srcSet={`${BRAND}agrospace-mark.png`} />
+            <img className="mark" src={`${BRAND}agrospace-mark.gif`} alt="" width={45} height={40} />
+          </picture>
+        )}
+        <div><b>AgroSpace</b><span>From territory to farm</span></div>
         <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>
         <SettingsMenu />
         {/* In the masthead row so it can never cover it; hidden with the masthead on the farm view. */}
@@ -291,7 +300,7 @@ export function Explorer() {
       <div className={`prep glass ${preparing ? 'visible' : ''}`} role="status"><i />{level >= 2 || sel ? 'Raising the terrain…' : 'Loading the farms…'}</div>
       {DIRECTOR && <Director ctrl={ctrl} />}
       <div className={`loading ${phase !== 'loading' ? 'done' : ''}`}>
-        <div><b>Ciberpiso</b><span>{error ?? 'Tracing the territory'}</span></div>
+        <div><b>AgroSpace</b><span>{error ?? 'Tracing the territory'}</span></div>
       </div>
     </div>
   )
