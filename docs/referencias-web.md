@@ -1,6 +1,6 @@
-# References for the Ciberpiso website
+# References for the AgroSpace website
 
-> Inspiration and technical support note for the Ciberpiso app. They are not mandatory dependencies: it is a curated list of maps, data, textures, repositories and patterns that can improve the website. Last review: **2026-11-14**.
+> Inspiration and technical support note for the AgroSpace app. They are not mandatory dependencies: it is a curated list of maps, data, textures, repositories and patterns that can improve the website. Last review: **2026-11-14**.
 
 > **Note:** the current app **does not use Google Maps**. It uses **Esri World Imagery** for the satellite view, **Mapzen Terrarium** for the terrain and **GIBS** for the optional layers. These references are for improving or replacing parts with judgement, not for adding them all.
 
@@ -183,7 +183,7 @@
 
 - .agents/skills/python-testing-patterns/SKILL.md
 - .agents/skills/vercel-react-best-practices/SKILL.md
-- .agents/skills/verify-ciberpiso/SKILL.md
+- .agents/skills/verify-agrospace/SKILL.md
 - .agents/skills/xlsx/SKILL.md
 
 ### Skills worth writing
@@ -207,7 +207,7 @@ The host's image generator failed with "API key not valid". These prompts are me
 ### 8.1. Andalucía landing page
 
 ~~~text
-Cinematic 3D aerial map of Andalusia, Spain, floating over a dark olive-green studio backdrop. The eight provinces are extruded low-poly terrain slabs in beige, terracotta, olive and cream, separated by thin glowing borders. Málaga is highlighted in warm gold with a soft hover glow. Minimal UI overlay top-left: "Ciberpiso" and breadcrumb "Andalucía". Volumetric light, depth of field, isometric perspective, premium agritech product design, physical diorama look, not a flat GIS map. Minimal legible text, no clutter.
+Cinematic 3D aerial map of Andalusia, Spain, floating over a dark olive-green studio backdrop. The eight provinces are extruded low-poly terrain slabs in beige, terracotta, olive and cream, separated by thin glowing borders. Málaga is highlighted in warm gold with a soft hover glow. Minimal UI overlay top-left: "AgroSpace" and breadcrumb "Andalucía". Volumetric light, depth of field, isometric perspective, premium agritech product design, physical diorama look, not a flat GIS map. Minimal legible text, no clutter.
 ~~~
 
 ### 8.2. Málaga and Antequera
@@ -268,7 +268,7 @@ Full-screen agritech app mockup, 16:9. Left 60%: 3D low-poly isometric farm dior
 | pipeline/export_app_fincas.py | Exports farms for the app |
 | pipeline/export_app_indicators.py | Exports indicators for the app |
 | data/README.md | Data model, CSV and SQLite |
-| docs/plan-de-accion.md | Use case and rotations |
+| docs/rotaciones.md | Use case and rotations |
 | .agents/skills/ | Agent skills of the repo |
 
 ---
