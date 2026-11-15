@@ -4,7 +4,7 @@
   "slots": 2,
   "slotsDir": "../Ciberpiso-night",
   "verifierModel": "sonnet",
-  "minFreeMB": 700,
+  "minFreeMB": 400,
   "limitProbeMinutes": 30,
   "limitMaxWaitHours": 7,
   "ntfyTopic": "",
