@@ -28,7 +28,7 @@
 // its threshold (value ÷ threshold, or threshold ÷ value when lower is worse). Ties keep the
 // order of the table. At most 3 are returned; the "best" insight is always a candidate, so a
 // farm with scores always gets at least one.
-import { PROFILES as WEIGHTS, type RotationScore } from '../lib/calculator'
+import { PROFILES as WEIGHTS, REFERENCE_DEFICIT_MM, type RotationScore } from '../lib/calculator'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
 import { APT, PROFILES, SHORT_ROTATION, fmt } from './texts'
 
@@ -67,8 +67,8 @@ export type FarmFacts = {
 export const T = {
   slopeSteep: 12,
   slopeVerySteep: 30,
-  referenceDeficit: 900, // REFERENCE_DEFICIT_MM in lib/calculator.ts (data/calibration.json)
-  deficitHigh: 720, // 80 % of the reference
+  referenceDeficit: REFERENCE_DEFICIT_MM, // the calculator's water scale (data/calibration.json)
+  deficitHigh: 0.8 * REFERENCE_DEFICIT_MM, // 80 % of the reference
   waterP20Blocker: 20,
   waterP20Warning: 40,
   heatHigh: 10,
