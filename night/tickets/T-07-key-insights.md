@@ -4,7 +4,7 @@ title: Farm view - surface what really matters for this farm
 model: opus
 effort: high
 depends: ["T-06"]
-files: ["app/src/explorer/**"]
+files: ["app/src/explorer/**", "app/e2e/**"]
 maxAttempts: 2
 timeoutMin: 150
 ---
@@ -31,6 +31,11 @@ cards and a timeline.
 3. Add a short "Recommendation" line under the rotation selector: the best rotation for the
    chosen priority and why, in one sentence.
 4. Unit tests for `insights.ts` (Vitest, `insights.test.ts`) if the test runner from T-04 exists.
+
+## Tests
+You may update `app/e2e/**` to match the new UI: remove `test.fail`/known-failure entries that
+your change fixes, adapt selectors, and add viewports you are asked to check. Never weaken a
+check to hide a real problem.
 
 ## Acceptance criteria
 - [ ] Each farm shows 1–3 ranked insights, consistent with its numbers (check Antequera

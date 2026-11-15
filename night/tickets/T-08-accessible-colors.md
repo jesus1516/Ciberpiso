@@ -4,7 +4,7 @@ title: Accessible colour system - fewer colours, enough contrast, never colour a
 model: sonnet
 effort: high
 depends: ["T-07"]
-files: ["app/src/explorer/**", "app/src/index.css"]
+files: ["app/src/explorer/**", "app/src/index.css", "app/e2e/**"]
 maxAttempts: 2
 timeoutMin: 120
 ---
@@ -25,6 +25,11 @@ readable and safe for colour-blind users.
    (High / Medium / Low), map legend swatches get patterns or labels, crop colours in the
    timeline get the crop initial or a tooltip.
 5. Reduce the number of distinct crop colours shown at once (group similar classes).
+
+## Tests
+You may update `app/e2e/**` to match the new UI: remove `test.fail`/known-failure entries that
+your change fixes, adapt selectors, and add viewports you are asked to check. Never weaken a
+check to hide a real problem.
 
 ## Acceptance criteria
 - [ ] Token-based palette; no stray hex colours left in `app/src/explorer` except the token
