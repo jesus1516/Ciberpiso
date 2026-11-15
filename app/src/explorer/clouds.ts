@@ -144,6 +144,9 @@ export class CloudLayer {
     Object.assign(this.canvas.style, { position: 'absolute', inset: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: String(zIndex), display: 'none' })
     parent.appendChild(this.canvas)
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false, premultipliedAlpha: false })
+    // T-05: checking every shader for errors calls getProgramInfoLog / getShaderInfoLog, which wait for the
+    // compiler on the main thread (seconds on slow GPUs). Only in development.
+    this.renderer.debug.checkShaderErrors = import.meta.env.DEV
     this.renderer.setClearColor(0x000000, 0)
     // The clouds are soft: half resolution is enough and leaves the GPU free for the map.
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2) * 0.5)

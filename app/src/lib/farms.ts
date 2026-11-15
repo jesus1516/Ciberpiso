@@ -1,11 +1,13 @@
 import bbox from '@turf/bbox'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson'
+import type { FarmsRequest, FarmsResponse } from './farms.worker'
 import type { BBox, Farm, FarmProps } from './geo'
 
 export type MunicipalityProps = { mun: number; nombre: string; fincas: number; ha: number; candidatas: number }
 export type Municipality = Feature<Polygon | MultiPolygon, MunicipalityProps>
-type Farms = FeatureCollection<Polygon | MultiPolygon, FarmProps>
+/** `url`: a blob: URL of the same GeoJSON, for MapLibre's setData (parsed in its worker). */
+export type Farms = FeatureCollection<Polygon | MultiPolygon, FarmProps> & { url?: string }
 
 const DATA = `${import.meta.env.BASE_URL}data`
 export const PROVINCE = 29
@@ -24,27 +26,66 @@ export async function loadMunicipalities(): Promise<FeatureCollection<Polygon | 
   return data
 }
 
-async function readGeojson(res: Response) {
-  const bytes = new Uint8Array(await res.arrayBuffer())
-  const gzipped = bytes[0] === 0x1f && bytes[1] === 0x8b
-  const body = gzipped ? new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')) : new Blob([bytes]).stream()
-  return JSON.parse(await new Response(body).text())
+// The farms of a municipality (Antequera: 14,529 farms, 9.8 MB of GeoJSON) are decompressed and
+// parsed in a Web Worker (T-05). The main thread receives the properties, a bounding box per farm and
+// each geometry as a JSON string that is parsed only when that farm is used; MapLibre loads the
+// GeoJSON itself, in its own worker, from a blob: URL (`Farms.url`).
+type Parsed = Extract<FarmsResponse, { ok: true }>
+let farmsWorker: Worker | null = null
+let nextReq = 0
+const waiting = new Map<number, { resolve: (r: Parsed) => void; reject: (e: Error) => void }>()
+
+function parseInWorker(url: string) {
+  if (!farmsWorker) {
+    farmsWorker = new Worker(new URL('./farms.worker.ts', import.meta.url), { type: 'module' })
+    farmsWorker.onmessage = (e: MessageEvent<FarmsResponse>) => {
+      const w = waiting.get(e.data.req)
+      if (!w) return
+      waiting.delete(e.data.req)
+      if (e.data.ok) w.resolve(e.data)
+      else w.reject(new Error(e.data.error))
+    }
+    farmsWorker.onerror = () => {
+      for (const w of waiting.values()) w.reject(new Error('farms worker failed'))
+      waiting.clear()
+      farmsWorker?.terminate()
+      farmsWorker = null
+    }
+  }
+  return new Promise<Parsed>((resolve, reject) => {
+    const req = ++nextReq
+    waiting.set(req, { resolve, reject })
+    farmsWorker!.postMessage({ req, url } satisfies FarmsRequest)
+  })
+}
+
+/** Features whose geometry is parsed on first use; `bbox` is set, so turf's bbox() never reads it. */
+function toFarms(r: Parsed): Farms {
+  const features = r.props.map((properties, i): Farm => {
+    const json = r.geoms[i]
+    let geometry: Polygon | MultiPolygon | undefined
+    return {
+      type: 'Feature',
+      properties,
+      bbox: [r.boxes[i * 4], r.boxes[i * 4 + 1], r.boxes[i * 4 + 2], r.boxes[i * 4 + 3]],
+      get geometry() {
+        return (geometry ??= JSON.parse(json) as Polygon | MultiPolygon)
+      },
+    }
+  })
+  return { type: 'FeatureCollection', features, url: URL.createObjectURL(r.blob) }
 }
 
 export function loadMunicipality(key: number): Promise<Farms> {
   if (!loaded.has(key)) {
-    const request = fetch(`${DATA}/fincas/${key}.geojson.gz`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`farms ${key} ${res.status}`)
-        return readGeojson(res)
+    const request = parseInWorker(new URL(`${DATA}/fincas/${key}.geojson.gz`, location.href).href).then((r) => {
+      const data = toFarms(r)
+      data.features.forEach((f) => {
+        byId.set(f.properties.id, f)
+        byPid.set(f.properties.pid, f)
       })
-      .then((data: Farms) => {
-        data.features.forEach((f) => {
-          byId.set(f.properties.id, f)
-          byPid.set(f.properties.pid, f)
-        })
-        return data
-      })
+      return data
+    })
     request.catch(() => loaded.delete(key))
     loaded.set(key, request)
   }

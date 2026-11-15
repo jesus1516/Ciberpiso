@@ -391,6 +391,9 @@ export class FarmDiorama {
     container.appendChild(this.bg)
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
+    // T-05: checking every shader for errors calls getProgramInfoLog / getShaderInfoLog, which wait for the
+    // compiler on the main thread (seconds on slow GPUs). Only in development.
+    this.renderer.debug.checkShaderErrors = import.meta.env.DEV
     // 1.5 is enough for sharp lines; if the machine is struggling, it drops to 1 (see adapt).
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace

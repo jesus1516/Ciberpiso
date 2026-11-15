@@ -681,7 +681,8 @@ export class ExplorerController {
     return loadMunicipality(mun).then((data) => {
       if (useExplorer.getState().municipality?.mun !== mun) return
       this.farms = data as FC<FarmProps>
-      this.source('farms').setData(data)
+      // A blob: URL: MapLibre parses and tiles the farms in its worker, not on the main thread (T-05).
+      this.source('farms').setData((data as { url?: string }).url ?? data)
       useExplorer.setState({ farmsCount: data.features.length, farmList: farmListOf(data.features as Farm[]) })
       // Prefetches the municipality detail so opening a farm is instant.
       loadDetails([{ id: -1, mun }]).catch(() => undefined)

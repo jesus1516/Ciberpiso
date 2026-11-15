@@ -1,3 +1,4 @@
+import type { DetailRequest, DetailResponse } from './detail.worker'
 
 export type SoilData = {
   arcilla_pct: number | null
@@ -79,26 +80,44 @@ export type Price = { producto: string; fuente: string; serie: [number, number][
 export type Common = { celdas: Record<string, ClimateCell>; precios: Record<string, Price> }
 
 const DATA = `${import.meta.env.BASE_URL}data`
-const municipalities = new Map<number, Promise<Record<string, FarmDetail>>>()
 let common: Promise<Common> | null = null
 
-async function gunzipJson(res: Response) {
-  const bytes = new Uint8Array(await res.arrayBuffer())
-  const gzipped = bytes[0] === 0x1f && bytes[1] === 0x8b
-  const stream = new Blob([bytes]).stream()
-  return JSON.parse(await new Response(gzipped ? stream.pipeThrough(new DecompressionStream('gzip')) : stream).text())
+// The municipality detail files (up to 16 MB of JSON) are decompressed and parsed in a Web Worker
+// (T-05): parsing them here blocked the main thread for over a second on slow computers. The main
+// thread only receives the farms it asks for.
+type Pending = { resolve: (d: Record<number, FarmDetail>) => void; reject: (e: Error) => void }
+let worker: Worker | null = null
+let nextReq = 0
+const pending = new Map<number, Pending>()
+
+function detailWorker() {
+  if (!worker) {
+    worker = new Worker(new URL('./detail.worker.ts', import.meta.url), { type: 'module' })
+    worker.onmessage = (e: MessageEvent<DetailResponse>) => {
+      const p = pending.get(e.data.req)
+      if (!p) return
+      pending.delete(e.data.req)
+      if (e.data.ok) p.resolve(e.data.details)
+      else p.reject(new Error(e.data.error))
+    }
+    worker.onerror = () => {
+      for (const p of pending.values()) p.reject(new Error('detail worker failed'))
+      pending.clear()
+      worker?.terminate()
+      worker = null
+    }
+  }
+  return worker
 }
 
-function loadDetailMunicipality(mun: number) {
-  if (!municipalities.has(mun)) {
-    const request = fetch(`${DATA}/detalle/${mun}.json.gz`).then((res) => {
-      if (!res.ok) throw new Error(`detail ${mun} ${res.status}`)
-      return gunzipJson(res)
-    })
-    request.catch(() => municipalities.delete(mun))
-    municipalities.set(mun, request)
-  }
-  return municipalities.get(mun)!
+/** Details of some farms of one municipality. An empty list only loads (prefetches) the file. */
+function requestDetails(mun: number, farms: number[]) {
+  const url = new URL(`${DATA}/detalle/${mun}.json.gz`, location.href).href
+  return new Promise<Record<number, FarmDetail>>((resolve, reject) => {
+    const req = ++nextReq
+    pending.set(req, { resolve, reject })
+    detailWorker().postMessage({ req, url, mun, farms } satisfies DetailRequest)
+  })
 }
 
 export function loadCommon(prov = 29) {
@@ -113,14 +132,10 @@ export function loadCommon(prov = 29) {
 }
 
 export async function loadDetails(farms: { id: number; mun: number }[]) {
-  const out: Record<number, FarmDetail> = {}
-  await Promise.all(
-    farms.map(async ({ id, mun }) => {
-      const data = await loadDetailMunicipality(mun)
-      if (data[id]) out[id] = data[id]
-    }),
-  )
-  return out
+  const byMun = new Map<number, number[]>()
+  for (const { id, mun } of farms) byMun.set(mun, [...(byMun.get(mun) ?? []), ...(id >= 0 ? [id] : [])])
+  const parts = await Promise.all([...byMun].map(([mun, ids]) => requestDetails(mun, ids)))
+  return Object.assign({}, ...parts) as Record<number, FarmDetail>
 }
 
 export function latestPrice(p: Price | undefined) {
