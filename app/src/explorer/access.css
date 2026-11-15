@@ -152,3 +152,26 @@
 .xp .in-tools .settings-btn {width: 44px; padding: 0; justify-content: center;}
 .xp .al-list li {padding: 10px 9px;}
 }
+
+/* ------------------------------------------------------------ SIGPAC search (feat/one-rotation-engine): text size, targets */
+.xp .search {height: calc(40px * var(--ts)); font-size: calc(13px * var(--ts));}
+.xp .search input {font-size: calc(13px * var(--ts));}
+.xp .search li {font-size: calc(12.5px * var(--ts));}
+.xp .search li small {font-size: calc(11px * var(--ts));}
+.xp .search .drop p {font-size: calc(11.5px * var(--ts));}
+.xp .search .lens {width: calc(15px * var(--ts)); height: calc(15px * var(--ts));}
+:root[data-contrast="high"] .xp .search {border-color: var(--n-300);}
+:root[data-contrast="high"] .xp .search li[aria-selected="true"] {background: var(--accent); color: var(--n-900);}
+:root[data-contrast="high"] .xp .search li[aria-selected="true"] small {color: var(--n-900);}
+@media (max-width: 759px) {
+.xp .search {height: 44px;}
+.xp .search li {min-height: 44px; align-items: center;}
+}
+/* The search is part of the masthead row (after Settings): it moves with the text size and never
+   covers the masthead. On the farm view the masthead, and with it the search, is hidden. */
+.xp .masthead .search {position: relative; z-index: auto; top: auto; left: auto; right: auto; transform: none; margin-left: 4px; width: clamp(200px, 26vw, 340px); min-width: 0; pointer-events: auto;}
+@media (max-width: 759px) {
+.xp .masthead {right: 16px; flex-wrap: wrap; row-gap: 8px;}
+.xp .masthead .search {flex: 1 0 100%; width: auto; margin: 0; height: 44px;}
+.xp .narrative {top: 124px; max-height: calc(100% - 124px - 76px * var(--ts));}
+}

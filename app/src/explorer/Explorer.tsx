@@ -7,6 +7,7 @@ import { FarmView } from './FarmView'
 import { levelMessage, mapSummary } from './messages'
 import { applySettings, useSettings } from './settings'
 import { SettingsMenu } from './SettingsMenu'
+import { SigpacSearch } from './SigpacSearch'
 import { useExplorer, type Hover, type Level } from './state'
 import { APT, DISCLAIMER, COVER_NAME, fmt } from './texts'
 import './explorer.css'
@@ -260,6 +261,8 @@ export function Explorer() {
         <div><b>Ciberpiso</b><span>From territory to farm</span></div>
         <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>
         <SettingsMenu />
+        {/* In the masthead row so it can never cover it; hidden with the masthead on the farm view. */}
+        <SigpacSearch ctrl={ctrl} />
       </header>
       <main className="xp-main" aria-label="Explorer">
         <Narrative ctrl={ctrl} />

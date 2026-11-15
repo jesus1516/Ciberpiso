@@ -12,7 +12,7 @@ test('keyboard only: Andalucía → Málaga → Antequera → farm 62-14 and bac
   await expect(page.getByRole('heading', { level: 1, name: 'Where is your farm?' })).toBeVisible()
 
   // Level 0: Tab to the province list, type, Enter.
-  const stops0 = await tabTo(page, (f) => f.role === 'combobox')
+  const stops0 = await tabTo(page, combo(/^Choose a province/)) // the SIGPAC search, before it, is a combobox too
   console.log('level 0 Tab stops:', stops0.map((f) => `${f.tag} "${f.name}"`).join(' → '))
   await expect(page.getByRole('combobox', { name: 'Choose a province from the list' })).toBeFocused()
   await page.keyboard.type('mal')
@@ -24,7 +24,7 @@ test('keyboard only: Andalucía → Málaga → Antequera → farm 62-14 and bac
   await expect(announcer(page)).toContainText('Step 2 of 4: Málaga')
 
   // Level 1: municipality list (accent-insensitive search, Down/Up change the highlighted option).
-  await tabTo(page, combo(/municipality/))
+  await tabTo(page, combo(/^Choose a municipality/))
   await page.keyboard.type('anteq')
   await expect(page.getByRole('option')).toHaveCount(1)
   await page.keyboard.press('Enter')

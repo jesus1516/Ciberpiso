@@ -4,7 +4,7 @@ title: Remove the word NASA from the repository and the web
 model: sonnet
 effort: medium
 depends: ["T-01", "T-02"]
-files: ["README.md", "resources.md", "resources.json", "tools_available.md", "docs/**/*.md", "data/README.md", "data/*.json", "data/processed/*.json", "app/README.md", "app/src/**", "app/index.html", "app/public/data/indicators_antequera.json", "pipeline/**/*.py", "tests/**/*.py"]
+files: ["README.md", "resources.md", "resources.json", "tools_available.md", "docs/**/*.md", "data/README.md", "data/*.json", "data/processed/*.json", "app/README.md", "app/src/**", "app/index.html", "app/public/data/indicators_antequera.json", "pipeline/**/*.py", "pipeline/sql/**", "app/public/brand/*.svg", "app/public/brand/README.md", "data/rotation_content.json", "tests/**/*.py"]
 maxAttempts: 2
 timeoutMin: 90
 ---
@@ -25,6 +25,9 @@ Using their open data and tools is fine.
   `data/manifest.json` descriptions): replace the word in human-readable string values only,
   never in URLs or keys; also change the producing code in `pipeline/` so a re-run does not
   bring it back.
+- The brand assets: edit the TEXT inside `app/public/brand/*.svg` (e.g. "SPACE APPS CHALLENGE
+  2026", "POWER · SOILGRIDS · MODIS · SIGPAC") and `app/public/brand/README.md`; the PNG/GIF/WEBP
+  exports are images and stay as they are (list them in the report for the designers).
 - Binary files and the official hackathon folders under `docs/[...]` (PDF/PNG whose names
   contain the word) are a human decision: do not touch them, list them in the report.
 

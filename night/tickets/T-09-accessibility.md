@@ -4,7 +4,7 @@ title: Accessibility - keyboard, screen readers, text size, contrast mode
 model: sonnet
 effort: high
 depends: ["T-08"]
-files: ["app/src/**", "app/index.html"]
+files: ["app/src/**", "app/index.html", "app/e2e/**"]
 maxAttempts: 2
 timeoutMin: 150
 ---
@@ -26,6 +26,11 @@ choose Málaga, a municipality, a farm, and understand its results.
 4. Focus management: after each transition, move focus to the new level's heading; `Esc` goes
    back (already exists); the "full data" drawer traps focus and returns it when closed.
 5. Touch targets ≥ 44×44 px on phones.
+
+## Tests
+You may update `app/e2e/**` to match the new UI: remove `test.fail`/known-failure entries that
+your change fixes, adapt selectors, and add viewports you are asked to check. Never weaken a
+check to hide a real problem.
 
 ## Acceptance criteria
 - [ ] The full journey can be done with the keyboard only (describe the exact key sequence in

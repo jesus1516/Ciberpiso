@@ -1,17 +1,15 @@
 import type { Map } from 'maplibre-gl'
 import { create } from 'zustand'
 import { computeClimate, type Climate } from './lib/climate'
-import { loadCommon, loadDetails, observedCrop, soilTexture, type Common, type FarmDetail } from './lib/detail'
-import { fieldCentroid, toField, weightedSlope, type BBox, type Field, type Farm } from './lib/geo'
+import { loadCommon, loadDetails, type Common, type FarmDetail } from './lib/detail'
+import { fieldCentroid, toField, type BBox, type Field, type Farm } from './lib/geo'
 import { daysAgo, type GibsId } from './lib/gibs'
 import { loadIndicators as fetchIndicators, type Indicators } from './lib/indicators'
 import { fetchPower, type PowerSource } from './lib/power'
-import type { SoilType } from './lib/soil'
-import { slopeClass } from './lib/terrain'
 
 export type Step = 'map' | 'dashboard'
 export type Terrain = 'off' | 'on' | 'flat'
-export type Tab = 'conditions' | 'layers' | 'priorities' | 'rotations'
+export type Tab = 'conditions' | 'layers'
 export type LoadStatus = 'loading' | 'ready' | 'error'
 export type MunicipalityFocus = { key: number; name: string; bounds?: BBox }
 export type ClimateState = {
@@ -19,18 +17,6 @@ export type ClimateState = {
   data: Climate | null
   source: PowerSource | null
   place?: string
-}
-
-export type PriorityKey = 'water' | 'income' | 'erosion' | 'organic' | 'cost'
-export type Priorities = Record<PriorityKey, number>
-export type Irrigation = 'yes' | 'no' | 'limited'
-export type SlopeClass = 'flat' | 'gentle' | 'moderate' | 'steep'
-export type Constraints = {
-  irrigation: Irrigation
-  currentCrop: string
-  soil: SoilType
-  slope: SlopeClass
-  slopePct: number | null
 }
 
 export type LayerState = { visible: boolean; opacity: number; error: boolean }
@@ -56,8 +42,6 @@ type State = {
   tab: Tab
   aboutOpen: boolean
   climate: ClimateState
-  priorities: Priorities
-  constraints: Constraints
   layers: Record<GibsId, LayerState>
   gibsDate: string
   setMap: (map: Map | null) => void
@@ -77,8 +61,6 @@ type State = {
   loadClimate: (lat: number, lon: number) => Promise<void>
   farmData: FarmData
   loadFarmData: () => Promise<void>
-  setPriority: (key: PriorityKey, value: number) => void
-  setConstraints: (patch: Partial<Constraints>) => void
   setLayer: (id: GibsId, patch: Partial<LayerState>) => void
   setGibsDate: (date: string) => void
 }
@@ -99,8 +81,6 @@ export const useStore = create<State>((set, get) => ({
   tab: 'conditions',
   aboutOpen: false,
   climate: { status: 'idle', data: null, source: null },
-  priorities: { water: 3, income: 3, erosion: 3, organic: 3, cost: 3 },
-  constraints: { irrigation: 'no', currentCrop: 'wheat', soil: 'loam', slope: 'gentle', slopePct: null },
   layers: {
     ndvi: { visible: false, opacity: 0.7, error: false },
     imerg: { visible: false, opacity: 0.7, error: false },
@@ -123,16 +103,7 @@ export const useStore = create<State>((set, get) => ({
   openProjectFarm: (farm) => {
     const field = toField([farm])
     const [lon, lat] = fieldCentroid(field)
-    const slopePct = weightedSlope(field)
-    set((s) => ({
-      selection: [farm],
-      field,
-      step: 'dashboard',
-      panelOpen: true,
-      panelSeen: false,
-      tab: 'rotations',
-      constraints: slopePct === null ? s.constraints : { ...s.constraints, slopePct, slope: slopeClass(slopePct) },
-    }))
+    set({ selection: [farm], field, step: 'dashboard', panelOpen: true, panelSeen: false, tab: 'conditions' })
     get().loadClimate(lat, lon)
     get().loadFarmData()
   },
@@ -147,13 +118,7 @@ export const useStore = create<State>((set, get) => ({
     const field = get().field
     if (!field) return
     const [lon, lat] = fieldCentroid(field)
-    const slopePct = weightedSlope(field)
-    set((s) => ({
-      step: 'dashboard',
-      panelOpen: false,
-      panelSeen: false,
-      constraints: slopePct === null ? s.constraints : { ...s.constraints, slopePct, slope: slopeClass(slopePct) },
-    }))
+    set({ step: 'dashboard', panelOpen: false, panelSeen: false })
     get().loadClimate(lat, lon)
     get().loadFarmData()
   },
@@ -168,19 +133,12 @@ export const useStore = create<State>((set, get) => ({
         loadCommon(),
       ])
       if (id !== farmRequest) return
-      const largest = [...selection].sort((a, b) => b.properties.ha - a.properties.ha)[0]
-      const texture = soilTexture(byId[largest?.properties.id]?.suelo ?? null)
-      const observed = observedCrop(byId[largest?.properties.id])
-      set((s) => ({
-        farmData: { status: 'ready', byId, common },
-        constraints: { ...s.constraints, ...(texture && { soil: texture }), ...(observed && { currentCrop: observed.crop }) },
-      }))
+      set({ farmData: { status: 'ready', byId, common } })
     } catch {
       if (id === farmRequest) set({ farmData: { status: 'error', byId: {}, common: null } })
     }
   },
-  resetField: () =>
-    set((s) => ({ step: 'map', panelOpen: false, terrain: 'off', constraints: { ...s.constraints, slopePct: null } })),
+  resetField: () => set({ step: 'map', panelOpen: false, terrain: 'off' }),
   setTerrain: (terrain) => set({ terrain }),
   setPanelOpen: (panelOpen) => set((s) => ({ panelOpen, panelSeen: s.panelSeen || panelOpen })),
   setTab: (tab) => set({ tab }),
@@ -192,8 +150,6 @@ export const useStore = create<State>((set, get) => ({
     if (id !== climateRequest) return
     set({ climate: { status: 'ready', data: computeClimate(result.daily), source: result.source, place: result.place } })
   },
-  setPriority: (key, value) => set((s) => ({ priorities: { ...s.priorities, [key]: value } })),
-  setConstraints: (patch) => set((s) => ({ constraints: { ...s.constraints, ...patch } })),
   setLayer: (id, patch) => set((s) => ({ layers: { ...s.layers, [id]: { ...s.layers[id], ...patch } } })),
   setGibsDate: (gibsDate) =>
     set((s) => ({

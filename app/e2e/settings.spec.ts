@@ -169,7 +169,7 @@ for (const [vpName, vp] of Object.entries(LAYOUT_VPS)) {
         }
         // The combobox open (level 0–2): the narrative stays inside the viewport and the highlighted option is visible in it.
         if (level < 3) {
-          await page.getByRole('combobox').focus()
+          await page.getByRole('combobox', { name: /from the list$/ }).focus()
           await page.waitForTimeout(300)
           const box = await page.evaluate(() => {
             const n = document.querySelector('.narrative')!.getBoundingClientRect()

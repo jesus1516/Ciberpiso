@@ -1,10 +1,10 @@
 {
   "base": "main",
   "integration": "night/integration",
-  "slots": 2,
+  "slots": 1,
   "slotsDir": "../Ciberpiso-night",
   "verifierModel": "sonnet",
-  "minFreeMB": 700,
+  "minFreeMB": 400,
   "limitProbeMinutes": 30,
   "limitMaxWaitHours": 7,
   "ntfyTopic": "",

@@ -1,35 +1,34 @@
-// Port of calculate_scores (pipeline/calculator.py) to score R0–R3 on any farm
-// in Málaga with its real data (detail + common). The 26 Antequera candidates ship
-// the pipeline output; check-calculator compares both.
+// The rotation engine of the app: a port of calculate_scores (pipeline/calculator.py) that
+// scores R0–R3 on any farm in Málaga with its real data (detail + common). It is the only
+// engine; the 26 Antequera candidates ship the pipeline output and check-calculator compares both.
 import type { Common, FarmDetail } from './detail'
 import type { ProfileKey, RotationKey } from './indicators'
 
+// The parameters come from the same files as the pipeline (data/crops.csv, data/calibration.json,
+// ROTATIONS and PROFILES of calculator.py) through pipeline/export_app_engine.py: never copy them here.
+import engine from '../data/engine.json' with { type: 'json' }
+
 type Crop = { water: number; cover: number; legume: boolean; years: number; market: number; erosion: number; organic: number }
 
-// data/crops.csv
-export const CROPS: Record<string, Crop> = {
-  trigo: { water: 3, cover: 8, legume: false, years: 1, market: 5, erosion: 3, organic: 3 },
-  girasol: { water: 2, cover: 6, legume: false, years: 1, market: 4, erosion: 2, organic: 2 },
-  garbanzo: { water: 2, cover: 6, legume: true, years: 1, market: 2, erosion: 2, organic: 2 },
-  veza: { water: 2, cover: 6, legume: true, years: 1, market: 1, erosion: 4, organic: 4 },
-  barbecho: { water: 0, cover: 0, legume: false, years: 1, market: 0, erosion: 0, organic: 0 },
+export const CROPS: Record<string, Crop> = engine.crops
+
+const NAMES: Record<RotationKey, string> = {
+  R0: 'Wheat–Sunflower (current)',
+  R1: 'Wheat–Sunflower–Chickpea',
+  R2: 'Wheat–Sunflower–Vetch',
+  R3: 'Wheat–Sunflower–Fallow',
 }
 
-export const ROTATIONS: Record<RotationKey, { name: string; crops: string[] }> = {
-  R0: { name: 'Wheat–Sunflower (current)', crops: ['trigo', 'girasol'] },
-  R1: { name: 'Wheat–Sunflower–Chickpea', crops: ['trigo', 'girasol', 'garbanzo'] },
-  R2: { name: 'Wheat–Sunflower–Vetch', crops: ['trigo', 'girasol', 'veza'] },
-  R3: { name: 'Wheat–Sunflower–Fallow', crops: ['trigo', 'girasol', 'barbecho'] },
-}
+export const ROTATIONS = Object.fromEntries(
+  (Object.keys(NAMES) as RotationKey[]).map((rid) => [rid, { name: NAMES[rid], crops: engine.rotations[rid] }]),
+) as Record<RotationKey, { name: string; crops: string[] }>
 
-export const PROFILES: Record<ProfileKey, Record<Score, number>> = {
-  water_first: { water: 0.5, soil: 0.25, profit: 0.15, risk: 0.1 },
-  soil_first: { water: 0.25, soil: 0.5, profit: 0.1, risk: 0.15 },
-  profit_first: { water: 0.15, soil: 0.1, profit: 0.6, risk: 0.15 },
-}
+export const PROFILES: Record<ProfileKey, Record<Score, number>> = engine.profiles
 
-// data/calibration.json: reference water deficit validated in docs/validacion.md
-const REFERENCE_DEFICIT_MM = 900
+// Water scale validated in docs/validacion.md. With water_model "precip" the deficit is ignored,
+// as in the pipeline.
+export const REFERENCE_DEFICIT_MM = engine.water_reference_deficit_mm
+const USE_DEFICIT = engine.water_model === 'deficit'
 // Rotation crop -> price key in comun_29.json
 const PRICE_KEYS: Record<string, string> = { trigo: 'wheat', girasol: 'sunflower', garbanzo: 'chickpea', veza: 'vetch' }
 const CAMPAIGNS = [2020, 2021, 2022, 2023, 2024, 2025]
@@ -147,8 +146,8 @@ export function calculateScores(s: Scenario): Record<RotationKey, RotationScore>
     const c = info.crops.map((id) => CROPS[id])
     const totalYears = c.reduce((sum, x) => sum + x.years, 0)
     const weightedWater = c.reduce((sum, x) => sum + x.water * x.years, 0) / totalYears
-    const water = waterScore(weightedWater, s.precipMm, s.deficitMm)
-    const waterP20 = waterScore(weightedWater, s.p20PrecipMm, s.deficitP20Mm ?? s.deficitMm)
+    const water = waterScore(weightedWater, s.precipMm, USE_DEFICIT ? s.deficitMm : null)
+    const waterP20 = waterScore(weightedWater, s.p20PrecipMm, USE_DEFICIT ? (s.deficitP20Mm ?? s.deficitMm) : null)
     const soil = soilScore(info.crops, s.soil)
 
     const marketAvg = c.reduce((sum, x) => sum + x.market, 0) / c.length

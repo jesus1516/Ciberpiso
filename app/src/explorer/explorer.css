@@ -331,7 +331,7 @@
 .xp[data-level="3"] .masthead {display: none;}
 .xp .province-label {pointer-events: none; font: 600 calc(10px * var(--ts))/1 Inter, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--n-100); text-shadow: 0 1px 6px color-mix(in srgb, var(--n-950) 90%, transparent); white-space: nowrap; transition: opacity .3s;}
 .xp .province-label.malaga {color: var(--accent);}
-.xp .province-label.malaga::after {content: "Recorrido disponible"; display: block; margin-top: 5px; font-size: calc(8.5px * var(--ts)); letter-spacing: .1em; color: var(--accent); text-align: center;}
+.xp .province-label.malaga::after {content: "Tour available"; display: block; margin-top: 5px; font-size: calc(8.5px * var(--ts)); letter-spacing: .1em; color: var(--accent); text-align: center;}
 .xp .callout {pointer-events: none; padding: 7px 10px; border-radius: 8px; background: color-mix(in srgb, var(--n-800) 90%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); color: var(--accent); font: 600 calc(10px * var(--ts))/1 Inter, sans-serif; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; transition: opacity .3s;}
 .xp .hidden-label {opacity: 0 !important;}
 .xp .tooltip {position: fixed; z-index: 70; left: 0; top: 0; width: 236px; padding: 13px 14px 12px; pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s;}
@@ -441,3 +441,29 @@
   .xp .xp-sheet { top: 40%; right: 0; width: auto; border-radius: 16px 16px 0 0; }
 }
 .xp[data-level="3"] .toast { left: calc(var(--fx-col) + (100% - var(--fx-col)) / 2); }
+/* ------------------------------------------------------------ SIGPAC search (top centre) */
+.xp .search { position: absolute; z-index: 70; top: 22px; left: 50%; transform: translateX(-50%); width: min(380px, 100vw - 760px); min-width: 260px; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; transition: border-color .2s, opacity .25s; }
+.xp .search:focus-within { border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+.xp .search.open { border-radius: 12px 12px 0 0; }
+.xp .search .lens { width: 15px; height: 15px; flex: none; color: var(--n-300); }
+.xp .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; color: var(--n-100); font: 400 13px Inter, system-ui, sans-serif; }
+.xp .search input::placeholder { color: var(--n-300); }
+.xp .search input::-webkit-search-cancel-button { display: none; }
+.xp .search .spin { width: 13px; height: 13px; flex: none; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent); border-top-color: var(--accent); animation: spin .8s linear infinite; }
+.xp .search .drop { position: absolute; left: -1px; right: -1px; top: 100%; padding: 4px; border: 1px solid var(--line); border-top-color: transparent; border-radius: 0 0 12px 12px; background: color-mix(in srgb, var(--n-800) 97%, transparent); box-shadow: 0 14px 40px color-mix(in srgb, var(--n-950) 35%, transparent); }
+.xp .search ul { list-style: none; margin: 0; padding: 0; }
+.xp .search li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 7px 9px; border-radius: 8px; cursor: pointer; font-size: 12.5px; }
+.xp .search li[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.xp .search li small { flex: none; font-size: 11px; color: var(--n-300); }
+.xp .search .drop p { margin: 0; padding: 7px 9px; font-size: 11.5px; line-height: 1.4; color: var(--n-300); }
+.xp .search .drop p.err { color: var(--bad); }
+.xp[data-phase="transitioning"] .search { opacity: .55; pointer-events: none; }
+/* On the farm view, next to Back and clear of the view tools (~390 px on the right). Below 1200 px
+   there is no room: the search is used from the municipality map. */
+.xp[data-level="3"] .search { top: 18px; left: calc(var(--fx-col) + 148px); transform: none; min-width: 0; width: min(300px, 100vw - var(--fx-col) - 576px); }
+@media (min-width: 760px) and (max-width: 1199px) { .xp[data-level="3"] .search { display: none; } }
+@media (max-width: 759px) {
+  .xp .search { top: 58px; left: 16px; right: 16px; transform: none; width: auto; min-width: 0; height: 38px; }
+  .xp .narrative { top: 108px; }
+  .xp[data-level="3"] .search { display: none; }
+}
