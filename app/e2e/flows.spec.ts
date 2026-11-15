@@ -127,3 +127,78 @@ test('the Sources button opens the about dialog', async ({ page }) => {
   await page.getByRole('button', { name: 'Sources' }).click()
   await expect(page.getByRole('dialog')).toBeVisible()
 })
+
+// Insights (explorer/insights.ts): 1–3 ranked points at the top of the farm column, the card
+// behind the top one emphasised, the others receded, and the key point announced once.
+const insights = (page: Page) => page.locator('.fx-insights')
+const topInsight = (page: Page) => insights(page).locator('.ins.top')
+const moreInsights = (page: Page) => insights(page).locator('.ins-more summary')
+
+test('farm insights: Antequera 2900059683 (heat, water deficit, best rotation)', async ({ page }) => {
+  test.setTimeout(150_000)
+  await toFarm(page, MUNICIPALITIES.antequera, FARMS.antequera)
+
+  await expect(topInsight(page)).toHaveClass(/warning/)
+  await expect(topInsight(page).getByRole('heading')).toHaveText(/^High heat risk in May–June \(14\s+days\)$/)
+  await expect(topInsight(page)).toContainText('cuts the climate-risk score by 35')
+  await expect(moreInsights(page)).toHaveText([/Severe water deficit \(823\s+mm\/yr\)/, /Best option: R1 \(\+2\.8 points over current\)/])
+  // The top insight is the largest text of the column
+  const sizes = await page.evaluate(() => {
+    const px = (el: Element | null) => (el ? parseFloat(getComputedStyle(el).fontSize) : 0)
+    const others = [...document.querySelectorAll('.fx-col *')].filter((el) => !el.closest('.ins.top') && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim()))
+    return { top: px(document.querySelector('.ins.top h2')), max: Math.max(...others.map(px)) }
+  })
+  expect(sizes.top).toBeGreaterThan(sizes.max)
+
+  // The card behind the top insight (climate risk) stands out; the others recede
+  await expect(page.locator('.fx-card.emph')).toHaveAttribute('data-k', 'risk')
+  await expect(page.locator('.fx-card.recede')).toHaveCount(3)
+  await expect(page.locator('.fx-card.emph .ev')).toBeVisible()
+
+  // Announced once to screen readers
+  const live = page.locator('.fx-col [aria-live="polite"]')
+  await expect(live).toHaveText(/^Key point for this farm: High heat risk in May–June \(14\s+days\)\. Also: Severe water deficit/)
+
+  // Recommendation under the rotation selector, for the chosen priority
+  await expect(page.locator('.rec')).toContainText('R1 (+ Chickpea) is best for Water: 67.0 vs. 64.2 now, mainly better soil (+7.5)')
+  await page.locator('.prio').getByRole('button', { name: 'Market' }).click()
+  await expect(page.locator('.rec')).toContainText('Keep the current rotation: it is best for Market (68.6)')
+  await expect(moreInsights(page).last()).toHaveText(/Current rotation is already the best option/)
+  await expect(live).toHaveText(/^Key point for this farm: High heat risk/) // not re-announced
+
+  // Opening a secondary insight shows its sentence and emphasises its card; clicking a card does too
+  await moreInsights(page).first().click()
+  await expect(insights(page).locator('.ins-more .why').first()).toContainText('823')
+  await expect(page.locator('.fx-card.emph')).toHaveAttribute('data-k', 'water')
+  await page.locator('.fx-card[data-k="soil"]').click()
+  await expect(page.locator('.fx-card.emph')).toHaveAttribute('data-k', 'soil')
+})
+
+test('farm insights: Ronda 2900263939 (steep slope)', async ({ page }) => {
+  test.setTimeout(150_000)
+  await toFarm(page, MUNICIPALITIES.ronda, FARMS.ronda)
+  await expect(topInsight(page).getByRole('heading')).toHaveText(/^Steep slope \(14\.8\s+%\): erosion risk$/)
+  await expect(moreInsights(page)).toHaveText([/Best option: R1 \(\+2\.4 points over current\)/])
+  await expect(page.locator('.fx-card.emph')).toHaveAttribute('data-k', 'soil')
+})
+
+test('farm insights: a farm with apt set (Antequera 2900063712, very steep)', async ({ page }) => {
+  test.setTimeout(150_000)
+  await toFarm(page, MUNICIPALITIES.antequera, FARMS.steep)
+  expect(await state(page, (s) => s.sel.farm.properties.apt)).toBe('pendiente')
+  await expect(topInsight(page)).toHaveClass(/critical/)
+  await expect(topInsight(page)).toContainText('Critical')
+  await expect(topInsight(page).getByRole('heading')).toHaveText(/^Very steep slope \(53\.7\s+%\): hard to farm$/)
+  await expect(moreInsights(page)).toHaveText([/Looks like a permanent crop: rotations are indicative/, /Severe water deficit/])
+})
+
+test('farm insights: a farm with nothing to warn about (Ronda 2900261494)', async ({ page }) => {
+  test.setTimeout(150_000)
+  await toFarm(page, MUNICIPALITIES.ronda, FARMS.calm)
+  await expect(topInsight(page)).toHaveClass(/good/)
+  await expect(topInsight(page).getByRole('heading')).toHaveText(/^Best option: R1 \(\+\d\.\d points over current\)$/)
+  await expect(moreInsights(page)).toHaveCount(0)
+  // The opportunity is about the rotation selector: it is the emphasised element
+  await expect(page.locator('.fx-dock.emph')).toHaveCount(1)
+  await expect(page.locator('.fx-card.recede')).toHaveCount(4)
+})

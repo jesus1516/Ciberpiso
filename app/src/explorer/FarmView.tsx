@@ -1,17 +1,19 @@
-// Interface of the farm view: an information column (header, the four indicator cards,
-// timeline with MODIS campaigns + scenario and the R0–R3 selector) next to the 3D terrain,
+// Interface of the farm view: an information column (the 1–3 insights that matter most for this
+// farm, header, the four indicator cards, timeline with MODIS campaigns + scenario and the R0–R3
+// selector with its recommendation) next to the 3D terrain,
 // which carries numbered markers (1–4) that match the cards. "Full data" opens the app's
 // conditions tab (POWER climate, soil and NDVI of the farm) as a drawer over the column.
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import type { RotationScore } from '../lib/calculator'
 import { fieldCentroid, toField } from '../lib/geo'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
 import { useStore } from '../store'
 import type { ExplorerController } from './controller'
 import type { MarkerKey } from './diorama'
+import { farmInsights, recommendation, type Insight, type InsightTarget, type Severity } from './insights'
 import { CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, type Mode } from './scene'
 import { useExplorer, type Selection } from './state'
-import { APT, DISCLAIMER, PROFILES, SHORT_ROTATION, fmt } from './texts'
+import { DISCLAIMER, PROFILES, SHORT_ROTATION, fmt } from './texts'
 
 // The conditions tab brings the charts (recharts): it is only downloaded when opened.
 const ConditionsTab = lazy(() => import('../components/ConditionsTab').then((m) => ({ default: m.ConditionsTab })))
@@ -43,17 +45,22 @@ const word = (v: number | null) => (v === null ? '—' : v >= 70 ? 'high' : v >=
 const riskWord = (v: number | null) => (v === null ? '—' : v >= 70 ? 'low risk' : v >= 55 ? 'medium risk' : 'high risk')
 
 type Hot = { hot: CardKey | null; setHot: (k: CardKey | null) => void }
+/** Emphasis: the element behind the top insight (or the one the user picked) stands out, the rest recede. */
+type Emph = { emph: InsightTarget | null; pick: (k: InsightTarget) => void }
 
-function Card({ k, value, wordTxt, base, rotation, ev, extra, hot, setHot }: {
+function Card({ k, value, wordTxt, base, rotation, ev, extra, hot, setHot, emph, pick }: {
   k: CardKey; value: number | null; wordTxt: string; base: number | null; rotation: RotationKey; ev: string; extra?: React.ReactNode
-} & Hot) {
+} & Hot & Emph) {
   const { n, label } = CARDS.find((c) => c.k === k)!
   const delta = value !== null && base !== null ? value - base : null
   const on = () => setHot(k)
   const off = () => setHot(null)
+  const state = emph === null ? '' : emph === k ? 'emph' : 'recede'
   return (
-    <article className={`fx-card glass ${hot === k ? 'hot' : ''}`} data-k={k} tabIndex={0}
-      onMouseEnter={on} onMouseLeave={off} onFocus={on} onBlur={off}>
+    <article className={`fx-card glass ${hot === k ? 'hot' : ''} ${state}`} data-k={k} tabIndex={0}
+      title={state === 'recede' ? `${label}: ${ev}. Click to show the details.` : undefined}
+      onMouseEnter={on} onMouseLeave={off} onFocus={on} onBlur={off} onClick={() => pick(k)}
+      onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(k) } }}>
       <div className="lbl"><span className="num" aria-label={`Marker ${n} on the terrain`} title={`Marker ${n} on the terrain: ${WHERE[k]}`}>{n}</span>{ICONS[k]}<span>{label}</span></div>
       <div className="val"><strong>{fmt(value)}</strong><small>/100</small><em className="word">{wordTxt}</em></div>
       <div className="bar"><i style={{ '--v': `${Math.max(0, Math.min(100, value ?? 0))}%` } as React.CSSProperties} /></div>
@@ -68,7 +75,7 @@ function Card({ k, value, wordTxt, base, rotation, ev, extra, hot, setHot }: {
   )
 }
 
-function Cards({ sel, rotation, hot, setHot }: { sel: Selection; rotation: RotationKey } & Hot) {
+function Cards({ sel, rotation, hot, setHot, emph, pick }: { sel: Selection; rotation: RotationKey } & Hot & Emph) {
   const r: RotationScore | undefined = sel.scores?.[rotation]
   const base = sel.scores?.R0
   if (!r || !base) {
@@ -85,7 +92,7 @@ function Cards({ sel, rotation, hot, setHot }: { sel: Selection; rotation: Rotat
   const prices = r.crops.map((c) => (c === 'barbecho' ? 0 : sel.prices[c]?.eurT ?? null))
   const avgPrice = prices.every((p) => p !== null) ? (prices as number[]).reduce((a, b) => a + b, 0) / prices.length : null
   const priceYear = Math.max(...Object.values(sel.prices).map((p) => p?.year ?? 0))
-  const h = { hot, setHot, rotation }
+  const h = { hot, setHot, rotation, emph, pick }
   return (
     <div className="fx-cards">
       <Card k="water" value={r.water} wordTxt={word(r.water)} base={base.water} {...h}
@@ -103,6 +110,45 @@ function Cards({ sel, rotation, hot, setHot }: { sel: Selection; rotation: Rotat
       <Card k="risk" value={r.risk} wordTxt={riskWord(r.risk)} base={base.risk} {...h}
         ev={sel.climate ? `${fmt(sel.climate.hotDays)} hot days in May–Jun · ${fmt(sel.climate.frostDays)} frost days` : 'No climate data for the cell'} />
     </div>
+  )
+}
+
+const SEVERITY: Record<Severity, string> = { critical: 'Critical', warning: 'Warning', good: 'Opportunity' }
+const SEVERITY_ICON: Record<Severity, React.ReactNode> = {
+  critical: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" /><path d="M12 10v4M12 17v.5" /></svg>,
+  warning: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16.5v.5" /></svg>,
+  good: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12.5 2.8 2.8L16.5 9" /></svg>,
+}
+
+/**
+ * The 1–3 insights of the farm (insights.ts), most important first and largest. The others are
+ * one-line disclosures. Pointing at one highlights its card; opening one emphasises that card.
+ */
+function Insights({ items, setHot, pick }: { items: Insight[] } & Pick<Hot, 'setHot'> & Pick<Emph, 'pick'>) {
+  if (!items.length) return null
+  const [top, ...rest] = items
+  const card = (t: InsightTarget | null) => (t && t !== 'rotations' ? t : null)
+  const point = (i: Insight) => ({ onMouseEnter: () => setHot(card(i.target)), onMouseLeave: () => setHot(null) })
+  return (
+    <section className="fx-insights" aria-label="What matters on this farm">
+      <article className={`ins top ${top.severity}`} {...point(top)}>
+        <p className="sev">{SEVERITY_ICON[top.severity]}{SEVERITY[top.severity]}</p>
+        <h2>{top.headline}</h2>
+        <p className="why">{top.detail}</p>
+      </article>
+      {rest.length > 0 && (
+        <ul className="ins-more">
+          {rest.map((i) => (
+            <li key={i.id} className={`ins ${i.severity}`} {...point(i)}>
+              <details onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open && i.target) pick(i.target) }}>
+                <summary>{SEVERITY_ICON[i.severity]}<span className="vh">{SEVERITY[i.severity]}: </span><span className="hl">{i.headline}</span></summary>
+                <p className="why">{i.detail}</p>
+              </details>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }
 
@@ -144,7 +190,9 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
   const [playing, setPlaying] = useState(false)
   const [showFullData, setShowFullData] = useState(false)
   const [hot, setHot] = useState<CardKey | null>(null)
+  const [picked, setPicked] = useState<InsightTarget | null>(null)
   const col = useRef<HTMLElement>(null)
+  const live = useRef<HTMLParagraphElement>(null)
   const dio = () => ctrl.current?.dio ?? null
 
   // Numbered markers on the terrain, one per card (only when the farm has scores). Hovering a
@@ -156,6 +204,7 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
       markers: CARDS.map(({ k, n, label }) => ({ key: k, n, label: `${n} · ${label}: ${WHERE[k]}` })),
       onHover: setHot,
       onSelect: (k) => {
+        setPicked(k)
         const card = col.current?.querySelector<HTMLElement>(`.fx-card[data-k="${k}"]`)
         card?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
         card?.focus({ preventScroll: true })
@@ -168,7 +217,33 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
   const crop = cropForYear(sel.farmScene, view.year, view.rotation)
   const best = sel.scores ? (Object.keys(sel.scores) as RotationKey[]).find((k) => sel.scores![k].rank[view.profile] === 1) : undefined
   const legendKeys = [...new Set(YEARS.map((y) => cropForYear(sel.farmScene, y, view.rotation).key))]
-  const isPermanent = sel.farmScene.rot?.split('-').every((l) => l === 'P') || p.cover === 'arbolado'
+  const insights = useMemo(() => farmInsights({
+    scores: sel.scores,
+    climate: sel.climate,
+    soil: sel.detail?.suelo ?? null,
+    slope: sel.farm.properties.slope ?? sel.detail?.pendiente_pct ?? null,
+    apt: sel.farm.properties.apt,
+    cover: sel.farm.properties.cover ?? sel.detail?.cobertura_dominante ?? null,
+    landCover: sel.detail?.cobertura ?? null,
+    seasons: sel.farmScene.rot,
+    profile: view.profile,
+  }), [sel, view.profile])
+  const rec = useMemo(() => recommendation(sel.scores, view.profile), [sel, view.profile])
+  // The element behind the top insight is emphasised until the user picks another one.
+  const emph = sel.scores ? picked ?? insights[0]?.target ?? null : null
+  const pick = (k: InsightTarget) => setPicked(k)
+
+  // Announce the key point once, when the farm view opens: the live region is in the page
+  // (empty) before its text arrives, which is what makes screen readers read it.
+  const announcement = insights.length
+    ? `Key point for this farm: ${insights[0].headline}.${insights.length > 1 ? ` Also: ${insights.slice(1).map((i) => i.headline).join('; ')}.` : ''}`
+    : ''
+  const [opening] = useState(announcement) // the text when the view opened; not re-announced on later changes
+  useEffect(() => {
+    if (!opening) return
+    const t = window.setTimeout(() => { if (live.current) live.current.textContent = opening }, 700)
+    return () => clearTimeout(t)
+  }, [opening])
 
   const play = (from?: number) => {
     setPlaying(true)
@@ -182,6 +257,9 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
   return (
     <div className="fx-panel">
       <aside className="fx-col" ref={col} aria-label="Farm information">
+        <p className="vh" aria-live="polite" ref={live} />
+        <Insights items={insights} setHot={setHot} pick={pick} />
+
         <header className="fx-head">
           <p className="eyebrow">{p.cand ? 'Project candidate' : 'Farm'} · {sel.municipality}</p>
           <div className="fx-title">
@@ -193,13 +271,11 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
             </div>
           </div>
           <p className="fx-meta">SIGPAC {p.pid} · {fmt(sel.detail?.recintos)} enclosures · {fmt(p.alt)} m · slope {fmt(p.slope, 1)} %</p>
-          {p.apt && <p className="warn">⚠ {APT[p.apt]}: herbaceous rotations fit less well here.</p>}
-          {!p.apt && isPermanent && <p className="warn">This looks like a permanent crop (tree cover); rotations are indicative.</p>}
         </header>
 
-        <Cards sel={sel} rotation={view.rotation} hot={hot} setHot={setHot} />
+        <Cards sel={sel} rotation={view.rotation} hot={hot} setHot={setHot} emph={emph} pick={pick} />
 
-        <section className="fx-dock glass" aria-label="Campaigns and rotations">
+        <section className={`fx-dock glass ${emph === 'rotations' ? 'emph' : ''}`} aria-label="Campaigns and rotations">
           <div className="tl">
             <button className="play" aria-label={playing ? 'Pause' : 'Play campaigns'} onClick={() => (playing ? stop() : play())}>
               {playing ? <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg> : <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z" /></svg>}
@@ -238,6 +314,7 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
                 ))}
               </div>
             </div>
+            {rec && <p className="rec"><b>Recommendation</b> {rec}</p>}
           </div>
         </section>
 
