@@ -103,7 +103,7 @@
 /* ------------------------------------------------------------ high contrast: borders and pressed states without relying on tint */
 :root[data-contrast="high"] .xp .glass, :root[data-contrast="high"] .xp .seg, :root[data-contrast="high"] .xp .fx-card, :root[data-contrast="high"] .xp .fx-dock {border-color: var(--n-300);}
 :root[data-contrast="high"] .xp .seg button[aria-pressed="true"], :root[data-contrast="high"] .xp .rot[aria-pressed="true"] {background: var(--accent); color: var(--n-900); border-color: var(--n-100);}
-:root[data-contrast="high"] .xp .rot[aria-pressed="true"] b, :root[data-contrast="high"] .xp .rot[aria-pressed="true"] strong {color: var(--n-900);}
+:root[data-contrast="high"] .xp .rot[aria-pressed="true"] b, :root[data-contrast="high"] .xp .rot[aria-pressed="true"] strong, :root[data-contrast="high"] .xp .rot[aria-pressed="true"] span {color: var(--n-900);}
 :root[data-contrast="high"] .xp .al-list li.on {background: var(--accent); color: var(--n-900);}
 :root[data-contrast="high"] .xp .al-list li.on .t, :root[data-contrast="high"] .xp .al-list li.on .d, :root[data-contrast="high"] .xp .al-list li.on .n {color: var(--n-900);}
 :root[data-contrast="high"] .xp .scrim {opacity: 1;}
