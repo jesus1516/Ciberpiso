@@ -13,6 +13,9 @@ export type Phase = 'loading' | 'idle' | 'transitioning'
 export type ProvinceProps = { id: string; nombre: string; and: number; fincas?: number; ha?: number; pct_cultivo?: number; candidatas?: number }
 export type MunicipalityInfo = { mun: number; nombre: string; fincas: number; ha: number; candidatas: number; pct_cultivo?: number; lluvia_mm?: number | null; deficit_mm?: number | null }
 
+/** One row of the keyboard list of farms (farmland only; see controller.loadFarms). */
+export type FarmItem = { id: number; pid: string; pol: number; par: number; ha: number; cand: boolean; apt: string | null }
+
 export type Hover =
   | { kind: 'province'; x: number; y: number; p: ProvinceProps }
   | { kind: 'municipality'; x: number; y: number; p: MunicipalityInfo }
@@ -34,6 +37,14 @@ type ExplorerState = {
   error: string | null
   municipality: MunicipalityInfo | null
   farmsCount: number | null
+  /** What the keyboard lists offer on each level (the same places the map offers). */
+  provinceList: ProvinceProps[]
+  municipalityList: MunicipalityInfo[]
+  farmList: FarmItem[]
+  /** The farm view without the 3D terrain (setting off, or WebGL unavailable): data table over a flat map. */
+  flat: boolean
+  /** Said while a transition runs ("Going to Antequera…"), for the live region. */
+  moving: string
   sel: Selection | null
   hover: Hover | null
   toast: { title: string; body: string; kind?: 'warning' | 'blocked' } | null
@@ -50,6 +61,11 @@ export const useExplorer = create<ExplorerState>(() => ({
   error: null,
   municipality: null,
   farmsCount: null,
+  provinceList: [],
+  municipalityList: [],
+  farmList: [],
+  flat: false,
+  moving: '',
   sel: null,
   hover: null,
   toast: null,

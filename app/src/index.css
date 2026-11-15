@@ -17,6 +17,11 @@
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* Text scale: settings.ts sets --ts (1, 1.25, 1.5) and the root font size; 1 until it runs. */
+:root {
+  --ts: 1;
+}
+
 html, body, #root {
   height: 100%;
   margin: 0;
