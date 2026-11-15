@@ -321,7 +321,15 @@
 .xp .chips .sw-cand { background: var(--amber); border-color: #FFF1D2; }
 .xp .chips .sw-lim { background: #2a2f22; }
 .xp .chips .sw-no { background: #4b4b52 repeating-linear-gradient(135deg, rgba(255,255,255,.75) 0 1.5px, transparent 1.5px 5px); }
-.xp .disclaimer { position: absolute; z-index: 20; left: 50%; bottom: 34px; transform: translateX(-50%); margin: 0; max-width: min(620px, 60vw); text-align: center; font-size: 10.5px; line-height: 1.4; color: var(--cream-3); pointer-events: none; }
+/* Centred between the breadcrumb (up to ~400 px wide with the longest municipality name) and Back:
+   the 840 px reserve keeps both edges clear at any desktop width. */
+.xp .disclaimer { position: absolute; z-index: 20; left: 50%; bottom: 34px; transform: translateX(-50%); margin: 0; max-width: min(620px, 100vw - 840px); text-align: center; font-size: 10.5px; line-height: 1.4; color: var(--cream-3); pointer-events: none; transition: opacity .25s; }
+/* Tablet: there is no room between the breadcrumb and Back, so the disclaimer moves to the free
+   bottom of the narrative column, above the breadcrumb. A toast (transient, on top) hides it. */
+@media (min-width: 760px) and (max-width: 1099px) {
+  .xp .disclaimer { left: 34px; bottom: 72px; transform: none; max-width: 250px; text-align: left; }
+  .xp:has(.toast.visible) .disclaimer { opacity: 0; }
+}
 .xp .tooltip .a.no { color: #E9A3A3; }
 .xp .tooltip .a.warn { color: #E8C27A; }
 .xp .toast.blocked { border-color: rgba(209,122,122,.6); }
