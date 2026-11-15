@@ -60,6 +60,13 @@ const boundsOf = (f: Feature | FeatureCollection): [[number, number], [number, n
   const [w, s, e, n] = bbox(f)
   return [[w, s], [e, n]]
 }
+/**
+ * The farm under the cursor. SIGPAC farms can overlap a little after simplification, and a tiny
+ * one (a building, a pond) can sit on a large one: the smallest wins, so every farm can be picked.
+ * MapLibre's own order of the features at a point is not stable between renders.
+ */
+const smallest = (features: maplibregl.MapGeoJSONFeature[]) =>
+  features.reduce((a, b) => ((b.properties.ha ?? Infinity) < (a.properties.ha ?? Infinity) ? b : a))
 const intersects = (a: BBox, b: BBox) => a[0] <= b[2] && a[2] >= b[0] && a[1] <= b[3] && a[3] >= b[1]
 
 /** Zoom "towards a fixed point": the point that ends up centred approaches in a straight line, like a pinch. */
@@ -693,7 +700,7 @@ export class ExplorerController {
     })
     map.on('mousemove', 'farms-fill', (e) => {
       if (useExplorer.getState().level !== 2) return
-      const f = e.features![0]
+      const f = smallest(e.features!)
       const p = f.properties as FarmProps
       this.hover('farms', Number(f.id), e, () => ({ kind: 'farm', x: 0, y: 0, p }))
       const tile = tileFor(bbox(f) as BBox)
@@ -717,7 +724,7 @@ export class ExplorerController {
     })
     map.on('click', 'farms-fill', (e) => {
       if (useExplorer.getState().level !== 2 || useExplorer.getState().phase !== 'idle') return
-      const id = Number(e.features![0].id)
+      const id = Number(smallest(e.features!).id)
       const farm = this.farms?.features.find((f) => f.properties.id === id) as Farm | undefined
       if (farm) this.openFarm(farm)
     })
