@@ -328,6 +328,8 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
                   </button>
                 )
               })}
+              {/* On phones the years wrap into two rows and this label sits between them (desktop: .years::after). */}
+              <span className="scn-lbl" aria-hidden="true">Scenario {view.rotation}</span>
             </div>
           </div>
           <div className="rots">
@@ -341,7 +343,7 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
                 <b>{code}</b>
                 <strong>{fmt(sel.scores?.[code].score[view.profile], 1)}</strong>
                 <span>{SHORT_ROTATION[code]}</span>
-                {code === best && <i className="best" title="Best rotation for this priority" aria-hidden="true">★</i>}
+                {code === best && <i className="best" title="Best rotation for this priority" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M5 .5l1.4 2.9 3.1.4-2.3 2.2.6 3.1L5 7.6 2.2 9.1l.6-3.1L.5 3.8l3.1-.4z" fill="currentColor" /></svg></i>}
               </button>
             ))}
             <div className="prio">

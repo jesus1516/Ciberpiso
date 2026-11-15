@@ -208,7 +208,14 @@ export function Explorer() {
   const lastPhase = useRef(phase)
   useEffect(() => {
     if (lastPhase.current === 'transitioning' && phase === 'idle') {
-      const t = window.setTimeout(() => document.getElementById('xp-heading')?.focus({ preventScroll: true }), 60)
+      const before = document.activeElement
+      const t = window.setTimeout(() => {
+        // If the person (or a dialog) already moved focus somewhere else in the meantime, leave it there:
+        // on a slow computer this timer can fire well after they pressed a button.
+        const now = document.activeElement
+        if (now && now !== before && now !== document.body && document.contains(now)) return
+        document.getElementById('xp-heading')?.focus({ preventScroll: true })
+      }, 60)
       lastPhase.current = phase
       return () => clearTimeout(t)
     }
