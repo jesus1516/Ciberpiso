@@ -1,129 +1,129 @@
-# Checklist de evaluación y demo
+# Evaluation and demo checklist
 
-La organización no publica una rúbrica detallada en la página del reto. Esta lista se
-basa en los requisitos del enunciado y en lo que un jurado suele buscar en Space Apps:
-problema real, uso sustantivo de datos NASA, rigor, incertidumbre y comunicación.
+The organisers do not publish a detailed rubric on the challenge page. This list is
+based on the challenge requirements and on what a jury usually looks for at Space
+Apps: a real problem, substantive use of Earth observation data, rigour, uncertainty
+and communication.
 
-> **Estado de la calculadora (14 nov 2026):** genera los cinco campos obligatorios,
-> fuentes/unidades por indicador, confianza, empates y restricciones propias.
-> `python3 pipeline/audit.py` da **0 fallos**. La app todavía no consume ese JSON.
+> **Calculator status (14 Nov 2026):** it generates the five mandatory fields,
+> sources/units per indicator, confidence, ties and custom constraints.
+> `python3 pipeline/audit.py` gives **0 failures**. The app does not consume that JSON yet.
 
-## Requisitos duros
+## Hard requirements
 
-| Requisito | Dónde se demuestra | Evidencia |
+| Requirement | Where it is demonstrated | Evidence |
 | --- | --- | --- |
-| ≥ 3 rotaciones, incluida la actual | Comparación de la app | R0 + R1 + R2 + R3 |
-| Por qué se sugiere | Ficha de cada rotación | Frase de mecanismo |
-| Evidencia | Ficha + `docs/rotaciones.md` | Fuente y fecha |
-| Beneficios | Ficha | 2–4 bullets |
-| Lagunas de datos | Ficha + panel de confianza | "Sin datos" explícito |
-| Riesgos de revisión local | Ficha | Lista de comprobaciones |
-| Herramienta de apoyo | Aviso + lenguaje | "No sustituye..." |
-| Usuarios sin formación geoespacial | Glosario + UI | Prueba con 2 personas |
-| Prioridades y restricciones | Sliders + perfil | Captura de la demo |
+| ≥ 3 rotations, including the current one | App comparison | R0 + R1 + R2 + R3 |
+| Why it is suggested | Card of each rotation | Mechanism sentence |
+| Evidence | Card + `docs/rotaciones.md` | Source and date |
+| Benefits | Card | 2–4 bullets |
+| Data gaps | Card + confidence panel | Explicit "No data" |
+| Local review risks | Card | List of checks |
+| Support tool | Notice + wording | "Does not replace..." |
+| Users without geospatial training | Glossary + UI | Test with 2 people |
+| Priorities and constraints | Sliders + profile | Demo screenshot |
 
-## Checklist de producto
+## Product checklist
 
-- [ ] Se pueden comparar al menos 3 rotaciones a la vez.
-- [ ] La rotación actual está incluida y etiquetada.
-- [ ] Cada rotación tiene los cinco campos obligatorios.
-- [ ] Cada número tiene fuente, fecha y unidad.
-- [ ] Hay un indicador de confianza por recomendación.
-- [ ] Las lagunas se muestran, no se esconden.
-- [ ] El aviso de revisión local es visible.
-- [ ] El glosario explica ET, NDVI, anomalía y balance hídrico.
-- [ ] Los sliders cambian el ranking y se ve la contribución.
-- [ ] La app funciona en móvil.
-- [ ] La app funciona sin red.
-- [ ] El mapa tiene leyenda y atribución.
+- [ ] At least 3 rotations can be compared at once.
+- [ ] The current rotation is included and labelled.
+- [ ] Each rotation has the five mandatory fields.
+- [ ] Every number has a source, date and unit.
+- [ ] There is a confidence indicator per recommendation.
+- [ ] Gaps are shown, not hidden.
+- [ ] The local review notice is visible.
+- [ ] The glossary explains ET, NDVI, anomaly and water balance.
+- [ ] The sliders change the ranking and the contribution is visible.
+- [ ] The app works on mobile.
+- [ ] The app works offline.
+- [ ] The map has a legend and attribution.
 
-## Checklist de datos
+## Data checklist
 
-- [ ] El AOI está definido y documentado.
-- [ ] Cada archivo está en `manifest.json`.
-- [ ] Las fechas y unidades están normalizadas.
-- [ ] Los `nodata` están filtrados.
-- [ ] La cobertura del AOI está calculada.
-- [ ] Hay al menos una validación cruzada (POWER/PRISM, SSURGO/WSS, CDL/NAIP).
-- [ ] Las limitaciones están escritas.
-- [ ] No hay secretos en el repo.
+- [ ] The AOI is defined and documented.
+- [ ] Every file is in `manifest.json`.
+- [ ] Dates and units are normalised.
+- [ ] `nodata` values are filtered.
+- [ ] AOI coverage is computed.
+- [ ] There is at least one cross-validation (POWER/PRISM, SSURGO/WSS, CDL/NAIP).
+- [ ] Limitations are written down.
+- [ ] There are no secrets in the repo.
 
-## Guion de demo (3 minutos)
+## Demo script (3 minutes)
 
-| Tiempo | Qué decir | Qué mostrar |
+| Time | What to say | What to show |
 | --- | --- | --- |
-| 0:00–0:20 | El problema: rotaciones con datos incompletos | Título y una frase |
-| 0:20–0:40 | El usuario y la decisión | Perfil de finca |
-| 0:40–1:40 | Demo: mapa, prioridades, 3 rotaciones | Comparación |
-| 1:40–2:10 | Evidencia y lagunas | Ficha de R1/R2 |
-| 2:10–2:30 | Incertidumbre y revisión local | Confianza y avisos |
-| 2:30–3:00 | Impacto y siguiente paso | Cierre |
+| 0:00–0:20 | The problem: rotations with incomplete data | Title and one sentence |
+| 0:20–0:40 | The user and the decision | Farm profile |
+| 0:40–1:40 | Demo: map, priorities, 3 rotations | Comparison |
+| 1:40–2:10 | Evidence and gaps | R1/R2 card |
+| 2:10–2:30 | Uncertainty and local review | Confidence and notices |
+| 2:30–3:00 | Impact and next step | Closing |
 
-**Consejo:** no leas la pantalla. Cuenta la decisión del agricultor y usa la UI como
-prueba.
+**Tip:** do not read the screen. Tell the farmer's decision and use the UI as proof.
 
-## Preguntas probables del jurado
+## Likely jury questions
 
-**¿Por qué Iowa?**
-Porque coinciden datos públicos de cultivo, suelo, clima y agua, y hay señal satelital
-de NASA. Es un caso reproducible, no un ejemplo genérico.
+**Why Iowa?**
+Because public crop, soil, climate and water data coincide, and there is a satellite
+signal. It is a reproducible case, not a generic example.
 
-**¿Por qué estas rotaciones?**
-Cubren tres mecanismos distintos: diversidad con leguminosa, cobertura de invierno y
-raíz profunda. La rotación actual es la línea base.
+**Why these rotations?**
+They cover three different mechanisms: diversity with a legume, winter cover and deep
+roots. The current rotation is the baseline.
 
-**¿Qué aporta NASA que no aporte un CSV local?**
-Series consistentes y comparables de clima, lluvia, humedad y vegetación; además,
-permiten escalar a regiones sin datos locales densos.
+**What does space data add that a local CSV does not?**
+Consistent, comparable series of climate, rainfall, moisture and vegetation; they also
+allow scaling to regions without dense local data.
 
-**¿Cómo manejan los datos faltantes?**
-Se muestran como lagunas, bajan la confianza y se convierten en una pregunta para el
-agricultor o el agrónomo. No se rellenan con una suposición.
+**How do you handle missing data?**
+They are shown as gaps, lower the confidence and become a question for the farmer or
+the agronomist. They are not filled with an assumption.
 
-**¿Esto sustituye a un agrónomo?**
-No. Ordena opciones y hace explícitos los compromisos; la decisión final es local.
+**Does this replace an agronomist?**
+No. It orders options and makes the trade-offs explicit; the final decision is local.
 
-**¿Cómo validaron?**
-Contraste de lluvia con PRISM/CoCoRaHS, suelo con WSS, cultivo con NAIP y prueba con
-dos personas ajenas al equipo. Lo que no se validó se dice.
+**How did you validate?**
+Rainfall against PRISM/CoCoRaHS, soil against WSS, crop against NAIP and a test with
+two people outside the team. What was not validated is stated.
 
-**¿Escala?**
-El pipeline es reproducible por AOI. La limitación es la disponibilidad de datos
-locales (CDL/SSURGO son de EE. UU.); para otros países hay que cambiar de fuente.
+**Does it scale?**
+The pipeline is reproducible per AOI. The limitation is the availability of local data
+(CDL/SSURGO are US-only); for other countries the source has to change.
 
-**¿Qué harían con más tiempo?**
-Validar con un extensionista, añadir ET de OpenET/ECOSTRESS y probar con agricultores
-reales.
+**What would you do with more time?**
+Validate with an extension officer, add ET from OpenET/ECOSTRESS and test with real
+farmers.
 
-## Señales de alarma
+## Warning signs
 
-- "La IA dice que..." sin explicación.
-- Precisión falsa: "reduce la erosión un 30 %" sin modelo ni fuente.
-- Prometer escala de parcela con SMAP (9 km).
-- Ocultar que falta un dato.
-- Depender de una API en vivo durante la demo.
-- Más funciones que evidencia.
-- Un mapa bonito sin tabla de comparación.
-- No incluir la rotación actual.
+- "The AI says that..." without an explanation.
+- False precision: "reduces erosion by 30%" without a model or source.
+- Promising plot scale with SMAP (9 km).
+- Hiding that a data point is missing.
+- Depending on a live API during the demo.
+- More features than evidence.
+- A pretty map without a comparison table.
+- Not including the current rotation.
 
-## Checklist de entrega
+## Submission checklist
 
-- [ ] README con propósito, demo y créditos.
-- [ ] `docs/` con fuentes, acceso, arquitectura y validación.
-- [ ] `resources.json` actualizado.
-- [ ] Vídeo de 3 minutos subido.
-- [ ] Demo desplegada y probada en modo avión.
-- [ ] Repo público o enlace accesible para el jurado.
-- [ ] Licencia y atribución de datos.
-- [ ] Créditos del equipo.
-- [ ] Enlace al reto oficial.
+- [ ] README with purpose, demo and credits.
+- [ ] `docs/` with sources, access, architecture and validation.
+- [ ] `resources.json` updated.
+- [ ] 3-minute video uploaded.
+- [ ] Demo deployed and tested in airplane mode.
+- [ ] Public repo or a link accessible to the jury.
+- [ ] Licence and data attribution.
+- [ ] Team credits.
+- [ ] Link to the official challenge.
 
-## Última hora
+## Last minute
 
-Si queda una hora:
+If one hour is left:
 
-1. Congela los datos.
-2. Graba el vídeo.
-3. Prueba la demo sin red.
-4. Revisa que los cinco campos estén en cada rotación.
-5. No añadas features.
+1. Freeze the data.
+2. Record the video.
+3. Test the demo offline.
+4. Check that the five fields are in every rotation.
+5. Do not add features.

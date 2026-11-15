@@ -1,36 +1,35 @@
-// Port de calculate_scores (pipeline/calculator.py) para puntuar R0–R3 en cualquier finca
-// de Málaga con sus datos reales (detalle + comun). Las 26 candidatas de Antequera traen
-// la salida del pipeline; check-calculator compara ambas.
-import type { Comun, FincaDetalle } from './detalle'
+// The rotation engine of the app: a port of calculate_scores (pipeline/calculator.py) that
+// scores R0–R3 on any farm in Málaga with its real data (detail + common). It is the only
+// engine; the 26 Antequera candidates ship the pipeline output and check-calculator compares both.
+import type { Common, FarmDetail } from './detail'
 import type { ProfileKey, RotationKey } from './indicators'
+
+// The parameters come from the same files as the pipeline (data/crops.csv, data/calibration.json,
+// ROTATIONS and PROFILES of calculator.py) through pipeline/export_app_engine.py: never copy them here.
+import engine from '../data/engine.json' with { type: 'json' }
 
 type Crop = { water: number; cover: number; legume: boolean; years: number; market: number; erosion: number; organic: number }
 
-// data/crops.csv
-export const CROPS: Record<string, Crop> = {
-  trigo: { water: 3, cover: 8, legume: false, years: 1, market: 5, erosion: 3, organic: 3 },
-  girasol: { water: 2, cover: 6, legume: false, years: 1, market: 4, erosion: 2, organic: 2 },
-  garbanzo: { water: 2, cover: 6, legume: true, years: 1, market: 2, erosion: 2, organic: 2 },
-  veza: { water: 2, cover: 6, legume: true, years: 1, market: 1, erosion: 4, organic: 4 },
-  barbecho: { water: 0, cover: 0, legume: false, years: 1, market: 0, erosion: 0, organic: 0 },
+export const CROPS: Record<string, Crop> = engine.crops
+
+const NAMES: Record<RotationKey, string> = {
+  R0: 'Wheat–Sunflower (current)',
+  R1: 'Wheat–Sunflower–Chickpea',
+  R2: 'Wheat–Sunflower–Vetch',
+  R3: 'Wheat–Sunflower–Fallow',
 }
 
-export const ROTATIONS: Record<RotationKey, { name: string; crops: string[] }> = {
-  R0: { name: 'Trigo–Girasol (actual)', crops: ['trigo', 'girasol'] },
-  R1: { name: 'Trigo–Girasol–Garbanzo', crops: ['trigo', 'girasol', 'garbanzo'] },
-  R2: { name: 'Trigo–Girasol–Veza', crops: ['trigo', 'girasol', 'veza'] },
-  R3: { name: 'Trigo–Girasol–Barbecho', crops: ['trigo', 'girasol', 'barbecho'] },
-}
+export const ROTATIONS = Object.fromEntries(
+  (Object.keys(NAMES) as RotationKey[]).map((rid) => [rid, { name: NAMES[rid], crops: engine.rotations[rid] }]),
+) as Record<RotationKey, { name: string; crops: string[] }>
 
-export const PROFILES: Record<ProfileKey, Record<Score, number>> = {
-  water_first: { water: 0.5, soil: 0.25, profit: 0.15, risk: 0.1 },
-  soil_first: { water: 0.25, soil: 0.5, profit: 0.1, risk: 0.15 },
-  profit_first: { water: 0.15, soil: 0.1, profit: 0.6, risk: 0.15 },
-}
+export const PROFILES: Record<ProfileKey, Record<Score, number>> = engine.profiles
 
-// data/calibration.json: déficit hídrico de referencia validado en docs/validacion.md
-const REFERENCE_DEFICIT_MM = 900
-// Cultivo de la rotación -> clave de precio en comun_29.json
+// Water scale validated in docs/validacion.md. With water_model "precip" the deficit is ignored,
+// as in the pipeline.
+export const REFERENCE_DEFICIT_MM = engine.water_reference_deficit_mm
+const USE_DEFICIT = engine.water_model === 'deficit'
+// Rotation crop -> price key in comun_29.json
 const PRICE_KEYS: Record<string, string> = { trigo: 'wheat', girasol: 'sunflower', garbanzo: 'chickpea', veza: 'vetch' }
 const CAMPAIGNS = [2020, 2021, 2022, 2023, 2024, 2025]
 
@@ -65,8 +64,8 @@ export type RotationScore = {
 }
 
 /**
- * round() de Python: redondea el valor binario exacto (65.35 es 65.3499…) y las mitades
- * exactas al par, para que las notas coincidan con el pipeline al decimal.
+ * Python's round(): rounds the exact binary value (65.35 is 65.3499…) and exact halves
+ * to even, so the scores match the pipeline to the decimal.
  */
 function pyRound(value: number, digits = 0) {
   const [int, frac] = Math.abs(value).toFixed(digits + 30).split('.')
@@ -85,16 +84,16 @@ const median = (xs: number[]) => {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2
 }
 
-/** Resume el clima de la celda POWER, el suelo y los precios como hace planning_scenario. */
-export function scenarioFor(detalle: FincaDetalle, comun: Comun): Scenario | null {
-  const celda = comun.celdas[String(detalle.celda)]
-  if (!celda) return null
-  const r = celda.resumen
-  const frost = celda.campanas.filter((c) => CAMPAIGNS.includes(c.campana)).map((c) => c.dias_helada)
+/** Summarises the POWER cell climate, the soil and the prices as planning_scenario does. */
+export function scenarioFor(detail: FarmDetail, common: Common): Scenario | null {
+  const cell = common.celdas[String(detail.celda)]
+  if (!cell) return null
+  const r = cell.resumen
+  const frost = cell.campanas.filter((c) => CAMPAIGNS.includes(c.campana)).map((c) => c.dias_helada)
   const prices: Record<string, number | null> = { barbecho: 0 }
   let priceYear: number | null = null
   for (const [crop, key] of Object.entries(PRICE_KEYS)) {
-    const last = comun.precios[key]?.serie.filter(([year]) => year <= 2025).at(-1)
+    const last = common.precios[key]?.serie.filter(([year]) => year <= 2025).at(-1)
     prices[crop] = last ? last[1] : null
     if (last) priceYear = Math.max(priceYear ?? 0, last[0])
   }
@@ -106,7 +105,7 @@ export function scenarioFor(detalle: FincaDetalle, comun: Comun): Scenario | nul
     deficitP20Mm: deficit === null ? null : deficit + (r.lluvia_media_mm - r.lluvia_p20_mm),
     heatDays: pyRound(r.dias_calor_may_jun_media),
     frostDays: frost.length ? pyRound(median(frost)) : 0,
-    soil: detalle.suelo,
+    soil: detail.suelo,
     prices,
     priceYear,
   }
@@ -137,7 +136,7 @@ function soilScore(crops: string[], soil: Scenario['soil']) {
   return clamp(0.4 * cover + 0.25 * quality + 0.15 * protection + 0.1 * organic + 0.1 * (legume ? 100 : 0), 0, 100)
 }
 
-/** Las cuatro rotaciones con notas 0–100, nota final por perfil y puesto. */
+/** The four rotations with 0–100 scores, final score per profile and rank. */
 export function calculateScores(s: Scenario): Record<RotationKey, RotationScore> {
   const heatRatio = clamp(1 - s.heatDays / 40, 0, 1)
   const frostRatio = clamp(1 - s.frostDays / 20, 0, 1)
@@ -147,8 +146,8 @@ export function calculateScores(s: Scenario): Record<RotationKey, RotationScore>
     const c = info.crops.map((id) => CROPS[id])
     const totalYears = c.reduce((sum, x) => sum + x.years, 0)
     const weightedWater = c.reduce((sum, x) => sum + x.water * x.years, 0) / totalYears
-    const water = waterScore(weightedWater, s.precipMm, s.deficitMm)
-    const waterP20 = waterScore(weightedWater, s.p20PrecipMm, s.deficitP20Mm ?? s.deficitMm)
+    const water = waterScore(weightedWater, s.precipMm, USE_DEFICIT ? s.deficitMm : null)
+    const waterP20 = waterScore(weightedWater, s.p20PrecipMm, USE_DEFICIT ? (s.deficitP20Mm ?? s.deficitMm) : null)
     const soil = soilScore(info.crops, s.soil)
 
     const marketAvg = c.reduce((sum, x) => sum + x.market, 0) / c.length
@@ -162,11 +161,11 @@ export function calculateScores(s: Scenario): Record<RotationKey, RotationScore>
 
     const blockers: string[] = []
     const warnings: string[] = []
-    if (waterP20 < 20) blockers.push('Déficit hídrico extremo incluso en año seco (P20)')
-    else if (waterP20 < 40) warnings.push('Estrés hídrico probable en años secos (P20)')
-    if (s.heatDays > 25) warnings.push('Calor elevado durante la temporada')
-    if (s.frostDays > 5) warnings.push('Riesgo de heladas por encima del umbral')
-    if (profit === null) warnings.push('Sin precio para todos los cultivos de la rotación')
+    if (waterP20 < 20) blockers.push('Extreme water deficit even in a dry year (P20)')
+    else if (waterP20 < 40) warnings.push('Water stress likely in dry years (P20)')
+    if (s.heatDays > 25) warnings.push('High heat during the season')
+    if (s.frostDays > 5) warnings.push('Frost risk above the threshold')
+    if (profit === null) warnings.push('No price for all the crops in the rotation')
 
     out[rid] = {
       name: info.name,
@@ -185,7 +184,7 @@ export function calculateScores(s: Scenario): Record<RotationKey, RotationScore>
     }
   }
 
-  // Como el pipeline, la nota final se calcula con las notas ya redondeadas.
+  // As in the pipeline, the final score is computed from the already rounded scores.
   for (const [profile, weights] of Object.entries(PROFILES) as [ProfileKey, Record<Score, number>][]) {
     for (const r of Object.values(out)) {
       const complete = (Object.keys(weights) as Score[]).every((k) => r[k] !== null)

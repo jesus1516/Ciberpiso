@@ -1,307 +1,309 @@
-# Fuentes scrapeadas: España (Málaga)
+# Scraped sources: Spain (Málaga)
 
-> Registro vivo de las fuentes que usa el pipeline `pipeline/`. **Regla del equipo:
-> todos los datos de las fincas salen de fuentes de [`resources.md`](../resources.md).**
+> Living record of the sources used by the `pipeline/` pipeline. **Team rule:
+> all farm data comes from sources in [`resources.md`](../resources.md).**
 >
-> Última actualización: 14 de noviembre de 2026. Ámbito: **provincia de Málaga (29)**.
-> Antequera es el municipio SIGPAC **15** (`municipio_key = 29015`).
+> Last updated: 14 November 2026. Scope: **province of Málaga (29)**.
+> Antequera is SIGPAC municipality **15** (`municipio_key = 29015`).
 
-## Resumen
+## Summary
 
-| Dato por finca | Fuente | ¿En `resources.md`? | Tabla CSV |
+| Data per farm | Source | In `resources.md`? | CSV table |
 | --- | --- | --- | --- |
-| Clima diario 2001–2025 → indicadores por campaña | **NASA POWER** | ✅ #6–7 | `clima_anual`, `dim_celda_power` |
-| Humedad del suelo (superficial, radicular, perfil) | **NASA POWER** (MERRA-2) | ✅ #6–7 | `suelo_humedad_anual` |
-| Altitud y pendiente | **SRTM** (versión NASA NASADEM) vía Planetary Computer | ✅ #28 (y SRTM, #3–4) | `fincas` |
-| Textura, carbono, pH y agua disponible del suelo | **ISRIC SoilGrids 2.0** | ⚠️ excepción aprobada | `suelo_fincas` |
-| Precios agrarios de venta en España, anuales 2000–2024 | **Eurostat** `apri_ap_crpouta` | ⚠️ excepción aprobada | `precios_anuales`, `dim_producto_precio` |
-| Cobertura del suelo (% cultivo, arbolado, pasto…) | **ESA WorldCover 2021** vía Planetary Computer | ✅ #28 | `fincas` |
-| Vegetación y cultivo estimado por campaña | **NASA MODIS MOD13Q1** (LP DAAC) vía Planetary Computer | ✅ #4, #28 | `fenologia_fincas`, `ndvi_fincas`, `fincas` |
-| Dónde está cada finca (identificador y polígono) | SIGPAC recintos 2026 (FEGA) | ❌ (ver nota) | `fincas`, `recintos`, `dim_municipio` |
+| Daily climate 2001–2025 → indicators per season | **POWER** | ✅ #6–7 | `clima_anual`, `dim_celda_power` |
+| Soil moisture (surface, root zone, profile) | **POWER** (MERRA-2) | ✅ #6–7 | `suelo_humedad_anual` |
+| Altitude and slope | **SRTM** (reprocessed DEM version) via Planetary Computer | ✅ #28 (and SRTM, #3–4) | `fincas` |
+| Soil texture, carbon, pH and available water | **ISRIC SoilGrids 2.0** | ⚠️ approved exception | `suelo_fincas` |
+| Farm-gate agricultural prices in Spain, annual 2000–2024 | **Eurostat** `apri_ap_crpouta` | ⚠️ approved exception | `precios_anuales`, `dim_producto_precio` |
+| Land cover (% crop, trees, grass…) | **ESA WorldCover 2021** via Planetary Computer | ✅ #28 | `fincas` |
+| Vegetation and estimated crop per season | **MODIS MOD13Q1** (LP DAAC) via Planetary Computer | ✅ #4, #28 | `fenologia_fincas`, `ndvi_fincas`, `fincas` |
+| Where each farm is (identifier and polygon) | SIGPAC recintos 2026 (FEGA) | ❌ (see note) | `fincas`, `recintos`, `dim_municipio` |
 
-**Nota sobre SIGPAC.** Ninguna fuente de `resources.md` delimita fincas en España, así
-que SIGPAC se usa **solo como esqueleto**: código de parcela/recinto, municipio y
-polígono. **No se usa ningún atributo temático de SIGPAC** (uso, pendiente, altitud,
-regadío ni cultivo declarado). Todo lo que describe la finca sale de las fuentes de la
-tabla anterior.
+**Note on SIGPAC.** No source in `resources.md` delimits farms in Spain, so SIGPAC is
+used **only as a skeleton**: plot/enclosure code, municipality and polygon. **No
+thematic SIGPAC attribute is used** (use, slope, altitude, irrigation or declared
+crop). Everything that describes the farm comes from the sources in the table above.
 
-**Nota sobre SoilGrids.** El equipo trabaja con **SoilGrids + SRTM**. SoilGrids no
-está en `resources.md`, pero el plan de acción ya lo fijaba como sustituto de SSURGO
-(que solo cubre EE. UU.), así que entra como **única excepción explícita**. SRTM sí está
-en la lista; se usa su versión reprocesada por NASA (NASADEM), con los mismos datos
-radar de 2000, huecos rellenados y mejor calibración.
+**Note on SoilGrids.** The team works with **SoilGrids + SRTM**. SoilGrids is not in
+`resources.md`, but the action plan already fixed it as the substitute for SSURGO
+(which only covers the US), so it enters as the **single explicit exception**. SRTM is
+in the list; its reprocessed version (SRTM-derived DEM) is used, with the same 2000 radar data,
+filled voids and better calibration.
 
-## 1. Revisión de `resources.md`, enlace a enlace
+## 1. Review of `resources.md`, link by link
 
-| # | Enlace | Fuente | ¿Cubre España? | Uso en el pipeline | Estado |
+| # | Link | Source | Covers Spain? | Use in the pipeline | Status |
 | --- | --- | --- | --- | --- | --- |
-| 1 | earthdata…/smap | SMAP | Sí (9 km) | Requiere Earthdata Login; humedad del suelo sale de POWER | 🔑 |
-| 2 | gpm.nasa.gov/data | GPM / IMERG | Sí (0,1°) | Lluvia sale de POWER; IMERG está también en Planetary Computer (`gpm-imerg-hhr`) | ⏸️ |
-| 3 | earthexplorer.usgs.gov | Landsat / SRTM | Sí | Relieve con NASADEM (SRTM reprocesado) vía #28 | ✅ (vía #28) |
-| 4 | earthdata…/lp-daac | MODIS / VIIRS (LP DAAC) | Sí (250 m) | **MOD13Q1 NDVI** vía Planetary Computer | ✅ |
-| 5 | search.earthdata…VIIRS | VIIRS | Sí | No necesario (MODIS cubre la serie) | ⏸️ |
-| 6–7 | power.larc.nasa.gov | **NASA POWER** | Sí (0,5°×0,625°) | Clima y humedad del suelo por celda | ✅ |
-| 8 | ecostress.jpl.nasa.gov | ECOSTRESS | Sí (~70 m) | Requiere Earthdata/AppEEARS | 🔑 |
+| 1 | earthdata…/smap | SMAP | Yes (9 km) | Requires Earthdata Login; soil moisture comes from POWER | 🔑 |
+| 2 | gpm.nasa.gov/data | GPM / IMERG | Yes (0.1°) | Rain comes from POWER; IMERG is also in Planetary Computer (`gpm-imerg-hhr`) | ⏸️ |
+| 3 | earthexplorer.usgs.gov | Landsat / SRTM | Yes | Relief with SRTM-derived DEM (reprocessed SRTM) via #28 | ✅ (via #28) |
+| 4 | earthdata…/lp-daac | MODIS / VIIRS (LP DAAC) | Yes (250 m) | **MOD13Q1 NDVI** via Planetary Computer | ✅ |
+| 5 | search.earthdata…VIIRS | VIIRS | Yes | Not needed (MODIS covers the series) | ⏸️ |
+| 6–7 | power.larc.nasa.gov | **POWER** | Yes (0.5°×0.625°) | Climate and soil moisture per cell | ✅ |
+| 8 | ecostress.jpl.nasa.gov | ECOSTRESS | Yes (~70 m) | Requires Earthdata/AppEEARS | 🔑 |
 | 9–11 | nal.usda.gov/…agdatacommons | Ag Data Commons | No | — | ⛔ |
 | 12 | prism.oregonstate.edu | PRISM | No | — | ⛔ |
-| 13 | nrcs.usda.gov/…/soils | SSURGO / NRCS | No | Sustituto: **SoilGrids** (excepción aprobada) | ⛔ |
+| 13 | nrcs.usda.gov/…/soils | SSURGO / NRCS | No | Substitute: **SoilGrids** (approved exception) | ⛔ |
 | 14 | naip-usdaonline… | NAIP | No | — | ⛔ |
-| 15 | usgs.gov/…/nlcd | NLCD | No | Cobertura con WorldCover (#28) | ⛔ |
-| 16–17 | earthdata.nasa.gov | Portal Earthdata | — | Login y catálogo | ➖ |
+| 15 | usgs.gov/…/nlcd | NLCD | No | Cover with WorldCover (#28) | ⛔ |
+| 16–17 | earthdata.nasa.gov | Earthdata portal | — | Login and catalogue | ➖ |
 | 18 | cocorahs.org | CoCoRaHS | No | — | ⛔ |
 | 19 | waterdata.usgs.gov | NWIS | No | — | ⛔ |
-| 20 | ams.usda.gov/market-news | AMS Market News | No (EE. UU.) | Sustituto: **Eurostat** (excepción aprobada) | ⛔ |
-| 21 | quickstats.nass.usda.gov | NASS QuickStats | No (EE. UU.) | Sin rendimientos para España | ⛔ |
-| 22 | etdata.org | OpenET | No | ET0 calculada con POWER | ⛔ |
+| 20 | ams.usda.gov/market-news | AMS Market News | No (US) | Substitute: **Eurostat** (approved exception) | ⛔ |
+| 21 | quickstats.nass.usda.gov | NASS QuickStats | No (US) | No yields for Spain | ⛔ |
+| 22 | etdata.org | OpenET | No | ET0 computed with POWER | ⛔ |
 | 23 | landfire.gov | LANDFIRE | No | — | ⛔ |
-| 24 | gedi.umd.edu | GEDI | Sí | Requiere Earthdata; poco útil en cultivo | 🔑 |
-| 25 | earthdata…/lp-daac | (repetido de #4) | — | — | — |
-| 26 | spaceapps.earth | Web del evento | — | — | ➖ |
-| 27 | meteomatics.com | Meteomatics | Sí | API con cuenta; no necesaria | ⏸️ |
-| 28 | planetarycomputer.microsoft.com | **Planetary Computer** | Sí | NASADEM, WorldCover, MODIS (STAC anónimo) | ✅ |
+| 24 | gedi.umd.edu | GEDI | Yes | Requires Earthdata; of little use on cropland | 🔑 |
+| 25 | earthdata…/lp-daac | (repeat of #4) | — | — | — |
+| 26 | spaceapps.earth | Event website | — | — | ➖ |
+| 27 | meteomatics.com | Meteomatics | Yes | API with an account; not needed | ⏸️ |
+| 28 | planetarycomputer.microsoft.com | **Planetary Computer** | Yes | SRTM-derived DEM, WorldCover, MODIS (anonymous STAC) | ✅ |
 
-Leyenda: ✅ usado · 🔑 requiere credenciales que no tenemos · ⏸️ disponible, no
-necesario · ⛔ solo EE. UU. · ➖ no es un dataset.
+Legend: ✅ used · 🔑 requires credentials we do not have · ⏸️ available, not needed ·
+⛔ US only · ➖ not a dataset.
 
-## 2. Detalle por fuente
+## 2. Detail per source
 
-### 2.1 NASA POWER (`pipeline/power.py`)
+### 2.1 POWER (`pipeline/power.py`)
 
 - **Endpoint:** `https://power.larc.nasa.gov/api/temporal/daily/point`, `community=AG`,
-  sin clave. Serie diaria **2001-01-01 → 2025-12-31**.
-- **Parámetros:** `PRECTOTCORR, T2M, T2M_MAX, T2M_MIN, TOA_SW_DWN, ALLSKY_SFC_SW_DWN,
+  no key. Daily series **2001-01-01 → 2025-12-31**.
+- **Parameters:** `PRECTOTCORR, T2M, T2M_MAX, T2M_MIN, TOA_SW_DWN, ALLSKY_SFC_SW_DWN,
   GWETTOP, GWETROOT, GWETPROF, RH2M, WS2M`.
-- **Rejilla:** MERRA-2, 0,5° lat × 0,625° lon. Se pide una vez por celda (10 celdas en
-  Málaga), no por finca. `celda_power = round((lat+90)/0,5)*1000 + round((lon+180)/0,625)`.
-- **Indicadores por campaña** (octubre del año anterior a septiembre): lluvia total y
-  de octubre a mayo, ET0 de Hargreaves-Samani (Ra = `TOA_SW_DWN` × 0,408), déficit
-  hídrico, días con Tmax ≥ 32 °C en mayo–junio (llenado del grano) y ≥ 35 °C en
-  julio–agosto (girasol), heladas totales y tardías, humedad del suelo media, de
-  primavera, de siembra y su anomalía.
-- **Gotchas verificados:**
-  - En las series `climatology` y `monthly`, `T2M_MAX`/`T2M_MIN` son **extremos**,
-    no medias. Por eso se usa la serie diaria.
-  - `GWETROOT` de MERRA-2 en Málaga no baja de ~0,46: un umbral fijo de "suelo seco"
-    no sirve. Se usa la **anomalía** respecto a la media de la celda.
-  - Las celdas costeras (lat 36,5) mezclan mar y tierra: ET0 y calor bajos.
-- **Validación rápida:** celda de Antequera (37,0, −4,375): 453 mm/año de media,
-  331 mm en año seco (p20), campañas más secas 2005 y 2014, sequía 2023 con 302 mm y
-  anomalía de humedad −0,07.
+- **Grid:** MERRA-2, 0.5° lat × 0.625° lon. It is requested once per cell (10 cells in
+  Málaga), not per farm. `celda_power = round((lat+90)/0.5)*1000 + round((lon+180)/0.625)`.
+- **Indicators per season** (October of the previous year to September): total rain and
+  October-to-May rain, Hargreaves-Samani ET0 (Ra = `TOA_SW_DWN` × 0.408), water
+  deficit, days with Tmax ≥ 32 °C in May–June (grain filling) and ≥ 35 °C in
+  July–August (sunflower), total and late frosts, mean soil moisture, spring and
+  sowing soil moisture and its anomaly.
+- **Verified gotchas:**
+  - In the `climatology` and `monthly` series, `T2M_MAX`/`T2M_MIN` are **extremes**,
+    not means. That is why the daily series is used.
+  - MERRA-2 `GWETROOT` in Málaga does not drop below ~0.46: a fixed "dry soil"
+    threshold is useless. The **anomaly** with respect to the cell mean is used.
+  - Coastal cells (lat 36.5) mix sea and land: low ET0 and heat.
+- **Quick validation:** Antequera cell (37.0, −4.375): 453 mm/year on average,
+  331 mm in a dry year (p20), driest seasons 2005 and 2014, drought 2023 with 302 mm
+  and moisture anomaly −0.07.
 
 ### 2.2 Planetary Computer (`pipeline/pc.py`)
 
-- **Catálogo:** `https://planetarycomputer.microsoft.com/api/stac/v1`, acceso anónimo
-  con firma SAS (`planetary_computer.sign`).
-- **Rejilla de análisis:** 1/4000° (~28 m N–S × 22 m E–O), alineada a grados enteros.
-  Las fincas se rasterizan en ella y cada variable se promedia con todos sus píxeles.
-  Las fincas sin píxel propio (muy pequeñas) toman el píxel de su centroide.
+- **Catalogue:** `https://planetarycomputer.microsoft.com/api/stac/v1`, anonymous
+  access with SAS signature (`planetary_computer.sign`).
+- **Analysis grid:** 1/4000° (~28 m N–S × 22 m E–W), aligned to whole degrees. Farms
+  are rasterised onto it and each variable is averaged over all of their pixels.
+  Farms without a pixel of their own (very small) take the pixel of their centroid.
 
-| Colección | Producto | Uso |
+| Collection | Product | Use |
 | --- | --- | --- |
-| `nasadem` | NASA NASADEM, 1" | `altitud_m` (media) y `pendiente_pct` (gradiente en la rejilla) |
-| `esa-worldcover` | WorldCover 2021 v200, 10 m | `wc_*_pct`: fracción exacta de 3×3 píxeles por celda de análisis |
-| `modis-13Q1-061` | MOD13Q1 v6.1 (Terra), 250 m, 16 días | NDVI 2019-10 → 2025-06 (130 compuestos, tesela h17v05) |
+| `nasadem` | SRTM-derived DEM, 1" | `altitud_m` (mean) and `pendiente_pct` (gradient on the grid) |
+| `esa-worldcover` | WorldCover 2021 v200, 10 m | `wc_*_pct`: exact fraction of 3×3 pixels per analysis cell |
+| `modis-13Q1-061` | MOD13Q1 v6.1 (Terra), 250 m, 16 days | NDVI 2019-10 → 2025-06 (130 composites, tile h17v05) |
 
-- **NDVI:** escala 0,0001; se descartan píxeles con `pixel_reliability` distinto de
-  0 (bueno) o 1 (marginal). Fecha = inicio del compuesto + 8 días.
-- **Gotchas verificados:**
-  - El catálogo tiene **varias versiones del mismo compuesto** (reprocesados; p. ej.
-    `A2021257` aparece 3 veces). Se deduplica por `AYYYYDDD` quedándose con la
-    producción más reciente.
-  - En Planetary Computer, MOD13Q1 **termina en `A2025177`** (finales de junio de
-    2025): la campaña 2025 no tiene julio–septiembre.
-- **Clase de cultivo estimada por campaña.** Umbrales calibrados en Málaga con fincas
-  de ≥ 80 % de una sola clase WorldCover (medianas):
+- **NDVI:** scale 0.0001; pixels with `pixel_reliability` other than 0 (good) or
+  1 (marginal) are discarded. Date = start of the composite + 8 days.
+- **Verified gotchas:**
+  - The catalogue has **several versions of the same composite** (reprocessed; e.g.
+    `A2021257` appears 3 times). It is deduplicated by `AYYYYDDD` keeping the most
+    recent production.
+  - In Planetary Computer, MOD13Q1 **ends at `A2025177`** (end of June 2025): the 2025
+    season has no July–September.
+- **Estimated crop class per season.** Thresholds calibrated in Málaga with farms of
+  ≥ 80% of a single WorldCover class (medians):
 
-| NDVI mediano | Cultivo | Pasto | Arbolado |
+| Median NDVI | Crop | Grass | Trees |
 | --- | --- | --- | --- |
-| Verano (jun–ago) | 0,26 | 0,31 | 0,42 |
-| Amplitud (p90−p10) | 0,33 | 0,24 | 0,16 |
-| Otoño (oct–dic) | ~0,27 (siembra tardía) | ~0,40 | ~0,52 |
+| Summer (Jun–Aug) | 0.26 | 0.31 | 0.42 |
+| Amplitude (p90−p10) | 0.33 | 0.24 | 0.16 |
+| Autumn (Oct–Dec) | ~0.27 (late sowing) | ~0.40 | ~0.52 |
 
-| Clase | Regla (se aplica en este orden) | Letra en `rotacion_estimada` |
+| Class | Rule (applied in this order) | Letter in `rotacion_estimada` |
 | --- | --- | --- |
-| `sin_datos` | < 12 compuestos válidos | `?` |
-| `sin_vegetacion` | NDVI máx < 0,25 | `S` |
-| `herbaceo_verano` | pico en mayo–agosto, máx − ene–abr ≥ 0,12 y jun–ago ≥ ene–abr (girasol) | `V` |
-| `herbaceo_invierno` | pico en feb–may, amplitud ≥ 0,25, jun–ago ≤ 0,33 y máx − oct–dic ≥ 0,25 (cereal, leguminosa) | `I` |
-| `permanente` | amplitud < 0,2 y jun–ago ≥ 0,33 (arbolado, matorral, olivar denso) | `P` |
-| `barbecho_o_pastizal` | jun–ago < 0,4 (en finca de cultivo: barbecho o cosecha débil) | `B` |
-| `mixto` | resto | `M` |
+| `sin_datos` | < 12 valid composites | `?` |
+| `sin_vegetacion` | max NDVI < 0.25 | `S` |
+| `herbaceo_verano` | peak in May–August, max − Jan–Apr ≥ 0.12 and Jun–Aug ≥ Jan–Apr (sunflower) | `V` |
+| `herbaceo_invierno` | peak in Feb–May, amplitude ≥ 0.25, Jun–Aug ≤ 0.33 and max − Oct–Dec ≥ 0.25 (cereal, legume) | `I` |
+| `permanente` | amplitude < 0.2 and Jun–Aug ≥ 0.33 (trees, scrub, dense olive grove) | `P` |
+| `barbecho_o_pastizal` | Jun–Aug < 0.4 (on a crop farm: fallow or weak harvest) | `B` |
+| `mixto` | the rest | `M` |
 
-- **Comprobación contra WorldCover** (fincas ≥ 2,5 ha): cultivo → 56 % `I` + 38 % `B`;
-  pasto → 70 % `B`; arbolado → 53 % `P`; matorral → 61 % `P`. Confusión conocida: el
-  olivar abierto con cubierta vegetal se parece a pasto (`B`).
+- **Check against WorldCover** (farms ≥ 2.5 ha): crop → 56% `I` + 38% `B`;
+  grass → 70% `B`; trees → 53% `P`; scrub → 61% `P`. Known confusion: open olive groves
+  with a vegetation cover look like grass (`B`).
 
-### 2.3 SIGPAC, solo esqueleto (`pipeline/sigpac.py`)
+### 2.3 SIGPAC, skeleton only (`pipeline/sigpac.py`)
 
-- **Descarga:** `https://sigpac-hubcloud.es/geopackages/2026/recintos/29_MALAGA_rec_2026_20251215_gpkg.zip`
-  (403 MB; CC BY 4.0, autor FEGA). Toda España: 50 ficheros, 34,5 GB.
-- **Columnas leídas:** `provincia, municipio, agregado, zona, poligono, parcela,
-  recinto` y la geometría (para el área y para rasterizar). Nada más.
-- **Málaga:** 969.034 recintos en 363.401 fincas (parcelas).
-- **Gotcha:** el GeoPackage está en EPSG:4258; los centroides se calculan en
-  EPSG:25830 (en Canarias, EPSG:4083).
+- **Download:** `https://sigpac-hubcloud.es/geopackages/2026/recintos/29_MALAGA_rec_2026_20251215_gpkg.zip`
+  (403 MB; CC BY 4.0, author FEGA). All of Spain: 50 files, 34.5 GB.
+- **Columns read:** `provincia, municipio, agregado, zona, poligono, parcela,
+  recinto` and the geometry (for the area and for rasterising). Nothing else.
+- **Málaga:** 969,034 enclosures in 363,401 farms (plots).
+- **Gotcha:** the GeoPackage is in EPSG:4258; centroids are computed in
+  EPSG:25830 (in the Canary Islands, EPSG:4083).
 
-### 2.4 SoilGrids 2.0, ISRIC (`pipeline/soilgrids.py`, excepción aprobada)
+### 2.4 SoilGrids 2.0, ISRIC (`pipeline/soilgrids.py`, approved exception)
 
-- **Endpoint:** `https://maps.isric.org/mapserv?map=/map/{prop}.map` (WCS 2.0.1, sin
-  clave, CC BY 4.0). Un recorte por propiedad y profundidad para el bbox de la
-  provincia (35 peticiones en Málaga, 8 MB).
-- **Propiedades:** arcilla, arena, carbono orgánico y elementos gruesos de 0 a 100 cm;
-  limo, pH, densidad, nitrógeno y CIC de 0 a 30 cm.
-- **Cálculo:** se muestrea el centroide de cada recinto y se promedia por finca
-  ponderando por superficie. Salidas: media 0–30 cm y **agua disponible 0–100 cm**
-  (`cad_0_100_mm`), estimada con Saxton & Rawls (2006) descontando los gruesos.
-- **Gotcha verificado:** el recorte debe pedirse en la proyección nativa (Homolosine,
-  `+proj=igh`) con `SUBSET=X(...)&SUBSET=Y(...)`. Con `SUBSETTINGSRS=EPSG:4326`
-  responde 404 `InvalidSubsetting`.
-- **Unidades de origen:** arcilla, arena y limo en g/kg (÷10 → %); carbono en dg/kg
-  (÷10 → g/kg); pH ×10; densidad en cg/cm³ (÷100); nitrógeno en cg/kg (÷100); CIC en
+- **Endpoint:** `https://maps.isric.org/mapserv?map=/map/{prop}.map` (WCS 2.0.1, no
+  key, CC BY 4.0). One crop per property and depth for the province bbox (35 requests
+  in Málaga, 8 MB).
+- **Properties:** clay, sand, organic carbon and coarse fragments from 0 to 100 cm;
+  silt, pH, bulk density, nitrogen and CEC from 0 to 30 cm.
+- **Calculation:** the centroid of each enclosure is sampled and averaged per farm
+  weighted by area. Outputs: 0–30 cm mean and **available water 0–100 cm**
+  (`cad_0_100_mm`), estimated with Saxton & Rawls (2006) discounting coarse fragments.
+- **Verified gotcha:** the crop must be requested in the native projection
+  (Homolosine, `+proj=igh`) with `SUBSET=X(...)&SUBSET=Y(...)`. With
+  `SUBSETTINGSRS=EPSG:4326` it answers 404 `InvalidSubsetting`.
+- **Source units:** clay, sand and silt in g/kg (÷10 → %); carbon in dg/kg
+  (÷10 → g/kg); pH ×10; bulk density in cg/cm³ (÷100); nitrogen in cg/kg (÷100); CEC in
   mmol(c)/kg (÷10).
-- **Resultado:** 356.481 de 363.401 fincas con dato (el resto, agua o urbano). En la
-  Campiña de Antequera: ~32 % arcilla, pH 7,8–7,9, carbono ~14 g/kg, ~130 mm de agua
-  disponible.
-- **Límite:** resolución de 250 m y modelo estadístico global. En la media provincial
-  el carbono (~22 g/kg) parece alto para suelos agrícolas andaluces: úsalo para
-  comparar fincas, no como análisis de laboratorio.
+- **Result:** 356,481 of 363,401 farms with data (the rest, water or urban). In the
+  Campiña de Antequera: ~32% clay, pH 7.8–7.9, carbon ~14 g/kg, ~130 mm of available
+  water.
+- **Limit:** 250 m resolution and a global statistical model. In the provincial mean
+  the carbon (~22 g/kg) looks high for Andalusian agricultural soils: use it to
+  compare farms, not as a laboratory analysis.
 
-### 2.5 Precios, Eurostat (`pipeline/precios.py`, excepción aprobada)
+### 2.5 Prices, Eurostat (`pipeline/precios.py`, approved exception)
 
 - **Endpoint:** `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/apri_ap_crpouta?geo=ES&currency=EUR`
-  (JSON-stat, sin clave). "Selling prices of crop products": precio medio anual de
-  venta en España que el Ministerio de Agricultura comunica a Eurostat.
-- **Contenido:** 87 productos y 1.901 precios de 2000 a 2024 (8 provisionales, marca
-  `p`). Para el caso: trigo blando y duro, cebada, avena, triticale, girasol, guisante,
-  haba, lenteja, garbanzo, aceituna y aceite. `precio_eur` va en la unidad de Eurostat
-  (casi siempre 100 kg) y `precio_eur_t` en €/t.
-- **Medias 2015–2024 (€/t):** garbanzo 756, girasol 401, trigo duro 288, guisante 250,
-  trigo blando 213, cebada 199. El pico de 2022 (trigo blando 342 €/t) refleja la guerra
-  de Ucrania.
-- **Primera opción descartada:** la API semanal por mercado de la Comisión Europea
-  (`api.tech.ec.europa.eu/agrifood/api/cereal/prices`) devolvía error 500 el 14-11-2026,
-  incluso con los ejemplos de su documentación. Si vuelve, daría precios semanales por
-  lonja.
-- **Límites:** precio nacional y anual, no de la Campiña ni de la semana de venta.
-  Eurostat no incluye veza; para eso está la serie del MAPA de 2.6. No es una previsión.
+  (JSON-stat, no key). "Selling prices of crop products": annual average selling
+  price in Spain that the Ministry of Agriculture reports to Eurostat.
+- **Content:** 87 products and 1,901 prices from 2000 to 2024 (8 provisional, flag
+  `p`). For the case: soft and durum wheat, barley, oat, triticale, sunflower, pea,
+  broad bean, lentil, chickpea, olive and oil. `precio_eur` is in Eurostat's unit
+  (almost always 100 kg) and `precio_eur_t` in €/t.
+- **2015–2024 means (€/t):** chickpea 756, sunflower 401, durum wheat 288, pea 250,
+  soft wheat 213, barley 199. The 2022 peak (soft wheat 342 €/t) reflects the war in
+  Ukraine.
+- **First option discarded:** the European Commission's weekly per-market API
+  (`api.tech.ec.europa.eu/agrifood/api/cereal/prices`) returned error 500 on
+  14-11-2026, even with the examples from its documentation. If it comes back, it
+  would give weekly prices per market (lonja).
+- **Limits:** national and annual price, not of the Campiña or of the week of sale.
+  Eurostat does not include vetch; for that there is the MAPA series in 2.6. It is not
+  a forecast.
 
-### 2.6 Precio de veza, MAPA (excepción aprobada)
+### 2.6 Vetch price, MAPA (approved exception)
 
-- **Fuente:** MAPA, Anuario de Estadística 2025, tabla 7.2.7.2 "Veza. Serie histórica
-  de superficie, rendimiento, producción, precio y valor". Precio medio anual
-  percibido por el agricultor, nacional, en €/100 kg.
+- **Source:** MAPA, Anuario de Estadística 2025, table 7.2.7.2 "Veza. Serie histórica
+  de superficie, rendimiento, producción, precio y valor". Average annual price
+  received by the farmer, national, in €/100 kg.
 - **URL:** `https://www.mapa.gob.es/estadistica/pags/anuario/2025/FORMATO%20PDF/AE25-C07/7.2.7.2.pdf`
-- **Contenido:** 2014–2024. 2024 = 48,79 €/100 kg = 487,9 €/t. Se guarda en
-  `data/manual/precios_veza.csv` (se copia a cada `csv/comun/`) y se cruza por campaña en `prepare_inputs.py`.
-- **Por qué no Eurostat:** la nomenclatura europea no incluye veza grano; sí incluye
-  guisante, haba, garbanzo y altramuces. No se usa un proxy.
-- **Límites:** precio nacional y anual, no de lonja; no hay precio provincial. La
-  campaña 2025 usa 2024 como referencia. Para veza forrajera en verde, el Anuario
-  publica otra tabla (7.6.3.5.1) que no es comparable con grano.
-- **Fuente complementaria:** lonjas andaluzas (Junta de Andalucía), veza grano en Jaén
-  (490 €/t en las semanas 37–38 de 2026), coherente con el orden de magnitud del MAPA.
+- **Content:** 2014–2024. 2024 = 48.79 €/100 kg = 487.9 €/t. It is stored in
+  `data/manual/precios_veza.csv` (copied to each `csv/comun/`) and joined by season in
+  `prepare_inputs.py`.
+- **Why not Eurostat:** the European nomenclature does not include grain vetch; it
+  does include pea, broad bean, chickpea and lupins. No proxy is used.
+- **Limits:** national and annual price, not from a lonja; there is no provincial
+  price. The 2025 season uses 2024 as a reference. For green forage vetch, the Anuario
+  publishes another table (7.6.3.5.1) that is not comparable with grain.
+- **Complementary source:** Andalusian lonjas (Junta de Andalucía), grain vetch in Jaén
+  (490 €/t in weeks 37–38 of 2026), consistent with the order of magnitude of MAPA.
 
-## 3. Modelo de datos (CSV → SQLite)
+## 3. Data model (CSV → SQLite)
 
-Dos copias, `data/malaga/` y `data/andalucia/`, cada una con `csv/comun/`, `csv/<pp_provincia>/` (una carpeta por provincia) y `database/`. UTF-8, coma, punto decimal, `NULL` = celda vacía,
-ordenados por clave primaria. Claves enteras para JOIN rápidos; el código SIGPAC
-(`parcela_id`, `recinto_id`) es el identificador estable entre versiones.
+Two copies, `data/malaga/` and `data/andalucia/`, each with `csv/comun/`,
+`csv/<pp_provincia>/` (one folder per province) and `database/`. UTF-8, comma, decimal
+point, `NULL` = empty cell, sorted by primary key. Integer keys for fast JOINs; the
+SIGPAC code (`parcela_id`, `recinto_id`) is the stable identifier across versions.
 
-| Tabla | Grano (una fila por…) | Clave primaria | Fuente |
+| Table | Grain (one row per…) | Primary key | Source |
 | --- | --- | --- | --- |
-| `dim_municipio` | municipio | `municipio_key` | Esqueleto |
-| `dim_celda_power` | celda MERRA-2 | `celda_power` | NASA POWER |
-| `fincas` | parcela SIGPAC | `finca_key` | Esqueleto + NASADEM + WorldCover + MODIS |
-| `recintos` | recinto SIGPAC | `recinto_key` | Esqueleto |
-| `suelo_fincas` | finca con dato de suelo | `finca_key` | SoilGrids |
-| `fenologia_fincas` | finca × campaña (fincas ≥ 2 ha) | `finca_key, campana` | MODIS |
-| `ndvi_fincas` | finca × compuesto de 16 días (fincas ≥ 10 ha con ≥ 50 % cultivo) | `finca_key, fecha` | MODIS |
-| `clima_anual` | celda × campaña | `celda_power, campana` | NASA POWER |
-| `suelo_humedad_anual` | celda × campaña | `celda_power, campana` | NASA POWER |
-| `dim_producto_precio` | producto agrario | `producto_codigo` | Eurostat |
-| `precios_anuales` | producto × año | `producto_codigo, anio` | Eurostat |
-| `precios_veza` | año | `anio` | MAPA (transcrito) |
+| `dim_municipio` | municipality | `municipio_key` | Skeleton |
+| `dim_celda_power` | MERRA-2 cell | `celda_power` | POWER |
+| `fincas` | SIGPAC plot | `finca_key` | Skeleton + SRTM-derived DEM + WorldCover + MODIS |
+| `recintos` | SIGPAC enclosure | `recinto_key` | Skeleton |
+| `suelo_fincas` | farm with soil data | `finca_key` | SoilGrids |
+| `fenologia_fincas` | farm × season (farms ≥ 2 ha) | `finca_key, campana` | MODIS |
+| `ndvi_fincas` | farm × 16-day composite (farms ≥ 10 ha with ≥ 50% crop) | `finca_key, fecha` | MODIS |
+| `clima_anual` | cell × season | `celda_power, campana` | POWER |
+| `suelo_humedad_anual` | cell × season | `celda_power, campana` | POWER |
+| `dim_producto_precio` | agricultural product | `producto_codigo` | Eurostat |
+| `precios_anuales` | product × year | `producto_codigo, anio` | Eurostat |
+| `precios_veza` | year | `anio` | MAPA (transcribed) |
 
-- **Esquema** con claves foráneas, índices y vistas (`v_fincas`, `v_candidatas`,
-  `v_clima_suelo_anual`): [`pipeline/sql/schema.sql`](../pipeline/sql/schema.sql) (se copia a cada `data/<copia>/database/`); consultas de ejemplo en [`pipeline/sql/consultas.sql`](../pipeline/sql/consultas.sql).
-- **Base de datos:** `python3 pipeline/cargar_sqlite.py malaga|andalucia` genera
-  `data/<copia>/database/ciberpiso_<copia>.sqlite` **a partir de los CSV**, comprueba que las columnas
-  coinciden con el esquema y valida las claves foráneas.
-- **Tamaños (Málaga):** `fincas` 363.401 filas (57 MB), `recintos` 969.034 (67 MB),
-  `suelo_fincas` 356.481 (26 MB), `fenologia_fincas` 296.238 (21 MB), `ndvi_fincas`
-  201.292 (6 MB), `clima_anual` y `suelo_humedad_anual` 240 cada una. SQLite: 269 MB.
-- **Acceso:** las consultas típicas (fincas de un municipio, finca por código SIGPAC,
-  serie NDVI de una finca, fenología + clima + humedad de una finca) usan índice o
-  clave primaria y tardan < 1 ms.
-- **Candidatas** (`es_candidata = 1`): parcela ≥ 50 ha, ≥ 60 % cultivo (WorldCover),
-  pendiente ≤ 12 %, ≥ 5 de 6 campañas arables (`I`, `V` o `B`) con al menos una `I`, y
-  sin señal de regadío estival (NDVI jun–ago < 0,55). **Resultado: 60 en Málaga, 26 en
-  Antequera**, todas en la Campiña (Antequera, Campillos, Teba, Fuente de Piedra,
-  Sierra de Yeguas). También en `data/processed/geo/fincas_candidatas.geojson`.
-  - Por qué no 150–250 ha: el plan describe una *explotación* de 150–250 ha en 5–20
-    parcelas. Sin el cultivo declarado de SIGPAC no se pueden agrupar parcelas en
-    explotaciones, y en Antequera solo 2 parcelas sueltas de ese tamaño son de cultivo.
-  - Ejemplo: `29:15:0:0:62:14` (96 ha, 99 % cultivo, pendiente 4 %) → `I-B-I-B-I-B`,
-    cereal–barbecho "año y vez".
+- **Schema** with foreign keys, indexes and views (`v_fincas`, `v_candidatas`,
+  `v_clima_suelo_anual`): [`pipeline/sql/schema.sql`](../pipeline/sql/schema.sql) (copied to each `data/<copy>/database/`); example queries in [`pipeline/sql/consultas.sql`](../pipeline/sql/consultas.sql).
+- **Database:** `python3 pipeline/cargar_sqlite.py malaga|andalucia` generates
+  `data/<copy>/database/ciberpiso_<copy>.sqlite` **from the CSVs**, checks that the
+  columns match the schema and validates the foreign keys.
+- **Sizes (Málaga):** `fincas` 363,401 rows (57 MB), `recintos` 969,034 (67 MB),
+  `suelo_fincas` 356,481 (26 MB), `fenologia_fincas` 296,238 (21 MB), `ndvi_fincas`
+  201,292 (6 MB), `clima_anual` and `suelo_humedad_anual` 240 each. SQLite: 269 MB.
+- **Access:** typical queries (farms of a municipality, farm by SIGPAC code, NDVI
+  series of a farm, phenology + climate + moisture of a farm) use an index or the
+  primary key and take < 1 ms.
+- **Candidates** (`es_candidata = 1`): plot ≥ 50 ha, ≥ 60% crop (WorldCover),
+  slope ≤ 12%, ≥ 5 of 6 arable seasons (`I`, `V` or `B`) with at least one `I`, and
+  no summer irrigation signal (Jun–Aug NDVI < 0.55). **Result: 60 in Málaga, 26 in
+  Antequera**, all in the Campiña (Antequera, Campillos, Teba, Fuente de Piedra,
+  Sierra de Yeguas). Also in `data/processed/geo/fincas_candidatas.geojson`.
+  - Why not 150–250 ha: the plan describes a *holding* of 150–250 ha in 5–20 plots.
+    Without the declared crop from SIGPAC, plots cannot be grouped into holdings, and
+    in Antequera only 2 loose plots of that size are cropland.
+  - Example: `29:15:0:0:62:14` (96 ha, 99% crop, slope 4%) → `I-B-I-B-I-B`,
+    cereal–fallow "año y vez" (alternate-year).
 
-## 4. Cómo reproducirlo
+## 4. How to reproduce it
 
 ```bash
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r pipeline/requirements.txt
-.venv/bin/python -m pipeline.sigpac --provincias 4,11,14,18,21,23,29,41 --borrar-zip  # esqueleto
-.venv/bin/python -m pipeline.power  --provincias 4,11,14,18,21,23,29,41   # clima y humedad
+.venv/bin/python -m pipeline.sigpac --provincias 4,11,14,18,21,23,29,41 --borrar-zip  # skeleton
+.venv/bin/python -m pipeline.power  --provincias 4,11,14,18,21,23,29,41   # climate and moisture
 .venv/bin/python -m pipeline.pc     --provincias 4,11,14,18,21,23,29,41   # SRTM, WorldCover, MODIS
-.venv/bin/python -m pipeline.soilgrids --provincias 4,11,14,18,21,23,29,41  # suelo
-.venv/bin/python -m pipeline.precios                    # precios (Eurostat)
-.venv/bin/python -m pipeline.build --ambito andalucia              # CSV de Andalucía
-.venv/bin/python -m pipeline.subconjunto --de andalucia --a malaga  # copia de Málaga
-python3 pipeline/cargar_sqlite.py andalucia                          # SQLite (y malaga)
+.venv/bin/python -m pipeline.soilgrids --provincias 4,11,14,18,21,23,29,41  # soil
+.venv/bin/python -m pipeline.precios                    # prices (Eurostat)
+.venv/bin/python -m pipeline.build --ambito andalucia              # Andalucía CSVs
+.venv/bin/python -m pipeline.subconjunto --de andalucia --a malaga  # Málaga copy
+python3 pipeline/cargar_sqlite.py andalucia                          # SQLite (and malaga)
 ```
 
-Cada descarga queda registrada en `data/manifest.json` (URL o colección, fecha, tamaño
-y SHA-256).
+Every download is recorded in `data/manifest.json` (URL or collection, date, size and
+SHA-256).
 
-## 5. Andalucía (8 provincias)
+## 5. Andalucía (8 provinces)
 
-Mismo pipeline, `--provincias 4,11,14,18,21,23,29,41`. Ejecutado el 14-11-2026 en ~1 h
-(descarga de SIGPAC 25 min; Planetary Computer 35 min).
+Same pipeline, `--provincias 4,11,14,18,21,23,29,41`. Run on 14-11-2026 in ~1 h
+(SIGPAC download 25 min; Planetary Computer 35 min).
 
-| Provincia | Fincas | Superficie, ha | % cultivo | Candidatas |
+| Province | Farms | Area, ha | % crop | Candidates |
 | --- | --- | --- | --- | --- |
-| 04 Almería | 487.398 | 876.613 | 4,7 | 6 |
-| 11 Cádiz | 96.831 | 743.329 | 29,1 | 581 |
-| 14 Córdoba | 342.866 | 1.376.610 | 17,3 | 617 |
-| 18 Granada | 590.259 | 1.263.818 | 13,9 | 78 |
-| 21 Huelva | 183.922 | 1.013.163 | 7,9 | 66 |
-| 23 Jaén | 629.141 | 1.348.134 | 4,8 | 34 |
-| 29 Málaga | 363.401 | 730.474 | 12,2 | 60 |
-| 41 Sevilla | 215.222 | 1.404.648 | 35,7 | 1.294 |
-| **Total** | **2.909.040** | **8.756.789** | | **2.736** |
+| 04 Almería | 487,398 | 876,613 | 4.7 | 6 |
+| 11 Cádiz | 96,831 | 743,329 | 29.1 | 581 |
+| 14 Córdoba | 342,866 | 1,376,610 | 17.3 | 617 |
+| 18 Granada | 590,259 | 1,263,818 | 13.9 | 78 |
+| 21 Huelva | 183,922 | 1,013,163 | 7.9 | 66 |
+| 23 Jaén | 629,141 | 1,348,134 | 4.8 | 34 |
+| 29 Málaga | 363,401 | 730,474 | 12.2 | 60 |
+| 41 Sevilla | 215,222 | 1,404,648 | 35.7 | 1,294 |
+| **Total** | **2,909,040** | **8,756,789** | | **2,736** |
 
-- 6.817.265 recintos; 47 celdas de NASA POWER; base SQLite de 2,2 GB generada desde los
-  CSV en ~70 s.
-- CSV en una carpeta por provincia (`data/andalucia/csv/<pp_provincia>/`); el mayor es
-  `23_jaen/fincas.csv` con 97 MiB, justo por debajo del límite de 100 MiB de GitHub.
-- **Avisos al leer la clase de cultivo fuera de Málaga:** los umbrales de NDVI se
-  calibraron en Málaga. En Almería, los invernaderos cuentan como cultivo en WorldCover
-  pero dan NDVI bajo (`sin_vegetacion`); en el altiplano de Granada pasa algo parecido
-  con el cereal de secano muy pobre. Jaén tiene poco "cultivo" porque WorldCover
-  clasifica casi todo el olivar como arbolado.
-- Para ahorrar disco, `pipeline.sigpac --borrar-zip` borra cada zip tras extraerlo, y
-  los GeoPackages se pueden borrar tras `pipeline.pc` (el GeoJSON de candidatas solo
-  incluye las provincias cuyo GeoPackage siga en disco).
+- 6,817,265 enclosures; 47 POWER cells; a 2.2 GB SQLite database generated from the
+  CSVs in ~70 s.
+- CSVs in one folder per province (`data/andalucia/csv/<pp_provincia>/`); the largest
+  is `23_jaen/fincas.csv` with 97 MiB, just below GitHub's 100 MiB limit.
+- **Warnings when reading the crop class outside Málaga:** the NDVI thresholds were
+  calibrated in Málaga. In Almería, greenhouses count as crop in WorldCover but give
+  low NDVI (`sin_vegetacion`); on the Granada high plateau something similar happens
+  with very poor rainfed cereal. Jaén has little "crop" because WorldCover classifies
+  almost all olive groves as trees.
+- To save disk, `pipeline.sigpac --borrar-zip` deletes each zip after extracting it,
+  and the GeoPackages can be deleted after `pipeline.pc` (the candidates GeoJSON only
+  includes the provinces whose GeoPackage is still on disk).
 
-## 6. Lagunas (por la regla "solo `resources.md`")
+## 6. Gaps (because of the "only `resources.md`" rule)
 
-- **Precios:** solo nacionales y anuales (Eurostat); sin precio local de lonja ni de veza.
-- **Suelo:** la textura y la química vienen de SoilGrids (excepción aprobada, 250 m);
-  la humedad, de POWER/MERRA-2 (~50 km). SMAP (9 km) necesitaría Earthdata Login.
-- **Cultivo real:** el cultivo es una **estimación por NDVI** a 250 m, no el cultivo
-  declarado. En fincas < 6 ha el píxel MODIS mezcla vecinos.
-- **Secano/regadío:** no hay dato directo; solo la señal de NDVI estival.
-- **Explotación (finca del agricultor con varias parcelas):** no se puede reconstruir
-  sin el cultivo declarado de SIGPAC, que no está en `resources.md`.
-- **Fuentes probadas y descartadas** por no estar en `resources.md`: SIGPAC cultivo
-  declarado 2025 y precios de la API agroalimentaria de la Comisión Europea.
-  Funcionaban; se pueden reactivar si el equipo cambia la regla.
+- **Prices:** only national and annual (Eurostat); no local lonja price, nor for vetch.
+- **Soil:** texture and chemistry come from SoilGrids (approved exception, 250 m);
+  moisture, from POWER/MERRA-2 (~50 km). SMAP (9 km) would need Earthdata Login.
+- **Real crop:** the crop is an **NDVI estimate** at 250 m, not the declared crop. On
+  farms < 6 ha the MODIS pixel mixes neighbours.
+- **Rainfed/irrigated:** there is no direct data; only the summer NDVI signal.
+- **Holding (the farmer's farm with several plots):** it cannot be reconstructed
+  without the declared crop from SIGPAC, which is not in `resources.md`.
+- **Sources tested and discarded** because they are not in `resources.md`: SIGPAC
+  declared crop 2025 and prices from the European Commission's agri-food API. They
+  worked; they can be reactivated if the team changes the rule.

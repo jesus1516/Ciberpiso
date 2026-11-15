@@ -18,7 +18,7 @@
     ],
     "evidence": [
       {
-        "source": "NASA POWER",
+        "source": "POWER",
         "url": "https://power.larc.nasa.gov/",
         "date": "2002-2025",
         "note": "Clima y déficit hídrico de la celda de la finca."
@@ -126,7 +126,7 @@
     ],
     "evidence": [
       {
-        "source": "NASA POWER",
+        "source": "POWER",
         "url": "https://power.larc.nasa.gov/",
         "date": "2002-2025",
         "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua."

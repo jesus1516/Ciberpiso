@@ -24,10 +24,18 @@ continues, human or agent. Everything below is already on GitHub.
 | T-06 farm view: terrain + info column | done | |
 | T-07 key insights first | done | |
 | T-08 accessible colour system | done | |
-| **T-09 accessibility** | **in progress** | work in progress saved on branch `night/T-09` (5 commits + WIP: keyboard lists, settings, data table, focus management, e2e specs). Not reviewed or merged yet |
-| T-05 performance (Opus) | pending | depends on T-04, T-09 |
-| T-10 bug sweep | pending | depends on T-05 |
+| T-09 accessibility | done | finished by hand after the shift was stopped; `night/reports/T-09.md` |
+| T-05 performance | done (partial) | data parsed in workers, no shader checks in production; the 200 ms target is not met under headless SwiftShader. `docs/performance.md`, `night/reports/T-05.md` |
+| T-10 bug sweep | done | full e2e suite green on the combined app; `night/reports/T-10.md` |
 | T-11 Andalucía viability | done | `docs/andalucia-viability.md`; implementation deliberately NOT started |
+
+## Update (2026-11-15, after the shift)
+
+The shift on the Mac was stopped and the remaining tickets were finished by hand. `night/integration`
+now also contains `feat/one-rotation-engine` (SIGPAC search, single rotation engine; its search
+moved into the masthead row) and the rename of the page to **AgroSpace** with the agrospace logo.
+Every ticket is done; nothing is left for the orchestrator. PR #2 (`night/integration` → `main`)
+is ready for review.
 
 ## How to continue
 

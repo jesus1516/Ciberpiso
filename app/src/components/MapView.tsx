@@ -2,28 +2,28 @@ import * as maplibregl from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
-import { flyToMunicipio, flyToProvincia, maxBoundsFor } from '../lib/camera'
-import { getMunicipio, loadMunicipio, loadMunicipios, municipioBbox, provinciaBbox } from '../lib/fincas'
+import { flyToMunicipality, flyToProvince, maxBoundsFor } from '../lib/camera'
+import { getMunicipality, loadMunicipality, loadMunicipalities, municipalityBbox, provinceBbox } from '../lib/farms'
 import { GIBS_LAYERS, gibsTiles, type GibsId } from '../lib/gibs'
-import { BASE_LAYER, EMPTY, GOLD, HATCH, hatchImage, municipioPaint, style } from '../lib/mapStyle'
+import { BASE_LAYER, EMPTY, GOLD, HATCH, hatchImage, municipalityPaint, style } from '../lib/mapStyle'
 import { pulse } from '../lib/pulse'
 import { disable3D, enable3D, flyToField } from '../lib/terrain'
 import { useStore } from '../store'
 
 maplibregl.setWorkerUrl(workerUrl)
 
-const MAP_LAYERS = ['municipios-fill', 'municipios-line', 'municipios-focus', 'fincas-limited', 'fincas-blocked-tint', 'fincas-blocked', 'fincas-candidate-fill', 'fincas-candidate-line']
+const MAP_LAYERS = ['municipalities-fill', 'municipalities-line', 'municipalities-focus', 'farms-limited', 'farms-blocked-tint', 'farms-blocked', 'farms-candidate-fill', 'farms-candidate-line']
 
 export function MapView() {
   const container = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
   const map = useStore((s) => s.map)
-  const ready = useStore((s) => s.fincasStatus === 'ready')
+  const ready = useStore((s) => s.farmsStatus === 'ready')
   const field = useStore((s) => s.field)
   const step = useStore((s) => s.step)
   const layers = useStore((s) => s.layers)
   const gibsDate = useStore((s) => s.gibsDate)
-  const municipio = useStore((s) => s.municipio)
+  const municipality = useStore((s) => s.municipality)
   const indicators = useStore((s) => s.indicators)
 
   useEffect(() => {
@@ -45,13 +45,13 @@ export function MapView() {
     instance.on('load', () => {
       if (!instance.hasImage(HATCH)) instance.addImage(HATCH, hatchImage())
       useStore.getState().setMap(instance)
-      loadMunicipios()
+      loadMunicipalities()
         .then((data) => {
-          instance.getSource<maplibregl.GeoJSONSource>('municipios')?.setData(data)
-          instance.setMaxBounds(maxBoundsFor(provinciaBbox()))
-          useStore.getState().setFincasStatus('ready')
+          instance.getSource<maplibregl.GeoJSONSource>('municipalities')?.setData(data)
+          instance.setMaxBounds(maxBoundsFor(provinceBbox()))
+          useStore.getState().setFarmsStatus('ready')
         })
-        .catch(() => useStore.getState().setFincasStatus('error'))
+        .catch(() => useStore.getState().setFarmsStatus('error'))
     })
     instance.on('error', (e) => {
       const sourceId = 'sourceId' in e ? String(e.sourceId) : ''
@@ -68,44 +68,44 @@ export function MapView() {
 
   useEffect(() => {
     if (!map || !ready) return
-    const level = municipio ? 'municipio' : 'provincia'
-    const paint = municipioPaint[level]
-    map.setPaintProperty('municipios-fill', 'fill-color', paint['fill-color'])
-    map.setPaintProperty('municipios-fill', 'fill-opacity', paint['fill-opacity'])
-    map.removeFeatureState({ source: 'municipios' })
-    const fincas = map.getSource<maplibregl.GeoJSONSource>('fincas')
-    if (!municipio) {
-      fincas?.setData(EMPTY)
-      if (useStore.getState().step === 'map') flyToProvincia(map, provinciaBbox(), 2200)
+    const level = municipality ? 'municipality' : 'province'
+    const paint = municipalityPaint[level]
+    map.setPaintProperty('municipalities-fill', 'fill-color', paint['fill-color'])
+    map.setPaintProperty('municipalities-fill', 'fill-opacity', paint['fill-opacity'])
+    map.removeFeatureState({ source: 'municipalities' })
+    const farms = map.getSource<maplibregl.GeoJSONSource>('farms')
+    if (!municipality) {
+      farms?.setData(EMPTY)
+      if (useStore.getState().step === 'map') flyToProvince(map, provinceBbox(), 2200)
       return
     }
-    map.setFeatureState({ source: 'municipios', id: municipio.key }, { active: true })
-    const feature = getMunicipio(municipio.key)
+    map.setFeatureState({ source: 'municipalities', id: municipality.key }, { active: true })
+    const feature = getMunicipality(municipality.key)
     if (feature && useStore.getState().step === 'map') {
-      flyToMunicipio(map, municipio.bounds ?? municipioBbox(feature))
+      flyToMunicipality(map, municipality.bounds ?? municipalityBbox(feature))
       pulse(map, feature, GOLD, 1200)
     }
     let current = true
-    const { setMunicipioStatus } = useStore.getState()
-    setMunicipioStatus('loading')
-    loadMunicipio(municipio.key)
+    const { setMunicipalityStatus } = useStore.getState()
+    setMunicipalityStatus('loading')
+    loadMunicipality(municipality.key)
       .then((data) => {
         if (!current) return
-        fincas?.setData(data)
-        setMunicipioStatus('ready')
+        farms?.setData(data)
+        setMunicipalityStatus('ready')
       })
-      .catch(() => current && setMunicipioStatus('error'))
+      .catch(() => current && setMunicipalityStatus('error'))
     return () => {
       current = false
     }
-  }, [map, ready, municipio])
+  }, [map, ready, municipality])
 
   useEffect(() => {
     if (!map) return
     const pids = Object.keys(indicators?.byPid ?? {})
     const filter: maplibregl.FilterSpecification = ['in', ['get', 'pid'], ['literal', pids]]
-    map.setFilter('fincas-candidate-fill', filter)
-    map.setFilter('fincas-candidate-line', filter)
+    map.setFilter('farms-candidate-fill', filter)
+    map.setFilter('farms-candidate-line', filter)
   }, [map, indicators])
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export function MapView() {
       const source = map.getSource<maplibregl.RasterTileSource>(id)
       if (!source) {
         if (!visible) continue
-        map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'NASA GIBS / ESDIS' })
+        map.addSource(id, { type: 'raster', tiles, tileSize: 256, maxzoom: l.level, attribution: 'GIBS / ESDIS' })
         map.addLayer({ id, type: 'raster', source: id }, BASE_LAYER)
       } else if (source.tiles?.[0] !== tiles[0]) {
         source.setTiles(tiles)
@@ -137,8 +137,8 @@ export function MapView() {
     const { field, setTerrain, setPanelOpen } = useStore.getState()
     if (!field) return
     pulse(map, field, GOLD, 1300)
-    map.setPaintProperty('fincas-fill', 'fill-opacity', 0)
-    map.setPaintProperty('fincas-line', 'line-opacity', 0)
+    map.setPaintProperty('farms-fill', 'fill-opacity', 0)
+    map.setPaintProperty('farms-line', 'line-opacity', 0)
     MAP_LAYERS.forEach((id) => map.setLayoutProperty(id, 'visibility', 'none'))
     const openPanel = () => setPanelOpen(true)
     const timer = setTimeout(() => {
@@ -150,8 +150,8 @@ export function MapView() {
     return () => {
       clearTimeout(timer)
       map.off('moveend', openPanel)
-      map.setPaintProperty('fincas-fill', 'fill-opacity', 0.04)
-      map.setPaintProperty('fincas-line', 'line-opacity', 0.5)
+      map.setPaintProperty('farms-fill', 'fill-opacity', 0.04)
+      map.setPaintProperty('farms-line', 'line-opacity', 0.5)
       MAP_LAYERS.forEach((id) => map.setLayoutProperty(id, 'visibility', 'visible'))
       disable3D(map)
     }

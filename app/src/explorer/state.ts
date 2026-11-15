@@ -1,30 +1,33 @@
-// Estado del explorador que lee la interfaz React. El mapa, las nubes y el 3D son
-// imperativos (controller.ts) y solo escriben aquí lo que hay que pintar.
+// Explorer state read by the React interface. The map, the clouds and the 3D are
+// imperative (controller.ts) and only write here what has to be rendered.
 import { create } from 'zustand'
 import type { RotationScore } from '../lib/calculator'
-import type { FincaDetalle } from '../lib/detalle'
-import type { Finca } from '../lib/geo'
+import type { FarmDetail } from '../lib/detail'
+import type { Farm } from '../lib/geo'
 import type { RotationKey } from '../lib/indicators'
-import type { Escena, ViewState } from './escena'
+import type { FarmScene, ViewState } from './scene'
 
 export type Level = 0 | 1 | 2 | 3
 export type Phase = 'loading' | 'idle' | 'transitioning'
 
-export type ProvinciaProps = { id: string; nombre: string; and: number; fincas?: number; ha?: number; pct_cultivo?: number; candidatas?: number }
-export type MunicipioInfo = { mun: number; nombre: string; fincas: number; ha: number; candidatas: number; pct_cultivo?: number; lluvia_mm?: number | null; deficit_mm?: number | null }
+export type ProvinceProps = { id: string; nombre: string; and: number; fincas?: number; ha?: number; pct_cultivo?: number; candidatas?: number }
+export type MunicipalityInfo = { mun: number; nombre: string; fincas: number; ha: number; candidatas: number; pct_cultivo?: number; lluvia_mm?: number | null; deficit_mm?: number | null }
+
+/** One row of the keyboard list of farms (farmland only; see controller.loadFarms). */
+export type FarmItem = { id: number; pid: string; pol: number; par: number; ha: number; cand: boolean; apt: string | null }
 
 export type Hover =
-  | { kind: 'provincia'; x: number; y: number; p: ProvinciaProps }
-  | { kind: 'municipio'; x: number; y: number; p: MunicipioInfo }
-  | { kind: 'finca'; x: number; y: number; p: Finca['properties'] }
+  | { kind: 'province'; x: number; y: number; p: ProvinceProps }
+  | { kind: 'municipality'; x: number; y: number; p: MunicipalityInfo }
+  | { kind: 'farm'; x: number; y: number; p: Farm['properties'] }
 
-export type Seleccion = {
-  finca: Finca
-  municipio: string
-  detalle: FincaDetalle | null
+export type Selection = {
+  farm: Farm
+  municipality: string
+  detail: FarmDetail | null
   scores: Record<RotationKey, RotationScore> | null
-  escena: Escena
-  climate: { lluvia: number; deficit: number; calor: number; heladas: number } | null
+  farmScene: FarmScene
+  climate: { rain: number; deficit: number; hotDays: number; frostDays: number } | null
   prices: Record<string, { eurT: number; year: number } | null>
 }
 
@@ -32,32 +35,45 @@ type ExplorerState = {
   level: Level
   phase: Phase
   error: string | null
-  municipio: MunicipioInfo | null
-  fincasCount: number | null
-  sel: Seleccion | null
+  municipality: MunicipalityInfo | null
+  farmsCount: number | null
+  /** What the keyboard lists offer on each level (the same places the map offers). */
+  provinceList: ProvinceProps[]
+  municipalityList: MunicipalityInfo[]
+  farmList: FarmItem[]
+  /** The farm view without the 3D terrain (setting off, or WebGL unavailable): data table over a flat map. */
+  flat: boolean
+  /** Said while a transition runs ("Going to Antequera…"), for the live region. */
+  moving: string
+  sel: Selection | null
   hover: Hover | null
   toast: { title: string; body: string; kind?: 'warning' | 'blocked' } | null
   preparing: boolean
   synthetic: boolean
   view: ViewState
   speed: number
-  totals: { andalucia: number; malaga: number; municipios: number; maxCultivo: number }
+  totals: { andalucia: number; malaga: number; municipalities: number; maxCropland: number }
 }
 
 export const useExplorer = create<ExplorerState>(() => ({
   level: 0,
   phase: 'loading',
   error: null,
-  municipio: null,
-  fincasCount: null,
+  municipality: null,
+  farmsCount: null,
+  provinceList: [],
+  municipalityList: [],
+  farmList: [],
+  flat: false,
+  moving: '',
   sel: null,
   hover: null,
   toast: null,
   preparing: false,
   synthetic: false,
-  view: { year: 2025, rotation: 'R1', profile: 'water_first', mode: 'satelite', exaggeration: 2 },
+  view: { year: 2025, rotation: 'R1', profile: 'water_first', mode: 'satellite', exaggeration: 2 },
   speed: 1,
-  totals: { andalucia: 0, malaga: 0, municipios: 0, maxCultivo: 0 },
+  totals: { andalucia: 0, malaga: 0, municipalities: 0, maxCropland: 0 },
 }))
 
 let toastTimer = 0

@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: app
+    env:
+      # Playwright uses the bundled chromium here instead of the Google Chrome installed locally.
+      E2E_BROWSER: chromium
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc -b
+
+      - name: Build
+        run: npm run build
+
+      - name: Calculator check (26 candidates, 0 differences)
+        run: node scripts/check-calculator.ts
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Install chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests (against vite preview of the build)
+        # The build above is already in dist/, so run Playwright directly.
+        run: npx playwright test
+        # `runner` is not available in the job-level env, so the output folder is set here.
+        env:
+          E2E_OUTPUT_DIR: ${{ runner.temp }}/e2e
+
+      - name: Upload the Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            ${{ runner.temp }}/e2e/report
+            ${{ runner.temp }}/e2e/results
+          if-no-files-found: ignore
+          retention-days: 7

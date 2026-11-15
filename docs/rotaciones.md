@@ -1,211 +1,211 @@
-# Rotaciones de ejemplo (Iowa central)
+# Example rotations (central Iowa)
 
-> Estas rotaciones son un **caso de estudio**, no una prescripción. La evidencia
-> agronómica varía por suelo, clima, mercado y manejo. Cada ficha termina con los
-> riesgos que debe revisar un agricultor o un extensionista local.
+> These rotations are a **case study**, not a prescription. Agronomic evidence varies
+> by soil, climate, market and management. Each card ends with the risks that a
+> farmer or a local extension officer must review.
 
-## Resumen
+## Summary
 
-| ID | Secuencia | Mecanismo principal | Papel en la comparación |
+| ID | Sequence | Main mechanism | Role in the comparison |
 | --- | --- | --- | --- |
-| R0 | Maíz → soja (ciclo de 2 años) | Línea base dominante | Rotación actual |
-| R1 | Maíz → soja → avena + trébol rojo (ciclo de 3 años) | Diversidad + fijación de N | Alternativa con leguminosa |
-| R2 | Maíz → soja → trigo + centeno (ciclo de 3 años) | Cobertura de invierno | Alternativa para erosión |
-| R3 | Maíz → soja → alfalfa → alfalfa (ciclo de 4–5 años) | Raíz profunda + N | Alternativa forrajera |
+| R0 | Corn → soybean (2-year cycle) | Dominant baseline | Current rotation |
+| R1 | Corn → soybean → oat + red clover (3-year cycle) | Diversity + N fixation | Legume alternative |
+| R2 | Corn → soybean → wheat + rye (3-year cycle) | Winter cover | Erosion alternative |
+| R3 | Corn → soybean → alfalfa → alfalfa (4–5-year cycle) | Deep root + N | Forage alternative |
 
-Las cuatro se comparan con los mismos indicadores. Si una no se puede calcular, se
-marca como laguna; no se inventa.
+All four are compared with the same indicators. If one cannot be computed, it is
+marked as a gap; it is not invented.
 
 ---
 
-## R0 — Maíz–soja (actual)
+## R0 — Corn–soybean (current)
 
-**Secuencia:** maíz → soja → maíz → soja.
+**Sequence:** corn → soybean → corn → soybean.
 
-**Por qué se incluye:** es la rotación dominante en Iowa y la referencia contra la
-que se mide cualquier cambio. Sin línea base no hay comparación.
+**Why it is included:** it is the dominant rotation in Iowa and the reference against
+which any change is measured. Without a baseline there is no comparison.
 
-**Evidencia:**
-- Práctica ampliamente documentada; CDL permite reconstruir la secuencia real.
-- La alternancia de gramínea y leguminosa rompe algunos ciclos de plagas y reduce la
-  dependencia de N sintético frente a maíz continuo.
-- Fuentes: [Iowa State University Extension](https://crops.extension.iastate.edu/),
+**Evidence:**
+- Widely documented practice; CDL allows reconstructing the actual sequence.
+- Alternating a grass and a legume breaks some pest cycles and reduces dependence on
+  synthetic N compared with continuous corn.
+- Sources: [Iowa State University Extension](https://crops.extension.iastate.edu/),
   [USDA NRCS — Soil Health](https://www.nrcs.usda.gov/conservation-basics/natural-resource-concerns/soil/soil-health).
 
-**Beneficios:**
-- Mercados líquidos y maquinaria estándar.
-- Menor complejidad operativa que una rotación con tres o cuatro cultivos.
-- La soja aporta N al sistema y diversifica la secuencia frente a maíz continuo.
+**Benefits:**
+- Liquid markets and standard machinery.
+- Lower operational complexity than a rotation with three or four crops.
+- Soybean adds N to the system and diversifies the sequence compared with continuous
+  corn.
 
-**Lagunas de datos:**
-- CDL no dice qué laboreo, variedad o fecha de siembra se usó.
-- No hay dato satelital directo de compactación, materia orgánica o enfermedad.
-- El precio y el margen dependen de mercado y no se pueden derivar del satélite.
+**Data gaps:**
+- CDL does not say which tillage, variety or sowing date was used.
+- There is no direct satellite data on compaction, organic matter or disease.
+- Price and margin depend on the market and cannot be derived from the satellite.
 
-**Riesgos para revisión local:**
-- Presión de plagas y enfermedades asociada a la alternancia repetida.
-- Erosión y pérdida de nutrientes si hay suelo desnudo en invierno.
-- Dependencia de insumos y de la ventana de siembra.
+**Risks for local review:**
+- Pest and disease pressure associated with repeated alternation.
+- Erosion and nutrient loss if there is bare soil in winter.
+- Dependence on inputs and on the sowing window.
 
-**Hipótesis para el modelo:** buena en mercado y simplicidad; peor en cobertura de
-invierno y diversidad. La erosión depende del manejo, no solo de la secuencia.
+**Hypothesis for the model:** good on market and simplicity; worse on winter cover and
+diversity. Erosion depends on management, not only on the sequence.
 
 ---
 
-## R1 — Maíz–soja–avena + trébol rojo
+## R1 — Corn–soybean–oat + red clover
 
-**Secuencia:** maíz → soja → avena con trébol rojo → maíz.
+**Sequence:** corn → soybean → oat with red clover → corn.
 
-**Por qué se sugiere:** añade un cereal pequeño y una leguminosa de cobertura. Rompe
-la alternancia maíz–soja, cubre el suelo después de la avena y puede aportar N al
-maíz siguiente.
+**Why it is suggested:** it adds a small grain and a cover legume. It breaks the
+corn–soybean alternation, covers the soil after the oat and can supply N to the
+following corn.
 
-**Evidencia:**
-- Los cereales pequeños diversifican la secuencia y compiten con malas hierbas.
-- El trébol rojo fija N y protege el suelo; el crédito depende de la biomasa y del
-  manejo.
-- Fuentes: [USDA SARE — Cover Crops](https://www.sare.org/resources/cover-crops/),
+**Evidence:**
+- Small grains diversify the sequence and compete with weeds.
+- Red clover fixes N and protects the soil; the credit depends on biomass and
+  management.
+- Sources: [USDA SARE — Cover Crops](https://www.sare.org/resources/cover-crops/),
   [Iowa State University Extension](https://crops.extension.iastate.edu/).
 
-**Beneficios:**
-- Diversidad de cultivos y de fechas de siembra/cosecha.
-- Cobertura viva después de la avena.
-- Posible reducción de N sintético y de erosión.
-- La avena puede tener mercado forrajero o de grano.
+**Benefits:**
+- Diversity of crops and of sowing/harvest dates.
+- Living cover after the oat.
+- Possible reduction of synthetic N and of erosion.
+- Oat can have a forage or grain market.
 
-**Lagunas de datos:**
-- Mercado y precio de la avena en la zona.
-- Establecimiento y persistencia del trébol rojo.
-- Crédito real de N según biomasa, clima y terminación.
-- Rendimiento de la avena en el condado elegido.
+**Data gaps:**
+- Market and price of oat in the area.
+- Establishment and persistence of red clover.
+- Real N credit depending on biomass, climate and termination.
+- Oat yield in the chosen county.
 
-**Riesgos para revisión local:**
-- La avena puede no tener comprador o margen suficiente.
-- El trébol debe terminarse en el momento correcto para no competir con el maíz.
-- El agua consumida por la cobertura puede afectar al cultivo siguiente en años secos.
-- Herbicidas residuales pueden impedir el establecimiento del trébol.
+**Risks for local review:**
+- Oat may have no buyer or insufficient margin.
+- The clover must be terminated at the right time so it does not compete with corn.
+- Water used by the cover may affect the following crop in dry years.
+- Residual herbicides may prevent clover establishment.
 
-**Hipótesis para el modelo:** mejor en suelo y diversidad; media en agua; el mercado
-es la incógnita principal.
+**Hypothesis for the model:** better on soil and diversity; medium on water; the
+market is the main unknown.
 
 ---
 
-## R2 — Maíz–soja–trigo + centeno
+## R2 — Corn–soybean–wheat + rye
 
-**Secuencia:** maíz → soja → trigo con centeno de cobertura → maíz.
+**Sequence:** corn → soybean → wheat with rye cover → corn.
 
-**Por qué se sugiere:** el trigo añade un cereal de invierno y el centeno cubre el
-suelo entre la cosecha y la siembra del maíz. Ataca el problema del suelo desnudo y
-de la erosión.
+**Why it is suggested:** wheat adds a winter cereal and rye covers the soil between
+the harvest and the corn sowing. It tackles the problem of bare soil and erosion.
 
-**Evidencia:**
-- Las cubiertas de centeno reducen erosión y escorrentía; el efecto depende de la
-  biomasa y de la fecha de terminación.
-- El trigo como cereal de invierno diversifica la secuencia y puede mejorar el uso
-  de la ventana de siembra.
-- Fuentes: [USDA SARE — Cover Crops](https://www.sare.org/resources/cover-crops/),
+**Evidence:**
+- Rye covers reduce erosion and runoff; the effect depends on biomass and termination
+  date.
+- Wheat as a winter cereal diversifies the sequence and can improve use of the sowing
+  window.
+- Sources: [USDA SARE — Cover Crops](https://www.sare.org/resources/cover-crops/),
   [USDA NRCS — Soil Health](https://www.nrcs.usda.gov/conservation-basics/natural-resource-concerns/soil/soil-health).
 
-**Beneficios:**
-- Cobertura del suelo en invierno y primavera.
-- Reducción del riesgo de erosión y de pérdida de nutrientes.
-- Supresión de malas hierbas y aporte de residuo.
-- Diversificación de la secuencia con un cereal de invierno.
+**Benefits:**
+- Soil cover in winter and spring.
+- Lower risk of erosion and nutrient loss.
+- Weed suppression and residue input.
+- Diversification of the sequence with a winter cereal.
 
-**Lagunas de datos:**
-- Biomasa y calidad de la cubierta a escala de campo.
-- Fecha real de terminación y su efecto sobre el agua del suelo.
-- Mercado y rentabilidad del trigo en Iowa.
-- Interacción con herbicidas y fertilización.
+**Data gaps:**
+- Biomass and quality of the cover at field scale.
+- Actual termination date and its effect on soil water.
+- Market and profitability of wheat in Iowa.
+- Interaction with herbicides and fertilisation.
 
-**Riesgos para revisión local:**
-- El centeno puede inmovilizar N si se termina tarde o con alta relación C/N.
-- La terminación debe coincidir con la ventana de siembra del maíz.
-- El trigo necesita un mercado y una logística que no siempre existen.
-- En años secos, la cubierta puede consumir agua que necesita el cultivo.
+**Risks for local review:**
+- Rye can immobilise N if terminated late or with a high C/N ratio.
+- Termination must coincide with the corn sowing window.
+- Wheat needs a market and logistics that do not always exist.
+- In dry years, the cover can use water the crop needs.
 
-**Hipótesis para el modelo:** mejor en cobertura y erosión; el agua y el mercado
-pueden penalizarla.
+**Hypothesis for the model:** better on cover and erosion; water and market may
+penalise it.
 
 ---
 
-## R3 — Maíz–soja–alfalfa
+## R3 — Corn–soybean–alfalfa
 
-**Secuencia:** maíz → soja → alfalfa → alfalfa → maíz (4–5 años).
+**Sequence:** corn → soybean → alfalfa → alfalfa → corn (4–5 years).
 
-**Por qué se sugiere:** la alfalfa es una leguminosa perenne de raíz profunda. Puede
-aportar N, mejorar la estructura del suelo y abrir una opción forrajera.
+**Why it is suggested:** alfalfa is a deep-rooted perennial legume. It can supply N,
+improve soil structure and open a forage option.
 
-**Evidencia:**
-- Las leguminosas perennes fijan N y dejan residuo de raíz; el crédito para el cultivo
-  siguiente depende de la edad y del manejo.
-- La raíz profunda puede mejorar infiltración y acceso al agua en capas profundas.
-- Fuentes: [Iowa State University Extension](https://crops.extension.iastate.edu/),
+**Evidence:**
+- Perennial legumes fix N and leave root residue; the credit for the following crop
+  depends on age and management.
+- The deep root can improve infiltration and access to water in deep layers.
+- Sources: [Iowa State University Extension](https://crops.extension.iastate.edu/),
   [Iowa State Ag Decision Maker](https://www.extension.iastate.edu/agdm/).
 
-**Beneficios:**
-- Aporte de N y reducción de la fertilización sintética.
-- Mejora de estructura, infiltración y cobertura del suelo.
-- Opción de forraje para ganado.
-- Diversidad biológica y ruptura de ciclos de plagas.
+**Benefits:**
+- N supply and reduced synthetic fertilisation.
+- Improved soil structure, infiltration and cover.
+- Forage option for livestock.
+- Biological diversity and breaking of pest cycles.
 
-**Lagunas de datos:**
-- Demanda de forraje y precio local.
-- Coste de establecimiento y riesgo de fallo.
-- Crédito de N según edad de la alfalfa.
-- Consumo de agua y efecto sobre el acuífero.
+**Data gaps:**
+- Forage demand and local price.
+- Establishment cost and risk of failure.
+- N credit depending on alfalfa age.
+- Water use and effect on the aquifer.
 
-**Riesgos para revisión local:**
-- Establecimiento lento y sensible a sequía.
-- Necesita mercado forrajero o ganado; sin él, la rotación no es viable.
-- Maquinaria y manejo distintos a maíz/soja.
-- En años secos, la alfalfa puede competir por agua.
+**Risks for local review:**
+- Slow establishment, sensitive to drought.
+- Needs a forage market or livestock; without it, the rotation is not viable.
+- Machinery and management differ from corn/soybean.
+- In dry years, alfalfa can compete for water.
 
-**Hipótesis para el modelo:** mejor en suelo y N; alta incertidumbre en mercado y
-establecimiento.
+**Hypothesis for the model:** better on soil and N; high uncertainty on market and
+establishment.
 
 ---
 
-## Matriz de prioridades (hipótesis, no resultados)
+## Priority matrix (hypotheses, not results)
 
-| Prioridad | R0 | R1 | R2 | R3 |
+| Priority | R0 | R1 | R2 | R3 |
 | --- | --- | --- | --- | --- |
-| Agua | Media | Media | Media | Media-alta |
-| Salud del suelo | Baja-media | Alta | Alta | Alta |
-| Rentabilidad | Alta | Media | Media | Media |
-| Riesgo operativo | Bajo | Medio | Medio | Alto |
-| Mercado | Muy líquido | Limitado | Limitado | Depende de forraje |
+| Water | Medium | Medium | Medium | Medium-high |
+| Soil health | Low-medium | High | High | High |
+| Profitability | High | Medium | Medium | Medium |
+| Operational risk | Low | Medium | Medium | High |
+| Market | Very liquid | Limited | Limited | Depends on forage |
 
-Esta tabla sirve para discutir, no para puntuar. El modelo debe calcular cada
-indicador con datos y mostrar la incertidumbre. Si un indicador no tiene dato, se
-marca como laguna.
+This table is for discussion, not for scoring. The model must compute each indicator
+from data and show the uncertainty. If an indicator has no data, it is marked as a
+gap.
 
 ---
 
-## De mecanismo a indicador
+## From mechanism to indicator
 
-| Mecanismo | Indicador | Fuente | Cómo se calcula |
+| Mechanism | Indicator | Source | How it is computed |
 | --- | --- | --- | --- |
-| Diversidad de cultivos | Shannon de 4 años | CDL | Proporción de cada cultivo en la ventana |
-| Cobertura del suelo | Meses con cobertura | CDL/NLCD | Conteo de meses con cultivo o cubierta |
-| Fijación de N | Años con leguminosa | Rotación | Años de leguminosa × crédito local |
-| Erosión | Proxy de pendiente × lluvia × cobertura | SRTM + POWER | Normalizar y combinar |
-| Estrés hídrico | Lluvia vs demanda | POWER (+ OpenET) | Balance simplificado, documentado |
-| Estrés térmico | Días > 32 °C | POWER | Conteo con umbral configurable |
-| Heladas | Días < 0 °C | POWER | Conteo con umbral configurable |
-| Ruptura de plagas | Años entre mismo cultivo | CDL | Distancia en la secuencia |
-| Suelo | AWC y drenaje | SSURGO | Media ponderada por componente |
-| Mercado | Precio/volumen o input | QuickStats/AMS/agricultor | Cualitativo o serie histórica |
+| Crop diversity | 4-year Shannon | CDL | Share of each crop in the window |
+| Soil cover | Months with cover | CDL/NLCD | Count of months with crop or cover |
+| N fixation | Years with legume | Rotation | Legume years × local credit |
+| Erosion | Proxy of slope × rainfall × cover | SRTM + POWER | Normalise and combine |
+| Water stress | Rainfall vs demand | POWER (+ OpenET) | Simplified, documented balance |
+| Heat stress | Days > 32 °C | POWER | Count with configurable threshold |
+| Frost | Days < 0 °C | POWER | Count with configurable threshold |
+| Pest breaking | Years between same crop | CDL | Distance in the sequence |
+| Soil | AWC and drainage | SSURGO | Weighted mean by component |
+| Market | Price/volume or input | QuickStats/AMS/farmer | Qualitative or historical series |
 
-## Cómo usarlo en la app
+## How to use it in the app
 
-Cada rotación debe renderizarse con la misma estructura:
+Each rotation must be rendered with the same structure:
 
-1. **Por qué** (una frase).
-2. **Evidencia** (mecanismo + fuente + fecha).
-3. **Beneficios** (2–4 bullets).
-4. **Lagunas** (qué falta y cómo afecta).
-5. **Revisión local** (qué debe comprobar el agricultor).
+1. **Why** (one sentence).
+2. **Evidence** (mechanism + source + date).
+3. **Benefits** (2–4 bullets).
+4. **Gaps** (what is missing and how it affects).
+5. **Local review** (what the farmer must check).
 
-Si una rotación no tiene alguna sección, la UI debe mostrar "sin datos" en lugar de
-inventar contenido.
+If a rotation lacks a section, the UI must show "no data" instead of inventing
+content.

@@ -8,7 +8,7 @@ from pipeline.export_app_indicators import GEOJSON, INDICATORS, exportar
 
 @unittest.skipUnless(
     INDICATORS.exists() and GEOJSON.exists(),
-    "requiere indicators.json y el GeoJSON de la app",
+    "requires indicators.json and the app GeoJSON",
 )
 class TestExportApp(unittest.TestCase):
     def test_export_antequera(self):

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Calculadora explicable de rotaciones de cultivo (Ciberpiso - Campiña de Antequera).
+"""Explainable crop rotation calculator (Ciberpiso - Campiña de Antequera).
 
-Lee el catálogo de cultivos y los escenarios reales por finca, calcula las cuatro
-rotaciones y escribe `data/processed/indicators.json` para la web. Sin caja negra:
-cada nota se puede reconstruir a partir de sus componentes.
+Reads the crop catalogue and the real per-farm scenarios, computes the four
+rotations and writes `data/processed/indicators.json` for the web. No black box:
+each score can be rebuilt from its components.
 
-Uso:
+Usage:
     python3 pipeline/calculator.py
 """
 
@@ -45,7 +45,7 @@ GLOSSARY = {
 
 SOURCES = [
     {
-        "name": "NASA POWER",
+        "name": "POWER",
         "url": "https://power.larc.nasa.gov/",
         "use": "Lluvia, temperatura, ET0 y déficit hídrico por celda.",
     },
@@ -102,24 +102,24 @@ PRIORITY_KEYS = {"water", "soil", "profit", "risk"}
 
 
 def normalizar_pesos(weights: dict) -> dict:
-    """Valida y normaliza pesos de prioridad; deben sumar 1."""
+    """Validate and normalise priority weights; they must sum to 1."""
     limpios = {}
     for key, value in weights.items():
         if key not in PRIORITY_KEYS:
-            raise ValueError(f"Prioridad desconocida: {key}")
+            raise ValueError(f"Unknown priority: {key}")
         valor = float(value)
         if valor < 0:
-            raise ValueError(f"Peso negativo en {key}")
+            raise ValueError(f"Negative weight in {key}")
         limpios[key] = valor
     total = sum(limpios.values())
     if total <= 0:
-        raise ValueError("Los pesos deben sumar más de 0")
+        raise ValueError("The weights must sum to more than 0")
     return {k: v / total for k, v in limpios.items()}
 
 
 def leer_csv(path: Path) -> list[dict]:
     if not path.exists():
-        raise FileNotFoundError(f"No existe {path}")
+        raise FileNotFoundError(f"{path} does not exist")
     with path.open(newline="", encoding="utf-8") as fh:
         return list(csv.DictReader(fh))
 
@@ -147,7 +147,7 @@ def load_scenarios(path: Path = SCENARIOS_PATH) -> list[dict]:
 
 
 def load_calibration(path: Path = CALIBRATION_PATH) -> dict:
-    """Carga los parámetros calibrados; si no existen, usa los valores por defecto."""
+    """Load the calibrated parameters; if they do not exist, use the default values."""
     calibracion = dict(DEFAULT_CALIBRATION)
     if path.exists():
         calibracion.update(json.loads(path.read_text(encoding="utf-8")))
@@ -155,9 +155,9 @@ def load_calibration(path: Path = CALIBRATION_PATH) -> dict:
 
 
 def load_content(path: Path = CONTENT_PATH) -> dict:
-    """Carga las fichas explicativas de cada rotación."""
+    """Load the explanatory sheets of each rotation."""
     if not path.exists():
-        raise FileNotFoundError(f"No existe {path}")
+        raise FileNotFoundError(f"{path} does not exist")
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -168,7 +168,7 @@ def _num(value, default=None):
 
 
 def latest_price(rows: list[dict], column: str) -> tuple[float | None, int | None]:
-    """Ultimo precio disponible; si la campana no lo tiene, usa el anterior."""
+    """Latest available price; if the season has none, use the previous one."""
     for row in sorted(rows, key=lambda r: int(r["campana"]), reverse=True):
         value = _num(row.get(column))
         if value is not None:
@@ -177,7 +177,7 @@ def latest_price(rows: list[dict], column: str) -> tuple[float | None, int | Non
 
 
 def planning_scenario(rows: list[dict]) -> dict:
-    """Resume las 6 campanas de una finca en el escenario que puntua la calculadora."""
+    """Summarise the 6 seasons of a farm into the scenario that the calculator scores."""
     first = rows[0]
     frost = [_num(r["dias_helada"]) for r in rows if _num(r["dias_helada"]) is not None]
     prices = {}
@@ -254,7 +254,7 @@ def _water_score(
     deficit_mm: float | None = None,
     reference_deficit_mm: float = 900.0,
 ) -> float:
-    """Nota de agua. Con déficit usa P-ET0; sin él, conserva el modo lluvia antiguo."""
+    """Water score. With deficit it uses P-ET0; without it, it keeps the old rain mode."""
     if deficit_mm is not None:
         drought_factor = min(
             3.0, max(0.25, deficit_mm / max(reference_deficit_mm, 1.0))
@@ -330,7 +330,7 @@ def calculate_scores(
     custom_weights: dict | None = None,
     constraints: dict | None = None,
 ) -> dict:
-    """Motor de reglas puro. Devuelve las cuatro rotaciones con notas 0-100."""
+    """Pure rule engine. Returns the four rotations with scores 0-100."""
     calibracion = calibration or DEFAULT_CALIBRATION
     reference_deficit = float(calibracion.get("water_reference_deficit_mm", 900.0))
     use_deficit = calibracion.get("water_model", "deficit") == "deficit"
@@ -461,7 +461,7 @@ def calculate_scores(
             "confidence": "low",
             "confidence_score": 0.4,
             "data_gaps": [
-                "Clima de celda NASA POWER (~50 km), no de la parcela",
+                "Clima de celda POWER (~50 km), no de la parcela",
                 "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
                 "Sin rendimientos ni costes: la nota de precio no es margen",
             ],
@@ -586,7 +586,7 @@ def _dynamic_evidence(
 
     evidencia = [
         {
-            "source": "NASA POWER",
+            "source": "POWER",
             "url": "https://power.larc.nasa.gov/",
             "date": "2002-2025",
             "value": (
@@ -670,7 +670,7 @@ def _dynamic_evidence(
 
 
 def _merge_evidence(static: list[dict], dynamic: list[dict]) -> list[dict]:
-    """Une por fuente para no repetir NASA/MODIS/SoilGrids en cada ficha."""
+    """Group by source so as not to repeat POWER/MODIS/SoilGrids on every sheet."""
     merged: list[dict] = []
     index: dict[str, int] = {}
     for item in list(static) + list(dynamic):
@@ -692,7 +692,7 @@ def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
         "water": {
             "value": data["water"],
             "unit": "índice 0-100",
-            "source": "NASA POWER",
+            "source": "POWER",
             "date": "2002-2025",
             "confidence": "medium",
             "gap": f"Déficit medio {deficit:.0f} mm; celda de ~50 km"
@@ -723,7 +723,7 @@ def _indicator_metadata(rid: str, data: dict, scenario: dict) -> dict:
         "risk": {
             "value": data["risk"],
             "unit": "índice 0-100",
-            "source": "NASA POWER",
+            "source": "POWER",
             "date": "2002-2025",
             "confidence": "low",
             "gap": "Umbrales expertos; no validados con daños observados",
@@ -771,7 +771,7 @@ def build_indicators(
         profiles["custom"] = normalizar_pesos(custom_weights)
     rows = load_scenarios(scenarios_path)
     if not rows:
-        raise ValueError(f"{scenarios_path} está vacío")
+        raise ValueError(f"{scenarios_path} is empty")
 
     groups: dict[str, list[dict]] = {}
     for row in rows:
@@ -875,7 +875,7 @@ def build_indicators(
         "aoi": "antequera-malaga",
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "real_data_provisional",
-        "source": "NASA POWER + SoilGrids + MODIS + Eurostat",
+        "source": "POWER + SoilGrids + MODIS + Eurostat",
         "method": "reglas_explicables_v2",
         "disclaimer": DISCLAIMER,
         "glossary": GLOSSARY,
@@ -914,11 +914,11 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=OUT_PATH)
     ap.add_argument(
         "--weights",
-        help='Pesos personalizados, JSON o ruta. Ej: {"water":0.5,"soil":0.3,"profit":0.1,"risk":0.1}',
+        help='Custom weights, JSON or path. E.g.: {"water":0.5,"soil":0.3,"profit":0.1,"risk":0.1}',
     )
     ap.add_argument(
         "--constraints",
-        help='Restricciones, JSON o ruta. Ej: {"max_water_demand":2.5,"market_safe":true,"max_crops":2}',
+        help='Constraints, JSON or path. E.g.: {"max_water_demand":2.5,"market_safe":true,"max_crops":2}',
     )
     args = ap.parse_args()
 
@@ -934,7 +934,7 @@ def main() -> None:
         json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
 
-    print(f"{data['summary']['fincas']} fincas -> {args.out.relative_to(BASE_DIR)}")
+    print(f"{data['summary']['fincas']} farms -> {args.out.relative_to(BASE_DIR)}")
     for profile, counts in data["summary"]["top_por_perfil"].items():
         print(f"  {profile}: {counts}")
 

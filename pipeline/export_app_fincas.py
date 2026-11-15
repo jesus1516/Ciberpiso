@@ -1,18 +1,18 @@
-"""Polígonos de las fincas de una provincia para el mapa de la app (app/public/data/).
+"""Farm polygons of a province for the app map (app/public/data/).
 
-Une los recintos SIGPAC de cada finca (parcela) en un polígono, lo simplifica un poco
-para que el navegador lo cargue rápido y le añade los atributos de
-data/<copia>/csv/<pp_provincia>/fincas.csv (las dos copias tienen las mismas filas).
-Escribe un GeoJSON comprimido por municipio (la app solo descarga el municipio que se
-abre) y un GeoJSON con el contorno de cada municipio para la vista de provincia.
-Cada finca lleva `apt`: por qué no parece campo de cultivo (ver aptitud()), o null.
-Necesita el GeoPackage de recintos extraído por pipeline.sigpac.
+Merges the SIGPAC enclosures of each farm (plot) into one polygon, simplifies it a bit
+so the browser loads it fast and adds the attributes of
+data/<copy>/csv/<pp_provincia>/fincas.csv (both copies have the same rows).
+Writes one compressed GeoJSON per municipality (the app only downloads the municipality
+that is opened) and a GeoJSON with the outline of each municipality for the province view.
+Each farm carries `apt`: why it does not look like cropland (see aptitud()), or null.
+Needs the enclosures GeoPackage extracted by pipeline.sigpac.
 
-Uso:
+Usage:
     python -m pipeline.export_app_fincas                 # Málaga (29)
     python -m pipeline.export_app_fincas --provincia 29
 
-Salida:
+Output:
     app/public/data/fincas/{municipio_key}.geojson.gz
     app/public/data/municipios_{provincia}.geojson
 """
@@ -32,8 +32,8 @@ from pipeline.common import DATA, ROOT
 from pipeline.sigpac import NAT, gpkg_de
 
 UTM = 25830
-TOLERANCIA_M = 1.5  # simplificación de fincas en metros
-CIERRE_M = 15  # cierra los huecos de caminos entre fincas al dibujar el municipio
+TOLERANCIA_M = 1.5  # farm simplification in metres
+CIERRE_M = 15  # closes the gaps of tracks between farms when drawing the municipality
 TOLERANCIA_MUNICIPIO_M = 20
 SALIDA = ROOT / "app" / "public" / "data"
 PROPS = {
@@ -50,17 +50,17 @@ PROPS = {
     "es_candidata": "cand",
 }
 WC = ["wc_urbano_pct", "wc_agua_pct", "wc_suelo_desnudo_pct", "wc_matorral_pct", "wc_arbolado_pct"]
-PENDIENTE_FUERTE = 30  # % de pendiente: por encima, el laboreo y la maquinaria son muy difíciles
-PARCELA_DOMINIO_PUBLICO = 9000  # en catastro y SIGPAC, las parcelas 9000+ son caminos, carreteras y cauces
+PENDIENTE_FUERTE = 30  # % slope: above it, tillage and machinery are very difficult
+PARCELA_DOMINIO_PUBLICO = 9000  # in the cadastre and SIGPAC, plots 9000+ are tracks, roads and watercourses
 
 
 def aptitud(f: pd.Series) -> str | None:
-    """Por qué una finca no parece campo de cultivo (None = parece apta).
+    """Why a farm does not look like cropland (None = looks suitable).
 
-    Reglas sobre la cobertura ESA WorldCover (% de la finca), la pendiente NASADEM y el número de
-    parcela: urbano, agua y dominio público (parcelas 9000+) no son agrícolas; roca, monte y
-    pendiente fuerte son de uso limitado.
-    El arbolado en pendiente suave no se marca: en Málaga suele ser olivar o almendral.
+    Rules on ESA WorldCover cover (% of the farm), SRTM-derived DEM slope and the plot
+    number: built-up, water and public land (plots 9000+) are not agricultural; rock, mountain and
+    steep slope are of limited use.
+    Trees on gentle slopes are not marked: in Málaga they are usually olive or almond groves.
     """
     if pd.isna(f["wc_urbano_pct"]):
         return None
@@ -91,13 +91,13 @@ def _geojson(gdf: gpd.GeoDataFrame) -> bytes:
 
 
 def _redondear(c):
-    return round(c, 5) if isinstance(c, float) else [_redondear(x) for x in c]  # 5 decimales ≈ 1 m
+    return round(c, 5) if isinstance(c, float) else [_redondear(x) for x in c]  # 5 decimals ≈ 1 m
 
 
 def _csv_provincia(prov: int) -> Path:
     carpetas = sorted(DATA.glob(f"*/csv/{prov:02d}_*/"))
     if not carpetas:
-        raise SystemExit(f"No hay CSV de la provincia {prov} en data/*/csv/")
+        raise SystemExit(f"No CSV for province {prov} in data/*/csv/")
     return carpetas[0]
 
 
@@ -113,7 +113,7 @@ def exportar(prov: int) -> None:
     parts = [rec[k].astype("int64").astype(str) for k in NAT]
     rec["parcela_id"] = parts[0].str.cat(parts[1:], sep=":")
     rec = rec[["parcela_id", "geometry"]].to_crs(UTM)
-    rec["geometry"] = rec.geometry.make_valid()  # algunos recintos SIGPAC traen anillos inválidos
+    rec["geometry"] = rec.geometry.make_valid()  # some SIGPAC enclosures bring invalid rings
     geo = rec.dissolve("parcela_id").reset_index()
     geo["geometry"] = geo.geometry.simplify(TOLERANCIA_M, preserve_topology=True)
     geo = geo.merge(fincas, on="parcela_id").rename(columns=PROPS)
@@ -139,8 +139,8 @@ def exportar(prov: int) -> None:
     municipios = SALIDA / f"municipios_{prov:02d}.geojson"
     municipios.write_bytes(_geojson(muni[["mun", "nombre", "fincas", "ha", "candidatas", "geometry"]]))
 
-    print(f"{len(geo):,} de {len(fincas):,} fincas en {geo['mun'].nunique()} municipios -> "
-          f"{carpeta.relative_to(ROOT)}/ ({total / 1e6:.1f} MB comprimido)")
+    print(f"{len(geo):,} of {len(fincas):,} farms in {geo['mun'].nunique()} municipalities -> "
+          f"{carpeta.relative_to(ROOT)}/ ({total / 1e6:.1f} MB compressed)")
     print(f"Municipios -> {municipios.relative_to(ROOT)} ({municipios.stat().st_size / 1e6:.1f} MB)")
 
 

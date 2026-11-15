@@ -8,10 +8,26 @@
   --color-surface: #fcfcfb;
   --color-line: #e1e0d9;
   --color-brand: #1c5cab;
-  --color-good: #0ca30c;
-  --color-warning: #fab219;
-  --color-critical: #d03b3b;
+  /* Status colours for light surfaces: blue / orange / magenta-red, distinguishable with deuteranopia and
+     protanopia and ≥ 4.5:1 on --color-surface (tokens.test.ts). Always pair them with a word or an icon.
+     The dark explorer has its own set (--good / --warn / --bad in explorer/explorer.css). */
+  --color-good: #0b63c5;
+  --color-warning: #a85a00;
+  --color-critical: #b3205f;
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Text scale: settings.ts sets --ts (1, 1.25, 1.5) and the root font size; 1 until it runs. */
+:root {
+  --ts: 1;
+}
+
+/* High-contrast mode (Settings → explorer/settings.ts) for the light surfaces: the Full data drawer and the Sources dialog. */
+:root[data-contrast="high"] {
+  --color-ink: #000000;
+  --color-ink-2: #1a1a1a;
+  --color-muted: #262626;
+  --color-line: #4d4d4d;
 }
 
 html, body, #root {
@@ -20,19 +36,19 @@ html, body, #root {
 }
 
 body {
-  background: #0d0d0d;
+  background: var(--color-ink);
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
 
-.finca-popup .maplibregl-popup-content {
+.farm-popup .maplibregl-popup-content {
   padding: 6px 10px;
   font-size: 12px;
   white-space: pre-line;
   pointer-events: none;
 }
 
-.finca-popup .maplibregl-popup-tip {
+.farm-popup .maplibregl-popup-tip {
   display: none;
 }
 
