@@ -76,7 +76,7 @@ test('a municipality outside Antequera (Ronda 29084) and a farm there (290026393
   await expect(page.getByRole('heading', { name: 'Ronda' })).toBeVisible()
   // The "Candidate" legend chip is only shown when the municipality has project candidates
   const candidates = await state(page, (s) => s.municipality.candidatas as number)
-  await expect(page.locator('.chips').getByText('Candidate', { exact: true })).toHaveCount(candidates > 0 ? 1 : 0)
+  await expect(page.locator('.chips').getByText(/^★?\s*Candidate$/)).toHaveCount(candidates > 0 ? 1 : 0)
 
   expect(await page.evaluate((id) => !!(window as any).__xp.getFarm(id), FARMS.ronda)).toBe(true)
   await toFarm(page, MUNICIPALITIES.ronda, FARMS.ronda)
