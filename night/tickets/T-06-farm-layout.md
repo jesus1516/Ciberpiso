@@ -4,7 +4,7 @@ title: Farm view redesign - terrain on one side, all cards in a column
 model: opus
 effort: high
 depends: ["T-01", "T-03"]
-files: ["app/src/explorer/**"]
+files: ["app/src/explorer/**", "app/e2e/**"]
 maxAttempts: 2
 timeoutMin: 150
 ---
@@ -31,6 +31,11 @@ hands over a screen rectangle `tileRect` and a snapshot; keep that hand-off seam
    (it may open as a drawer over the column), the map → 3D entry animation and the exit.
 4. Nothing may overlap at 1440×900, 1280×720, 1024×768 and 390×844 (check with the e2e layout
    tests from T-04 if they exist: `npm run test:e2e`).
+
+## Tests
+You may update `app/e2e/**` to match the new UI: remove `test.fail`/known-failure entries that
+your change fixes, adapt selectors, and add viewports you are asked to check. Never weaken a
+check to hide a real problem.
 
 ## Acceptance criteria
 - [ ] Column + terrain layout on desktop, stacked on phones, no overlaps at the four sizes.

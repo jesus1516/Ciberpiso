@@ -152,8 +152,14 @@ async function prepareSlot(slot, t, ts) {
   git(dir, 'clean', '-fd')
   git(dir, 'fetch', 'origin', '--prune')
   const branch = `night/${t.id}`
+  // A branch can only be checked out in one worktree: free it if another slot still holds it.
+  const holders = git(ROOT, 'worktree', 'list', '--porcelain').split('\n\n')
+    .filter((b) => b.includes(`branch refs/heads/${branch}`)).map((b) => b.split('\n')[0].slice('worktree '.length))
+  for (const h of holders) if (resolve(h) !== resolve(dir)) git(h, 'checkout', '--detach')
   const exists = tryGit(dir, 'rev-parse', '--verify', branch).ok
-  if (exists && ts.attempts > 0 && !ts.restart) {
+  // Resume an existing branch that already has work (retry, or a session cut by a restart).
+  const hasWork = exists && git(dir, 'rev-list', '--count', `origin/${CONFIG.integration}..${branch}`) !== '0'
+  if (exists && (ts.attempts > 0 || hasWork) && !ts.restart) {
     git(dir, 'checkout', branch)
     // Bring the branch up to date with what other tickets merged meanwhile.
     const merge = tryGit(dir, 'merge', '--no-edit', `origin/${CONFIG.integration}`)
@@ -166,7 +172,8 @@ async function prepareSlot(slot, t, ts) {
     git(dir, 'checkout', '-B', branch, `origin/${CONFIG.integration}`)
     ts.restart = false
   }
-  ts.base = git(dir, 'rev-parse', 'HEAD')
+  // Changes are judged against the integration branch, not against where a retry resumed.
+  ts.base = git(dir, 'merge-base', 'HEAD', `origin/${CONFIG.integration}`)
   // Dependencies: reinstall only when the lockfile changed.
   const lock = join(dir, 'app', 'package-lock.json')
   const marker = join(dir, 'app', 'node_modules', '.night-lock')
@@ -181,11 +188,17 @@ async function prepareSlot(slot, t, ts) {
 }
 
 // ------------------------------------------------------------------ Claude sessions
-const LIMIT_RE = /usage limit|rate limit|limit reached|hit your limit|limit will reset|resets? (at|in)|overloaded|529/i
+const LIMIT_RE = /usage.?limit|rate.?limit|limit reached|hit your .{0,20}limit|limit will reset|overloaded|"api_error_status":(429|529)/i
+/** Reset time from "...|1712345678" or "resets 4am" / "resets 4:30pm" (local time); 0 if unknown. */
 function limitResetAt(text) {
   const epoch = text.match(/limit reached\|(\d{10})/)
   if (epoch) return Number(epoch[1]) * 1000
-  return 0
+  const m = text.match(/resets (\d{1,2})(?::(\d{2}))?\s*(am|pm)/i)
+  if (!m) return 0
+  const d = new Date()
+  d.setHours((Number(m[1]) % 12) + (m[3].toLowerCase() === 'pm' ? 12 : 0), Number(m[2] ?? 0), 0, 0)
+  if (d.getTime() < Date.now()) d.setDate(d.getDate() + 1)
+  return d.getTime()
 }
 async function claude({ prompt, model, effort, cwd, timeoutMin, logFile, schema, readOnly = false }) {
   const args = ['-p', '--model', model, '--effort', effort, '--output-format', 'json',
@@ -198,7 +211,8 @@ async function claude({ prompt, model, effort, cwd, timeoutMin, logFile, schema,
   let result = null
   try { result = JSON.parse(out.slice(out.indexOf('{'))) } catch { /* not JSON */ }
   const text = result?.result ?? out
-  const limited = (code !== 0 || result?.is_error) && LIMIT_RE.test(text + out)
+  const limited = result?.api_error === 'usage_limit_reached' || [429, 529].includes(result?.api_error_status) ||
+    ((code !== 0 || result?.is_error) && LIMIT_RE.test(text + out))
   return { code, result, text: String(text), limited, resetAt: limited ? limitResetAt(text + out) : 0, cost: result?.total_cost_usd ?? 0 }
 }
 
@@ -417,7 +431,12 @@ async function main() {
           log(`${t.id}: orchestrator error ${e.stack}`)
           notify(`${t.id} error`, String(e.message).slice(0, 120))
         })
-        .finally(() => { running.delete(slot); publishSummary(tickets, false) })
+        .finally(() => {
+          // Free the ticket branch so a retry can use it from any slot.
+          tryGit(join(SLOTS_DIR, `slot-${slot}`), 'checkout', '--detach')
+          running.delete(slot)
+          publishSummary(tickets, false)
+        })
       running.set(slot, { t, promise })
       await sleep(2000)
     }
