@@ -3,7 +3,7 @@
   "aoi": "antequera-malaga",
   "generated_at": "2026-11-14T14:21:22+00:00",
   "status": "real_data_provisional",
-  "source": "NASA POWER + SoilGrids + MODIS + Eurostat",
+  "source": "POWER + SoilGrids + MODIS + Eurostat",
   "method": "reglas_explicables_v2",
   "disclaimer": "Herramienta de apoyo a la decisión. Ordena opciones y declara incertidumbre; no sustituye al agricultor, al agrónomo ni a una revisión local.",
   "glossary": {
@@ -19,7 +19,7 @@
   },
   "sources": [
     {
-      "name": "NASA POWER",
+      "name": "POWER",
       "url": "https://power.larc.nasa.gov/",
       "use": "Lluvia, temperatura, ET0 y déficit hídrico por celda."
     },
@@ -278,7 +278,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -307,7 +307,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -338,7 +338,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -365,7 +365,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -472,7 +472,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -515,7 +515,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -537,7 +537,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -564,7 +564,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -671,7 +671,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -721,7 +721,7 @@
               "value": "Arcilla 31%; pH 7.9; agua disponible 132 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -737,7 +737,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -764,7 +764,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -871,7 +871,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -901,7 +901,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -930,7 +930,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -957,7 +957,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -1152,7 +1152,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -1181,7 +1181,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -1212,7 +1212,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -1239,7 +1239,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -1346,7 +1346,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -1389,7 +1389,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -1411,7 +1411,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -1438,7 +1438,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -1545,7 +1545,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -1595,7 +1595,7 @@
               "value": "Arcilla 31%; pH 7.9; agua disponible 134 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -1611,7 +1611,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -1638,7 +1638,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -1745,7 +1745,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -1775,7 +1775,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -1804,7 +1804,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -1831,7 +1831,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -2026,7 +2026,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -2055,7 +2055,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -2086,7 +2086,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -2113,7 +2113,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -2220,7 +2220,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -2263,7 +2263,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -2285,7 +2285,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -2312,7 +2312,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -2419,7 +2419,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -2469,7 +2469,7 @@
               "value": "Arcilla 33%; pH 7.8; agua disponible 130 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -2485,7 +2485,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -2512,7 +2512,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -2619,7 +2619,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -2649,7 +2649,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -2678,7 +2678,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -2705,7 +2705,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -2900,7 +2900,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -2929,7 +2929,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -2960,7 +2960,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -2987,7 +2987,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -3094,7 +3094,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -3137,7 +3137,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -3159,7 +3159,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -3186,7 +3186,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -3293,7 +3293,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -3343,7 +3343,7 @@
               "value": "Arcilla 24%; pH 7.8; agua disponible 146 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -3359,7 +3359,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -3386,7 +3386,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -3493,7 +3493,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -3523,7 +3523,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -3552,7 +3552,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -3579,7 +3579,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -3774,7 +3774,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -3803,7 +3803,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -3834,7 +3834,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -3861,7 +3861,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -3968,7 +3968,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -4011,7 +4011,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -4033,7 +4033,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -4060,7 +4060,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -4167,7 +4167,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -4217,7 +4217,7 @@
               "value": "Arcilla 28%; pH 7.8; agua disponible 142 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -4233,7 +4233,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -4260,7 +4260,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -4367,7 +4367,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -4397,7 +4397,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -4426,7 +4426,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -4453,7 +4453,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -4648,7 +4648,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -4677,7 +4677,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -4708,7 +4708,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -4735,7 +4735,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -4842,7 +4842,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -4885,7 +4885,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -4907,7 +4907,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -4934,7 +4934,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -5041,7 +5041,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -5091,7 +5091,7 @@
               "value": "Arcilla 30%; pH 7.8; agua disponible 134 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -5107,7 +5107,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -5134,7 +5134,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -5241,7 +5241,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -5271,7 +5271,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -5300,7 +5300,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -5327,7 +5327,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -5522,7 +5522,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -5551,7 +5551,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -5582,7 +5582,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -5609,7 +5609,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -5716,7 +5716,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -5759,7 +5759,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -5781,7 +5781,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -5808,7 +5808,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -5915,7 +5915,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -5965,7 +5965,7 @@
               "value": "Arcilla 26%; pH 7.9; agua disponible 144 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -5981,7 +5981,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -6008,7 +6008,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -6115,7 +6115,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -6145,7 +6145,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -6174,7 +6174,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -6201,7 +6201,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -6396,7 +6396,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -6425,7 +6425,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -6456,7 +6456,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -6483,7 +6483,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -6590,7 +6590,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -6633,7 +6633,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -6655,7 +6655,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -6682,7 +6682,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -6789,7 +6789,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -6839,7 +6839,7 @@
               "value": "Arcilla 34%; pH 8.0; agua disponible 130 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -6855,7 +6855,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -6882,7 +6882,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -6989,7 +6989,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -7019,7 +7019,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -7048,7 +7048,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -7075,7 +7075,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -7270,7 +7270,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -7299,7 +7299,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -7330,7 +7330,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -7357,7 +7357,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -7464,7 +7464,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -7507,7 +7507,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -7529,7 +7529,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -7556,7 +7556,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -7663,7 +7663,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -7713,7 +7713,7 @@
               "value": "Arcilla 29%; pH 7.8; agua disponible 137 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -7729,7 +7729,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -7756,7 +7756,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -7863,7 +7863,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -7893,7 +7893,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -7922,7 +7922,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -7949,7 +7949,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -8144,7 +8144,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -8173,7 +8173,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -8204,7 +8204,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -8231,7 +8231,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -8338,7 +8338,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -8381,7 +8381,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -8403,7 +8403,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -8430,7 +8430,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -8537,7 +8537,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -8587,7 +8587,7 @@
               "value": "Arcilla 30%; pH 7.8; agua disponible 136 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -8603,7 +8603,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -8630,7 +8630,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -8737,7 +8737,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -8767,7 +8767,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -8796,7 +8796,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -8823,7 +8823,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -9018,7 +9018,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -9047,7 +9047,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -9078,7 +9078,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -9105,7 +9105,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -9212,7 +9212,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -9255,7 +9255,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -9277,7 +9277,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -9304,7 +9304,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -9411,7 +9411,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -9461,7 +9461,7 @@
               "value": "Arcilla 35%; pH 7.9; agua disponible 125 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -9477,7 +9477,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -9504,7 +9504,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -9611,7 +9611,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -9641,7 +9641,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -9670,7 +9670,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -9697,7 +9697,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -9892,7 +9892,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -9921,7 +9921,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -9952,7 +9952,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -9979,7 +9979,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -10086,7 +10086,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -10129,7 +10129,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -10151,7 +10151,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -10178,7 +10178,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -10285,7 +10285,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -10335,7 +10335,7 @@
               "value": "Arcilla 34%; pH 7.8; agua disponible 126 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -10351,7 +10351,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -10378,7 +10378,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -10485,7 +10485,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -10515,7 +10515,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -10544,7 +10544,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -10571,7 +10571,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -10766,7 +10766,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -10795,7 +10795,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -10826,7 +10826,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -10853,7 +10853,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -10960,7 +10960,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -11003,7 +11003,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -11025,7 +11025,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -11052,7 +11052,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -11159,7 +11159,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -11209,7 +11209,7 @@
               "value": "Arcilla 35%; pH 7.9; agua disponible 124 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -11225,7 +11225,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -11252,7 +11252,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -11359,7 +11359,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -11389,7 +11389,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -11418,7 +11418,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -11445,7 +11445,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -11640,7 +11640,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -11669,7 +11669,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -11700,7 +11700,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -11727,7 +11727,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -11834,7 +11834,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -11877,7 +11877,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -11899,7 +11899,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -11926,7 +11926,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -12033,7 +12033,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -12083,7 +12083,7 @@
               "value": "Arcilla 32%; pH 7.9; agua disponible 129 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -12099,7 +12099,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -12126,7 +12126,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -12233,7 +12233,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -12263,7 +12263,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -12292,7 +12292,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -12319,7 +12319,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -12514,7 +12514,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -12543,7 +12543,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -12574,7 +12574,7 @@
             "water": {
               "value": 63.4,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -12601,7 +12601,7 @@
             "risk": {
               "value": 51.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -12708,7 +12708,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -12751,7 +12751,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 501 mm; P20 387 mm; déficit 823 mm"
@@ -12773,7 +12773,7 @@
             "water": {
               "value": 65.9,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -12800,7 +12800,7 @@
             "risk": {
               "value": 55.0,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -12907,7 +12907,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -12957,7 +12957,7 @@
               "value": "Arcilla 35%; pH 7.9; agua disponible 121 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 501 mm; P20 387 mm; déficit 823 mm"
@@ -12973,7 +12973,7 @@
             "water": {
               "value": 65.9,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -13000,7 +13000,7 @@
             "risk": {
               "value": 55.0,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -13107,7 +13107,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -13137,7 +13137,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -13166,7 +13166,7 @@
             "water": {
               "value": 75.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -13193,7 +13193,7 @@
             "risk": {
               "value": 41.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -13388,7 +13388,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -13417,7 +13417,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -13448,7 +13448,7 @@
             "water": {
               "value": 63.4,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -13475,7 +13475,7 @@
             "risk": {
               "value": 51.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -13582,7 +13582,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -13625,7 +13625,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 501 mm; P20 387 mm; déficit 823 mm"
@@ -13647,7 +13647,7 @@
             "water": {
               "value": 65.9,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -13674,7 +13674,7 @@
             "risk": {
               "value": 55.0,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -13781,7 +13781,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -13831,7 +13831,7 @@
               "value": "Arcilla 33%; pH 7.9; agua disponible 122 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 501 mm; P20 387 mm; déficit 823 mm"
@@ -13847,7 +13847,7 @@
             "water": {
               "value": 65.9,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -13874,7 +13874,7 @@
             "risk": {
               "value": 55.0,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -13981,7 +13981,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -14011,7 +14011,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -14040,7 +14040,7 @@
             "water": {
               "value": 75.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -14067,7 +14067,7 @@
             "risk": {
               "value": 41.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -14262,7 +14262,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -14291,7 +14291,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -14322,7 +14322,7 @@
             "water": {
               "value": 63.4,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -14349,7 +14349,7 @@
             "risk": {
               "value": 51.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -14456,7 +14456,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -14499,7 +14499,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 501 mm; P20 387 mm; déficit 823 mm"
@@ -14521,7 +14521,7 @@
             "water": {
               "value": 65.9,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -14548,7 +14548,7 @@
             "risk": {
               "value": 55.0,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -14655,7 +14655,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -14705,7 +14705,7 @@
               "value": "Arcilla 36%; pH 8.0; agua disponible 120 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 501 mm; P20 387 mm; déficit 823 mm"
@@ -14721,7 +14721,7 @@
             "water": {
               "value": 65.9,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -14748,7 +14748,7 @@
             "risk": {
               "value": 55.0,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -14855,7 +14855,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -14885,7 +14885,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -14914,7 +14914,7 @@
             "water": {
               "value": 75.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 823 mm; celda de ~50 km",
@@ -14941,7 +14941,7 @@
             "risk": {
               "value": 41.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -15136,7 +15136,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -15165,7 +15165,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -15196,7 +15196,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -15223,7 +15223,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -15330,7 +15330,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -15373,7 +15373,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -15395,7 +15395,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -15422,7 +15422,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -15529,7 +15529,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -15579,7 +15579,7 @@
               "value": "Arcilla 34%; pH 7.8; agua disponible 125 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -15595,7 +15595,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -15622,7 +15622,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -15729,7 +15729,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -15759,7 +15759,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -15788,7 +15788,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -15815,7 +15815,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -16010,7 +16010,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -16039,7 +16039,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -16070,7 +16070,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -16097,7 +16097,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -16204,7 +16204,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -16247,7 +16247,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -16269,7 +16269,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -16296,7 +16296,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -16403,7 +16403,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -16453,7 +16453,7 @@
               "value": "Arcilla 35%; pH 7.9; agua disponible 127 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -16469,7 +16469,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -16496,7 +16496,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -16603,7 +16603,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -16633,7 +16633,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -16662,7 +16662,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -16689,7 +16689,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -16884,7 +16884,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -16913,7 +16913,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -16944,7 +16944,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -16971,7 +16971,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -17078,7 +17078,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -17121,7 +17121,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -17143,7 +17143,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -17170,7 +17170,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -17277,7 +17277,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -17327,7 +17327,7 @@
               "value": "Arcilla 35%; pH 7.9; agua disponible 126 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -17343,7 +17343,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -17370,7 +17370,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -17477,7 +17477,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -17507,7 +17507,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -17536,7 +17536,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -17563,7 +17563,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -17758,7 +17758,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -17787,7 +17787,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -17818,7 +17818,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -17845,7 +17845,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -17952,7 +17952,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -17995,7 +17995,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -18017,7 +18017,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -18044,7 +18044,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -18151,7 +18151,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -18201,7 +18201,7 @@
               "value": "Arcilla 34%; pH 7.8; agua disponible 127 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -18217,7 +18217,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -18244,7 +18244,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -18351,7 +18351,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -18381,7 +18381,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -18410,7 +18410,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -18437,7 +18437,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -18632,7 +18632,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -18661,7 +18661,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -18692,7 +18692,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -18719,7 +18719,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -18826,7 +18826,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -18869,7 +18869,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -18891,7 +18891,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -18918,7 +18918,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -19025,7 +19025,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -19075,7 +19075,7 @@
               "value": "Arcilla 32%; pH 7.8; agua disponible 130 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -19091,7 +19091,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -19118,7 +19118,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -19225,7 +19225,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -19255,7 +19255,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -19284,7 +19284,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -19311,7 +19311,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -19506,7 +19506,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -19535,7 +19535,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -19566,7 +19566,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -19593,7 +19593,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -19700,7 +19700,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -19743,7 +19743,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -19765,7 +19765,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -19792,7 +19792,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -19899,7 +19899,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -19949,7 +19949,7 @@
               "value": "Arcilla 31%; pH 7.8; agua disponible 133 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -19965,7 +19965,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -19992,7 +19992,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -20099,7 +20099,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -20129,7 +20129,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -20158,7 +20158,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -20185,7 +20185,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -20380,7 +20380,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -20409,7 +20409,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -20440,7 +20440,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -20467,7 +20467,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -20574,7 +20574,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -20617,7 +20617,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -20639,7 +20639,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -20666,7 +20666,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -20773,7 +20773,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -20823,7 +20823,7 @@
               "value": "Arcilla 30%; pH 7.8; agua disponible 136 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -20839,7 +20839,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -20866,7 +20866,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -20973,7 +20973,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -21003,7 +21003,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -21032,7 +21032,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -21059,7 +21059,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -21254,7 +21254,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -21283,7 +21283,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -21314,7 +21314,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -21341,7 +21341,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -21448,7 +21448,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -21491,7 +21491,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -21513,7 +21513,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -21540,7 +21540,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -21647,7 +21647,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -21697,7 +21697,7 @@
               "value": "Arcilla 35%; pH 8.0; agua disponible 122 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -21713,7 +21713,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -21740,7 +21740,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -21847,7 +21847,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -21877,7 +21877,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -21906,7 +21906,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -21933,7 +21933,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -22128,7 +22128,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "No hay cultivo declarado: la secuencia se estima con NDVI a 250 m.",
@@ -22157,7 +22157,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "Clima y déficit hídrico de la celda de la finca.",
@@ -22188,7 +22188,7 @@
             "water": {
               "value": 64.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -22215,7 +22215,7 @@
             "risk": {
               "value": 68.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -22322,7 +22322,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio nacional de garbanzo; no hay lonja local ni contrato.",
@@ -22365,7 +22365,7 @@
               "value": "Garbanzo 870 €/t"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -22387,7 +22387,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -22414,7 +22414,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -22521,7 +22521,7 @@
           "confidence": "medium",
           "confidence_score": 0.7,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "Precio de veza del MAPA, nacional y anual; no hay lonja local ni serie Eurostat.",
@@ -22571,7 +22571,7 @@
               "value": "Arcilla 30%; pH 7.1; agua disponible 113 mm"
             },
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "value": "Lluvia media 453 mm; P20 331 mm; déficit 792 mm"
@@ -22587,7 +22587,7 @@
             "water": {
               "value": 67.2,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -22614,7 +22614,7 @@
             "risk": {
               "value": 72.8,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"
@@ -22721,7 +22721,7 @@
           "confidence": "medium",
           "confidence_score": 0.74,
           "data_gaps": [
-            "Clima de celda NASA POWER (~50 km), no de la parcela",
+            "Clima de celda POWER (~50 km), no de la parcela",
             "Cultivo estimado por NDVI a 250 m; no hay cultivo declarado",
             "Sin rendimientos ni costes: la nota de precio no es margen",
             "El barbecho no genera ingreso; el coste de oportunidad no está calculado.",
@@ -22751,7 +22751,7 @@
           ],
           "evidence": [
             {
-              "source": "NASA POWER",
+              "source": "POWER",
               "url": "https://power.larc.nasa.gov/",
               "date": "2002-2025",
               "note": "El balance hídrico y el P20 se usan para estimar la reserva de agua.",
@@ -22780,7 +22780,7 @@
             "water": {
               "value": 76.5,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "medium",
               "gap": "Déficit medio 792 mm; celda de ~50 km",
@@ -22807,7 +22807,7 @@
             "risk": {
               "value": 54.6,
               "unit": "índice 0-100",
-              "source": "NASA POWER",
+              "source": "POWER",
               "date": "2002-2025",
               "confidence": "low",
               "gap": "Umbrales expertos; no validados con daños observados"

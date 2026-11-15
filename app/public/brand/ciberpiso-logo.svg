@@ -88,11 +88,11 @@
   <text x="630" y="534" font-family="Segoe UI, Arial, sans-serif" font-size="31" font-weight="400"
         fill="#4B5563">Rotaciones que cuidan el suelo</text>
   <text x="630" y="594" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700"
-        letter-spacing="4" fill="#0B3D91">NASA SPACE APPS CHALLENGE 2026</text>
+        letter-spacing="4" fill="#0B3D91">SPACE APPS CHALLENGE 2026</text>
 
   <!-- Pie -->
   <text x="135" y="808" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600"
-        letter-spacing="2.5" fill="#6B7280">NASA POWER · SOILGRIDS · MODIS · SIGPAC</text>
+        letter-spacing="2.5" fill="#6B7280">POWER · SOILGRIDS · MODIS · SIGPAC</text>
   <text x="1465" y="808" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="16"
         font-weight="600" letter-spacing="2.5" fill="#6B7280">ANTEQUERA · MÁLAGA</text>
 </svg>

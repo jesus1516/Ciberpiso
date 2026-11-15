@@ -52,7 +52,7 @@ function plans(ctx: Context) {
 function evidence(ctx: Context, a: Analysis) {
   const c = ctx.climate
   const e = t.rotations.evidence
-  const power = ctx.climateReal ? 'NASA POWER' : `NASA POWER (${t.rotations.sample})`
+  const power = ctx.climateReal ? 'POWER' : `POWER (${t.rotations.sample})`
   const frostMonths = c.monthly.filter((m) => m.frostDays >= 0.5).map((m) => t.months[m.month])
   return {
     balance: { source: power, text: e.balance(c.annualRain, c.annualEt0), demo: !ctx.climateReal },

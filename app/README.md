@@ -1,6 +1,6 @@
 # Ciberpiso · Crop Rotation Explorer (frontend MVP)
 
-A decision-support web app that helps farmers explore crop-rotation strategies using NASA Earth
+A decision-support web app that helps farmers explore crop-rotation strategies using Earth
 observations. It supports farmer judgment; it does not replace it.
 
 ## Run
@@ -46,7 +46,7 @@ python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geo
 3. `components/MapView.tsx` owns MapLibre: Esri basemap, farm and selection layers, GIBS overlays, 3D terrain and the fly-to.
 4. `components/FincaPicker.tsx` drives the map funnel (Málaga → municipality → farms) and the selection; `lib/fincas.ts` loads each municipality on demand; `lib/pulse.ts` animates selections.
 5. `lib/terrain.ts` adds the Terrarium DEM + hillshade and falls back to a flat map on errors; slope comes from the farms' project data.
-6. `lib/power.ts` fetches NASA POWER daily data, caches it in localStorage and falls back to a bundled sample.
+6. `lib/power.ts` fetches POWER daily data, caches it in localStorage and falls back to a bundled sample.
 7. `lib/climate.ts` derives monthly climatology, frost days, rain variability, Turc water balance and trends.
 8. `lib/gibs.ts` lists the GIBS layers verified in GetCapabilities and builds the WMTS tile URLs.
 9. `lib/scoring.ts` is the transparent rule engine (0–100 per priority, a reason and an uncertainty level each); `lib/rotations.ts` builds strategies A/B/C and their texts.
@@ -57,19 +57,19 @@ python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geo
 
 | Data | Status | Source |
 | --- | --- | --- |
-| Daily temperature, min temperature, rain, radiation, humidity (2015 → yesterday) | **Real** | NASA POWER daily point API (AG community) |
+| Daily temperature, min temperature, rain, radiation, humidity (2015 → yesterday) | **Real** | POWER daily point API (AG community) |
 | Climatology, frost days, rain variability, water balance, trends | **Real (derived)** | Computed in the browser from POWER; ET uses the Turc formula and is labelled approximate |
-| MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** | NASA GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
+| MODIS Terra NDVI 8-day, GPM IMERG precipitation rate, SMAP L4 surface soil moisture | **Real imagery** | GIBS WMTS (EPSG:3857), names verified in GetCapabilities |
 | Farm boundaries (363,401 farms in the 103 municipalities of Málaga) | **Real** | SIGPAC parcels (FEGA, CC BY 4.0) joined to `data/malaga/csv/29_malaga/fincas.csv`; built with `pipeline/export_app_fincas.py` |
-| Farm slope, altitude, land cover | **Real** | Project dataset (`data/malaga/csv/29_malaga/fincas.csv`: NASADEM, ESA WorldCover) |
+| Farm slope, altitude, land cover | **Real** | Project dataset (`data/malaga/csv/29_malaga/fincas.csv`: SRTM-derived DEM, ESA WorldCover) |
 | Precomputed rotation results for 26 Antequera candidates | **Real** | `data/processed/indicators.json`, filtered by `pipeline/export_app_indicators.py` into `public/data/indicators_antequera.json` |
 | 3D terrain | **Real** | Mapzen Terrarium tiles on AWS Open Data |
 | Basemap, place search | **Real** | Esri World Imagery, OpenStreetMap Nominatim |
 | Soil per farm (texture, organic carbon, pH, N, CEC, available water) | **Real** | ISRIC SoilGrids 2.0 in the project dataset → `public/data/detalle/` |
 | Seasonal vegetation, NDVI series and observed rotation per farm | **Real** | MODIS NDVI in the project dataset → `public/data/detalle/` |
-| Climate and root-zone soil moisture per season (2002–2025) | **Real** | NASA POWER cell summaries in the project dataset → `public/data/comun_29.json` |
+| Climate and root-zone soil moisture per season (2002–2025) | **Real** | POWER cell summaries in the project dataset → `public/data/comun_29.json` |
 | Crop prices | **Real** | Eurostat apri_ap_crpouta and MAPA (vetch) → `public/data/comun_29.json` |
-| Heat stress index per month | Derived | From NASA POWER temperature and the approximate water balance |
+| Heat stress index per month | Derived | From POWER temperature and the approximate water balance |
 | Income score | Proxy | 70 % market ease (crop catalog) + 30 % latest national price, the same formula as `pipeline/calculator.py`; no yields or costs |
 | Crop catalog | Hand-made reference | `src/data/crops.json` |
 
@@ -97,7 +97,7 @@ that municipality's farms (`public/data/fincas/{municipio_key}.geojson.gz`, 35 M
 most). The browser decompresses the files itself, so any static host works.
 
 Farms that do not look like cropland are marked on the map (rule in `aptitud()` in
-`pipeline/export_app_fincas.py`, using ESA WorldCover, NASADEM slope and SIGPAC parcel numbers):
+`pipeline/export_app_fincas.py`, using ESA WorldCover, SRTM-derived DEM slope and SIGPAC parcel numbers):
 
 | Class | Rule | On the map |
 | --- | --- | --- |
@@ -132,7 +132,7 @@ button does not appear.
 
 ## Next steps
 
-- SMAP L3/L4 soil moisture and ECOSTRESS ET/ESI time series via NASA Earthdata (needs Earthdata Login, so a small proxy).
+- SMAP L3/L4 soil moisture and ECOSTRESS ET/ESI time series via Earthdata (needs Earthdata Login, so a small proxy).
 - Yields and costs per crop, so the income score becomes a margin instead of a price proxy.
 - The declared crop from SIGPAC (cultivo_declarado) to check the crop estimated from NDVI.
 - English translation of the precomputed project narrative (the UI labels are already English; the calculator text is Spanish).
@@ -140,7 +140,5 @@ button does not appear.
 
 ## Acknowledgements
 
-These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA
-Earth Science/Applied Science Program. We acknowledge the use of imagery provided by services from NASA's
-Global Imagery Browse Services (GIBS), part of NASA's Earth Science Data and Information System (ESDIS).
-NASA does not endorse this project.
+Climate data: POWER Project, Langley Research Center (LaRC). Imagery: Global Imagery Browse Services (GIBS),
+part of the Earth Science Data and Information System (ESDIS).

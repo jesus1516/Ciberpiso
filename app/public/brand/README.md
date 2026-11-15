@@ -15,7 +15,7 @@
 | Oliva | `#588157` |
 | Arena | `#F7F4EA` |
 | Oro | `#FACC15` |
-| Azul NASA | `#0B3D91` |
+| Azul espacial | `#0B3D91` |
 
 ## Uso
 

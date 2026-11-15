@@ -2,7 +2,7 @@
 
 All thematic content comes from sources in resources.md:
     POWER                 climate and soil moisture (pipeline.power)
-    Planetary Computer    NASADEM, ESA WorldCover, MODIS NDVI (pipeline.pc)
+    Planetary Computer    SRTM-derived DEM, ESA WorldCover, MODIS NDVI (pipeline.pc)
 SIGPAC only provides the skeleton: identifier, municipality and geometry of each farm.
 
 Output: data/<scope>/csv/comun/*.csv (common tables) and data/<scope>/csv/<pp_provincia>/*.csv

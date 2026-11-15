@@ -70,7 +70,7 @@ def descargar(celda_id: int, lat: float, lon: float) -> pd.DataFrame:
         r = session().get(API, params=params, timeout=300)
         r.raise_for_status()
         f.write_bytes(r.content)
-        record("NASA POWER daily", r.url, f, celda_power=celda_id, lat=lat, lon=lon)
+        record("POWER daily", r.url, f, celda_power=celda_id, lat=lat, lon=lon)
     data = json.loads(f.read_text())["properties"]["parameter"]
     df = pd.DataFrame(data)
     df.index = pd.to_datetime(df.index, format="%Y%m%d")
