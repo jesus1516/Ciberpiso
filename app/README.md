@@ -43,20 +43,20 @@ The Andalucía level needs the provinces and per-municipality colours, built fro
 python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geojson, municipios_29_stats.json
 ```
 
-`MapView`, `MapScreen`, `FarmPicker`, `Header`, `SearchBox` and `Dashboard` are no longer mounted; their logic (municipality loading, `apt` rules, farm data) is reused by the explorer.
+`MapView`, `MapScreen`, `FarmPicker`, `Header`, `SearchBox`, `LayersTab` and `RealRotations` are no longer mounted; their logic (municipality loading, `apt` rules, farm data) is reused by the explorer. The old dashboard and its A/B/C rule engine were removed: see [Rotation engine](#rotation-engine).
 
 ## Architecture (10 lines)
 
 1. `src/App.tsx` mounts the explorer (`src/explorer/`) and the About modal; the components below are the previous map-and-dashboard interface.
-2. `src/store.ts` (Zustand) holds all state: selected farms, step, terrain, climate, priorities, constraints, GIBS layers.
+2. `src/store.ts` (Zustand) holds the state shared with the components: selected farms, farm data, climate, About modal, and the old map's terrain and GIBS layers.
 3. `components/MapView.tsx` owns MapLibre: Esri basemap, farm and selection layers, GIBS overlays, 3D terrain and the fly-to.
-4. `components/FincaPicker.tsx` drives the map funnel (Málaga → municipality → farms) and the selection; `lib/fincas.ts` loads each municipality on demand; `lib/pulse.ts` animates selections.
+4. `components/FarmPicker.tsx` drives the map funnel (Málaga → municipality → farms) and the selection; `lib/farms.ts` loads each municipality on demand; `lib/pulse.ts` animates selections.
 5. `lib/terrain.ts` adds the Terrarium DEM + hillshade and falls back to a flat map on errors; slope comes from the farms' project data.
 6. `lib/power.ts` fetches POWER daily data, caches it in localStorage and falls back to a bundled sample.
 7. `lib/climate.ts` derives monthly climatology, frost days, rain variability, Turc water balance and trends.
 8. `lib/gibs.ts` lists the GIBS layers verified in GetCapabilities and builds the WMTS tile URLs.
-9. `lib/scoring.ts` is the transparent rule engine (0–100 per priority, a reason and an uncertainty level each); `lib/rotations.ts` builds strategies A/B/C and their texts.
-10. `lib/indicators.ts` loads the precomputed project results for 26 Antequera candidates; `components/RealRotations.tsx` shows R0–R3 with their evidence, gaps and local review notes. The gold-outlined farms use this path.
+9. `lib/calculator.ts` is the only rotation engine (R0–R3 for any farm); its parameters are `src/data/engine.json`, exported from the pipeline. See [Rotation engine](#rotation-engine).
+10. `lib/indicators.ts` has the R0–R3 and profile types and loads the precomputed pipeline results for the 26 Antequera candidates (used by the calculator check, and by the unmounted `components/RealRotations.tsx`).
 11. All UI text lives in `src/i18n/en.ts`; add `es.ts` with the same shape to translate. Project narrative inside the precomputed JSON is still Spanish.
 
 ## Real vs demo data
@@ -75,9 +75,8 @@ python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geo
 | Seasonal vegetation, NDVI series and observed rotation per farm | **Real** | MODIS NDVI in the project dataset → `public/data/detalle/` |
 | Climate and root-zone soil moisture per season (2002–2025) | **Real** | POWER cell summaries in the project dataset → `public/data/comun_29.json` |
 | Crop prices | **Real** | Eurostat apri_ap_crpouta and MAPA (vetch) → `public/data/comun_29.json` |
-| Heat stress index per month | Derived | From POWER temperature and the approximate water balance |
-| Income score | Proxy | 70 % market ease (crop catalog) + 30 % latest national price, the same formula as `pipeline/calculator.py`; no yields or costs |
-| Crop catalog | Hand-made reference | `src/data/crops.json` |
+| Market score | Proxy | 70 % market ease (`data/crops.csv`) + 30 % latest national price, in `pipeline/calculator.py` and its port `lib/calculator.ts`; no yields or costs |
+| Crop parameters (1–5 water demand, cover months, market ease…) | Hand-made reference | `data/crops.csv`, exported to `src/data/engine.json` |
 
 When a farm has no SoilGrids data, typical soil values are used; the score says so, shows a dashed badge and its
 uncertainty goes up. If POWER is unreachable, the app uses `src/data/sample-power.json` (real POWER data for
@@ -87,9 +86,7 @@ Antequera, Spain) and shows a warning.
 
 When you analyse one or more farms, the app downloads the project data of their municipality
 (`public/data/detalle/{municipio_key}.json.gz`, 20 MB in total) and the province file
-(`public/data/comun_29.json`, 113 kB). The Conditions tab shows it per farm, Priorities is prefilled with the
-SoilGrids texture and the crop the satellite saw last season, and the rotation scores use the real soil and
-prices. To rebuild the files from `data/malaga/csv/`:
+(`public/data/comun_29.json`, 113 kB). "Full data" shows it per farm, and the rotation scores use its climate, soil and prices. To rebuild the files from `data/malaga/csv/`:
 
 ```bash
 python -m pipeline.export_app_detalle --provincia 29
@@ -122,19 +119,32 @@ python -m pipeline.export_app_fincas --provincia 29
 `public/data/fincas_antequera.geojson` is no longer loaded by the app; it is kept because
 `pipeline/export_app_indicators.py` and its test still read it.
 
-## Precomputed project results
+## Rotation engine
 
-Gold-outlined farms have results from the project pipeline. The button **Open a demo farm with
-project data** selects the first one. To regenerate the file after changing the calculator:
+There is one engine: `calculate_scores` in `pipeline/calculator.py`. The app runs its TypeScript port,
+`src/lib/calculator.ts`, in the browser for any farm of Málaga, with the farm's climate cell, soil and prices
+from `public/data/`. The heat, frost, insight and recommendation texts of the farm view all read its scores.
+
+The port does not copy numbers by hand. Crop parameters (`data/crops.csv`), the water scale
+(`data/calibration.json`) and the rotations and profile weights (`ROTATIONS`, `PROFILES` in
+`pipeline/calculator.py`) are exported to `src/data/engine.json`. After changing any of them:
+
+```bash
+python3 -m pipeline.export_app_engine   # rewrites app/src/data/engine.json
+node app/scripts/check-calculator.ts    # the app must still give the pipeline's scores
+```
+
+`tests/test_export_app_engine.py` fails while `engine.json` is out of date. `check-calculator.ts` compares the
+app with the pipeline output for the 26 Antequera candidates (`public/data/indicators_antequera.json`,
+1,144 values, 0 differences). To regenerate that file after changing the calculator:
 
 ```bash
 python3 pipeline/calculator.py
 python3 pipeline/export_app_indicators.py
 ```
 
-The app loads `public/data/indicators_antequera.json` and needs no backend or live API for
-that path. If the file is missing, the interactive engine still works and the project-data
-button does not appear.
+If you change the formulas in `calculator.py` (not only its parameters), change `lib/calculator.ts` the same
+way; the check shows any difference.
 
 ## Next steps
 
@@ -142,7 +152,7 @@ button does not appear.
 - Yields and costs per crop, so the income score becomes a margin instead of a price proxy.
 - The declared crop from SIGPAC (cultivo_declarado) to check the crop estimated from NDVI.
 - English translation of the narrative inside `indicators_antequera.json` (Spanish; the explorer does not show it, only the old `RealRotations` panel did).
-- Spanish translation (`src/i18n/es.ts`) and validation of scoring rules with local agronomists.
+- Spanish translation (`src/i18n/es.ts`) and validation of the calculator rules with local agronomists.
 
 ## Acknowledgements
 
