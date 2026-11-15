@@ -16,6 +16,7 @@ import { Line2 } from 'three/addons/lines/Line2.js'
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
+import { reducedMotion } from './settings'
 import { alpha, NEUTRAL, SCENE } from './tokens'
 import { COVER_COLORS, CROPS, cropInfo, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, rings, yearLetter, type Anchor, type Anchors, type BBox, type FarmScene, type Geometry, type Mode, type ViewState } from './scene'
 
@@ -398,6 +399,9 @@ export class FarmDiorama {
     this.renderer.shadowMap.type = THREE.PCFShadowMap
     this.renderer.setClearColor(0x000000, 0)
     this.renderer.domElement.className = 'dio-canvas'
+    // The picture says nothing a screen reader can use: the farm column and the data table carry the same facts.
+    this.renderer.domElement.setAttribute('role', 'img')
+    this.renderer.domElement.setAttribute('aria-label', '3D terrain of the farm. The same facts are in the farm information column and in the data table.')
     container.appendChild(this.renderer.domElement)
 
     const overlay = document.createElement('div')
@@ -1188,6 +1192,11 @@ export class FarmDiorama {
       }, 250)
     }
   }
+  /** Frames the block again in the free area (the column changed width, e.g. a larger text size). */
+  reframe() {
+    this.resize()
+    if (this.active && this.controls.enabled) void this.resetView()
+  }
   private applyViewOffset() {
     const { width: w, height: h } = this
     this.camera.setViewOffset(w, h, -this.viewOffset.x, -this.viewOffset.y, w, h)
@@ -1284,8 +1293,7 @@ export class FarmDiorama {
   // -------------------------------------------------------- loop
   tween(ms: number, fn: (k: number) => void) {
     return new Promise<void>((resolve) => {
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      this.tweens.push({ start: performance.now(), ms: reduced ? 1 : ms / this.speed, fn, resolve })
+      this.tweens.push({ start: performance.now(), ms: reducedMotion() ? 1 : ms / this.speed, fn, resolve })
       this.kick()
     })
   }

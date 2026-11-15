@@ -17,6 +17,19 @@
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* Text scale: settings.ts sets --ts (1, 1.25, 1.5) and the root font size; 1 until it runs. */
+:root {
+  --ts: 1;
+}
+
+/* High-contrast mode (Settings → explorer/settings.ts) for the light surfaces: the Full data drawer and the Sources dialog. */
+:root[data-contrast="high"] {
+  --color-ink: #000000;
+  --color-ink-2: #1a1a1a;
+  --color-muted: #262626;
+  --color-line: #4d4d4d;
+}
+
 html, body, #root {
   height: 100%;
   margin: 0;

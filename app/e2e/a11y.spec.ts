@@ -61,8 +61,10 @@ test('the "Full data" sheet and the "Sources" dialog have named buttons', async 
   const errors = await openApp(page)
   await reachLevel(page, 3)
   await page.getByRole('button', { name: 'Full data', exact: true }).click()
-  await expect(page.getByRole('complementary', { name: 'Full data for the farm' })).toBeVisible()
+  await expect(page.getByRole('dialog', { name: 'Full data' })).toBeVisible()
   expect.soft(await unnamedButtons(page), 'sheet buttons without an accessible name').toEqual([])
+  await page.keyboard.press('Escape') // closes the drawer (focus returns to its button)
+  await expect(page.getByRole('dialog', { name: 'Full data' })).toBeHidden()
   await page.keyboard.press('Escape') // leaves the farm; the page must keep working
   await expect.poll(() => page.evaluate(() => (window as any).__xp.state.getState().level), { timeout: 60_000 }).toBe(2)
   await page.getByRole('button', { name: 'Sources' }).click()

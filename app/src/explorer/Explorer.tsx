@@ -1,11 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { getFarm } from '../lib/farms'
 import { useStore } from '../store'
+import { AccessList } from './AccessList'
 import { ExplorerController } from './controller'
 import { FarmView } from './FarmView'
+import { levelMessage, mapSummary } from './messages'
+import { applySettings, useSettings } from './settings'
+import { SettingsMenu } from './SettingsMenu'
 import { useExplorer, type Hover, type Level } from './state'
 import { APT, DISCLAIMER, COVER_NAME, fmt } from './texts'
 import './explorer.css'
+import './access.css'
 
 const DIRECTOR = new URLSearchParams(location.search).has('director')
 
@@ -73,37 +78,40 @@ function Tooltip({ hover }: { hover: Hover | null }) {
   )
 }
 
-function Narrative() {
+function Narrative({ ctrl }: { ctrl: React.RefObject<ExplorerController | null> }) {
   const level = useExplorer((s) => s.level)
+  const phase = useExplorer((s) => s.phase)
   const totals = useExplorer((s) => s.totals)
   const municipality = useExplorer((s) => s.municipality)
   const farms = useExplorer((s) => s.farmsCount)
   if (level === 3) return null
   return (
-    <section className="narrative" aria-live="polite">
+    <section className="narrative" aria-label="Where you are" inert={phase !== 'idle'}>
       {level === 0 && (
         <div className="scene" key="l0">
           <p className="eyebrow">Step 1 of 4 · Andalucía</p>
-          <h1>Where is your farm?</h1>
+          <h1 id="xp-heading" tabIndex={-1}>Where is your farm?</h1>
           <p>Pick a province. The full tour, with farms and rotations, is available for Málaga.</p>
           <div className="fact"><strong>{fmt(totals.andalucia)}</strong><span>SIGPAC farms<br />in the 8 provinces</span></div>
           <div className="hint">Click on Málaga</div>
+          <AccessList level={0} ctrl={ctrl} />
         </div>
       )}
       {level === 1 && (
         <div className="scene" key="l1">
           <p className="eyebrow">Step 2 of 4 · Málaga</p>
-          <h1>Choose the municipality</h1>
+          <h1 id="xp-heading" tabIndex={-1}>Choose the municipality</h1>
           <p>The colour shows what share of its farms is cropland according to the satellite (ESA WorldCover).</p>
           <div className="legend-scale"><div className="bar" /><div className="ticks"><span>0 %</span><span>cropland farms</span><span>{fmt(totals.maxCropland)} %</span></div></div>
           <div className="fact"><strong>{fmt(totals.malaga)}</strong><span>farms in<br />{totals.municipalities} municipalities</span></div>
           <div className="hint">Click on a municipality</div>
+          <AccessList level={1} ctrl={ctrl} />
         </div>
       )}
       {level === 2 && municipality && (
         <div className="scene" key={`l2-${municipality.mun}`}>
           <p className="eyebrow">Step 3 of 4 · Málaga</p>
-          <h1>{municipality.nombre}</h1>
+          <h1 id="xp-heading" tabIndex={-1}>{municipality.nombre}</h1>
           <p>
             {farms === null ? 'Loading its farms…' : `${fmt(farms)} SIGPAC farms.`} Zoom in and pick one
             {municipality.candidatas ? `; the ${municipality.candidatas} gold ones are project candidates` : ''}.
@@ -115,6 +123,7 @@ function Narrative() {
             <li><i className="sw-no" aria-hidden />Not farmland</li>
           </ul>
           <div className="hint">Click on a farm to see it in 3D</div>
+          <AccessList level={2} ctrl={ctrl} />
         </div>
       )}
     </section>
@@ -171,6 +180,51 @@ export function Explorer() {
   const error = useExplorer((s) => s.error)
   const sel = useExplorer((s) => s.sel)
   const setAboutOpen = useStore((s) => s.setAboutOpen)
+  const municipality = useExplorer((s) => s.municipality)
+  const farmsCount = useExplorer((s) => s.farmsCount)
+  const municipalityList = useExplorer((s) => s.municipalityList)
+  const moving = useExplorer((s) => s.moving)
+  const flat = useExplorer((s) => s.flat)
+  const settings = useSettings()
+
+  // Settings → <html> (text scale, contrast, motion), then re-frame what depends on the column width.
+  const sizeSeen = useRef(settings.textSize)
+  useEffect(() => {
+    applySettings(settings)
+    if (sizeSeen.current !== settings.textSize) {
+      sizeSeen.current = settings.textSize
+      requestAnimationFrame(() => requestAnimationFrame(() => ctrl.current?.refit()))
+    }
+  }, [settings])
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const on = () => applySettings()
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+
+  // After each transition focus moves to the heading of the new level, so a keyboard or screen-reader
+  // user lands at the top of what changed instead of on a control that no longer exists.
+  const lastPhase = useRef(phase)
+  useEffect(() => {
+    if (lastPhase.current === 'transitioning' && phase === 'idle') {
+      const before = document.activeElement
+      const t = window.setTimeout(() => {
+        // If the person (or a dialog) already moved focus somewhere else in the meantime, leave it there:
+        // on a slow computer this timer can fire well after they pressed a button.
+        const now = document.activeElement
+        if (now && now !== before && now !== document.body && document.contains(now)) return
+        document.getElementById('xp-heading')?.focus({ preventScroll: true })
+      }, 60)
+      lastPhase.current = phase
+      return () => clearTimeout(t)
+    }
+    lastPhase.current = phase
+  }, [phase])
+
+  const farmName = sel ? `Farm ${sel.farm.properties.pol}-${sel.farm.properties.par}` : 'Farm'
+  const announcement = phase === 'loading' ? '' : phase === 'transitioning' ? moving : levelMessage(level, { municipality: municipality?.nombre ?? '', farms: farmsCount, farm: farmName, ha: sel?.farm.properties.ha ?? 0, municipalities: municipalityList.length, flat })
+  const summary = useMemo(() => mapSummary(level, { municipality: municipality?.nombre ?? '', farms: farmsCount, municipalities: municipalityList.length, flat }), [level, municipality, farmsCount, municipalityList.length, flat])
 
   useEffect(() => {
     const c = new ExplorerController(app.current!, mapEl.current!, dioEl.current!)
@@ -178,7 +232,8 @@ export function Explorer() {
     if (DIRECTOR) Object.assign(window, { __xp: { ctrl: c, state: useExplorer, getFarm } })
     const onResize = () => c.resize()
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape' || (e.target as HTMLElement).closest('input, textarea, select')) return
+      // Esc belongs to dialogs, drawers, menus and text fields first; only a "free" Esc goes back a level.
+      if (e.key !== 'Escape' || e.defaultPrevented || (e.target as HTMLElement).closest('dialog, [role="dialog"], input:not([role="combobox"]), textarea, select')) return
       const { level } = useExplorer.getState()
       if (level > 0) c.go((level - 1) as Level)
     }
@@ -195,17 +250,22 @@ export function Explorer() {
   const go = (l: Level) => ctrl.current?.go(l)
 
   return (
-    <div ref={app} className="xp" data-level={level} data-phase={phase}>
-      <div ref={mapEl} className="xp-map" role="application" aria-label="Map of Andalucía and Málaga" />
+    <div ref={app} className="xp" data-level={level} data-phase={phase} data-flat={flat}>
+      <div ref={mapEl} className="xp-map" role="region" aria-label="Map of Andalucía and Málaga" aria-describedby="xp-map-summary" />
+      <p id="xp-map-summary" className="vh">{summary}</p>
+      <p className="vh" role="status" aria-live="polite" aria-atomic="true" data-testid="announcer">{announcement}</p>
       <div className="scrim" />
       <header className="masthead">
         <img src={`${import.meta.env.BASE_URL}brand/ciberpiso-icon.svg`} alt="" width={36} height={36} />
         <div><b>Ciberpiso</b><span>From territory to farm</span></div>
         <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>
+        <SettingsMenu />
       </header>
-      <Narrative />
-      <div ref={dioEl} />
-      <FarmView ctrl={ctrl} />
+      <main className="xp-main" aria-label="Explorer">
+        <Narrative ctrl={ctrl} />
+        <div ref={dioEl} />
+        <FarmView ctrl={ctrl} />
+      </main>
       <Crumbs go={go} />
       <button className="back" disabled={phase !== 'idle' || level === 0} onClick={() => go((level - 1) as Level)}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="m9 6-6 6 6 6M3 12h18" /></svg>

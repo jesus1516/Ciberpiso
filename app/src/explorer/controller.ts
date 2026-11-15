@@ -22,7 +22,8 @@ import type { FarmDiorama } from './diorama'
 import { tileFor, type BBox, type FarmScene } from './scene'
 import { ACCENT, MAP, RAMP } from './tokens'
 import { APT } from './texts'
-import { showToast, useExplorer, type Level, type MunicipalityInfo, type ProvinceProps } from './state'
+import { is3dEnabled, reducedMotion } from './settings'
+import { showToast, useExplorer, type FarmItem, type Level, type MunicipalityInfo, type ProvinceProps } from './state'
 
 maplibregl.setWorkerUrl(workerUrl)
 
@@ -37,7 +38,17 @@ const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const range = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
-const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+/**
+ * The farms the keyboard list offers: farmland only (urban, water and public-domain farms cannot be
+ * analysed and are not listed), candidates first, then by area. Limited farms (forest, steep, rock)
+ * can be opened from the map with a warning, so they are listed too and say so.
+ */
+export function farmListOf(features: Farm[]): FarmItem[] {
+  return features
+    .filter((f) => !f.properties.apt || !NOT_FARMLAND.includes(f.properties.apt))
+    .map(({ properties: p }) => ({ id: p.id, pid: p.pid, pol: p.pol, par: p.par, ha: p.ha, cand: p.cand > 0, apt: p.apt }))
+    .sort((a, b) => Number(b.cand) - Number(a.cand) || b.ha - a.ha)
+}
 const mercX = (lon: number) => (lon + 180) / 360
 const mercY = (lat: number) => {
   const s = Math.sin((lat * Math.PI) / 180)
@@ -201,6 +212,8 @@ export class ExplorerController {
     map.setPaintProperty('muni-fill', 'fill-color', hoverState(MAP.farm, ['interpolate', ['linear'], ['coalesce', ['get', 'pct_cultivo'], 0], 0, RAMP[0], maxCropland * 0.33, RAMP[1], maxCropland * 0.66, RAMP[2], maxCropland, RAMP[3]]))
     map.setPaintProperty('muni-fill', 'fill-opacity', hoverState(0.6, 0.72))
     useExplorer.setState({
+      provinceList: andalucia.map((f) => f.properties),
+      municipalityList: this.municipalities.features.map((f) => f.properties).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
       totals: {
         andalucia: andalucia.reduce((s, f) => s + (f.properties.fincas ?? 0), 0),
         malaga: this.municipalities.features.reduce((s, f) => s + f.properties.fincas, 0),
@@ -210,12 +223,13 @@ export class ExplorerController {
     })
     this.labelsFor()
     this.events()
+    map.getCanvas().tabIndex = -1
     map.jumpTo(this.cameraFor(0))
     this.prepareLevel(0)
     useExplorer.setState({ phase: 'idle' })
     // The clouds of the first transition must be ready before the first click.
     const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 600))
-    idle(() => this.loadThree())
+    if (is3dEnabled()) idle(() => this.loadThree()) // with the 3D off, three.js is never downloaded
   }
 
   private source(id: string) {
@@ -249,6 +263,11 @@ export class ExplorerController {
     const w = window.innerWidth
     // The farm is handed to the 3D already centred in the area the information column leaves free.
     if (level === 3 && this.dio) return this.dio.framePadding()
+    if (level === 3) {
+      const f = this.dioEl.querySelector<HTMLElement>('.dio-frame')
+      const h = this.dioEl.clientHeight
+      if (f && f.offsetWidth > 40 && f.offsetHeight > 40) return { top: f.offsetTop, left: f.offsetLeft, right: w - f.offsetLeft - f.offsetWidth, bottom: h - f.offsetTop - f.offsetHeight }
+    }
     if (w < 760) return { top: level === 2 ? 170 : 230, bottom: 70, left: 20, right: 20 }
     if (level === 3) return { top: 90, bottom: 170, left: 480, right: 30 }
     return { top: 80, bottom: 80, left: w < 1100 ? 330 : 390, right: 70 }
@@ -287,6 +306,9 @@ export class ExplorerController {
       if (on) h.enable()
       else h.disable()
     }
+    // The map canvas is a Tab stop only where the keyboard can do something with it (arrows pan,
+    // +/- zoom in a municipality); elsewhere the lists and buttons are the way in.
+    m.getCanvas().tabIndex = on ? 0 : -1
     if (on) m.touchZoomRotate.disableRotation()
     if (on && this.munBounds) {
       // The bound starts from the arrival view (which includes the gap for the text): if it were only
@@ -337,7 +359,8 @@ export class ExplorerController {
   // ------------------------------------------------------------ transitions
   /** Andalucía ⇄ Málaga (clouds) and Málaga ⇄ municipality (mist). */
   private async cloudDive(target: Level, variant: CloudVariant) {
-    const { clouds } = await this.loadThree()
+    // With the 3D switched off the clouds (WebGL) are not even downloaded: the map just flies.
+    const clouds = is3dEnabled() ? (await this.loadThree()).clouds : null
     const { level, speed } = useExplorer.getState()
     const back = target < level
     const a = this.current(), b = this.cameraFor(target)
@@ -372,9 +395,9 @@ export class ExplorerController {
       this.farms = null
     }
     const key = useExplorer.getState().municipality?.mun
-    await clouds.play({
+    const opts = {
       variant, reverse: back, speed,
-      onProgress: (t) => {
+      onProgress: (t: number) => {
         const cam = path(easeInOut(t))
         this.map.jumpTo({ ...cam, pitch: Math.sin(Math.PI * t) * pitchPeak, bearing: Math.sin(Math.PI * t) * bearingPeak })
         if (variant !== 'mist') return
@@ -411,12 +434,24 @@ export class ExplorerController {
       onCover: () => {
         if (variant === 'clouds') this.prepareLevel(target)
       },
-    })
+    }
+    if (clouds) await clouds.play(opts)
+    else {
+      let covered = false
+      await this.animate(variant === 'clouds' ? 1100 : 900, (t) => {
+        opts.onProgress(t)
+        if (!covered && t >= 0.5) {
+          covered = true
+          opts.onCover()
+        }
+      })
+    }
     this.map.jumpTo(b)
   }
 
   /** Municipality → farm: the boundary is traced, the map flies to the tile from above and the 3D raises it. */
   private async enterFarm(farm: Farm) {
+    if (!is3dEnabled()) return this.enterFarmFlat(farm)
     const { dio, diorama } = await this.loadThree()
     const props = farm.properties
     const farmSceneP = this.farmScene(farm)
@@ -504,19 +539,68 @@ export class ExplorerController {
       this.map.triggerRepaint()
     })
   }
+  /**
+   * Farm view without the 3D: the map flies to the farm and stays there as a flat satellite
+   * picture behind the information column; the data table (FarmTable) replaces the terrain.
+   * Used when the 3D is switched off in the settings (slow devices) and when WebGL fails.
+   */
+  private async enterFarmFlat(farm: Farm) {
+    const props = farm.properties
+    const farmSceneP = this.farmScene(farm)
+    this.beforeFarm = this.current()
+    this.source('sel').setData(toLines(farm.geometry))
+    this.vis('sel-line', true)
+    this.vis('sel-glow', true)
+    this.clearHover()
+    await this.animate(500, (t) => {
+      this.setTrace('sel', easeInOut(t))
+      this.fadeFarms(lerp(1, 0.35, t))
+      this.paint('farms-fill', 'fill-opacity', ['case', ['==', ['get', 'id'], props.id], 0.22, 0])
+    })
+    const sel = await farmSceneP
+    this.ensureFrame()
+    const path = cameraPath(this.current(), this.farmCamera(sel.farmScene.tile))
+    FARM_LAYERS.forEach((id) => this.vis(id, false))
+    await this.animate(1200, (t) => {
+      this.map.jumpTo({ ...path(easeInOut(t)), pitch: 0, bearing: 0 })
+      this.paint('sat', 'raster-saturation', lerp(-0.35, 0, range(t, 0.2, 0.9)))
+      this.paint('sat', 'raster-opacity', lerp(0.62, 1, range(t, 0.1, 0.8)))
+      this.paint('hill', 'hillshade-exaggeration', lerp(0.25, 0, range(t, 0.3, 0.9)))
+      this.paint('focus-mask', 'fill-opacity', lerp(0.45, 0, range(t, 0, 0.6)))
+    })
+    this.map.jumpTo(this.farmCamera(sel.farmScene.tile))
+    const { view } = useExplorer.getState()
+    useExplorer.setState({ sel, flat: true, synthetic: false, view: { ...view, mode: 'satellite' } })
+  }
+  /** Invisible box that stands in for the one the 3D creates, so the camera padding is read from the same CSS. */
+  private ensureFrame() {
+    if (this.dio || this.dioEl.querySelector('.dio-frame')) return
+    this.dioEl.classList.add('dio')
+    const f = document.createElement('div')
+    f.className = 'dio-frame'
+    this.dioEl.appendChild(f)
+  }
   private async exitFarm() {
-    const { dio } = await this.loadThree()
     const sel = useExplorer.getState().sel
     if (!sel) return
     const tile = sel.farmScene.tile
-    this.app.classList.add('handoff')
-    this.map.jumpTo(this.farmCamera(tile))
-    await dio.exit({ toRect: this.tileRect(tile) })
-    this.vis('sel-line', true)
-    this.vis('sel-glow', true)
-    this.setTrace('sel', 1)
-    dio.hide()
-    this.app.classList.remove('handoff')
+    if (useExplorer.getState().flat) {
+      this.map.jumpTo(this.farmCamera(tile))
+      this.vis('sel-line', true)
+      this.vis('sel-glow', true)
+      this.setTrace('sel', 1)
+      useExplorer.setState({ flat: false })
+    } else {
+      const { dio } = await this.loadThree()
+      this.app.classList.add('handoff')
+      this.map.jumpTo(this.farmCamera(tile))
+      await dio.exit({ toRect: this.tileRect(tile) })
+      this.vis('sel-line', true)
+      this.vis('sel-glow', true)
+      this.setTrace('sel', 1)
+      dio.hide()
+      this.app.classList.remove('handoff')
+    }
     const path = cameraPath(this.current(), this.beforeFarm ?? this.cameraFor(2))
     await this.animate(1600, (t) => {
       this.map.jumpTo({ ...path(easeInOut(t)), pitch: Math.sin(Math.PI * t) * 22, bearing: 0 })
@@ -586,12 +670,12 @@ export class ExplorerController {
   private loadFarms(mun: number) {
     this.farms = null
     this.farmBoxes.clear()
-    useExplorer.setState({ farmsCount: null })
+    useExplorer.setState({ farmsCount: null, farmList: [] })
     return loadMunicipality(mun).then((data) => {
       if (useExplorer.getState().municipality?.mun !== mun) return
       this.farms = data as FC<FarmProps>
       this.source('farms').setData(data)
-      useExplorer.setState({ farmsCount: data.features.length })
+      useExplorer.setState({ farmsCount: data.features.length, farmList: farmListOf(data.features as Farm[]) })
       // Prefetches the municipality detail so opening a farm is instant.
       loadDetails([{ id: -1, mun }]).catch(() => undefined)
       loadCommon().catch(() => undefined)
@@ -603,7 +687,8 @@ export class ExplorerController {
     const st = useExplorer.getState()
     if (st.phase !== 'idle' || target === st.level || target < 0 || target > 3) return
     this.clearHover()
-    useExplorer.setState({ phase: 'transitioning', toast: null })
+    const where = target === 0 ? 'Andalucía' : target === 1 ? 'Málaga' : target === 2 ? (opts.municipality ?? st.municipality)?.nombre ?? 'the municipality' : opts.farm ? `farm ${opts.farm.properties.pol}-${opts.farm.properties.par}` : 'the farm'
+    useExplorer.setState({ phase: 'transitioning', toast: null, moving: `Going to ${where}…` })
     this.setInteractive(false)
     try {
       let l = st.level
@@ -635,7 +720,7 @@ export class ExplorerController {
             await this.cloudDive(1, 'mist')
             this.source('farms').setData(EMPTY)
             this.farms = null
-            useExplorer.setState({ municipality: null, farmsCount: null })
+            useExplorer.setState({ municipality: null, farmsCount: null, farmList: [] })
           } else if (l === 1) {
             useExplorer.setState({ level: 1 })
             await this.cloudDive(0, 'clouds')
@@ -646,7 +731,7 @@ export class ExplorerController {
         this.prepareLevel(l as Level)
       }
     } finally {
-      useExplorer.setState({ phase: 'idle' })
+      useExplorer.setState({ phase: 'idle', moving: '' })
       this.setInteractive(useExplorer.getState().level === 2)
     }
   }
@@ -705,30 +790,44 @@ export class ExplorerController {
     map.on('dragstart', () => this.clearHover())
     map.on('click', 'prov-fill', (e) => {
       if (useExplorer.getState().level !== 0) return
-      const p = e.features![0].properties as ProvinceProps
-      if (p.id === '29') this.go(1)
-      else showToast(`${p.nombre} · ${(p.fincas ?? 0).toLocaleString('en-GB')} farms`, 'For now, farm and rotation detail is only available for Málaga.')
+      this.chooseProvince((e.features![0].properties as ProvinceProps).id)
     })
     map.on('click', 'muni-fill', (e) => {
       if (useExplorer.getState().level !== 1) return
-      const id = Number(e.features![0].id)
-      const m = this.municipalities!.features.find((f) => f.properties.mun === id)
-      if (m) this.go(2, { municipality: m.properties })
+      this.chooseMunicipality(Number(e.features![0].id))
     })
     map.on('click', 'farms-fill', (e) => {
-      if (useExplorer.getState().level !== 2 || useExplorer.getState().phase !== 'idle') return
-      const id = Number(e.features![0].id)
-      const farm = this.farms?.features.find((f) => f.properties.id === id) as Farm | undefined
-      if (!farm) return
-      const apt = farm.properties.apt
-      if (apt && NOT_FARMLAND.includes(apt)) {
-        pulse(this.map, farm, MAP.pulseBlocked, 700)
-        showToast('Not farmland', `${APT[apt]}: this farm cannot be analysed (SIGPAC and ESA WorldCover).`, 'blocked')
-        return
-      }
-      if (apt && LIMITED.includes(apt)) showToast('Indicative analysis', `${APT[apt]}: the farm can be opened, but herbaceous rotations fit less well here.`, 'warning')
-      this.go(3, { farm })
+      this.chooseFarm(Number(e.features![0].id))
     })
+  }
+  // The same three actions serve the map clicks and the keyboard lists (AccessList.tsx).
+  /** Province: Málaga opens; the others say the tour is not available yet. */
+  chooseProvince(id: string) {
+    const st = useExplorer.getState()
+    if (st.level !== 0 || st.phase !== 'idle') return
+    const p = st.provinceList.find((x) => x.id === id)
+    if (!p) return
+    if (p.id === '29') this.go(1)
+    else showToast(`${p.nombre} · ${(p.fincas ?? 0).toLocaleString('en-GB')} farms`, 'For now, farm and rotation detail is only available for Málaga.')
+  }
+  chooseMunicipality(mun: number) {
+    const st = useExplorer.getState()
+    if (st.level !== 1 || st.phase !== 'idle') return
+    const m = this.municipalities?.features.find((f) => f.properties.mun === mun)
+    if (m) this.go(2, { municipality: m.properties })
+  }
+  chooseFarm(id: number) {
+    if (useExplorer.getState().level !== 2 || useExplorer.getState().phase !== 'idle') return
+    const farm = this.farms?.features.find((f) => f.properties.id === id) as Farm | undefined
+    if (!farm) return
+    const apt = farm.properties.apt
+    if (apt && NOT_FARMLAND.includes(apt)) {
+      pulse(this.map, farm, MAP.pulseBlocked, 700)
+      showToast('Not farmland', `${APT[apt]}: this farm cannot be analysed (SIGPAC and ESA WorldCover).`, 'blocked')
+      return
+    }
+    if (apt && LIMITED.includes(apt)) showToast('Indicative analysis', `${APT[apt]}: the farm can be opened, but herbaceous rotations fit less well here.`, 'warning')
+    this.go(3, { farm })
   }
   private labelsFor() {
     const tweak: Record<string, [number, number]> = { '29': [0.05, -0.12], '04': [0.1, 0], '11': [0.05, 0.05] }
@@ -750,6 +849,15 @@ export class ExplorerController {
   resize() {
     const { level, phase } = useExplorer.getState()
     if (phase === 'idle' && level < 2) this.map.jumpTo(this.cameraFor(level))
+  }
+  /** After a text-size change the column is wider or narrower: frame the level again in the free area. */
+  refit() {
+    const { level, phase, sel, flat } = useExplorer.getState()
+    if (phase !== 'idle') return
+    this.map.resize()
+    if (level < 2) this.map.jumpTo(this.cameraFor(level))
+    else if (level === 3 && sel && flat) this.map.jumpTo(this.farmCamera(sel.farmScene.tile))
+    else if (level === 3) this.dio?.reframe()
   }
   dispose() {
     this.disposed = true

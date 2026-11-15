@@ -1,0 +1,154 @@
+/* Accessibility layer of the explorer: visible focus, keyboard lists, settings menu, data table,
+   reduced motion, flat (no-3D) farm view and the 44 px touch targets on phones.
+   Colours come only from the tokens in explorer.css (and its high-contrast block). */
+
+/* ------------------------------------------------------------ focus: always visible */
+.xp :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px;}
+.xp h1:focus {outline: none;}
+/* Focus moved to the heading by a transition: a bar beside it (an outline would cross the tall serif glyphs). */
+.xp h1[tabindex]:focus-visible {outline: none; position: relative;} /* [tabindex]: beats the generic ring rule above */
+.xp h1[tabindex]:focus-visible::before {content: ""; position: absolute; left: -12px; top: .1em; bottom: .1em; width: 4px; border-radius: 2px; background: var(--accent);}
+.xp .xp-sheet :focus-visible {outline-color: var(--color-brand);}
+.xp .al input:focus-visible {outline-offset: 0;}
+.xp .maplibregl-canvas:focus-visible {outline: 3px solid var(--accent); outline-offset: -3px;}
+.xp [inert] {pointer-events: none;}
+
+/* ------------------------------------------------------------ landmarks and layout helpers */
+.xp .xp-main {display: contents;}
+
+/* ------------------------------------------------------------ narrative: scrolls instead of overlapping */
+.xp .narrative {pointer-events: auto; max-height: calc(100% - 150px - 106px * var(--ts)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px;}
+@media (min-width: 760px) and (max-width: 1099px) {
+.xp .narrative {max-height: calc(100% - 150px - 190px * var(--ts));}
+/* The farm tools wrap to two rows here (Data table, Full data, Settings): keep the director panel below them. */
+.xp[data-level="3"] .director {top: 122px;}
+}
+@media (max-width: 759px) {
+.xp .narrative {max-height: calc(100% - 64px - 76px * var(--ts));}
+.xp .crumbs {flex-wrap: wrap; max-width: calc(100% - 96px * var(--ts) - 24px);}
+}
+.xp .narrative {width: calc(320px * var(--ts));}
+@media (max-width: 759px) {
+.xp .narrative {width: auto;}
+}
+.xp .scene p {max-width: calc(290px * var(--ts));}
+.xp .legend-scale {width: calc(220px * var(--ts));}
+
+/* ------------------------------------------------------------ keyboard list (AccessList) */
+.xp .al {position: relative; margin-top: 18px; max-width: 100%;}
+.xp .al-label {display: block; font-size: calc(11.5px * var(--ts)); font-weight: 600; color: var(--n-100); margin-bottom: 6px;}
+.xp .al-field {position: relative;}
+.xp .al-field input {width: 100%; box-sizing: border-box; height: calc(40px * var(--ts)); padding: 0 34px 0 12px; border-radius: 10px; border: 1px solid var(--n-500); background: var(--n-800); color: var(--n-100); font: 400 calc(13px * var(--ts)) Inter, system-ui, sans-serif;}
+.xp .al-field input::placeholder {color: var(--n-300); opacity: 1;}
+.xp .al-field svg {position: absolute; right: 10px; top: 50%; width: 14px; height: 14px; margin-top: -7px; color: var(--n-300); pointer-events: none;}
+.xp .al-hint {margin: 6px 0 0; font-size: calc(10.5px * var(--ts)); line-height: 1.45; color: var(--n-300);}
+.xp .al-list {list-style: none; margin: 8px 0 0; padding: 4px; max-height: calc(210px * var(--ts)); overflow-y: auto; border-radius: 10px; border: 1px solid var(--n-500); background: var(--n-800); scrollbar-width: thin;}
+.xp .al-list[hidden] {display: none;}
+.xp .al-list li {display: grid; grid-template-columns: 1fr auto; gap: 0 10px; padding: 6px 9px; border-radius: 7px; cursor: pointer; font-size: calc(12.5px * var(--ts)); line-height: 1.35;}
+.xp .al-list li .t {font-weight: 600; color: var(--n-100);}
+.xp .al-list li .d {color: var(--n-200); font-size: calc(11px * var(--ts)); text-align: right;}
+.xp .al-list li .n {grid-column: 1 / -1; color: var(--accent); font-size: calc(10.5px * var(--ts));}
+.xp .al-list li.on {background: color-mix(in srgb, var(--accent) 18%, transparent); outline: 2px solid var(--accent); outline-offset: -2px;}
+
+/* ------------------------------------------------------------ settings */
+.xp .masthead .settings {pointer-events: auto; position: relative; align-self: center;}
+.xp .settings-btn {display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--n-500); background: var(--glass); color: var(--n-200); font-size: calc(11px * var(--ts)); padding: 5px 9px; border-radius: 8px;}
+.xp .settings-btn:hover, .xp .settings-btn[aria-expanded="true"] {color: var(--accent);}
+.xp .settings-btn svg {width: 14px; height: 14px;}
+.xp .in-tools .settings-btn {height: calc(36px * var(--ts)); border-radius: 11px; padding: 0 12px; font-size: calc(12px * var(--ts));}
+.xp .settings-panel {position: absolute; z-index: 95; top: calc(100% + 10px); left: 0; width: calc(320px * var(--ts)); max-width: calc(100vw - 24px); box-sizing: border-box; padding: 14px 16px 14px; background: var(--n-800); border: 1px solid var(--n-500); border-radius: 14px; font-size: calc(12px * var(--ts)); color: var(--n-100); text-align: left; box-shadow: 0 18px 50px color-mix(in srgb, var(--n-950) 60%, transparent);}
+.xp .in-tools .settings-panel {left: auto; right: 0;}
+.xp .settings-panel .head {display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;}
+.xp .settings-panel h2 {margin: 0; font: 500 calc(18px * var(--ts))/1.1 Fraunces, Georgia, serif;}
+.xp .settings-panel .x {border: 0; background: none; color: var(--n-200); font-size: calc(15px * var(--ts)); padding: 4px 8px; border-radius: 6px;}
+.xp .settings-panel fieldset {border: 0; margin: 0 0 10px; padding: 0;}
+.xp .settings-panel legend {padding: 0; margin-bottom: 6px; font-weight: 700; font-size: calc(12px * var(--ts));}
+.xp .settings-panel .opts {display: flex; gap: 6px;}
+.xp .settings-panel .opts label {position: relative; flex: 1;}
+.xp .settings-panel .opts input {position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer;}
+.xp .settings-panel .opts span {display: block; margin: 0; letter-spacing: 0; text-transform: none; font-size: calc(12px * var(--ts)); text-align: center; padding: 8px 6px; border-radius: 9px; border: 1px solid var(--n-500); color: var(--n-200); font-weight: 600;}
+.xp .settings-panel .opts input:checked + span {background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); color: var(--accent);}
+.xp .settings-panel .opts input:checked + span::before {content: "✓ ";}
+.xp .settings-panel .opts input:focus-visible + span {outline: 3px solid var(--accent); outline-offset: 2px;}
+.xp .settings-panel .opts input:focus-visible {outline: none;}
+.xp .settings-panel .row {display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer;}
+.xp .settings-panel .row input {flex: none; width: calc(18px * var(--ts)); height: calc(18px * var(--ts)); margin: 1px 0 0; accent-color: var(--accent);}
+.xp .settings-panel .row .ti {display: block; font-weight: 600; font-size: calc(12px * var(--ts)); letter-spacing: 0; text-transform: none; color: var(--n-100); margin: 0;}
+.xp .settings-panel .row small {display: block; margin-top: 2px; color: var(--n-300); font-size: calc(10.5px * var(--ts)); line-height: 1.4;}
+.xp .settings-panel .reset {margin-top: 6px; border: 1px solid var(--n-500); background: none; color: var(--n-200); padding: 7px 12px; border-radius: 9px; font-size: calc(11.5px * var(--ts));}
+.xp .settings-panel .reset:hover {color: var(--accent);}
+
+/* ------------------------------------------------------------ data table (alternative to the 3D) */
+.xp .fx-table {flex: 0 1 auto; min-height: 0; overflow: auto; padding: 14px 16px 14px; background: var(--n-800); box-sizing: border-box;}
+.xp .fx-table h2 {margin: 0 0 4px; font: 500 calc(20px * var(--ts))/1.15 Fraunces, Georgia, serif; letter-spacing: -.3px;}
+.xp .fx-table .meta {margin: 0 0 10px; font-size: calc(12px * var(--ts)); color: var(--n-200);}
+.xp .fx-table .scroll {overflow-x: auto;}
+.xp .fx-table table {width: 100%; border-collapse: collapse; font-size: calc(12.5px * var(--ts)); color: var(--n-100);}
+.xp .fx-table caption {text-align: left; font-size: calc(11px * var(--ts)); line-height: 1.45; color: var(--n-300); padding-bottom: 8px;}
+.xp .fx-table th, .xp .fx-table td {padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: baseline;}
+.xp .fx-table thead th {font-size: calc(11px * var(--ts)); letter-spacing: .06em; text-transform: uppercase; color: var(--n-300); font-weight: 600; border-bottom: 2px solid var(--n-500);}
+.xp .fx-table tbody th, .xp .fx-table th:first-child, .xp .fx-table td:nth-child(2) {text-align: left;}
+.xp .fx-table td:nth-child(2) {white-space: normal; min-width: calc(120px * var(--ts)); color: var(--n-200);}
+.xp .fx-table tbody th {font-weight: 600;}
+.xp .fx-table tbody th button {border: 0; background: none; color: inherit; font: inherit; font-weight: 600; padding: 2px 0; text-align: left; text-decoration: underline; text-decoration-color: var(--n-500); text-underline-offset: 3px;}
+.xp .fx-table tr.cur th, .xp .fx-table tr.cur td {background: color-mix(in srgb, var(--accent) 12%, transparent);}
+.xp .fx-table tr.cur th::before {content: "▶ "; color: var(--accent); font-size: .8em;}
+
+/* ------------------------------------------------------------ farm view without the 3D (flat map + table) */
+.xp[data-flat="true"] .dio:not(.active) ~ .fx {visibility: visible;}
+.xp[data-flat="true"] .fx-col, .xp[data-flat="true"] .fx-insights, .xp[data-flat="true"] .fx-head, .xp[data-flat="true"] .fx-card, .xp[data-flat="true"] .fx-dock, .xp[data-flat="true"] .fx-tools {opacity: 1; transform: none;}
+.xp[data-flat="true"] .scrim {opacity: 0;}
+.xp[data-flat="true"] .dio {pointer-events: none;}
+
+/* ------------------------------------------------------------ reduced motion (setting or OS) */
+:root[data-motion="reduced"] .xp *, :root[data-motion="reduced"] .xp *::before, :root[data-motion="reduced"] .xp *::after {animation: none !important; transition-duration: 0s !important; transition-delay: 0s !important; scroll-behavior: auto !important;}
+:root[data-motion="reduced"] .xp .loading i, :root[data-motion="reduced"] .xp .prep i {animation: none !important;}
+
+/* ------------------------------------------------------------ high contrast: borders and pressed states without relying on tint */
+:root[data-contrast="high"] .xp .glass, :root[data-contrast="high"] .xp .seg, :root[data-contrast="high"] .xp .fx-card, :root[data-contrast="high"] .xp .fx-dock {border-color: var(--n-300);}
+:root[data-contrast="high"] .xp .seg button[aria-pressed="true"], :root[data-contrast="high"] .xp .rot[aria-pressed="true"] {background: var(--accent); color: var(--n-900); border-color: var(--n-100);}
+:root[data-contrast="high"] .xp .rot[aria-pressed="true"] b, :root[data-contrast="high"] .xp .rot[aria-pressed="true"] strong, :root[data-contrast="high"] .xp .rot[aria-pressed="true"] span {color: var(--n-900);}
+:root[data-contrast="high"] .xp .al-list li.on {background: var(--accent); color: var(--n-900);}
+:root[data-contrast="high"] .xp .al-list li.on .t, :root[data-contrast="high"] .xp .al-list li.on .d, :root[data-contrast="high"] .xp .al-list li.on .n {color: var(--n-900);}
+:root[data-contrast="high"] .xp .scrim {opacity: 1;}
+:root[data-contrast="high"] .xp .ins.top, :root[data-contrast="high"] .xp .fx-card.emph {border-width: 2px;}
+:root[data-contrast="high"] .xp .eyebrow, :root[data-contrast="high"] .xp .hint {text-shadow: none;}
+:root[data-contrast="high"] .xp .fx-col .fx-card.recede:not(.hot) {border-color: var(--n-500);}
+:root[data-contrast="high"] .xp .settings-panel .opts input:checked + span {background: var(--accent); color: var(--n-900);}
+/* The light-surface parts (Full data drawer, Sources dialog) get their high-contrast tokens in index.css. */
+
+/* ------------------------------------------------------------ phones: touch targets of at least 44 × 44 px */
+@media (max-width: 759px) {
+.xp :is(button, summary, .al-list li, .al-field input) {min-height: 44px;}
+.xp :is(.seg button, .crumb, .icon-btn, .play, .back, .sources, .settings-btn, .full-data-btn, .x, .close) {min-height: 44px; min-width: 44px;}
+.xp .masthead .sources {display: inline-block; margin-left: 4px;}
+.xp .masthead {gap: 8px;}
+.xp .masthead b {font-size: calc(20px * var(--ts));}
+.xp .icon-btn {width: 44px; height: 44px;}
+.xp .tl .play {width: 44px; height: 44px;}
+.xp .back {height: 44px; padding: 0 14px;}
+.xp[data-level="3"] .back {height: 44px;}
+.xp .crumb {padding: 6px 8px;}
+.xp .seg button {padding: 0 12px;}
+.xp .prio .seg button {padding: 0 12px;}
+.xp .dio-mk b {pointer-events: none;}
+.xp .years {grid-template-columns: repeat(6, 1fr); gap: 4px; padding-top: 14px;}
+.xp .year {min-height: 44px; min-width: 44px; padding: 3px 0 1px; align-content: center;}
+.xp .year:nth-child(7) {margin-left: 0;}
+.xp .fx-card[tabindex="0"] {min-height: 44px;} /* the indicator cards are buttons too (they highlight their marker) */
+.xp .year i {height: calc(20px * var(--ts));}
+/* "Scenario …" is a row of its own between the observed and the scenario years (any text size). */
+.xp .years::after {content: none;}
+.xp .years .scn-lbl {display: block; grid-column: 1 / -1; grid-row: 2; padding-top: 2px; line-height: 1.2; font-size: calc(9.5px * var(--ts)); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--accent);}
+.xp .years {padding-bottom: 2px;}
+.xp .ins-more summary {min-height: 44px;}
+.xp .rot {min-height: 52px;}
+.xp .settings-panel {position: fixed; left: 8px; right: 8px; top: 64px; width: auto; max-height: calc(100dvh - 80px); overflow-y: auto;}
+.xp .settings-panel .row input {width: 24px; height: 24px;}
+.xp .settings-panel .row {min-height: 44px; align-items: center;}
+.xp .settings-panel .opts span {padding: 12px 6px;}
+.xp .maplibregl-ctrl-attrib-button {width: 44px; height: 44px;}
+.xp .in-tools .settings-btn span {display: none;}
+.xp .in-tools .settings-btn {width: 44px; padding: 0; justify-content: center;}
+.xp .al-list li {padding: 10px 9px;}
+}

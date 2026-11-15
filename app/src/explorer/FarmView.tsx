@@ -4,6 +4,9 @@
 // which carries numbered markers (1–4) that match the cards. "Full data" opens the app's
 // conditions tab (POWER climate, soil and NDVI of the farm) as a drawer over the column.
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { FarmTable } from './FarmTable'
+import { SettingsMenu } from './SettingsMenu'
+import { useFocusTrap } from './useFocusTrap'
 import type { RotationScore } from '../lib/calculator'
 import { fieldCentroid, toField } from '../lib/geo'
 import type { ProfileKey, RotationKey } from '../lib/indicators'
@@ -11,7 +14,7 @@ import { useStore } from '../store'
 import type { ExplorerController } from './controller'
 import type { MarkerKey } from './diorama'
 import { farmInsights, recommendation, type Insight, type InsightTarget, type Severity } from './insights'
-import { FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, cropInfo, type Mode } from './scene'
+import { FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, cropInfo, type Mode, type ViewState } from './scene'
 import { SOIL_TEXTURE as SOIL_TEX } from './tokens'
 import { useExplorer, type Selection } from './state'
 import { DISCLAIMER, PROFILES, SHORT_ROTATION, fmt } from './texts'
@@ -64,7 +67,7 @@ function Card({ k, value, wordTxt, base, rotation, ev, extra, hot, setHot, emph,
   const off = () => setHot(null)
   const state = emph === null ? '' : emph === k ? 'emph' : 'recede'
   return (
-    <article className={`fx-card glass ${hot === k ? 'hot' : ''} ${state}`} data-k={k} tabIndex={0}
+    <article className={`fx-card glass ${hot === k ? 'hot' : ''} ${state}`} data-k={k} tabIndex={0} aria-label={`${label}, indicator ${n}: ${fmt(value)} out of 100, ${wordTxt}`}
       title={state === 'recede' ? `${label}: ${ev}. Click to show the details.` : undefined}
       onMouseEnter={on} onMouseLeave={off} onFocus={on} onBlur={off} onClick={() => pick(k)}
       onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(k) } }}>
@@ -160,7 +163,11 @@ function Insights({ items, setHot, pick }: { items: Insight[] } & Pick<Hot, 'set
 }
 
 /** Side panel with the app's conditions tab (POWER climate, soil, NDVI). */
-function FullData({ sel, onClose }: { sel: Selection; onClose: () => void }) {
+function FullData({ sel, onClose, opener }: { sel: Selection; onClose: () => void; opener: React.RefObject<HTMLButtonElement | null> }) {
+  const sheet = useRef<HTMLElement>(null)
+  // A drawer that covers the column is a modal dialog: Tab stays inside, Esc closes it, and focus
+  // goes back to the "Full data" button.
+  useFocusTrap(sheet, onClose, () => sheet.current?.querySelector<HTMLElement>('button.close') ?? null, () => opener.current)
   useEffect(() => {
     const field = toField([sel.farm])
     const [lon, lat] = fieldCentroid(field)
@@ -169,18 +176,18 @@ function FullData({ sel, onClose }: { sel: Selection; onClose: () => void }) {
     useStore.getState().loadClimate(lat, lon)
   }, [sel])
   return (
-    <aside className="xp-sheet bg-surface text-ink" aria-label="Full data for the farm">
+    <section ref={sheet} className="xp-sheet bg-surface text-ink" role="dialog" aria-modal="true" aria-labelledby="xp-sheet-title" aria-describedby="xp-sheet-sub" tabIndex={-1}>
       <header>
         <div>
-          <h2>Full data</h2>
-          <p>Farm {sel.farm.properties.pol}-{sel.farm.properties.par} · {sel.municipality}</p>
+          <h2 id="xp-sheet-title">Full data</h2>
+          <p id="xp-sheet-sub">Farm {sel.farm.properties.pol}-{sel.farm.properties.par} · {sel.municipality}</p>
         </div>
-        <button onClick={onClose} aria-label="Close full data">✕</button>
+        <button className="close" onClick={onClose} aria-label="Close full data">✕</button>
       </header>
       <div className="body">
         <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}><ConditionsTab /></Suspense>
       </div>
-    </aside>
+    </section>
   )
 }
 
@@ -194,18 +201,28 @@ export function FarmView({ ctrl }: { ctrl: React.RefObject<ExplorerController | 
 function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<ExplorerController | null> }) {
   const view = useExplorer((s) => s.view)
   const synthetic = useExplorer((s) => s.synthetic)
+  const flat = useExplorer((s) => s.flat)
   const [playing, setPlaying] = useState(false)
   const [showFullData, setShowFullData] = useState(false)
+  const [showTable, setShowTable] = useState(false)
+  const fullBtn = useRef<HTMLButtonElement>(null)
+  const playToken = useRef(0)
   const [hot, setHot] = useState<CardKey | null>(null)
   const [picked, setPicked] = useState<InsightTarget | null>(null)
   const col = useRef<HTMLElement>(null)
   const live = useRef<HTMLParagraphElement>(null)
-  const dio = () => ctrl.current?.dio ?? null
+  // Without the 3D (setting off) there is no diorama: the same controls change the view state directly.
+  const dio = () => (flat ? null : ctrl.current?.dio ?? null)
+  const setView = (patch: Partial<ViewState>) => useExplorer.setState((s) => ({ view: { ...s.view, ...patch } }))
+  const setYear = (y: number) => (dio() ? dio()!.setYear(y) : setView({ year: y }))
+  const setProfile = (k: ProfileKey) => (dio() ? dio()!.setProfile(k) : setView({ profile: k }))
+  const setRotation = async (k: RotationKey) => (dio() ? dio()!.setRotation(k) : setView({ rotation: k }))
+  useEffect(() => () => { playToken.current++ }, [])
 
   // Numbered markers on the terrain, one per card (only when the farm has scores). Hovering a
   // marker highlights its card; clicking it brings the card into view and focuses it.
   useEffect(() => {
-    const d = ctrl.current?.dio
+    const d = flat ? null : ctrl.current?.dio
     if (!d || !sel.scores) return
     return d.attachOverlay({
       markers: CARDS.map(({ k, n, label }) => ({ key: k, n, label: `${n} · ${label}: ${WHERE[k]}` })),
@@ -217,8 +234,8 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
         card?.focus({ preventScroll: true })
       },
     })
-  }, [sel, ctrl])
-  useEffect(() => ctrl.current?.dio?.highlight(hot), [hot, ctrl])
+  }, [sel, ctrl, flat])
+  useEffect(() => { if (!flat) ctrl.current?.dio?.highlight(hot) }, [hot, ctrl, flat])
 
   const p = sel.farm.properties
   const crop = cropForYear(sel.farmScene, view.year, view.rotation)
@@ -254,23 +271,34 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
 
   const play = (from?: number) => {
     setPlaying(true)
-    dio()?.play(from, () => setPlaying(false))
+    const d = dio()
+    if (d) return void d.play(from, () => setPlaying(false))
+    // No 3D: step through the years with a timer.
+    const token = ++playToken.current
+    void (async () => {
+      let y = from ?? (useExplorer.getState().view.year >= LAST_YEAR ? 2020 : useExplorer.getState().view.year + 1)
+      while (playToken.current === token && y <= LAST_YEAR) {
+        setView({ year: y })
+        await new Promise((r) => setTimeout(r, 900 / useExplorer.getState().speed))
+        y++
+      }
+      if (playToken.current === token) setPlaying(false)
+    })()
   }
   const stop = () => {
     dio()?.stopPlay()
+    playToken.current++
     setPlaying(false)
   }
 
   return (
     <div className="fx-panel">
-      <aside className="fx-col" ref={col} aria-label="Farm information">
+      <section className="fx-col" ref={col} aria-label="Farm information">
         <p className="vh" aria-live="polite" ref={live} />
-        <Insights items={insights} setHot={setHot} pick={pick} />
-
         <header className="fx-head">
           <p className="eyebrow">{p.cand ? 'Project candidate' : 'Farm'} · {sel.municipality}</p>
           <div className="fx-title">
-            <h2>{fmt(p.ha, 1)}<small>ha</small></h2>
+            <h1 id="xp-heading" tabIndex={-1}><span className="vh">Farm {p.pol}-{p.par}: </span>{fmt(p.ha, 1)}<small>ha</small></h1>
             <div className="now">
               <i className="crop-sw" style={cropStyle(crop.key)} aria-hidden="true">{cropInfo(crop.key).letter}</i>
               <b>{cropInfo(crop.key).label}</b>
@@ -279,6 +307,8 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
           </div>
           <p className="fx-meta">SIGPAC {p.pid} · {fmt(sel.detail?.recintos)} enclosures · {fmt(p.alt)} m · slope {fmt(p.slope, 1)} %</p>
         </header>
+
+        <Insights items={insights} setHot={setHot} pick={pick} />
 
         <Cards sel={sel} rotation={view.rotation} hot={hot} setHot={setHot} emph={emph} pick={pick} />
 
@@ -292,31 +322,35 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
                 const c = cropForYear(sel.farmScene, y, view.rotation)
                 return (
                   <button key={y} className={`year ${y >= FIRST_SCENARIO_YEAR ? 'future' : ''}`} aria-current={y === view.year} title={`${y} · ${cropInfo(c.key).label}${y >= FIRST_SCENARIO_YEAR ? ' (scenario)' : ' (observed)'}`}
-                    onClick={() => { stop(); dio()?.setYear(y) }}>
+                    aria-label={`${y}: ${cropInfo(c.key).label}${y >= FIRST_SCENARIO_YEAR ? ' (scenario)' : ' (observed)'}`}
+                    onClick={() => { stop(); void setYear(y) }}>
                     <i style={cropStyle(c.key)} aria-hidden="true">{cropInfo(c.key).letter}</i><span>{String(y).slice(2)}</span>
                   </button>
                 )
               })}
+              {/* On phones the years wrap into two rows and this label sits between them (desktop: .years::after). */}
+              <span className="scn-lbl" aria-hidden="true">Scenario {view.rotation}</span>
             </div>
           </div>
           <div className="rots">
             {(['R0', 'R1', 'R2', 'R3'] as RotationKey[]).map((code) => (
               <button key={code} className="rot" aria-pressed={code === view.rotation} disabled={!sel.scores}
+                aria-label={`${code}, ${SHORT_ROTATION[code]}: score ${fmt(sel.scores?.[code].score[view.profile], 1)}${code === best ? ', best for this priority' : ''}`}
                 onClick={async () => {
-                  await dio()?.setRotation(code)
-                  if ((dio()?.state.year ?? 0) < FIRST_SCENARIO_YEAR) play(FIRST_SCENARIO_YEAR)
+                  await setRotation(code)
+                  if (useExplorer.getState().view.year < FIRST_SCENARIO_YEAR) play(FIRST_SCENARIO_YEAR)
                 }}>
                 <b>{code}</b>
                 <strong>{fmt(sel.scores?.[code].score[view.profile], 1)}</strong>
                 <span>{SHORT_ROTATION[code]}</span>
-                {code === best && <i className="best" title="Best rotation for this priority">★</i>}
+                {code === best && <i className="best" title="Best rotation for this priority" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M5 .5l1.4 2.9 3.1.4-2.3 2.2.6 3.1L5 7.6 2.2 9.1l.6-3.1L.5 3.8l3.1-.4z" fill="currentColor" /></svg></i>}
               </button>
             ))}
             <div className="prio">
-              <label>Priority</label>
-              <div className="seg">
+              <span id="fx-prio" className="lab">Priority</span>
+              <div className="seg" role="group" aria-labelledby="fx-prio">
                 {PROFILES.map(([k, l]) => (
-                  <button key={k} aria-pressed={k === view.profile} onClick={() => dio()?.setProfile(k as ProfileKey)}>{l}</button>
+                  <button key={k} aria-pressed={k === view.profile} onClick={() => void setProfile(k as ProfileKey)}>{l}</button>
                 ))}
               </div>
             </div>
@@ -325,33 +359,47 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
         </section>
 
         <p className="fx-note">
-          Real relief (DEM) exaggerated ×{fmt(view.exaggeration, 1)}. Scores from the project calculator on the farm's CSV data. {DISCLAIMER}
+          {flat ? '' : <>Real relief (DEM) exaggerated ×{fmt(view.exaggeration, 1)}. </>}Scores from the project calculator on the farm's CSV data. {DISCLAIMER}
         </p>
-      </aside>
+      </section>
 
+      <div className="fx-stage">
       <div className="fx-tools">
-        <div className="seg" role="group" aria-label="Terrain style">
-          {(['satellite', 'model'] as Mode[]).map((m) => (
-            <button key={m} aria-pressed={view.mode === m} onClick={() => dio()?.setMode(m)}>{m === 'satellite' ? 'Satellite' : 'Model'}</button>
-          ))}
-        </div>
-        <div className="seg" role="group" aria-label="Relief exaggeration">
-          {[1, 2, 3.5].map((e) => (
-            <button key={e} aria-pressed={Math.abs(view.exaggeration - e) < 0.01} onClick={() => dio()?.setExaggeration(e)}>×{fmt(e, e % 1 ? 1 : 0)}</button>
-          ))}
-        </div>
-        <button className="icon-btn" aria-label="Re-centre view" title="Re-centre view" onClick={() => dio()?.resetView()}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" /><path d="M4 4v4.5h4.5" /></svg>
-        </button>
-        <button className="full-data-btn" aria-pressed={showFullData} onClick={() => setShowFullData(!showFullData)}>Full data</button>
+        {!flat && (
+          <>
+            <div className="seg" role="group" aria-label="Terrain style">
+              {(['satellite', 'model'] as Mode[]).map((m) => (
+                <button key={m} aria-pressed={view.mode === m} onClick={() => dio()?.setMode(m)}>{m === 'satellite' ? 'Satellite' : 'Model'}</button>
+              ))}
+            </div>
+            <div className="seg relief" role="group" aria-label="Relief exaggeration">
+              {[1, 2, 3.5].map((e) => (
+                <button key={e} aria-pressed={Math.abs(view.exaggeration - e) < 0.01} aria-label={`Relief exaggeration ×${fmt(e, e % 1 ? 1 : 0)}`} onClick={() => dio()?.setExaggeration(e)}>×{fmt(e, e % 1 ? 1 : 0)}</button>
+              ))}
+            </div>
+            <button className="icon-btn" aria-label="Re-centre view" title="Re-centre view" onClick={() => dio()?.resetView()}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" /><path d="M4 4v4.5h4.5" /></svg>
+            </button>
+            <button className="full-data-btn" aria-pressed={showTable} onClick={() => setShowTable(!showTable)}>Data table</button>
+          </>
+        )}
+        <button ref={fullBtn} className="full-data-btn" aria-haspopup="dialog" aria-expanded={showFullData} onClick={() => setShowFullData(!showFullData)}>Full data</button>
+        <SettingsMenu className="in-tools" />
       </div>
 
-      <aside className="fx-legend" aria-label="Terrain legend">
-        <div className="sw">{legendKeys.map((k) => <span key={k}><i style={cropStyle(k)} aria-hidden="true">{cropInfo(k).letter}</i>{cropInfo(k).label}</span>)}</div>
-        {synthetic && <span className="badge-synth">Offline: synthetic relief or orthophoto</span>}
-      </aside>
+      {(flat || showTable) && (
+        <FarmTable sel={sel} profile={view.profile} rotation={view.rotation} onPick={(r) => { void setRotation(r); if (view.year < FIRST_SCENARIO_YEAR) setView({ year: FIRST_SCENARIO_YEAR }) }} />
+      )}
+      </div>
 
-      {showFullData && <FullData sel={sel} onClose={() => setShowFullData(false)} />}
+      {!flat && !showTable && (
+        <div className="fx-legend" role="group" aria-label="Terrain legend">
+          <div className="sw">{legendKeys.map((k) => <span key={k}><i style={cropStyle(k)} aria-hidden="true">{cropInfo(k).letter}</i>{cropInfo(k).label}</span>)}</div>
+          {synthetic && <span className="badge-synth">Offline: synthetic relief or orthophoto</span>}
+        </div>
+      )}
+
+      {showFullData && <FullData sel={sel} onClose={() => setShowFullData(false)} opener={fullBtn} />}
     </div>
   )
 }

@@ -10,6 +10,10 @@ const dir = __dirname
 const css = readFileSync(join(dir, 'explorer.css'), 'utf8')
 /** The token block: the first `.xp { … }` rule, up to its closing brace. */
 const tokenBlock = css.slice(css.indexOf('.xp {'), css.indexOf('}', css.indexOf('.xp {')) + 1)
+/** The high-contrast token block: `:root[data-contrast="high"] .xp { … }`. */
+const hcStart = css.indexOf(':root[data-contrast="high"] .xp {')
+const hcBlock = css.slice(hcStart, css.indexOf('}', hcStart) + 1)
+const hcToken = (name: string) => hcBlock.match(new RegExp(`--${name}:\\s*(#[0-9A-Fa-f]{6})`))?.[1]?.toUpperCase()
 const cssToken = (name: string) => tokenBlock.match(new RegExp(`--${name}:\\s*(#[0-9A-Fa-f]{6})`))?.[1]?.toUpperCase()
 
 describe('tokens: CSS and TypeScript say the same', () => {
@@ -32,7 +36,7 @@ describe('no stray colours in app/src/explorer', () => {
   const colour = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/
   it.each(files)('%s uses tokens, not literals', (f) => {
     let src = readFileSync(join(dir, f), 'utf8')
-    if (f === 'explorer.css') src = src.replace(tokenBlock, '') // the only place hex may be defined
+    if (f === 'explorer.css') src = src.replace(tokenBlock, '').replace(hcBlock, '') // the only places hex may be defined
     const stray = src.split('\n').map((l, i) => ({ l, n: i + 1 })).filter(({ l }) => colour.test(l) && !l.includes('colour-ok:'))
     expect(stray.map(({ n, l }) => `${f}:${n}: ${l.trim().slice(0, 90)}`)).toEqual([])
   })
@@ -105,5 +109,26 @@ describe('crops: grouped colours, a letter each', () => {
   it('land cover reuses the same few colours', () => {
     expect(Object.keys(COVER_TOKENS)).toHaveLength(4)
     expect(MAP.bg).toBe(NEUTRAL['n-800'])
+  })
+})
+
+describe('high-contrast mode (Settings)', () => {
+  const names = ['n-950', 'n-900', 'n-800', 'n-700', 'n-600', 'n-500', 'n-300', 'n-200', 'n-100', 'accent', 'good', 'warn', 'bad']
+  const hc = Object.fromEntries(names.map((n) => [n, hcToken(n)])) as Record<string, string>
+  it('overrides every token of the palette it replaces', () => {
+    for (const n of names) expect(hc[n], n).toMatch(/^#[0-9A-F]{6}$/)
+  })
+  it('text and accent read at AAA (7:1) on every surface', () => {
+    for (const bg of ['n-950', 'n-900', 'n-800', 'n-700', 'n-600'])
+      for (const fg of ['n-100', 'n-200', 'n-300', 'accent', 'good', 'warn', 'bad'])
+        expect(contrast(hc[fg], hc[bg]), `${fg} on ${bg}`).toBeGreaterThanOrEqual(7)
+  })
+  it('control borders (n-500) stand out from every surface by at least 3:1', () => {
+    for (const bg of ['n-800', 'n-700', 'n-600']) expect(contrast(hc['n-500'], hc[bg]), bg).toBeGreaterThanOrEqual(3)
+  })
+  it('status colours stay distinguishable with protanopia and deuteranopia', () => {
+    const group = { good: hc.good, warn: hc.warn, bad: hc.bad }
+    expect(minDistance(group, 'protanopia').d).toBeGreaterThanOrEqual(10)
+    expect(minDistance(group, 'deuteranopia').d).toBeGreaterThanOrEqual(10)
   })
 })

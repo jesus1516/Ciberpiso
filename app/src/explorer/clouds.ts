@@ -3,6 +3,7 @@
 // spread in depth. Halfway they cover the screen (the map swaps layers unnoticed)
 // and then open up like a tunnel. It is only drawn while it lasts.
 import * as THREE from 'three'
+import { reducedMotion } from './settings'
 
 export type CloudVariant = 'clouds' | 'mist'
 
@@ -189,7 +190,7 @@ export class CloudLayer {
     const variant = o.variant ?? 'clouds'
     const duration = (o.duration ?? VARIANTS[variant].duration) / (o.speed || 1)
     this.running?.cancel()
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (reducedMotion()) {
       o.onProgress?.(1)
       o.onCover?.()
       return Promise.resolve()
