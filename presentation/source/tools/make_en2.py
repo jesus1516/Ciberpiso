@@ -5,6 +5,8 @@ s = Path("build.js").read_text()
 R = [
  ('pres.author = "Equipo Ciberpiso"', 'pres.author = "Team Ciberpiso"'),
  ('"build/agrospace-static.pptx" : "build/agrospace-base.pptx"', '"build/agrospace-en-static.pptx" : "build/agrospace-en-base.pptx"'),
+ ('pres.title = "AgroSpace · Del satélite a la huerta"', 'pres.title = "AgroSpace · From satellite to farm"'),
+ ('"Del satélite a la huerta"', '"From satellite to farm"'),
  # 1
  ('"LA ESPAÑA VACÍA"', '"EMPTY SPAIN"'),
  ('"3.834"', '"3,834"'),
@@ -66,7 +68,7 @@ NOTES = [
  "[≈25 s] Let's go down to a real dryland farm in Antequera, Málaga. It gets 453 litres of rain a year on average; in 2023, only 302, a third less. " +
  "And the crops would need almost 800 more than what falls. Every autumn the farmer decides what to sow: wheat and sunflower again, a legume, a fallow year? " +
  "The satellite data exists and is open, but it never reaches them.",
- "[≈10 s] That is why we built AgroSpace: from territory to farm. It brings satellite data to each farmer's decision, with no technical training needed.",
+ "[≈10 s] That is why we built AgroSpace: from satellite to farm. It brings satellite data to each farmer's decision, with no technical training needed.",
  "[≈20 s] It starts in Andalucía, with almost three million SIGPAC parcels, and drops like a funnel: Málaga, the municipality, and finally your farm. " +
  "Entering Málaga, the camera dives through the clouds.",
  "[≈20 s] And it lands on your farm in 3D: its real relief, its orthophoto, the soil profile and the crops the MODIS satellite saw every season since 2020. " +

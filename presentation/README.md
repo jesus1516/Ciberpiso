@@ -21,7 +21,7 @@ QR → https://agrospace-w8ej.onrender.com/
 
 1. Hook — *Empty Spain* (*la España vacía*): 3,834 municipalities lost population in 2023 alone (INE, Censo Anual de Población 1-1-2024) [~20 s]
 2. The problem: a dryland farm in Antequera, 453 mm average rain, 302 mm in 2023, 792 mm water deficit; sowing blind [~25 s]
-3. The reveal: AgroSpace, *From territory to farm* [~10 s]
+3. The reveal: AgroSpace, *Del satélite a la huerta* (EN deck: *From satellite to farm*) [~10 s]
 4. The solution: Andalucía → Málaga → municipality → farm (cloud dive GIF) [~20 s]
 5. The demo: landing on the farm in 3D [~20 s]
 6. The decision: R0–R3 for farm 29:15:2:18 (R1 + chickpea, 70.1 vs 67.3) and the validated water score (AUC 0.723 vs 0.627) [~30 s]

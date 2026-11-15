@@ -6,7 +6,7 @@ const fs = require("fs");
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 in
-pres.title = "AgroSpace · From territory to farm";
+pres.title = "AgroSpace · From satellite to farm";
 pres.author = "Team Ciberpiso";
 pres.theme = { headFontFace: "Georgia", bodyFontFace: "Calibri" };
 
@@ -84,11 +84,11 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
   const s = pres.addSlide({ masterName: "MARFIL" });
   const lw = 7.4, lh = lw * 320 / 1100;
   s.addImage({ path: media("logo-once.gif", "logo-still.png"), x: (W - lw) / 2, y: 1.45, w: lw, h: lh, objectName: "!!logo" });
-  t(s, "From territory to farm", { x: 1, y: 3.85, w: W - 2, h: 0.6, align: "center", fontFace: HEAD, fontSize: 30, italic: true, color: K.green, objectName: "tagline" });
+  t(s, "From satellite to farm", { x: 1, y: 3.85, w: W - 2, h: 0.6, align: "center", fontFace: HEAD, fontSize: 30, italic: true, color: K.green, objectName: "tagline" });
   t(s, "We bring satellite data to every farm's decision", { x: 1.5, y: 4.55, w: W - 3, h: 0.45, align: "center", fontSize: 20, color: "3E5A45", objectName: "sub" });
   t(s, "Space Apps Challenge 2026  ·  «Field Shift» challenge  ·  Team Ciberpiso", { x: 1, y: 6.6, w: W - 2, h: 0.3, align: "center", fontSize: 13, color: "6B7A62", charSpacing: 1, objectName: "event" });
   s.addNotes(
-    "[≈10 s] That is why we built AgroSpace: from territory to farm. It brings satellite data to each farmer's decision, with no technical training needed."
+    "[≈10 s] That is why we built AgroSpace: from satellite to farm. It brings satellite data to each farmer's decision, with no technical training needed."
   );
 }
 
@@ -209,7 +209,7 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     shadow: { type: "outer", color: "103B2D", opacity: 0.18, blur: 18, offset: 6, angle: 90 }, objectName: "qr_bg" });
   s.addImage({ path: IMG + "qr.png", x: 8.55, y: 1.35, w: 3.65, h: 3.65, objectName: "qr" });
   t(s, "agrospace-w8ej.onrender.com", { x: 8.15, y: 5.3, w: 4.45, h: 0.35, align: "center", fontSize: 16, bold: true, color: K.green, objectName: "url" });
-  t(s, "From territory to farm", { x: 8.15, y: 5.72, w: 4.45, h: 0.35, align: "center", fontFace: HEAD, fontSize: 14, italic: true, color: "6B7A62", objectName: "tag" });
+  t(s, "From satellite to farm", { x: 8.15, y: 5.72, w: 4.45, h: 0.35, align: "center", fontFace: HEAD, fontSize: 14, italic: true, color: "6B7A62", objectName: "tag" });
   s.addNotes(
     "[≈15 s] Scan the QR code and try it live on any farm in Málaga. Let deciding what to sow stop being a gamble. We are Team Ciberpiso: Gael, Nikhil, Jesús, Javier and Yeray. Thank you."
   );
