@@ -10,5 +10,5 @@ Source: `assets/logo/agrospace/` (transparent logo, still and animated) and `ass
 | `agrospace-symbol.svg` | The mark as a vector, transparent. Favicon. |
 | `agrospace-logo.svg` / `agrospace-logo.png` | Full horizontal logo with the wordmark (1100 × 320), transparent. The wordmark is dark green: use it on light backgrounds only. |
 
-The product name in the interface is **AgroSpace**; the descriptor is **From territory to farm**.
+The product name in the interface is **AgroSpace**; the descriptor is **From satellite to farm**.
 Do not stretch, recolour or add shadows to the logo.

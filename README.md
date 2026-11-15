@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b>From territory to farm.</b><br>
+  <b>From satellite to farm.</b><br>
   Satellite, climate and soil data to choose the next crop rotation for any farm in Málaga.
 </p>
 

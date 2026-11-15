@@ -292,7 +292,7 @@ export function Explorer() {
             <img className="mark" src={`${BRAND}agrospace-mark.gif`} alt="" width={45} height={40} />
           </picture>
         )}
-        <div><b>AgroSpace</b><span>From territory to farm</span></div>
+        <div><b>AgroSpace</b><span>From satellite to farm</span></div>
         <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>
         <SettingsMenu />
         {/* In the masthead row so it can never cover it; hidden with the masthead on the farm view. */}
