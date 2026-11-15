@@ -229,7 +229,7 @@ export class ExplorerController {
     useExplorer.setState({ phase: 'idle' })
     // The clouds of the first transition must be ready before the first click.
     const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 600))
-    idle(() => this.loadThree())
+    if (is3dEnabled()) idle(() => this.loadThree()) // with the 3D off, three.js is never downloaded
   }
 
   private source(id: string) {
