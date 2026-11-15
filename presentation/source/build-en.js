@@ -1,5 +1,6 @@
-// Genera la maqueta del deck (sin transiciones ni animaciones).
+// Genera la maqueta del deck (sin transiciones ni animaciones). Versión v2: arranca por el problema.
 // Después: python3 tools/animate.py build/agrospace-base.pptx anim.json AgroSpace.pptx
+// Guion de 2–3 minutos en las notas del orador.
 const pptxgen = require("pptxgenjs");
 const fs = require("fs");
 
@@ -27,12 +28,13 @@ pres.defineSlideMaster({ title: "OSCURO", background: { color: K.bg } });
 pres.defineSlideMaster({ title: "MARFIL", background: { color: K.ivory } });
 
 const t = (s, text, o) => s.addText(text, { isTextBox: true, margin: 0, fontFace: BODY, color: K.text, valign: "top", ...o });
+const pg = (s, n) => t(s, `0${n} / 07`, { x: 11.3, y: 0.48, w: 1.5, h: 0.3, fontSize: 11, color: K.dim, align: "right", charSpacing: 2, objectName: "!!pg" });
 
-// Elementos fijos de las diapositivas oscuras (mismo nombre en todas: Morph los deja quietos)
+// Elementos fijos de las diapositivas oscuras con marca (mismo nombre: Morph los deja quietos)
 function chrome(s, n, eyebrow, title) {
   s.addImage({ path: IMG + "agrospace-mark.png", x: 0.55, y: 0.38, w: 0.6, h: 0.6 * 251 / 292, objectName: "!!logo" });
   t(s, "AgroSpace", { x: 1.28, y: 0.44, w: 2.2, h: 0.4, fontFace: HEAD, fontSize: 16, objectName: "!!brand" });
-  t(s, `0${n} / 07`, { x: 11.3, y: 0.48, w: 1.5, h: 0.3, fontSize: 11, color: K.dim, align: "right", charSpacing: 2, objectName: "!!pg" });
+  pg(s, n);
   t(s, eyebrow, { x: 0.6, y: 1.12, w: 7, h: 0.3, fontSize: 12, color: K.gold, bold: true, charSpacing: 4, objectName: "!!eyebrow" });
   if (title) t(s, title, { x: 0.6, y: 1.42, w: 12.1, h: 0.75, fontFace: HEAD, fontSize: 32, objectName: "!!title" });
 }
@@ -43,48 +45,57 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
   t(s, label, { x, y, w: d, h: d, align: "center", valign: "middle", fontFace: HEAD, fontSize: 16, color, objectName: name + "_n" });
 };
 
-// ───────────────────────── 1 · Portada (marfil)
+// ───────────────────────── 1 · Gancho: la España vacía
+{
+  const s = pres.addSlide({ masterName: "OSCURO" });
+  s.addImage({ path: IMG + "campo-oscuro.jpg", x: 0, y: 0, w: W, h: 7.5, objectName: "bgcampo" });
+  t(s, "EMPTY SPAIN", { x: 0.8, y: 1.35, w: 8, h: 0.35, fontSize: 14, color: K.gold, bold: true, charSpacing: 5, objectName: "eyebrow" });
+  t(s, "3,834", { x: 0.75, y: 1.85, w: 8, h: 1.6, fontFace: HEAD, fontSize: 110, color: K.gold, objectName: "big" });
+  t(s, "Spanish municipalities lost population\nin 2023 alone: almost half.", { x: 0.8, y: 3.55, w: 8.5, h: 1.05, fontFace: HEAD, fontSize: 28, lineSpacingMultiple: 1.05, objectName: "what" });
+  t(s, "When living off the land stops paying off, the village empties.", { x: 0.8, y: 4.95, w: 8.5, h: 0.45, fontSize: 20, color: K.muted, objectName: "why" });
+  t(s, "Source: INE (Spain's national statistics institute), Annual Population Census, 1 January 2024", { x: 0.8, y: 6.8, w: 8, h: 0.3, fontSize: 11, color: K.dim, objectName: "src" });
+  s.addNotes(
+    "[≈20 s] We have all heard of Empty Spain: villages left without people. In 2023 alone, almost half of Spain's municipalities lost population. And in the countryside it often starts the same way: a drought, a bad season, a wrong call on what to sow… and living off the land stops paying off."
+  );
+}
+
+// ───────────────────────── 2 · El problema concreto
+{
+  const s = pres.addSlide({ masterName: "OSCURO" });
+  s.addImage({ path: IMG + "mapa-andalucia-oscuro.png", x: 4.3, y: 0, w: 7.5 * 1180 / 720, h: 7.5, objectName: "!!mapa" });
+  t(s, "THE PROBLEM", { x: 0.6, y: 1.12, w: 7, h: 0.3, fontSize: 12, color: K.gold, bold: true, charSpacing: 4, objectName: "eyebrow" });
+  t(s, "Sowing blind\nin a drought", { x: 0.6, y: 1.5, w: 6.2, h: 1.6, fontFace: HEAD, fontSize: 44, objectName: "q" });
+  t(s, "Every autumn, the dryland farmer decides what to sow. The season is a gamble between water, soil and market, and the satellite data that could help never reaches them.",
+    { x: 0.6, y: 3.3, w: 5.4, h: 1.5, fontSize: 17, color: K.muted, lineSpacingMultiple: 1.15, objectName: "body" });
+  const st = [["453 mm", "mean rainfall\nper year"], ["302 mm", "in 2023: a third\nless rain"], ["792 mm", "water deficit\nper year"]];
+  st.forEach(([v, l], i) => {
+    const x = 0.6 + i * 1.95;
+    t(s, v, { x, y: 5.15, w: 1.9, h: 0.6, fontFace: HEAD, fontSize: 30, color: i === 1 ? K.warn : K.gold, objectName: `stat${i}_v` });
+    t(s, l, { x, y: 5.8, w: 1.9, h: 0.6, fontSize: 13, color: K.muted, objectName: `stat${i}_l` });
+  });
+  t(s, "Dryland farm 29:15:2:18, Antequera (Málaga) · POWER climate", { x: 0.6, y: 6.85, w: 6, h: 0.25, fontSize: 10, color: K.dim, objectName: "src" });
+  s.addNotes(
+    "[≈25 s] Let's go down to a real dryland farm in Antequera, Málaga. It gets 453 litres of rain a year on average; in 2023, only 302, a third less. And the crops would need almost 800 more than what falls. Every autumn the farmer decides what to sow: wheat and sunflower again, a legume, a fallow year? The satellite data exists and is open, but it never reaches them."
+  );
+}
+
+// ───────────────────────── 3 · La revelación: AgroSpace (marfil)
 {
   const s = pres.addSlide({ masterName: "MARFIL" });
   const lw = 7.4, lh = lw * 320 / 1100;
-  s.addImage({ path: media("logo-once.gif", "logo-still.png"), x: (W - lw) / 2, y: 1.35, w: lw, h: lh, objectName: "!!logo" });
-  t(s, "From territory to farm", { x: 1, y: 3.75, w: W - 2, h: 0.6, align: "center", fontFace: HEAD, fontSize: 30, italic: true, color: K.green, objectName: "tagline" });
-  t(s, "A crop rotation explorer built on Earth observation data", { x: 1.5, y: 4.45, w: W - 3, h: 0.45, align: "center", fontSize: 19, color: "3E5A45", objectName: "sub" });
-  t(s, "Space Apps Challenge 2026  ·  «Field Shift» challenge  ·  Málaga", { x: 1, y: 6.35, w: W - 2, h: 0.3, align: "center", fontSize: 13, color: "6B7A62", charSpacing: 1, objectName: "event" });
-  t(s, "Team Ciberpiso", { x: 1, y: 6.7, w: W - 2, h: 0.3, align: "center", fontSize: 13, bold: true, color: K.green, objectName: "team" });
+  s.addImage({ path: media("logo-once.gif", "logo-still.png"), x: (W - lw) / 2, y: 1.45, w: lw, h: lh, objectName: "!!logo" });
+  t(s, "From territory to farm", { x: 1, y: 3.85, w: W - 2, h: 0.6, align: "center", fontFace: HEAD, fontSize: 30, italic: true, color: K.green, objectName: "tagline" });
+  t(s, "We bring satellite data to every farm's decision", { x: 1.5, y: 4.55, w: W - 3, h: 0.45, align: "center", fontSize: 20, color: "3E5A45", objectName: "sub" });
+  t(s, "Space Apps Challenge 2026  ·  «Field Shift» challenge  ·  Team Ciberpiso", { x: 1, y: 6.6, w: W - 2, h: 0.3, align: "center", fontSize: 13, color: "6B7A62", charSpacing: 1, objectName: "event" });
   s.addNotes(
-    "Good morning. We are Team Ciberpiso, and this is AgroSpace: from territory to farm. " +
-    "It lets a dryland farmer compare crop rotations using Earth observation data, with no geospatial training needed."
+    "[≈10 s] That is why we built AgroSpace: from territory to farm. It brings satellite data to each farmer's decision, with no technical training needed."
   );
 }
 
-// ───────────────────────── 2 · Problema
+// ───────────────────────── 4 · Del territorio a tu finca
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  // Mapa a sangre: Morph lo lleva al marco del GIF de nubes en la diapositiva 3
-  s.addImage({ path: IMG + "mapa-andalucia-oscuro.png", x: 4.3, y: 0, w: 7.5 * 1180 / 720, h: 7.5, objectName: "!!mapa" });
-  chrome(s, 2, "THE PROBLEM", "");
-  t(s, "Wheat and sunflower\nagain?", { x: 0.6, y: 1.5, w: 6, h: 1.6, fontFace: HEAD, fontSize: 44, objectName: "q" });
-  t(s, "In the drylands of Antequera, farmers decide every year what to sow. Each rotation is a trade-off between water, soil and market, and the satellite data that could help is out of their reach.",
-    { x: 0.6, y: 3.3, w: 5.4, h: 1.5, fontSize: 17, color: K.muted, lineSpacingMultiple: 1.15, objectName: "body" });
-  const st = [["453 mm", "mean rainfall\nper year"], ["792 mm", "water deficit\nper year"], ["14,529", "SIGPAC farms\nin Antequera alone"]];
-  st.forEach(([v, l], i) => {
-    const x = 0.6 + i * 1.95;
-    t(s, v, { x, y: 5.15, w: 1.9, h: 0.6, fontFace: HEAD, fontSize: 30, color: K.gold, objectName: `stat${i}_v` });
-    t(s, l, { x, y: 5.8, w: 1.9, h: 0.6, fontSize: 13, color: K.muted, objectName: `stat${i}_l` });
-  });
-  t(s, "Farm 29:15:2:18, Antequera · POWER climate 2002–2025", { x: 0.6, y: 6.85, w: 6, h: 0.25, fontSize: 10, color: K.dim, objectName: "src" });
-  s.addNotes(
-    "Picture a dryland farm in Antequera. It gets about 453 millimetres of rain a year, and the crops would need 792 more. " +
-    "Every autumn the farmer chooses: wheat and sunflower again, a legume, or a fallow year? Each option wins on something and loses on something else. " +
-    "The satellite data exists and is open, but it was not built for them."
-  );
-}
-
-// ───────────────────────── 3 · Solución: el embudo
-{
-  const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 3, "THE SOLUTION", "From territory to your farm, in four steps");
+  chrome(s, 4, "THE SOLUTION", "From territory to your farm, in four steps");
   card(s, 6.12, 2.32, 6.66, 4.06, "!!frame");
   s.addImage({ path: media("a-nubes.l.gif", "a-still.png"), x: 6.2, y: 2.4, w: 6.5, h: 6.5 * 720 / 1180, objectName: "!!mapa" });
   t(s, "Andalucía → Málaga: the camera dives through the clouds · live demo", { x: 6.2, y: 6.5, w: 6.5, h: 0.3, fontSize: 11, color: K.dim, objectName: "cap" });
@@ -102,15 +113,14 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     t(s, d, { x: 1.45, y: y + 0.36, w: 4.4, h: 0.3, fontSize: 14, color: K.muted, objectName: `step${i}_d` });
   });
   s.addNotes(
-    "AgroSpace guides the user like a funnel: it starts in Andalucía, with almost three million SIGPAC farms, drops to Málaga, then to the municipality, and lands on their farm. " +
-    "Every transition is designed so you never get lost, even without any map skills: entering Málaga, the camera dives through the clouds."
+    "[≈20 s] It starts in Andalucía, with almost three million SIGPAC parcels, and drops like a funnel: Málaga, the municipality, and finally your farm. Entering Málaga, the camera dives through the clouds."
   );
 }
 
-// ───────────────────────── 4 · Demo 3D
+// ───────────────────────── 5 · Demo 3D
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 4, "THE DEMO", "Land on your farm, in 3D");
+  chrome(s, 5, "THE DEMO", "Land on your farm, in 3D");
   const gh = 4.72, gw = gh * 1100 / 720;
   card(s, 0.52, 2.32, gw + 0.16, gh + 0.16, "!!frame");
   s.addImage({ path: media("b-aterrizaje.l.gif", "b-still.png"), x: 0.6, y: 2.4, w: gw, h: gh, objectName: "!!mapa" });
@@ -127,16 +137,14 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
     t(s, d, { x: 9.25, y: y + 0.33, w: 3.55, h: 0.6, fontSize: 13, color: K.muted, objectName: `pt${i}_d` });
   });
   s.addNotes(
-    "When you pick a farm, the map flies overhead and hands it to a 3D scene that starts pixel-identical. " +
-    "It is the real relief, the real orthophoto, the SoilGrids soil profile on the sides, and the crops the MODIS satellite saw every season since 2020. " +
-    "The farmer recognises their land instantly."
+    "[≈20 s] And it lands on your farm in 3D: its real relief, its orthophoto, the soil profile and the crops the MODIS satellite saw every season since 2020. Farmers recognise their land instantly."
   );
 }
 
-// ───────────────────────── 5 · Rotaciones
+// ───────────────────────── 6 · La decisión (y la prueba de que funciona)
 {
   const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 5, "THE DECISION", "Four rotations, one recommendation that explains itself");
+  chrome(s, 6, "THE DECISION", "Four rotations, one recommendation that explains itself");
   const R = [
     { code: "R0", name: "Current · wheat–sunflower", score: "67.3", v: [64.8, 67.5, 74.9, 68.2], c: K.cereal },
     { code: "R1", name: "+ chickpea", score: "70.1", v: [67.2, 75.0, 70.1, 72.8], c: K.legume, best: true },
@@ -161,73 +169,28 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
       t(s, v.toFixed(1), { x: x + 2.38, y: yy, w: 0.45, h: 0.22, fontSize: 11, color: K.text, align: "right", objectName: `${p}v${j}` });
     });
   });
-  // Abajo: GIF de la línea temporal y la recomendación
-  const gh = 1.95, gw = gh * 1120 / 720;
-  card(s, 0.52, 5.17, gw + 0.16, gh + 0.16, "gframe");
-  s.addImage({ path: media("c-rotacion.l.gif", "c-still.png"), x: 0.6, y: 5.25, w: gw, h: gh, objectName: "gifc" });
-  const rx = 0.6 + gw + 0.45;
+  // Abajo a la izquierda: la recomendación y lo que explica
   t(s, [
     { text: "Recommendation (water first): ", options: { bold: true, color: K.gold } },
     { text: "R1 with chickpea, 70.1 vs 67.3 today. It wins mainly on soil (+7.5), despite a weaker market (−4.8)." },
-  ], { x: rx, y: 5.22, w: 12.73 - rx, h: 0.75, fontSize: 15, lineSpacingMultiple: 1.1, objectName: "rec" });
+  ], { x: 0.6, y: 5.25, w: 7.5, h: 0.75, fontSize: 15, lineSpacingMultiple: 1.1, objectName: "rec" });
   const chips = [["Why", K.good], ["Evidence", K.good], ["Data gaps", K.warn], ["Risks to check in the field", K.warn]];
-  let cx = rx;
+  let cx = 0.6;
   chips.forEach(([c, col], i) => {
     const w = 0.42 + c.length * 0.085;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: cx, y: 6.12, w, h: 0.36, rectRadius: 0.18, fill: { color: K.card }, line: { color: col, width: 1 }, objectName: `chip${i}_bg` });
-    t(s, c, { x: cx, y: 6.12, w, h: 0.36, align: "center", valign: "middle", fontSize: 12, color: col, objectName: `chip${i}_t` });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: cx, y: 6.2, w, h: 0.36, rectRadius: 0.18, fill: { color: K.card }, line: { color: col, width: 1 }, objectName: `chip${i}_bg` });
+    t(s, c, { x: cx, y: 6.2, w, h: 0.36, align: "center", valign: "middle", fontSize: 12, color: col, objectName: `chip${i}_t` });
     cx += w + 0.15;
   });
-  t(s, "Every rotation shows them. The farmer picks the priority: water, soil or market.", { x: rx, y: 6.65, w: 12.73 - rx, h: 0.3, fontSize: 13, color: K.muted, objectName: "foot" });
+  t(s, "Real open data: POWER · MODIS · SoilGrids · WorldCover · SIGPAC · SRTM", { x: 0.6, y: 6.78, w: 7.6, h: 0.3, fontSize: 12, color: K.dim, objectName: "srcs" });
+  // Abajo a la derecha: la prueba de que funciona
+  card(s, 8.45, 5.17, 4.28, 1.95, "proof_bg", { line: { color: K.good, width: 1 } });
+  t(s, "VALIDATED WATER SCORE", { x: 8.7, y: 5.33, w: 3.9, h: 0.25, fontSize: 11, bold: true, color: K.good, charSpacing: 2, objectName: "proof_h" });
+  t(s, "0.723", { x: 8.7, y: 5.6, w: 1.9, h: 0.75, fontFace: HEAD, fontSize: 40, color: K.gold, objectName: "proof_v" });
+  t(s, "AUC vs 0.627\nwith rainfall only", { x: 10.55, y: 5.72, w: 2.1, h: 0.6, fontSize: 13, color: K.text, objectName: "proof_c" });
+  t(s, "Detects water-stressed seasons (360 farm-seasons)", { x: 8.7, y: 6.5, w: 3.95, h: 0.45, fontSize: 12, color: K.muted, objectName: "proof_d" });
   s.addNotes(
-    "For that farm we compare the current rotation, wheat and sunflower, with three alternatives: adding chickpea, vetch or a fallow year. " +
-    "Each one is scored on water, soil, market and climate risk, with explainable rules, not a black box. " +
-    "With water first, R1 with chickpea wins: 70.1 versus 67.3. And the tool says why, with what evidence, which data is missing and what to check in the field."
-  );
-}
-
-// ───────────────────────── 6 · Rigor
-{
-  const s = pres.addSlide({ masterName: "OSCURO" });
-  chrome(s, 6, "THE RIGOUR", "Real open data, verified results");
-  const src = [
-    ["POWER", "climate 2002–2025"], ["MODIS", "NDVI and phenology 2020–2025"],
-    ["SoilGrids 2.0", "texture, pH, soil water"], ["ESA WorldCover", "land cover"],
-    ["SIGPAC", "2.9 million parcels"], ["SRTM", "terrain relief"],
-  ];
-  t(s, "SOURCES", { x: 0.6, y: 2.3, w: 3, h: 0.25, fontSize: 11, bold: true, color: K.dim, charSpacing: 3, objectName: "srch" });
-  src.forEach(([h, d], i) => {
-    const x = 0.6 + (i % 2) * 2.95, y = 2.65 + Math.floor(i / 2) * 0.82;
-    card(s, x, y, 2.8, 0.68, `src${i}_bg`);
-    t(s, h, { x: x + 0.18, y: y + 0.08, w: 2.5, h: 0.28, fontFace: HEAD, fontSize: 14, objectName: `src${i}_h` });
-    t(s, d, { x: x + 0.18, y: y + 0.37, w: 2.55, h: 0.25, fontSize: 11, color: K.muted, objectName: `src${i}_d` });
-  });
-  // Validación (gráfico nativo)
-  t(s, "Does it detect water-stressed seasons? (AUC, 360 farm-seasons)", { x: 6.9, y: 2.3, w: 5.9, h: 0.25, fontSize: 11, bold: true, color: K.dim, charSpacing: 1, objectName: "chh" });
-  s.addChart(pres.charts.BAR, [{ name: "AUC", labels: ["Rainfall only", "AgroSpace water score"], values: [627, 723] }], {
-    x: 6.8, y: 2.55, w: 6.0, h: 2.0, barDir: "bar", objectName: "chart",
-    chartColors: [K.dim, K.straw], invertedColors: [K.dim], valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
-    valAxisMinVal: 500, valAxisMaxVal: 750,
-    catAxisLabelColor: K.text, catAxisLabelFontSize: 13, catAxisLabelFontFace: BODY, catAxisLineShow: false,
-    showValue: true, dataLabelColor: K.text, dataLabelFontSize: 14, dataLabelFontFace: HEAD, dataLabelFormatCode: '"0."000', dataLabelPosition: "outEnd",
-    barGapWidthPct: 55, showLegend: false,
-  });
-  const st = [["1,144 · 0", "values compared between the app and\nthe Python pipeline, zero differences"], ["960 · 0", "indicators audited, zero failures"]];
-  st.forEach(([v, l], i) => {
-    const x = 6.9 + i * 3.0;
-    t(s, v, { x, y: 4.65, w: 2.9, h: 0.55, fontFace: HEAD, fontSize: 28, color: K.gold, objectName: `rs${i}_v` });
-    t(s, l, { x, y: 5.2, w: 2.85, h: 0.5, fontSize: 12, color: K.muted, objectName: `rs${i}_l` });
-  });
-  card(s, 0.6, 5.95, 12.13, 0.9, "honest_bg", { line: { color: K.good, width: 1 } });
-  t(s, "✓", { x: 0.85, y: 6.17, w: 0.45, h: 0.45, align: "center", valign: "middle", fontFace: BODY, fontSize: 20, bold: true, color: K.good, objectName: "honest_i" });
-  t(s, [
-    { text: "Transparent by design. ", options: { bold: true, color: K.text } },
-    { text: "Every rotation shows its confidence level and its data gaps, so the farmer knows how far to trust it.", options: { color: K.muted } },
-  ], { x: 1.45, y: 6.08, w: 11.1, h: 0.66, valign: "middle", fontSize: 14, objectName: "honest_t" });
-  s.addNotes(
-    "Everything comes from real open data: POWER climate, MODIS NDVI, SoilGrids soil, WorldCover, SIGPAC parcels and SRTM relief. " +
-    "We validated the water score on 360 farm-seasons: it detects water stress better than rainfall alone, AUC 0.723 versus 0.627. " +
-    "The web calculation matches the Python pipeline one hundred percent, and every rotation shows its confidence level and its data gaps."
+    "[≈30 s] For that farm we compare the current rotation with three alternatives, scored on water, soil, market and risk with explainable rules. With water first, adding chickpea wins: 70.1 versus 67.3, and the tool explains why, with what evidence and what to check in the field. Everything uses real open data, and the water score is validated: it detects water-stressed seasons better than rainfall alone."
   );
 }
 
@@ -248,8 +211,7 @@ const ring = (s, x, y, d, label, name, color = K.gold) => {
   t(s, "agrospace-w8ej.onrender.com", { x: 8.15, y: 5.3, w: 4.45, h: 0.35, align: "center", fontSize: 16, bold: true, color: K.green, objectName: "url" });
   t(s, "From territory to farm", { x: 8.15, y: 5.72, w: 4.45, h: 0.35, align: "center", fontFace: HEAD, fontSize: 14, italic: true, color: "6B7A62", objectName: "tag" });
   s.addNotes(
-    "Here is the QR code: it opens the live demo, nothing to install. You can search any farm in Málaga by its SIGPAC reference. " +
-    "We are Gael, Nikhil, Jesús, Javier and Yeray, Team Ciberpiso. Thank you."
+    "[≈15 s] Scan the QR code and try it live on any farm in Málaga. Let deciding what to sow stop being a gamble. We are Team Ciberpiso: Gael, Nikhil, Jesús, Javier and Yeray. Thank you."
   );
 }
 

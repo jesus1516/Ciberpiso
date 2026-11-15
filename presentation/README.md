@@ -4,9 +4,9 @@
 
 | File | What it is |
 |---|---|
-| `AgroSpace-ES.pptx` | **The deck to present (Spanish).** Opens with the problem; 2–3 min script in the speaker notes |
-| `AgroSpace-ES-backup.pdf` | Static backup (still frames instead of GIFs) in case the room computer fails |
-| `AgroSpace-EN.pptx` / `AgroSpace-EN-backup.pdf` | Earlier English version (previous slide order: title first, rigour slide) |
+| `AgroSpace-ES.pptx` | **Spanish deck.** Opens with the problem; 2–3 min script in the speaker notes |
+| `AgroSpace-EN.pptx` | **English deck.** Same slides, notes and animations |
+| `AgroSpace-ES-backup.pdf` / `AgroSpace-EN-backup.pdf` | Static backups (still frames instead of GIFs) in case the room computer fails |
 
 QR → https://agrospace-w8ej.onrender.com/
 
@@ -17,9 +17,9 @@ QR → https://agrospace-w8ej.onrender.com/
 - Speaker notes (about one minute per slide) are in each slide's notes.
 - Fonts are Georgia and Calibri, installed with Office, so nothing needs embedding.
 
-## Slides (Spanish deck, ~2 min 20 s)
+## Slides (both decks, ~2 min 20 s)
 
-1. Hook — *la España vacía*: 3,834 municipalities lost population in 2023 alone (INE, Censo Anual de Población 1-1-2024) [~20 s]
+1. Hook — *Empty Spain* (*la España vacía*): 3,834 municipalities lost population in 2023 alone (INE, Censo Anual de Población 1-1-2024) [~20 s]
 2. The problem: a dryland farm in Antequera, 453 mm average rain, 302 mm in 2023, 792 mm water deficit; sowing blind [~25 s]
 3. The reveal: AgroSpace, *From territory to farm* [~10 s]
 4. The solution: Andalucía → Málaga → municipality → farm (cloud dive GIF) [~20 s]
@@ -33,11 +33,13 @@ The deck is generated with [PptxGenJS](https://github.com/gitbrent/PptxGenJS); t
 
 ```bash
 npm install pptxgenjs@3.12.0
-node build.js                         # → build/agrospace-base.pptx (STATIC=1 for the backup version)
+node build.js                         # Spanish → build/agrospace-base.pptx (STATIC=1 for the backup version)
 python3 tools/animate.py build/agrospace-base.pptx anim.json AgroSpace-ES.pptx
+node build-en.js                      # English → build/agrospace-en-base.pptx
+python3 tools/animate.py build/agrospace-en-base.pptx anim.json AgroSpace-EN.pptx
 ```
 
-- `build.js` is the current Spanish deck. `build-en.js` and `tools/make_en.py` belong to the earlier English version and no longer match `build.js`.
+- `build.js` is the Spanish source; `tools/make_en2.py` regenerates `build-en.js` from it, failing if any string to translate is missing.
 - `anim.json` sets each slide's transition and entrance animations. Slides with Morph have no entrance animations on purpose: PowerPoint shows the end state during Morph, so an entrance effect would make the shape appear, vanish and animate in again.
 - Shapes named `!!logo`, `!!mapa`, `!!frame` are matched by Morph across consecutive slides.
 - `tools/record.py` records the demo with Playwright and `tools/mkgif.sh` turns the clips into GIFs (ffmpeg palette + `gifsicle --lossy`). Images and GIFs are not stored here: they are inside the `.pptx` (`ppt/media/`).
