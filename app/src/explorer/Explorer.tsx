@@ -172,6 +172,15 @@ export function Explorer() {
   const app = useRef<HTMLDivElement>(null)
   const mapEl = useRef<HTMLDivElement>(null)
   const dioEl = useRef<HTMLDivElement>(null)
+  const masthead = useRef<HTMLElement>(null)
+  // The masthead wraps (search row on phones, large text): its real height places the narrative below it.
+  useEffect(() => {
+    const el = masthead.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(() => app.current?.style.setProperty('--mh', `${Math.ceil(el.getBoundingClientRect().height)}px`))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const ctrl = useRef<ExplorerController | null>(null)
   const level = useExplorer((s) => s.level)
   const phase = useExplorer((s) => s.phase)
@@ -256,7 +265,7 @@ export function Explorer() {
       <p id="xp-map-summary" className="vh">{summary}</p>
       <p className="vh" role="status" aria-live="polite" aria-atomic="true" data-testid="announcer">{announcement}</p>
       <div className="scrim" />
-      <header className="masthead">
+      <header ref={masthead} className="masthead">
         <img src={`${import.meta.env.BASE_URL}brand/ciberpiso-icon.svg`} alt="" width={36} height={36} />
         <div><b>Ciberpiso</b><span>From territory to farm</span></div>
         <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>

@@ -172,6 +172,8 @@
 .xp .masthead .search {position: relative; z-index: auto; top: auto; left: auto; right: auto; transform: none; margin-left: 4px; width: clamp(200px, 26vw, 340px); min-width: 0; pointer-events: auto;}
 @media (max-width: 759px) {
 .xp .masthead {right: 16px; flex-wrap: wrap; row-gap: 8px;}
-.xp .masthead .search {flex: 1 0 100%; width: auto; margin: 0; height: 44px;}
-.xp .narrative {top: 124px; max-height: calc(100% - 124px - 76px * var(--ts));}
+.xp .masthead .search {flex: 1 0 100%; width: auto; margin: 0; height: auto;}
+.xp .masthead .search input {height: 44px;}
+/* Below the masthead whatever its height (--mh is measured in Explorer.tsx). */
+.xp .narrative {top: calc(16px + var(--mh, 104px) + 10px); max-height: calc(100% - 26px - var(--mh, 104px) - 76px * var(--ts));}
 }
