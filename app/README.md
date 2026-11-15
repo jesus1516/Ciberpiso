@@ -27,9 +27,15 @@ No backend and no API keys: every request goes straight from the browser to publ
 - Every municipality and farm of Málaga can be opened. Built-up, water and public-land farms cannot be selected; mountain, steep and rocky farms open with a warning (same `apt` rule as the farm map).
 - The 3D block uses real terrain (Terrarium) and imagery (Esri), the farm boundary, a soil profile from SoilGrids, trees where WorldCover and the imagery agree, and the crop seen by MODIS each season (2020–2025) followed by the chosen rotation (2026–2031).
 - R0–R3 scores are computed in the browser for any farm by `lib/calculator.ts`, a port of `calculate_scores` in `pipeline/calculator.py`. `node scripts/check-calculator.ts` checks it against the 26 precomputed Antequera candidates (1,144 values, 0 differences).
-- "Datos completos" opens the Conditions tab (`components/ConditionsTab.tsx`) for the farm.
+- "Full data" opens the Conditions tab (`components/ConditionsTab.tsx`) for the farm.
 - `three` is loaded on demand in its own chunk; the 3D view only renders while something moves and lowers its resolution if the first frames are slow.
 - `?director` shows a small panel to replay transitions at 0.5× or 0.25×.
+- The search at the top centre (`explorer/SigpacSearch.tsx`, parser in `explorer/sigpac.ts`) goes from any level
+  straight to a municipality or a farm. It accepts the SIGPAC reference as a farmer has it in the CAP declaration:
+  `Antequera 100 1`, `29:15:100:1`, `29:15:0:0:100:1`, `15:100:1`, or just `100 1` for the municipality on screen
+  (any of space `:` `/` `-` `.` `,` separates the numbers); a name alone lists the matching municipalities. In
+  Málaga the aggregate and zone are always 0 and (municipality, polygon, parcel) is unique, so a reference finds
+  one farm. Built-up, water and public-land farms are shown on the map with the usual warning instead of opening.
 
 The Andalucía level needs the provinces and per-municipality colours, built from the CSVs:
 
@@ -37,7 +43,7 @@ The Andalucía level needs the provinces and per-municipality colours, built fro
 python -m pipeline.export_app_andalucia   # public/data/provincias_andalucia.geojson, municipios_29_stats.json
 ```
 
-`MapView`, `MapScreen`, `FincaPicker`, `Header`, `SearchBox` and `Dashboard` are no longer mounted; their logic (municipality loading, `apt` rules, farm data) is reused by the explorer.
+`MapView`, `MapScreen`, `FarmPicker`, `Header`, `SearchBox` and `Dashboard` are no longer mounted; their logic (municipality loading, `apt` rules, farm data) is reused by the explorer.
 
 ## Architecture (10 lines)
 
@@ -135,7 +141,7 @@ button does not appear.
 - SMAP L3/L4 soil moisture and ECOSTRESS ET/ESI time series via Earthdata (needs Earthdata Login, so a small proxy).
 - Yields and costs per crop, so the income score becomes a margin instead of a price proxy.
 - The declared crop from SIGPAC (cultivo_declarado) to check the crop estimated from NDVI.
-- English translation of the precomputed project narrative (the UI labels are already English; the calculator text is Spanish).
+- English translation of the narrative inside `indicators_antequera.json` (Spanish; the explorer does not show it, only the old `RealRotations` panel did).
 - Spanish translation (`src/i18n/es.ts`) and validation of scoring rules with local agronomists.
 
 ## Acknowledgements

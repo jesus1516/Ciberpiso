@@ -717,16 +717,46 @@ export class ExplorerController {
       if (useExplorer.getState().level !== 2 || useExplorer.getState().phase !== 'idle') return
       const id = Number(e.features![0].id)
       const farm = this.farms?.features.find((f) => f.properties.id === id) as Farm | undefined
-      if (!farm) return
-      const apt = farm.properties.apt
-      if (apt && NOT_FARMLAND.includes(apt)) {
-        pulse(this.map, farm, '#ef4444', 700)
-        showToast('Not farmland', `${APT[apt]}: this farm cannot be analysed (SIGPAC and ESA WorldCover).`, 'blocked')
-        return
-      }
-      if (apt && LIMITED.includes(apt)) showToast('Indicative analysis', `${APT[apt]}: the farm can be opened, but herbaceous rotations fit less well here.`, 'warning')
-      this.go(3, { farm })
+      if (farm) this.openFarm(farm)
     })
+  }
+  /** Opens a farm of the current municipality, or explains why it cannot be opened. */
+  private openFarm(farm: Farm) {
+    const apt = farm.properties.apt
+    if (apt && NOT_FARMLAND.includes(apt)) {
+      pulse(this.map, farm, '#ef4444', 700)
+      showToast('Not farmland', `${APT[apt]}: this farm cannot be analysed (SIGPAC and ESA WorldCover).`, 'blocked')
+      return Promise.resolve()
+    }
+    if (apt && LIMITED.includes(apt)) showToast('Indicative analysis', `${APT[apt]}: the farm can be opened, but herbaceous rotations fit less well here.`, 'warning')
+    return this.go(3, { farm })
+  }
+
+  // ------------------------------------------------------------ search
+  /** The Málaga municipalities with their statistics (empty until the map has loaded). */
+  municipalityList(): MunicipalityInfo[] {
+    return this.municipalities?.features.map((f) => f.properties) ?? []
+  }
+  /**
+   * Goes from any level to a municipality, or straight to one of its farms (SIGPAC search).
+   * A farm that cannot be opened is shown on the municipality map with the usual warning.
+   */
+  async jumpTo(m: MunicipalityInfo, farm?: Farm) {
+    const st = useExplorer.getState()
+    if (st.phase !== 'idle') return
+    if (st.level === 3) {
+      if (farm && st.sel?.farm.properties.id === farm.properties.id) return
+      await this.go(2)
+    }
+    if (useExplorer.getState().level === 2 && useExplorer.getState().municipality?.mun !== m.mun) await this.go(1)
+    if (useExplorer.getState().level < 2) await this.go(2, { municipality: m })
+    if (!farm || useExplorer.getState().level !== 2) return
+    if (farm.properties.apt && NOT_FARMLAND.includes(farm.properties.apt)) {
+      const [w, s, e, n] = this.boxOf(farm as Feature<Geo, FarmProps>)
+      this.map.fitBounds([[w, s], [e, n]], { padding: this.padding(2), maxZoom: 16, duration: reducedMotion() ? 0 : 900 })
+      await new Promise((r) => this.map.once('moveend', r))
+    }
+    await this.openFarm(farm)
   }
   private labelsFor() {
     const tweak: Record<string, [number, number]> = { '29': [0.05, -0.12], '04': [0.1, 0], '11': [0.05, 0.05] }

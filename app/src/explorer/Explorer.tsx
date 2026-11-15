@@ -3,6 +3,7 @@ import { getFarm } from '../lib/farms'
 import { useStore } from '../store'
 import { ExplorerController } from './controller'
 import { FarmView } from './FarmView'
+import { SigpacSearch } from './SigpacSearch'
 import { useExplorer, type Hover, type Level } from './state'
 import { APT, DISCLAIMER, COVER_NAME, fmt } from './texts'
 import './explorer.css'
@@ -203,6 +204,7 @@ export function Explorer() {
         <div><b>Ciberpiso</b><span>From territory to farm</span></div>
         <button className="sources" onClick={() => setAboutOpen(true)}>Sources</button>
       </header>
+      <SigpacSearch ctrl={ctrl} />
       <Narrative />
       <div ref={dioEl} />
       <FarmView ctrl={ctrl} />
