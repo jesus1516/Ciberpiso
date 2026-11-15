@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 import { clearTransient, FARMS, MUNICIPALITIES, openApp, reachLevel, toFarm, VIEWPORTS } from './helpers'
 import { measureLayout } from './layout'
 
-// Every level (and a few extra states) at desktop and phone size: panels must not overlap, must
+// Every level (and a few extra states) at 1440×900, 1280×720, 1024×768 and 390×844: panels must not overlap, must
 // stay inside the viewport and text must not be cut off. A problem is a failing test with the
 // offending elements in the message. Known problems are listed in KNOWN and marked `test.fail`
 // (see docs/testing.md); once one is fixed its test "unexpectedly passes" and the entry must go.
@@ -43,14 +43,20 @@ const scenarios: Scenario[] = [
   },
 ]
 
-/** `<viewport>/<scenario id>` → what is known to be wrong (listed for T-10 to fix). */
-const KNOWN: Record<string, string> = {
-  'mobile/level3': 'Phone farm view: the Back button overlaps the farm header ("Project candidate · Antequera")',
-  'mobile/level3-ronda': 'Phone farm view: the Back button overlaps the farm header ("Farm · Ronda")',
-  'mobile/level3-full-data': 'Phone farm view: the Back button overlaps the farm header (it also sits above the open sheet)',
-}
+/** `<viewport>/<scenario id>` → what is known to be wrong. Empty: add an entry only for a real, tracked bug. */
+const KNOWN: Record<string, string> = {}
 
-for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
+/**
+ * The layout suite checks two more sizes than the shared desktop/phone pair: a small laptop
+ * (1280×720) and a tablet in landscape (1024×768), where the farm view uses its narrower column.
+ */
+const LAYOUT_VIEWPORTS = {
+  ...VIEWPORTS,
+  laptop: { width: 1280, height: 720 },
+  tablet: { width: 1024, height: 768 },
+} as const
+
+for (const [vpName, viewport] of Object.entries(LAYOUT_VIEWPORTS)) {
   for (const sc of scenarios) {
     test(`layout ${vpName} ${viewport.width}x${viewport.height} · ${sc.title}`, async ({ page }) => {
       test.setTimeout(150_000)
