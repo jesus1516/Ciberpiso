@@ -29,15 +29,15 @@ function Panel({ onClose, opener }: { onClose: () => void; opener: React.RefObje
       </fieldset>
       <label className="row">
         <input type="checkbox" checked={s.highContrast} onChange={(e) => updateSettings({ highContrast: e.target.checked })} />
-        <span><b>High contrast</b><small>Black background, white text, stronger borders.</small></span>
+        <span><span className="ti">High contrast</span><small>Black background, white text, stronger borders.</small></span>
       </label>
       <label className="row">
         <input type="checkbox" checked={s.reduceMotion} onChange={(e) => updateSettings({ reduceMotion: e.target.checked })} />
-        <span><b>Reduce motion</b><small>No flights, clouds or fades. Also on when your device asks for it.</small></span>
+        <span><span className="ti">Reduce motion</span><small>No flights, clouds or fades. Also on when your device asks for it.</small></span>
       </label>
       <label className="row">
         <input type="checkbox" checked={!s.use3d} onChange={(e) => updateSettings({ use3d: !e.target.checked })} />
-        <span><b>Turn off the 3D terrain</b><small>For slow devices: a flat map and a data table replace the 3D and the clouds. Applies from the next farm you open.</small></span>
+        <span><span className="ti">Turn off the 3D terrain</span><small>For slow devices: a flat map and a data table replace the 3D and the clouds. Applies from the next farm you open.</small></span>
       </label>
       <button type="button" className="reset" onClick={resetSettings}>Reset to defaults</button>
     </div>
@@ -57,7 +57,7 @@ export function SettingsMenu({ className = '' }: { className?: string }) {
   }, [open])
   return (
     <div ref={wrap} className={`settings ${className}`}>
-      <button ref={btn} type="button" className="settings-btn" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(!open)}>
+      <button ref={btn} type="button" className="settings-btn" aria-label="Settings" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(!open)}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" /></svg>
         <span>Settings</span>
       </button>

@@ -165,14 +165,14 @@
 
 /* Terrain controls and legend, over the terrain */
 .xp .fx-stage {position: absolute; left: calc(var(--fx-col) + 20px); right: 20px; top: 18px; bottom: calc(66px * var(--ts)); display: flex; flex-direction: column; gap: 10px; pointer-events: none; z-index: 2;}
-.xp .fx > .fx-stage > * {pointer-events: auto;}
+.xp .fx-stage > * {pointer-events: auto;}
 .xp .fx-tools {align-self: flex-end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: calc(100% - 150px * var(--ts)); flex: none;}
 .xp .seg {display: inline-flex; padding: 3px; border-radius: 11px; background: var(--glass); border: 1px solid var(--line);}
 .xp .seg button {border: 0; background: transparent; padding: 7px 11px; border-radius: 8px; font-size: calc(12px * var(--ts)); color: var(--n-200); cursor: pointer;}
 .xp .seg button[aria-pressed="true"] {background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent);}
 .xp .icon-btn {width: calc(36px * var(--ts)); height: calc(36px * var(--ts)); display: grid; place-items: center; border-radius: 11px; border: 1px solid var(--n-500); background: var(--glass); cursor: pointer;}
 .xp .icon-btn svg {width: 16px; height: 16px;}
-.xp .fx-legend {position: absolute; right: 20px; bottom: 18px; max-width: 330px; padding: 7px 10px; border-radius: 10px; background: color-mix(in srgb, var(--n-900) 78%, transparent); border: 1px solid var(--line);
+.xp .fx-legend {position: absolute; right: 20px; bottom: calc(18px + (var(--ts) - 1) * 110px); max-width: 330px; padding: 7px 10px; border-radius: 10px; background: color-mix(in srgb, var(--n-900) 78%, transparent); border: 1px solid var(--line);
   font-size: calc(10.5px * var(--ts)); line-height: 1.5; color: var(--n-200); pointer-events: none;}
 .xp .fx-legend .sw {display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 10px;}
 .xp .fx-legend .sw span {display: inline-flex; align-items: center; gap: 5px;}
@@ -298,7 +298,7 @@
 .xp .masthead {position: absolute; z-index: 50; left: 32px; top: 24px; display: flex; align-items: center; gap: 12px; pointer-events: none;}
 .xp .masthead svg {width: 34px; height: 34px; color: var(--accent);}
 .xp .masthead b {display: block; font: 600 calc(27px * var(--ts))/1 Fraunces, Georgia, serif; letter-spacing: -.6px;}
-.xp .masthead span {display: block; margin-top: 6px; font-size: calc(9.5px * var(--ts)); letter-spacing: .14em; text-transform: uppercase; color: var(--n-300);}
+.xp .masthead div > span {display: block; margin-top: 6px; font-size: calc(9.5px * var(--ts)); letter-spacing: .14em; text-transform: uppercase; color: var(--n-300);}
 .xp .narrative {position: absolute; z-index: 20; left: 34px; top: 150px; width: 320px; pointer-events: none;}
 .xp .scene {display: none; animation: copy-in .7s var(--ease) both;}
 .xp[data-level="0"] .scene[data-l="0"], .xp[data-level="1"] .scene[data-l="1"], .xp[data-level="2"] .scene[data-l="2"] {display: block;}
@@ -367,7 +367,7 @@
 @media (max-width: 759px) {
 .xp .masthead {left: 16px; top: 16px;}
 .xp .masthead b {font-size: calc(22px * var(--ts));}
-.xp .masthead span {display: none;}
+.xp .masthead div > span {display: none;}
 .xp .masthead svg {width: 28px; height: 28px;}
 .xp .narrative {left: 16px; right: 16px; top: 64px; width: auto;}
 .xp .scene h1 {font-size: calc(28px * var(--ts)); margin: 8px 0 8px;}

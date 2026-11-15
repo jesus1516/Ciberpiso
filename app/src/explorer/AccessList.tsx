@@ -79,7 +79,7 @@ function Combobox({ label, hint, entries, onChoose, noun }: {
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d={open ? 'm6 15 6-6 6 6' : 'm6 9 6 6 6-6'} /></svg>
       </div>
       <p id={`${uid}-hint`} className="al-hint">{hint}</p>
-      <ul id={listId} ref={list} role="listbox" aria-label={label} className="al-list" hidden={!open}>
+      <ul id={listId} ref={list} role="listbox" tabIndex={-1} aria-label={label} className="al-list" hidden={!open}>
         {shown.map((e, i) => (
           <li key={e.id} id={`${uid}-opt-${e.id}`} role="option" aria-selected={i === active} className={i === active ? 'on' : undefined}
             onMouseDown={(ev) => ev.preventDefault()} onClick={() => choose(e)} onMouseMove={() => i !== active && setActive(i)}>

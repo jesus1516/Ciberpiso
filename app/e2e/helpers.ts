@@ -93,3 +93,40 @@ export async function clearTransient(page: Page) {
   await page.evaluate(() => (window as any).__xp.state.setState({ toast: null, hover: null }))
   await page.waitForTimeout(400)
 }
+
+// ---------------------------------------------------------------- accessibility helpers (T-09)
+
+export const SETTINGS_KEY = 'ciberpiso.settings.v1'
+
+/** Opens the app with saved settings (text size, contrast, motion, 3D) already in localStorage. */
+export async function openAppWith(page: Page, settings: Record<string, unknown>, viewport: { width: number; height: number } = VIEWPORTS.desktop): Promise<ErrorLog> {
+  await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [SETTINGS_KEY, JSON.stringify(settings)])
+  return openApp(page, viewport)
+}
+
+/** What has keyboard focus: tag, role, accessible-ish name and id. */
+export const focused = (page: Page) =>
+  page.evaluate(() => {
+    const el = document.activeElement as HTMLElement | null
+    if (!el || el === document.body) return { tag: 'body', role: '', name: '', id: '', inside: '' }
+    const label = (el as HTMLInputElement).labels?.[0]?.textContent
+    const name = (el.getAttribute('aria-label') ?? label ?? (el.textContent ?? '')).replace(/\s+/g, ' ').trim().slice(0, 60)
+    return { tag: el.tagName.toLowerCase(), role: el.getAttribute('role') ?? '', name, id: el.id, inside: el.closest('[role="dialog"]')?.getAttribute('aria-labelledby') ?? '' }
+  })
+
+/** Presses Tab until the focused element matches (or fails after `max` presses). Returns every stop on the way. */
+export async function tabTo(page: Page, match: (f: Awaited<ReturnType<typeof focused>>) => boolean, max = 40) {
+  const stops: Awaited<ReturnType<typeof focused>>[] = []
+  for (let i = 0; i < max; i++) {
+    await page.keyboard.press('Tab')
+    const f = await focused(page)
+    stops.push(f)
+    if (match(f)) return stops
+  }
+  throw new Error(`Tab did not reach the target in ${max} presses. Stops: ${stops.map((f) => `${f.tag}[${f.role}] "${f.name}"`).join(' → ')}`)
+}
+
+/** Waits until the explorer is idle on a level (after a keyboard-driven transition). */
+export async function waitLevel(page: Page, level: number) {
+  await page.waitForFunction((l) => { const s = (window as any).__xp.state.getState(); return s.phase === 'idle' && s.level === l }, level, { timeout: 60_000 })
+}
