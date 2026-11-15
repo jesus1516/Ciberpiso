@@ -431,10 +431,7 @@ export class ExplorerController {
     })
     const sel = await farmSceneP
     const tile = sel.farmScene.tile
-    // Handed over with a slightly smaller tile: one zoom level less is ~4× fewer satellite
-    // tiles to download; the 3D rise completes the approach.
-    const b = this.cameraFor(3, [[tile[0], tile[1]], [tile[2], tile[3]]])
-    b.zoom -= 0.75
+    const b = this.farmCamera(tile)
     const path = cameraPath(this.current(), b)
     this.app.classList.add('handoff')
     // During the flight only the chosen boundary is visible: so farms are not sliced at every zoom.
@@ -461,6 +458,24 @@ export class ExplorerController {
     const snapshot = await this.snapshot(rect)
     await dio.enter({ fromRect: rect, snapshot, traced: true })
     this.app.classList.remove('handoff')
+  }
+  /**
+   * Map camera for the hand-over to the 3D. The tile is handed over slightly smaller (0.75 zoom
+   * levels less is ~3× fewer satellite tiles to download; the 3D rise completes the approach)
+   * and centred in the area the farm column leaves free, so the block rises where it will stay.
+   * The zoom-out is done around that centre, not around the middle of the screen.
+   */
+  private farmCamera(tile: BBox): Camera {
+    const cam = this.cameraFor(3, [[tile[0], tile[1]], [tile[2], tile[3]]])
+    cam.zoom -= 0.75
+    const pad = this.padding(3)
+    const { clientWidth: w, clientHeight: h } = this.map.getContainer()
+    const dx = pad.left + (w - pad.left - pad.right) / 2 - w / 2, dy = pad.top + (h - pad.top - pad.bottom) / 2 - h / 2
+    const nw = maplibregl.MercatorCoordinate.fromLngLat([tile[0], tile[3]]), se = maplibregl.MercatorCoordinate.fromLngLat([tile[2], tile[1]])
+    const worldPx = 512 * 2 ** cam.zoom
+    const c = new maplibregl.MercatorCoordinate((nw.x + se.x) / 2 - dx / worldPx, (nw.y + se.y) / 2 - dy / worldPx).toLngLat()
+    cam.center = [c.lng, c.lat]
+    return cam
   }
   private tileRect(tile: BBox) {
     const nw = this.map.project([tile[0], tile[3]]), se = this.map.project([tile[2], tile[1]])
@@ -493,9 +508,7 @@ export class ExplorerController {
     if (!sel) return
     const tile = sel.farmScene.tile
     this.app.classList.add('handoff')
-    const near = this.cameraFor(3, [[tile[0], tile[1]], [tile[2], tile[3]]])
-    near.zoom -= 0.75
-    this.map.jumpTo(near)
+    this.map.jumpTo(this.farmCamera(tile))
     await dio.exit({ toRect: this.tileRect(tile) })
     this.vis('sel-line', true)
     this.vis('sel-glow', true)
