@@ -92,10 +92,3 @@ export function flyToField(map: Map, field: Field, pitched: boolean) {
     curve: 1.5,
   })
 }
-
-export function slopeClass(pct: number) {
-  if (pct < 2) return 'flat' as const
-  if (pct < 8) return 'gentle' as const
-  if (pct < 15) return 'moderate' as const
-  return 'steep' as const
-}

@@ -1,4 +1,3 @@
-import type { SoilType } from './soil'
 
 export type SoilData = {
   arcilla_pct: number | null
@@ -129,18 +128,11 @@ export function latestPrice(p: Price | undefined) {
   return last ? { year: last[0], eurT: last[1] } : null
 }
 
+export type SoilType = 'sandy' | 'loam' | 'clay'
+
 export function soilTexture(s: SoilData | null): SoilType | null {
   if (!s || s.arena_pct === null || s.arcilla_pct === null) return null
   if (s.arcilla_pct >= 35) return 'clay'
   if (s.arena_pct >= 52 && s.arcilla_pct < 20) return 'sandy'
   return 'loam'
-}
-
-const CLASS_TO_CROP: Record<string, string> = { herbaceo_invierno: 'wheat', herbaceo_verano: 'sunflower', permanente: 'olive' }
-
-export function observedCrop(d: FarmDetail | undefined) {
-  const last = d?.fenologia.filter((f) => f.clase_estimada && f.clase_estimada !== 'sin_datos').at(-1)
-  if (!last?.clase_estimada) return null
-  const crop = CLASS_TO_CROP[last.clase_estimada]
-  return crop ? { crop, campana: last.campana, clase: last.clase_estimada } : null
 }

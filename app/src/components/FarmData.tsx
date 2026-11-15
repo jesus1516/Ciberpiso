@@ -160,7 +160,7 @@ export function FarmData() {
             <div className="mt-3">
               <Rows
                 rows={[
-                  [s.texture, texture ? t.priorities.soils[texture] : '—'],
+                  [s.texture, texture ? s.soils[texture] : '—'],
                   [s.organicCarbon, fmt(suelo.cos_gkg, 1, ' g/kg')],
                   [s.ph, fmt(suelo.ph_h2o, 1)],
                   [s.nitrogen, fmt(suelo.nitrogeno_gkg, 2, ' g/kg')],

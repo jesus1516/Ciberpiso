@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { t } from '../i18n'
 import { useStore } from '../store'
-import { DemoBadge } from './DemoBadge'
 
 const a = t.aboutModal
 
@@ -32,7 +31,7 @@ export function AboutModal() {
           <ul className="mt-1 list-disc space-y-1 pl-5">{a.realItems.map((i) => <li key={i}>{i}</li>)}</ul>
         </section>
         <section>
-          <h3 className="flex items-center gap-2 font-semibold">{a.demo} <DemoBadge /></h3>
+          <h3 className="font-semibold">{a.demo}</h3>
           <ul className="mt-1 list-disc space-y-1 pl-5">{a.demoItems.map((i) => <li key={i}>{i}</li>)}</ul>
           <p className="mt-1 text-ink-2">{a.catalog}</p>
         </section>
