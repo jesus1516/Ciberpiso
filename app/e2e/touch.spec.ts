@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { FARMS, MUNICIPALITIES, VIEWPORTS, clearTransient, openApp, openAppWith, reachLevel, toFarm } from './helpers'
+import { unfold, FARMS, MUNICIPALITIES, VIEWPORTS, clearTransient, openApp, openAppWith, reachLevel, toFarm } from './helpers'
 
 // T-09: on phones every control is at least 44 × 44 CSS px.
 
@@ -40,6 +40,7 @@ for (const level of [0, 1, 2, 3] as const) {
 test('touch targets on a phone: open list, settings panel and the data table', async ({ page }) => {
   test.setTimeout(150_000)
   await openApp(page, VIEWPORTS.mobile)
+  await unfold(page)
   await page.getByRole('combobox', { name: /from the list$/ }).focus()
   expect(await smallTargets(page), 'open province list').toEqual([])
   await page.getByRole('button', { name: 'Settings' }).click()

@@ -188,7 +188,8 @@ export function Explorer() {
   const dioEl = useRef<HTMLDivElement>(null)
   const masthead = useRef<HTMLElement>(null)
   // Phones: the narrative (and the search) can be folded away so the map is visible.
-  const [compact, setCompact] = useState(false)
+  // Folded by default on phones (the map first); "Details" opens it.
+  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 759px)').matches)
   // The masthead wraps (search row on phones, large text): its real height places the narrative below it.
   useEffect(() => {
     const el = masthead.current

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { FARMS, MUNICIPALITIES, SETTINGS_KEY, VIEWPORTS, clearTransient, openApp, openAppWith, reachLevel, toFarm, waitLevel } from './helpers'
+import { unfold, FARMS, MUNICIPALITIES, SETTINGS_KEY, VIEWPORTS, clearTransient, openApp, openAppWith, reachLevel, toFarm, waitLevel } from './helpers'
 import { measureLayout } from './layout'
 import { textContrast } from './contrast'
 
@@ -169,6 +169,7 @@ for (const [vpName, vp] of Object.entries(LAYOUT_VPS)) {
         }
         // The combobox open (level 0–2): the narrative stays inside the viewport and the highlighted option is visible in it.
         if (level < 3) {
+          await unfold(page)
           await page.getByRole('combobox', { name: /from the list$/ }).focus()
           await page.waitForTimeout(300)
           const box = await page.evaluate(() => {

@@ -130,3 +130,9 @@ export async function tabTo(page: Page, match: (f: Awaited<ReturnType<typeof foc
 export async function waitLevel(page: Page, level: number) {
   await page.waitForFunction((l) => { const s = (window as any).__xp.state.getState(); return s.phase === 'idle' && s.level === l }, level, { timeout: 60_000 })
 }
+
+/** Phones open with the narrative folded (map first): press "Details" if it is folded. */
+export async function unfold(page: Page) {
+  const fold = page.locator('.fold[aria-expanded="false"]')
+  if (await fold.isVisible()) await fold.click()
+}
