@@ -1,0 +1,69 @@
+/* "Full data" drawer in the explorer's look: dark glass, Fraunces titles, one accent, tokens only.
+   Loaded with FullDataPanel (lazy chunk). The drawer shell (.xp-sheet) is in explorer.css. */
+.xp .xp-sheet.fd-sheet {background: var(--n-800); color: var(--n-100); border-right: 1px solid var(--line); font-family: Inter, system-ui, sans-serif;}
+/* Own compositing layer: the farm column (animated, composited) was painted over the drawer while it scrolled. */
+.xp .xp-sheet.fd-sheet {isolation: isolate; will-change: transform;}
+.xp .fd-sheet header {border-bottom-color: var(--line); padding: 16px 18px 12px;}
+.xp .fd-sheet header h2 {font: 500 calc(22px * var(--ts))/1.1 Fraunces, Georgia, serif; letter-spacing: -.3px; color: var(--n-100);}
+.xp .fd-sheet header p {color: var(--n-300);}
+.xp .fd-sheet header button.close {color: var(--n-200); border: 1px solid var(--line); background: var(--wash); min-width: 36px; min-height: 36px;}
+.xp .fd-sheet header button.close:hover {color: var(--accent); border-color: var(--accent);}
+.xp .fd-sheet :focus-visible {outline-color: var(--accent);}
+.xp .fd-sheet .body {padding: 0 18px 22px;}
+
+/* tabs: the explorer's segmented control */
+.xp .fd-tabs {position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 0 -18px 14px; padding: 12px 18px 10px; background: var(--n-800); border-bottom: 1px solid var(--line);}
+.xp .fd-tabs button {border: 1px solid var(--line); background: var(--wash); color: var(--n-200); border-radius: 9px; padding: 7px 4px; font-size: calc(12.5px * var(--ts)); font-weight: 600; cursor: pointer;}
+.xp .fd-tabs button:hover {color: var(--n-100); border-color: var(--n-500);}
+.xp .fd-tabs button[aria-selected="true"] {background: color-mix(in srgb, var(--accent) 16%, transparent); border-color: var(--accent); color: var(--accent);}
+.xp .fd-panel {display: grid; gap: 12px;}
+
+/* key numbers */
+.xp .fd-tiles {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0;}
+.xp .fd-tile {background: var(--wash); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; align-content: start;}
+.xp .fd-tile dt {font-size: calc(10.5px * var(--ts)); letter-spacing: .08em; text-transform: uppercase; color: var(--n-300);}
+.xp .fd-tile dd {margin: 0; font: 500 calc(22px * var(--ts))/1.15 Fraunces, Georgia, serif; color: var(--n-100); font-variant-numeric: tabular-nums;}
+.xp .fd-tile small {font-size: calc(11px * var(--ts)); color: var(--n-300); line-height: 1.35;}
+
+/* cards */
+.xp .fd-card {background: var(--wash); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px;}
+.xp .fd-card h3 {margin: 0 0 10px; font: 500 calc(16px * var(--ts))/1.2 Fraunces, Georgia, serif; color: var(--n-100);}
+.xp .fd-note {margin: 8px 0 0; font-size: calc(11px * var(--ts)); line-height: 1.45; color: var(--n-300);}
+.xp .fd-empty {margin: 4px 0; font-size: calc(13px * var(--ts)); color: var(--n-200);}
+.xp .fd-warn {margin: 0; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--warn); border-left-width: 4px; background: color-mix(in srgb, var(--warn) 10%, transparent); font-size: calc(12.5px * var(--ts)); line-height: 1.45; color: var(--n-100);}
+.xp .fd-warn b {display: block; margin-bottom: 2px; font-size: calc(10.5px * var(--ts)); letter-spacing: .1em; text-transform: uppercase; color: var(--warn);}
+
+/* record rows */
+.xp .fd-rows {display: grid; gap: 6px; margin: 0;}
+.xp .fd-rows div {display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 10px; font-size: calc(13px * var(--ts));}
+.xp .fd-rows dt {color: var(--n-300);}
+.xp .fd-rows dd {margin: 0; color: var(--n-100); overflow-wrap: anywhere;}
+
+/* bars (land cover) */
+.xp .fd-bars {list-style: none; margin: 0; padding: 0; display: grid; gap: 7px;}
+.xp .fd-bars li {display: grid; grid-template-columns: minmax(0, 7.5rem) 1fr 3rem; align-items: center; gap: 10px; font-size: calc(12.5px * var(--ts)); color: var(--n-200);}
+.xp .fd-bars .track {height: 6px; border-radius: 6px; background: var(--wash-2); overflow: hidden;}
+.xp .fd-bars .track span {display: block; height: 100%; border-radius: 6px; background: var(--accent);}
+.xp .fd-bars b {text-align: right; font-weight: 600; color: var(--n-100); font-variant-numeric: tabular-nums;}
+
+/* soil texture: one stacked bar + a labelled legend */
+.xp .fd-stack {display: flex; height: 12px; border-radius: 8px; overflow: hidden; background: var(--wash-2);}
+.xp .fd-legend {list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: calc(12px * var(--ts)); color: var(--n-200);}
+.xp .fd-legend li {display: inline-flex; align-items: center; gap: 6px;}
+.xp .fd-legend i {width: 10px; height: 10px; border-radius: 3px; border: 1px solid var(--line);}
+.xp .fd-legend i.dash {width: 14px; height: 0; border: 0; border-top: 2px dashed var(--accent); border-radius: 0;}
+.xp .fd-legend b {color: var(--n-100); font-weight: 600;}
+
+/* seasons seen by the satellite */
+.xp .fd-chips {list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px;}
+.xp .fd-chips li {font-size: calc(11.5px * var(--ts)); color: var(--n-100); border: 1px solid var(--line); background: var(--wash-2); border-radius: 8px; padding: 3px 8px;}
+.xp .fd-chips span {color: var(--n-300); margin-right: 5px; font-variant-numeric: tabular-nums;}
+
+/* recharts text on the dark panel */
+.xp .fd .recharts-text {fill: var(--n-300);}
+
+@media (max-width: 759px) {
+.xp .xp-sheet.fd-sheet {width: auto; right: 0; border-radius: 0;}
+.xp .fd-tabs button {min-height: 44px;}
+.xp .fd-sheet header button.close {min-width: 44px; min-height: 44px;}
+}

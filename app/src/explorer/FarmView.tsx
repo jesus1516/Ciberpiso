@@ -20,7 +20,8 @@ import { useExplorer, type Selection } from './state'
 import { DISCLAIMER, PROFILES, SHORT_ROTATION, fmt } from './texts'
 
 // The conditions tab brings the charts (recharts): it is only downloaded when opened.
-const ConditionsTab = lazy(() => import('../components/ConditionsTab').then((m) => ({ default: m.ConditionsTab })))
+// The Full data content (recharts) loads only when the drawer opens.
+const FullDataPanel = lazy(() => import('./FullDataPanel').then((m) => ({ default: m.FullDataPanel })))
 
 type CardKey = MarkerKey
 /** Column order, top to bottom; the number is the one shown on the terrain marker. */
@@ -176,7 +177,7 @@ function FullData({ sel, onClose, opener }: { sel: Selection; onClose: () => voi
     useStore.getState().loadClimate(lat, lon)
   }, [sel])
   return (
-    <section ref={sheet} className="xp-sheet bg-surface text-ink" role="dialog" aria-modal="true" aria-labelledby="xp-sheet-title" aria-describedby="xp-sheet-sub" tabIndex={-1}>
+    <section ref={sheet} className="xp-sheet fd-sheet" role="dialog" aria-modal="true" aria-labelledby="xp-sheet-title" aria-describedby="xp-sheet-sub" tabIndex={-1}>
       <header>
         <div>
           <h2 id="xp-sheet-title">Full data</h2>
@@ -185,7 +186,7 @@ function FullData({ sel, onClose, opener }: { sel: Selection; onClose: () => voi
         <button className="close" onClick={onClose} aria-label="Close full data">✕</button>
       </header>
       <div className="body">
-        <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}><ConditionsTab /></Suspense>
+        <Suspense fallback={<p className="fd-empty" role="status">Loading…</p>}><FullDataPanel sel={sel} /></Suspense>
       </div>
     </section>
   )
