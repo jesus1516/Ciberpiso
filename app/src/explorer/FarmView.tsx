@@ -11,7 +11,8 @@ import { useStore } from '../store'
 import type { ExplorerController } from './controller'
 import type { MarkerKey } from './diorama'
 import { farmInsights, recommendation, type Insight, type InsightTarget, type Severity } from './insights'
-import { CROPS, FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, type Mode } from './scene'
+import { FIRST_SCENARIO_YEAR, LAST_YEAR, cropForYear, cropInfo, type Mode } from './scene'
+import { SOIL_TEXTURE as SOIL_TEX } from './tokens'
 import { useExplorer, type Selection } from './state'
 import { DISCLAIMER, PROFILES, SHORT_ROTATION, fmt } from './texts'
 
@@ -33,6 +34,8 @@ const WHERE: Record<CardKey, string> = {
   market: 'centre of the farm',
   risk: 'highest point of the farm',
 }
+/** Colour of a crop group and the ink that reads on it; the crop's letter is printed on top. */
+const cropStyle = (key: string) => ({ '--c': cropInfo(key).color, '--ink': cropInfo(key).ink }) as React.CSSProperties
 const YEARS = Array.from({ length: LAST_YEAR - 2019 }, (_, i) => 2020 + i)
 
 const ICONS: Record<CardKey, React.ReactNode> = {
@@ -41,8 +44,12 @@ const ICONS: Record<CardKey, React.ReactNode> = {
   market: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 17l5-5 4 3 7-8" /><path d="M15 7h5v5" /></svg>,
   risk: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M5 19l1.4-1.4M17.6 6.4 19 5" /></svg>,
 }
+// Score → word (and, through `level`, a status colour). The word is the signal, the colour only reinforces it.
+type Level = 'good' | 'warn' | 'bad'
+const level = (v: number | null): Level | null => (v === null ? null : v >= 70 ? 'good' : v >= 55 ? 'warn' : 'bad')
 const word = (v: number | null) => (v === null ? '—' : v >= 70 ? 'high' : v >= 55 ? 'medium' : 'low')
 const riskWord = (v: number | null) => (v === null ? '—' : v >= 70 ? 'low risk' : v >= 55 ? 'medium risk' : 'high risk')
+const LEVEL_GLYPH: Record<Level, string> = { good: '▲', warn: '■', bad: '▼' } // shape as well as colour
 
 type Hot = { hot: CardKey | null; setHot: (k: CardKey | null) => void }
 /** Emphasis: the element behind the top insight (or the one the user picked) stands out, the rest recede. */
@@ -62,12 +69,12 @@ function Card({ k, value, wordTxt, base, rotation, ev, extra, hot, setHot, emph,
       onMouseEnter={on} onMouseLeave={off} onFocus={on} onBlur={off} onClick={() => pick(k)}
       onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(k) } }}>
       <div className="lbl"><span className="num" aria-label={`Marker ${n} on the terrain`} title={`Marker ${n} on the terrain: ${WHERE[k]}`}>{n}</span>{ICONS[k]}<span>{label}</span></div>
-      <div className="val"><strong>{fmt(value)}</strong><small>/100</small><em className="word">{wordTxt}</em></div>
+      <div className="val"><strong>{fmt(value)}</strong><small>/100</small><em className="word" data-lv={level(value) ?? undefined}>{level(value) && <span aria-hidden="true">{LEVEL_GLYPH[level(value)!]} </span>}{wordTxt}</em></div>
       <div className="bar"><i style={{ '--v': `${Math.max(0, Math.min(100, value ?? 0))}%` } as React.CSSProperties} /></div>
       {rotation === 'R0' || delta === null ? (
         <span className="delta">baseline (current)</span>
       ) : (
-        <span className={`delta ${delta > 0.05 ? 'up' : delta < -0.05 ? 'down' : ''}`}>{delta > 0 ? '+' : ''}{fmt(delta, 1)} vs. current</span>
+        <span className={`delta ${delta > 0.05 ? 'up' : delta < -0.05 ? 'down' : ''}`}>{delta > 0.05 && <span aria-hidden="true">▲ </span>}{delta < -0.05 && <span aria-hidden="true">▼ </span>}{delta > 0 ? '+' : ''}{fmt(delta, 1)} vs. current</span>
       )}
       {extra}
       <div className="ev">{ev}</div>
@@ -101,7 +108,7 @@ function Cards({ sel, rotation, hot, setHot, emph, pick }: { sel: Selection; rot
         ev={soil ? `Available water ${fmt(soil.cad_0_100_mm)} mm · pH ${fmt(soil.ph_h2o, 1)}` : 'No SoilGrids data: typical soil'}
         extra={soil?.arcilla_pct != null && soil.limo_pct != null && soil.arena_pct != null && (
           <div className="tex-row">
-            <div className="tex"><i style={{ width: `${soil.arcilla_pct}%`, background: '#8A5A3C' }} /><i style={{ width: `${soil.limo_pct}%`, background: '#B58E62' }} /><i style={{ width: `${soil.arena_pct}%`, background: '#D8C29A' }} /></div>
+            <div className="tex"><i style={{ width: `${soil.arcilla_pct}%`, background: SOIL_TEX.clay }} /><i style={{ width: `${soil.limo_pct}%`, background: SOIL_TEX.silt }} /><i style={{ width: `${soil.arena_pct}%`, background: SOIL_TEX.sand }} /></div>
             <div className="tex-k"><span>clay {fmt(soil.arcilla_pct)} %</span><span>silt {fmt(soil.limo_pct)} %</span><span>sand {fmt(soil.arena_pct)} %</span></div>
           </div>
         )} />
@@ -265,8 +272,8 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
           <div className="fx-title">
             <h2>{fmt(p.ha, 1)}<small>ha</small></h2>
             <div className="now">
-              <i style={{ background: CROPS[crop.key]?.color ?? '#777' }} />
-              <b>{CROPS[crop.key]?.label ?? crop.key}</b>
+              <i className="crop-sw" style={cropStyle(crop.key)} aria-hidden="true">{cropInfo(crop.key).letter}</i>
+              <b>{cropInfo(crop.key).label}</b>
               <span>{crop.observed ? `campaign ${view.year} · MODIS` : `${view.year} · scenario ${view.rotation}`}</span>
             </div>
           </div>
@@ -284,10 +291,9 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
               {YEARS.map((y) => {
                 const c = cropForYear(sel.farmScene, y, view.rotation)
                 return (
-                  <button key={y} className={`year ${y >= FIRST_SCENARIO_YEAR ? 'future' : ''}`} aria-current={y === view.year} title={`${y} · ${CROPS[c.key]?.label ?? c.key}`}
-                    style={{ '--c': CROPS[c.key]?.color ?? '#666' } as React.CSSProperties}
+                  <button key={y} className={`year ${y >= FIRST_SCENARIO_YEAR ? 'future' : ''}`} aria-current={y === view.year} title={`${y} · ${cropInfo(c.key).label}${y >= FIRST_SCENARIO_YEAR ? ' (scenario)' : ' (observed)'}`}
                     onClick={() => { stop(); dio()?.setYear(y) }}>
-                    <i /><span>{String(y).slice(2)}</span>
+                    <i style={cropStyle(c.key)} aria-hidden="true">{cropInfo(c.key).letter}</i><span>{String(y).slice(2)}</span>
                   </button>
                 )
               })}
@@ -341,7 +347,7 @@ function FarmPanel({ sel, ctrl }: { sel: Selection; ctrl: React.RefObject<Explor
       </div>
 
       <aside className="fx-legend" aria-label="Terrain legend">
-        <div className="sw">{legendKeys.map((k) => <span key={k}><i style={{ background: CROPS[k]?.color }} />{CROPS[k]?.label ?? k}</span>)}</div>
+        <div className="sw">{legendKeys.map((k) => <span key={k}><i style={cropStyle(k)} aria-hidden="true">{cropInfo(k).letter}</i>{cropInfo(k).label}</span>)}</div>
         {synthetic && <span className="badge-synth">Offline: synthetic relief or orthophoto</span>}
       </aside>
 

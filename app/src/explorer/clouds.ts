@@ -129,10 +129,10 @@ export class CloudLayer {
   private uniforms = {
     uT: { value: 0 }, uTime: { value: 0 }, uAspect: { value: 1 }, uOpacity: { value: 0 }, uVeil: { value: 0 },
     uCoverage: { value: 0.6 }, uRing: { value: 0 }, uSeed: { value: 0 },
-    uLight: { value: new THREE.Color('#FFFCF6') },
-    uShadow: { value: new THREE.Color('#A9B2B8') },
-    uWarm: { value: new THREE.Color('#FFE3B8') },
-    uVeilColor: { value: new THREE.Color('#F5F1EA') },
+    uLight: { value: new THREE.Color('#FFFCF6') }, // colour-ok: cloud shader constant (a cloud is white or grey, not a UI colour)
+    uShadow: { value: new THREE.Color('#A9B2B8') }, // colour-ok: cloud shader constant (a cloud is white or grey, not a UI colour)
+    uWarm: { value: new THREE.Color('#FFE3B8') }, // colour-ok: cloud shader constant (a cloud is white or grey, not a UI colour)
+    uVeilColor: { value: new THREE.Color('#F5F1EA') }, // colour-ok: cloud shader constant (a cloud is white or grey, not a UI colour)
   }
   private onResize = () => this.resize()
 

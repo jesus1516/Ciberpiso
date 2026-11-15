@@ -62,7 +62,7 @@ function Tooltip({ hover }: { hover: Hover | null }) {
           <Metric value={COVER_NAME[p.cover ?? ''] ?? '—'} label="land cover" />
         </div>
         <div className={`a ${blocked ? 'no' : p.apt ? 'warn' : ''}`}>
-          {blocked ? `${APT[p.apt!]}: cannot be analysed` : p.apt ? `⚠ ${APT[p.apt]}: indicative analysis` : 'Click to see it in 3D →'}
+          {blocked ? `✕ ${APT[p.apt!]}: cannot be analysed` : p.apt ? `⚠ ${APT[p.apt]}: indicative analysis` : 'Click to see it in 3D →'}
         </div>
       </>
     )
@@ -110,10 +110,10 @@ function Narrative() {
             {municipality.candidatas ? `; the ${municipality.candidatas} gold ones are project candidates` : ''}.
           </p>
           <ul className="chips">
-            <li><i className="sw-ok" />Farmland</li>
-            {municipality.candidatas > 0 && <li><i className="sw-cand" />Candidate</li>}
-            <li><i className="sw-lim" />Limited (with warning)</li>
-            <li><i className="sw-no" />Not farmland</li>
+            <li><i className="sw-ok" aria-hidden />Farmland</li>
+            {municipality.candidatas > 0 && <li><i className="sw-cand" aria-hidden>★</i>Candidate</li>}
+            <li><i className="sw-lim" aria-hidden />Limited (with warning)</li>
+            <li><i className="sw-no" aria-hidden />Not farmland</li>
           </ul>
           <div className="hint">Click on a farm to see it in 3D</div>
         </div>
